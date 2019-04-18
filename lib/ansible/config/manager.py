@@ -11,7 +11,7 @@ import sys
 import stat
 import tempfile
 import traceback
-from collections import namedtuple
+from collections import namedtuple, Mapping
 
 from yaml import load as yaml_load
 try:
@@ -476,7 +476,12 @@ class ConfigManager(object):
             # ensure choice is valid
             if value is not None and defs[config].get('choices'):
                 if value not in defs[config].get('choices'):
-                    raise AnsibleError('Provided value (%s) for "%s" was not a valid choice.' % (value, config))
+                    choices = defs[config].get('choices')
+                    if isinstance(choices, Mapping):
+                        choices = ', '.join(choices.keys())
+                    else:
+                        choices = ', '.join(choices)
+                    raise AnsibleError("Invalid %s value '%s': valid values are %s" % (value, config, choices))
 
             # deal with deprecation of the setting
             if 'deprecated' in defs[config] and origin != 'default':
