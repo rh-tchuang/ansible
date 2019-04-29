@@ -11,7 +11,7 @@ import sys
 import stat
 import tempfile
 import traceback
-from collections import namedtuple, Mapping
+from collections import namedtuple
 
 from yaml import load as yaml_load
 try:
@@ -22,6 +22,7 @@ except ImportError:
 
 from ansible.config.data import ConfigData
 from ansible.errors import AnsibleOptionsError, AnsibleError
+from ansible.module_utils.common._collections_compat import Mapping
 from ansible.module_utils.six import PY3, string_types
 from ansible.module_utils.six.moves import configparser
 from ansible.module_utils._text import to_text, to_bytes, to_native
