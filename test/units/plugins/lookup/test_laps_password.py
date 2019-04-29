@@ -126,7 +126,7 @@ def test_invalid_auth():
     with pytest.raises(AnsibleLookupError) as err:
         lookup_loader.get('laps_password').run(["host"], domain="test", auth="fail")
 
-    assert str(err.value) == "Invalid auth value 'fail': expecting either 'gssapi', or 'simple'"
+    assert str(err.value) == "Invalid value 'fail' for 'auth', choices are: simple, gssapi"
 
 
 def test_gssapi_without_sasl(monkeypatch, ):
