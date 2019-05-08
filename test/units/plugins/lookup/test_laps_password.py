@@ -118,8 +118,7 @@ def test_invalid_cert_mapping():
     with pytest.raises(AnsibleLookupError) as err:
         lookup_loader.get('laps_password').run(["host"], domain="test", validate_certs="incorrect")
 
-    assert str(err.value) == "Invalid validate_certs value 'incorrect': valid values are 'allow', 'demand', " \
-                             "'never', 'try'"
+    assert str(err.value) == "Invalid value 'incorrect' for 'validate_certs', choices are: never, allow, try, demand"
 
 
 def test_invalid_auth():
