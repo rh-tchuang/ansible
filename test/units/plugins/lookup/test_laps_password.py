@@ -13,7 +13,7 @@ import sys
 
 from units.compat.mock import MagicMock
 
-from ansible.errors import AnsibleLookupError
+from ansible.errors import AnsibleLookupError, AnsibleError
 from ansible.plugins.loader import lookup_loader
 
 
