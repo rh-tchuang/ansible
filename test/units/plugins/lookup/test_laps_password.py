@@ -115,14 +115,14 @@ def test_missing_ldap(laps_password):
 
 
 def test_invalid_cert_mapping():
-    with pytest.raises(AnsibleLookupError) as err:
+    with pytest.raises(AnsibleError) as err:
         lookup_loader.get('laps_password').run(["host"], domain="test", validate_certs="incorrect")
 
     assert str(err.value) == "Invalid value 'incorrect' for 'validate_certs', choices are: never, allow, try, demand"
 
 
 def test_invalid_auth():
-    with pytest.raises(AnsibleLookupError) as err:
+    with pytest.raises(AnsibleError) as err:
         lookup_loader.get('laps_password').run(["host"], domain="test", auth="fail")
 
     assert str(err.value) == "Invalid value 'fail' for 'auth', choices are: simple, gssapi"
