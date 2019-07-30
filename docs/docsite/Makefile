@@ -1,6 +1,7 @@
 OS := $(shell uname -s)
 SITELIB = $(shell python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()"):
 PLUGIN_FORMATTER=../../hacking/build-ansible.py document-plugins
+COLLECTION_PLUGIN_FORMATTER=../../hacking/build-ansible.py document-collection-plugins
 TESTING_FORMATTER=../bin/testing_formatter.sh
 KEYWORD_DUMPER=../../hacking/build-ansible.py document-keywords
 CONFIG_DUMPER=../../hacking/build-ansible.py document-config
@@ -67,6 +68,7 @@ clean:
 	find . -type f \( -name "*~" -or -name "#*" \) -delete
 	find . -type f \( -name "*.swp" \) -delete
 	@echo "Cleaning up generated rst"
+	rm -rf rst/collections/*
 	rm -f rst/modules/*_by_category.rst
 	rm -f rst/modules/list_of_*.rst
 	rm -f rst/modules/*_maintained.rst
@@ -95,14 +97,18 @@ keywords: ../templates/playbooks_keywords.rst.j2
 config: ../templates/config.rst.j2
 	PYTHONPATH=../../lib $(CONFIG_DUMPER) --template-file=../templates/config.rst.j2 --output-dir=rst/reference_appendices/ ../../lib/ansible/config/base.yml
 
-modules: ../templates/plugin.rst.j2
-	PYTHONPATH=../../lib $(PLUGIN_FORMATTER) -t rst --template-dir=../templates --module-dir=../../lib/ansible/modules -o rst/modules/ $(MODULE_ARGS)
+core_modules: ../templates/plugin.rst.j2
+	PYTHONPATH=../../lib $(PLUGIN_FORMATTER) --template-dir=../templates --module-dir=../../lib/ansible/modules -o rst $(MODULE_ARGS)
+
+# Note: core_modules will overwrite collection modules so have to run core_modules first and this second
+modules: core_modules
+	PYTHONPATH=../../lib $(COLLECTION_PLUGIN_FORMATTER) full --template-dir=../templates -o rst $(MODULE_ARGS)
 
 plugins: ../templates/plugin.rst.j2
 	@echo "looping over doc plugins"
 	for plugin in $(DOC_PLUGINS); \
 	do \
-		PYTHONPATH=../../lib $(PLUGIN_FORMATTER) -t rst --plugin-type $$plugin --template-dir=../templates --module-dir=../../lib/ansible/plugins/$$plugin -o rst $(PLUGIN_ARGS); \
+		PYTHONPATH=../../lib $(PLUGIN_FORMATTER) --plugin-type $$plugin --template-dir=../templates --module-dir=../../lib/ansible/plugins/$$plugin -o rst $(PLUGIN_ARGS); \
 	done
 
 testing:

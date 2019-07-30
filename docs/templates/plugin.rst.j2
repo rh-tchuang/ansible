@@ -5,10 +5,28 @@
 :orphan:
 {% endif %}
 
+{%- if plugin_type in ('module', 'module_util') %}
+{%-   set normalized_plugin_type = plugin_type + 's' %}
+{%- else %}
+{%-   set normalized_plugin_type = plugin_type %}
+{%- endif %}
+
+{% if collection -%}
+.. _ansible_collections.@{collection}@.plugins.@{normalized_plugin_type}@.@{module}@:
+{%- else -%}
 .. _@{ module }@_@{ plugin_type }@:
+{% endif -%}
+
 {% for alias in aliases %}
 .. _@{ alias }@_@{ plugin_type }@:
 {% endfor %}
+
+{% if collection %}
+.. note::
+    This module has moved to the `@{collection}@ collection <@{collection_source}@/@{collection | replace('.', '/')}@>`_.  You can install it
+    via :code:`ansible-galaxy collection install @{collection}@` and use it in
+    a playbook by specifying :code:`@{collection}@.@{module}@`
+{% endif %}
 
 {% if short_description %}
 {%   set title = module + ' -- ' + short_description | rst_ify %}
@@ -19,7 +37,7 @@
 @{ title }@
 @{ '+' * title|length }@
 
-{% if version_added is defined and version_added != '' -%}
+{% if version_added is still_relevant -%}
 .. versionadded:: @{ version_added | default('') }@
 {% endif %}
 
@@ -56,7 +74,7 @@ Synopsis
 
 {% endif %}
 
-{% if aliases is defined -%}
+{% if aliases is defined and aliases -%}
 Aliases: @{ ','.join(aliases) }@
 {% endif %}
 
@@ -119,7 +137,7 @@ Parameters
                         {% if value.get('elements') %} / <span style="color: purple">elements=@{ value.elements | documented_type }@</span>{% endif %}
                         {% if value.get('required', False) %} / <span style="color: red">required</span>{% endif %}
                     </div>
-                    {% if value.version_added %}<div style="font-style: italic; font-size: small; color: darkgreen">added in @{value.version_added}@</div>{% endif %}
+                    {% if value.version_added is still_relevant %}<div style="font-style: italic; font-size: small; color: darkgreen">added in @{value.version_added}@</div>{% endif %}
                 </td>
                 {# default / choices #}
                 <td>
@@ -292,7 +310,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
                       <span style="color: purple">@{ value.type | documented_type }@</span>
                       {% if value.elements %} / <span style="color: purple">elements=@{ value.elements | documented_type }@</span>{% endif %}
                     </div>
-                    {% if value.version_added %}<div style="font-style: italic; font-size: small; color: darkgreen">added in @{value.version_added}@</div>{% endif %}
+                    {% if value.version_added is still_relevant %}<div style="font-style: italic; font-size: small; color: darkgreen">added in @{value.version_added}@</div>{% endif %}
                 </td>
                 <td>@{ value.returned | html_ify }@</td>
                 <td>
@@ -367,7 +385,7 @@ Common return values are documented :ref:`here <common_return_values>`, the foll
                       <span style="color: purple">@{ value.type | documented_type }@</span>
                       {% if value.elements %} / <span style="color: purple">elements=@{ value.elements | documented_type }@</span>{% endif %}
                     </div>
-                    {% if value.version_added %}<div style="font-style: italic; font-size: small; color: darkgreen">added in @{value.version_added}@</div>{% endif %}
+                    {% if value.version_added is still_relevant %}<div style="font-style: italic; font-size: small; color: darkgreen">added in @{value.version_added}@</div>{% endif %}
                 </td>
                 <td>@{ value.returned | html_ify }@</td>
                 <td>
