@@ -317,6 +317,8 @@ class GalaxyCLI(CLI):
         server_def = [('url', True), ('username', False), ('password', False), ('token', False),
                       ('auth_url', False)]
 
+        validate_certs = not context.CLIARGS['ignore_certs']
+
         config_servers = []
         for server_key in (C.GALAXY_SERVER_LIST or []):
             # Config definitions are looked up dynamically based on the C.GALAXY_SERVER_LIST entry. We look up the
@@ -343,12 +345,10 @@ class GalaxyCLI(CLI):
                     if auth_url:
                         server_options['token'] = KeycloakToken(access_token=token_val,
                                                                 auth_url=auth_url,
-                                                                validate_certs=not context.CLIARGS['ignore_certs'])
+                                                                validate_certs=validate_certs)
                     else:
                         # The galaxy v1 / github / django / 'Token'
                         server_options['token'] = GalaxyToken(token=token_val)
-
-            config_servers.append(GalaxyAPI(self.galaxy, server_key, **server_options))
 
         cmd_server = context.CLIARGS['api_server']
         cmd_token = GalaxyToken(token=context.CLIARGS['api_key'])
@@ -359,13 +359,15 @@ class GalaxyCLI(CLI):
             if config_server:
                 self.api_servers.append(config_server)
             else:
-                self.api_servers.append(GalaxyAPI(self.galaxy, 'cmd_arg', cmd_server, token=cmd_token))
+                self.api_servers.append(GalaxyAPI(self.galaxy, 'cmd_arg', cmd_server, token=cmd_token,
+                                                  validate_certs=validate_certs))
         else:
             self.api_servers = config_servers
 
         # Default to C.GALAXY_SERVER if no servers were defined
         if len(self.api_servers) == 0:
-            self.api_servers.append(GalaxyAPI(self.galaxy, 'default', C.GALAXY_SERVER, token=cmd_token))
+            self.api_servers.append(GalaxyAPI(self.galaxy, 'default', C.GALAXY_SERVER, token=cmd_token,
+                                              validate_certs=validate_certs))
 
         context.CLIARGS['func']()
 
@@ -473,7 +475,10 @@ class GalaxyCLI(CLI):
                         # Try and match up the requirement source with our list of Galaxy API servers defined in the
                         # config, otherwise create a server with that URL without any auth.
                         req_source = next(iter([a for a in self.api_servers if req_source in [a.name, a.api_server]]),
-                                          GalaxyAPI(self.galaxy, "explicit_requirement_%s" % req_name, req_source))
+                                          GalaxyAPI(self.galaxy,
+                                                    "explicit_requirement_%s" % req_name,
+                                                    req_source,
+                                                    validate_certs=not context.CLIARGS['ignore_certs']))
 
                     requirements['collections'].append((req_name, req_version, req_source))
                 else:
