@@ -236,6 +236,8 @@ async def fetch_collections(destdir, fqcns):
 def expand_collection(tar_file, expand_dir):
     # TODO: Is the filename normalized by galaxy or could we get a filename that was arbitrarily
     # determined by the uploading user?
+    # According to rich, the filename is validated by galaxy so if it doesn't match
+    # namespace.collection-version.tar.gz, then it is rejected.
 
     # Derive the fqcn from the tar_file name
     tar_name_parts = os.path.basename(tar_file).split('-')
@@ -293,8 +295,8 @@ def write_stubs(plugin_type, plugin_name, collection, jinja_env, stub_dir):
 def write_collection_doc(plugin_type, plugin_name, collection, jinja_env, input_dir,
                          collection_doc_dir):
     # Determine which file in the collection has the plugin's docs
-    if plugin_type == 'module':
-        plugin_dir = 'modules'
+    if plugin_type in ('module', 'module_util'):
+        plugin_dir = '{0}s'.format(plugin_type)
     else:
         plugin_dir = plugin_type
 
