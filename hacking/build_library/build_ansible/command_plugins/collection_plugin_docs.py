@@ -275,142 +275,161 @@ async def expand_collections(tar_dir, expand_dir):
 
 
 class CollectionWriter:
-    ### TODO: Finish me.  Holds useful state and initializes directories (similar to CollectionFetcher)
     def __init__(self, template_dir, output_dir):
+        """
+        Context and initialization for writing collection docs
+        :arg jinja_env: The jinja2 environment in which te template for the stub pages resides
+        """
         self.jinja_env = doc_environment(template_dir)
         self.output_dir = output_dir
         self.collection_doc_dir = os.path.join(output_dir, 'collections')
 
-    pass
+        # Create collection_doc_dir if it does not exist
+        try:
+            os.mkdir(self.collection_doc_dir, mode=0o755)
+        except FileExistsError:
+            # Sanity check that the file is not a symlink
+            if os.path.islink(self.collection_doc_dir):
+                raise ValueError('DANGER: The collection path in output_dir already exists as'
+                                 ' a symlink!')
 
+    def write_stubs(self, plugin_type, plugin_name, collection_name):
+        """
+        Output an html page at the old location that says the plugin has moved to a collection
 
-def write_stubs(plugin_type, plugin_name, collection, jinja_env, stub_dir):
-    """
-    Output an html page at the old location that says the plugin has moved to a collection
-
-    :arg plugin_type: Is the plugin a module, module_util, callback, connection, etc
-    :arg plugin_name: The name of the plugin
-    :arg collection: FQCN for the collection which contains the plugin
-    :arg jinja_env: The jinja2 environment in which te template for the stub pages resides
-    :arg stub_dir: The directory to output the stub file to.
-    """
-    stub_template = jinja_env.get_template('moved_to_collections.rst.j2')
-    stub_file = stub_template.render({'plugin_type': plugin_type,
-                                      'module': plugin_name,
-                                      'collection': collection['fqcn'],
-                                      })
-
-    output_file = plugin_filename_format(plugin_type) % plugin_name
-    filename = os.path.join(stub_dir, output_file)
-    with open(filename, 'w') as f:
-        f.write(stub_file)
-
-
-def write_collection_doc(plugin_type, plugin_name, collection, jinja_env, input_dir,
-                         collection_doc_dir):
-    # Set the directory that the plugin doc will be written to
-    plugin_doc_dir = os.path.join(collection_doc_dir, collection['fqcn'])
-    if not os.path.exists(plugin_doc_dir):
-        os.mkdir(plugin_doc_dir)
-
-    if _STYLE_DIRECTORY:
-        plugin_doc_dir = os.path.join(plugin_doc_dir, plugin_type)
-        if not os.path.exists(plugin_doc_dir):
-            os.mkdir(plugin_doc_dir)
-
-    ### FIXME: Move this higher and then pass it in
-    # Determine which file in the collection has the plugin's docs
-    if plugin_type in ('module', 'module_util'):
-        normalized_plugin_type = '{0}s'.format(plugin_type)
-    else:
-        normalized_plugin_type = plugin_type
-
-    plugin_file = os.path.join(input_dir, collection['fqcn'], 'plugins', normalized_plugin_type,
-                               '%s.py' % plugin_name)
-
-    # Get the documentation data from the plugin
-    try:
-        plugin_data = get_plugin_info(plugin_name, plugin_file, input_dir)
-    except Exception as e:
-        print("*** ERROR: Malformed documentation in %s: %s ***" % (plugin_file, to_native(e)))
-    ### END FIXME (?) Or should normalize be run higher up as well?
-    # Format the data into the form the templates expect
-    aliases = set()  # Current collections implementation does not have aliases
-    normalize_plugin_info(plugin_data['doc'], plugin_name, collection['fqcn'],
-                          collection['source'], plugin_data['source'], plugin_type,
-                          plugin_data['deprecated'], aliases, plugin_data['metadata'],
-                          plugin_data['examples'], plugin_data['returndocs'])
-    plugin_data = plugin_data['doc']
-
-    # Pass the documentation into the jinja2 render function
-    plugin_template = jinja_env.get_template('plugin.rst.j2')
-    plugin_file = plugin_template.render(**plugin_data)
-
-    # Write the docs to the plugin_name.rst file
-    if _STYLE_DIRECTORY:
-        filename = os.path.join(plugin_doc_dir, '%s.rst' % plugin_name)
-    else:
-        filename = os.path.join(plugin_doc_dir,
-                                '%s_%s.rst' % (plugin_name, normalized_plugin_type))
-    with open(filename, 'w') as f:
-        f.write(plugin_file)
-
-
-def write_index(collection_name, collection_plugins, jinja_env, template_dir, collection_doc_dir):
-    # Pass the documentation into the jinja2 render function
-    collection_template = jinja_env.get_template('plugins_by_collection.rst.j2')
-    collection_info = {'collection_name': collection_name, 'plugins': collection_plugins}
-    collection_file = collection_template.render(**collection_info)
-
-    # Write the docs to the plugin_name.rst file
-    if _STYLE_DIRECTORY:
-        ### FIXME: Have to do more here:
-        # toplevel index.rst
-        # sub index.rst for each plugin type
-        filename = os.path.join(collection_doc_dir, collection_name, 'index.rst')
-    else:
-        filename = os.path.join(collection_doc_dir, collection_name, 'index.rst')
-    with open(filename, 'w') as f:
-        f.write(collection_file)
-
-
-def write_toplevel_index(collections, jinja_env, collection_doc_dir):
-    # Pass the documentation into the jinja2 render function
-    collection_template = jinja_env.get_template('list_of_collections.rst.j2')
-    collection_file = collection_template.render(collections=collections)
-
-    filename = os.path.join(collection_doc_dir, 'index.rst')
-    with open(filename, 'w') as f:
-        f.write(collection_file)
-
-async def write_docs(plugin_mapping, template_dir, input_dir, output_dir):
-    loop = get_running_loop()
-
-    collection_doc_dir = os.path.join(output_dir, 'collections')
-    if not os.path.exists(collection_doc_dir):
-        os.mkdir(collection_doc_dir)
-
-    jinja_env = doc_environment(template_dir)
-
-    writers = []
-    # We only provide backwards compatible documentation for a subset of the plugin types
-    for plugin_type in DOCUMENTED_PLUGIN_TYPES:
-        # Setup output directory for this plugin type
-        stub_dir = plugin_output_directory(plugin_type, output_dir)
+        :arg plugin_type: Is the plugin a module, module_util, callback, connection, etc
+        :arg plugin_name: The name of the plugin
+        :arg collection_name: FQCN for the collection which contains the plugin
+        """
+        # The directory to output the stub file to.
+        stub_dir = plugin_output_directory(plugin_type, self.output_dir)
 
         if not os.path.exists(stub_dir):
             os.mkdir(stub_dir)
 
+        stub_template = self.jinja_env.get_template('moved_to_collections.rst.j2')
+        stub_file = stub_template.render({'plugin_type': plugin_type,
+                                          'module': plugin_name,
+                                          'collection': collection_name,
+                                          })
+
+        output_file = plugin_filename_format(plugin_type) % plugin_name
+        filename = os.path.join(stub_dir, output_file)
+        with open(filename, 'w') as f:
+            f.write(stub_file)
+
+    def write_collection_plugin_doc(self, plugin_type, plugin_name, collection, input_dir):
+        """
+        Write the documentation for a plugin that is in a collection
+
+        :arg plugin_type: Is the plugin a module, module_util, callback, connection, etc
+        :arg plugin_name: The name of the plugin
+        :arg collection: dict containing the `fqcn` and `source` (galaxy server) for the collection.
+        :arg input_dir: **TODO: This needs to move to a higher level* The directory to scan for
+            plugin information
+        """
+        # Set the directory that the plugin doc will be written to
+        plugin_doc_dir = os.path.join(self.collection_doc_dir, collection['fqcn'])
+        if not os.path.exists(plugin_doc_dir):
+            os.mkdir(plugin_doc_dir)
+
+        if _STYLE_DIRECTORY:
+            plugin_doc_dir = os.path.join(plugin_doc_dir, plugin_type)
+            if not os.path.exists(plugin_doc_dir):
+                os.mkdir(plugin_doc_dir)
+
+        ### FIXME: Move this higher and then pass it in
+        # Determine which file in the collection has the plugin's docs
+        if plugin_type in ('module', 'module_util'):
+            normalized_plugin_type = '{0}s'.format(plugin_type)
+        else:
+            normalized_plugin_type = plugin_type
+
+        plugin_file = os.path.join(input_dir, collection['fqcn'], 'plugins', normalized_plugin_type,
+                                   '%s.py' % plugin_name)
+
+        # Get the documentation data from the plugin
+        try:
+            plugin_data = get_plugin_info(plugin_name, plugin_file, input_dir)
+        except Exception as e:
+            print("*** ERROR: Malformed documentation in %s: %s ***" % (plugin_file, to_native(e)))
+        ### END FIXME (?) Or should normalize be run higher up as well?
+        # Format the data into the form the templates expect
+        aliases = set()  # Current collections implementation does not have aliases
+        normalize_plugin_info(plugin_data['doc'], plugin_name, collection['fqcn'],
+                              collection['source'], plugin_data['source'], plugin_type,
+                              plugin_data['deprecated'], aliases, plugin_data['metadata'],
+                              plugin_data['examples'], plugin_data['returndocs'])
+        plugin_data = plugin_data['doc']
+
+        # Pass the documentation into the jinja2 render function
+        plugin_template = self.jinja_env.get_template('plugin.rst.j2')
+        plugin_file = plugin_template.render(**plugin_data)
+
+        # Write the docs to the plugin_name.rst file
+        if _STYLE_DIRECTORY:
+            filename = os.path.join(plugin_doc_dir, '%s.rst' % plugin_name)
+        else:
+            filename = os.path.join(plugin_doc_dir,
+                                    '%s_%s.rst' % (plugin_name, normalized_plugin_type))
+        with open(filename, 'w') as f:
+            f.write(plugin_file)
+
+    def write_index(self, collection_name, collection_plugins):
+        """
+        Write an index file listing docs in the collection
+
+        :arg collection_name: FQCN of the collection
+        :arg collection_plugins: Information about the plugins that are in the collection
+        """
+        # Pass the documentation into the jinja2 render function
+        collection_template = self.jinja_env.get_template('plugins_by_collection.rst.j2')
+        collection_info = {'collection_name': collection_name, 'plugins': collection_plugins}
+        collection_file = collection_template.render(**collection_info)
+
+        # Write the docs to the plugin_name.rst file
+        if _STYLE_DIRECTORY:
+            ### FIXME: Have to do more here:
+            # toplevel index.rst
+            # sub index.rst for each plugin type
+            filename = os.path.join(self.collection_doc_dir, collection_name, 'index.rst')
+        else:
+            filename = os.path.join(self.collection_doc_dir, collection_name, 'index.rst')
+        with open(filename, 'w') as f:
+            f.write(collection_file)
+
+    def write_toplevel_index(self, collections):
+        """
+        Write an index file listing all of the collections we have docs for
+
+        :arg collections: List of fqcns.
+        """
+        # Pass the documentation into the jinja2 render function
+        collection_template = self.jinja_env.get_template('list_of_collections.rst.j2')
+        collection_file = collection_template.render(collections=collections)
+
+        filename = os.path.join(self.collection_doc_dir, 'index.rst')
+        with open(filename, 'w') as f:
+            f.write(collection_file)
+
+
+async def write_docs(plugin_mapping, template_dir, input_dir, output_dir):
+    loop = get_running_loop()
+
+    writer = CollectionWriter(template_dir, output_dir)
+
+    writers = []
+    # We only provide backwards compatible documentation for a subset of the plugin types
+    for plugin_type in DOCUMENTED_PLUGIN_TYPES:
         for plugin_name, collection in plugin_mapping[plugin_type].items():
-            writers.append(loop.run_in_executor(None, write_stubs, plugin_type, plugin_name,
-                                                collection, jinja_env, stub_dir))
+            writers.append(loop.run_in_executor(None, writer.write_stubs, plugin_type, plugin_name,
+                                                collection['fqcn']))
             # TODO: In the future we may want to look at documenting all of the plugins in the
             # collection, not just the ones that have moved.  This is in part because the index
             # pages are per-collection but they don't currently document plugins i nthe collection
             # which were not in ansible/ansible to begin with
-            writers.append(loop.run_in_executor(None, write_collection_doc, plugin_type,
-                                                plugin_name, collection, jinja_env, input_dir,
-                                                collection_doc_dir))
+            writers.append(loop.run_in_executor(None, writer.write_collection_plugin_doc,
+                                                plugin_type, plugin_name, collection, input_dir))
 
     # Construct a collection mapping which is:
     # collection_name: plugin_type: plugin_name: plugin_info
@@ -422,12 +441,12 @@ async def write_docs(plugin_mapping, template_dir, input_dir, output_dir):
             # write_collection_doc
             collection_mapping[collection['fqcn']][plugin_type][plugin_name] = None
 
-    writers.append(loop.run_in_executor(None, write_toplevel_index, collection_mapping.keys(),
-                                        jinja_env, collection_doc_dir))
+    writers.append(loop.run_in_executor(None, writer.write_toplevel_index,
+                                        collection_mapping.keys()))
 
     for collection_name, collection_plugins in collection_mapping.items():
-        writers.append(loop.run_in_executor(None, write_index, collection_name, collection_plugins,
-                                            jinja_env, template_dir, collection_doc_dir))
+        writers.append(loop.run_in_executor(None, writer.write_index, collection_name,
+                                            collection_plugins))
 
     await asyncio.gather(*writers)
 
