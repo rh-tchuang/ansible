@@ -415,7 +415,8 @@ async def write_docs(plugin_mapping, template_dir, input_dir, output_dir):
     # Construct a collection mapping which is:
     # collection_name: plugin_type: plugin_name: plugin_info
     collection_mapping = defaultdict(partial(defaultdict, dict))
-    for plugin_type, plugin_info in plugin_mapping.items():
+    # Note: we only document modules right now
+    for plugin_type, plugin_info in ((t, i) for (t, i) in plugin_mapping.items() if t == 'module'):
         for plugin_name, collection in plugin_info.items():
             # TODO: Extract plugin_info in the full docs function so we can use it here and in
             # write_collection_doc

@@ -10,7 +10,8 @@ These are the plugins in the @{collection_name}@ collection
 .. toctree::
     :maxdepth: 1
 
-{% for category in collection | sort %}
+{% for category in plugins | sort %}
+
 @{ category }@ Plugins
 @{ '-' * ((category | length) + 8) }@
 
@@ -19,11 +20,11 @@ These are the plugins in the @{collection_name}@ collection
 {% else %}
 {%   set normalized_category = category %}
 {% endif %}
+{% for plugin in plugins[category] | sort %}
+* :ref:`@{ plugin }@ <ansible_collections.@{ collection_name}@.plugins.@{normalized_category}@.@{plugin}@>` @{ plugins[category][plugin] }@
+{% endfor %}
+{% endfor %}
 
-{% for plugin in collection[category] | sort %}
-* :ref:`@{ plugin }@ <ansible_collections.@{ collection_name}@.plugins.@{normalized_category}@.@{plugin}@>` @{ collection[category][plugin] }@
-{% endfor %}
-{% endfor %}
 
 .. seealso::
 
