@@ -23,9 +23,11 @@
 
 {% if collection %}
 .. note::
-    This module has moved to the `@{collection}@ collection <@{collection_source}@/@{collection | replace('.', '/')}@>`_.  You can install it
-    via :code:`ansible-galaxy collection install @{collection}@` and use it in
-    a playbook by specifying :code:`@{collection}@.@{module}@`
+    This module is part of the the `@{collection}@ collection <@{collection_source}@/@{collection | replace('.', '/')}@>`_.
+
+    To install it: :code:`ansible-galaxy collection install @{collection}@`.
+    
+    To use it in a playbook, specify: :code:`@{collection}@.@{module}@`.
 {% endif %}
 
 {% if short_description %}
