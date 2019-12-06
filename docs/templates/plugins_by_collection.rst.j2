@@ -21,7 +21,7 @@ These are the plugins in the @{collection_name}@ collection
 {%   set normalized_category = category %}
 {% endif %}
 {% for plugin in plugins[category] | sort %}
-* :ref:`@{ plugin }@ <ansible_collections.@{ collection_name}@.plugins.@{normalized_category}@.@{plugin}@>` @{ plugins[category][plugin] }@
+* :ref:`@{ plugin }@ <ansible_collections.@{ collection_name}@.plugins.@{normalized_category}@.@{plugin}@>` -- @{ plugins[category][plugin]['short_description'] }@
 {% endfor %}
 {% endfor %}
 

@@ -7,6 +7,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import asyncio
+import itertools
 import os
 import os.path
 import pathlib
@@ -84,19 +85,27 @@ def plugin_to_collection_mapping(mapping_filename):
     :arg mapping_filename: The filename in which the data lives
     :return: The returned data is structured as a set of dicts::
 
-        plugin_type:
-            plugin_name:
-                source: "Service that this lives on.  For example https://galaxy.ansible.com/"
-                fqcn: "Full qualified collection name.  For example purestorage.flasharray"
-            plugin_name2:
+        $plugin_type:
+            $plugin_name:
+                collection:
+                    source: "Service that this lives on.  For example https://galaxy.ansible.com/"
+                    fqcn: "Full qualified collection name.  For example purestorage.flasharray"
+            $plugin_name2:
             [..]
-        plugin_type2:
+        $plugin_type2:
         [..]
 
     """
+    # Read the data in
     with open(mapping_filename, 'rb') as f:
-        plugin_to_collection_mapping = yaml.safe_load(f.read())
-    return plugin_to_collection_mapping
+        plugin_mapping = yaml.safe_load(f.read())
+
+    # Normalize the data to a form we'll use later
+    for plugin_record in plugin_mapping.values():
+        for plugin_name, collection_info in plugin_record.items():
+            plugin_record[plugin_name] = {'collection': collection_info, 'plugin': {}}
+
+    return plugin_mapping
 
 
 def get_running_loop():
@@ -179,101 +188,6 @@ class CollectionFetcher:
         return filename
 
 
-#
-# Subcommand validate
-#
-
-def validate(args):
-    """
-    Validate the structure of the yaml file
-
-    :args args: The parsed command line arguments
-
-    Schema example:
-    .. code-block:: yaml
-
-        modules:
-          ec2:
-            fqcn: "ansible_aws_sig.amazon"
-            source: "https://galaxy.ansible.com"
-          ec2_remove_host:
-            fqcn: "ansible_aws_sig.ec2"
-            source: "https://dev.ansible.redhat.com/api/automation-hub"
-        filters:
-          ipaddress:
-            fqcn: "ansible_ipadress.ipaddress"
-            source: "https://galaxy.ansible.com"
-    """
-    # Import voluptuous here so that it is only a dependency of the validation, not of the rest of
-    # the script
-    import voluptuous as v
-
-    collection_mapping_schema = v.Schema({v.Any(*PLUGIN_TYPES): {
-        str: {'fqcn': str,
-              'source': str}
-    }})
-
-    plugin_mapping = plugin_to_collection_mapping(args.plugin_to_collection_file)
-    return collection_mapping_schema(plugin_mapping)
-
-
-#
-# Subcommand full
-#
-
-async def fetch_collections(destdir, fqcns):
-    """
-    Fetch all of the collections to the destdir
-    """
-    loop = get_running_loop()
-
-    requestors = []
-    for server in fqcns:
-        fetcher = CollectionFetcher(server, destdir)
-        for fqcn in fqcns[server]:
-            requestors.append(loop.run_in_executor(None, fetcher.fetch_collection,
-                                                   *fqcn.split('.', 1)))
-
-    await asyncio.gather(*requestors)
-
-
-def expand_collection(tar_file, expand_dir):
-    # TODO: Is the filename normalized by galaxy or could we get a filename that was arbitrarily
-    # determined by the uploading user?
-    # According to rich, the filename is validated by galaxy so if it doesn't match
-    # namespace.collection-version.tar.gz, then it is rejected.
-
-    # Derive the fqcn from the tar_file name
-    tar_name_parts = os.path.basename(tar_file).split('-')
-    if len(tar_name_parts) != 3:
-        raise UnknownCollectionNameFormat('The name of the tarball for a collection did not meet'
-                                          ' our assumptions.  This code has to be recoded to allow'
-                                          ' for this name: {0}'.format(tar_file))
-    fqcn = '.'.join(tar_name_parts[0:2])
-
-    dir_name = os.path.join(expand_dir, fqcn)
-
-    with tarfile.open(tar_file, 'r') as collection_tar:
-        return collection_tar.extractall(path=dir_name)
-
-
-async def expand_collections(tar_dir, expand_dir):
-    """
-    Expand all collections in the tar_dir into expand_dir
-
-    :tar_dir: Directory where the collections have been placed
-    :expand_dir: Directory where the expanded collections will live
-    """
-    loop = get_running_loop()
-
-    expanders = []
-    for filename in os.listdir(tar_dir):
-        tar_file = os.path.join(tar_dir, filename)
-        expanders.append(loop.run_in_executor(None, expand_collection, tar_file, expand_dir))
-
-    await asyncio.gather(*expanders)
-
-
 class CollectionWriter:
     def __init__(self, template_dir, output_dir):
         """
@@ -318,18 +232,16 @@ class CollectionWriter:
         with open(filename, 'w') as f:
             f.write(stub_file)
 
-    def write_collection_plugin_doc(self, plugin_type, plugin_name, collection, input_dir):
+    def write_collection_plugin_doc(self, plugin_type, plugin_name, plugin_record):
         """
         Write the documentation for a plugin that is in a collection
 
         :arg plugin_type: Is the plugin a module, module_util, callback, connection, etc
         :arg plugin_name: The name of the plugin
-        :arg collection: dict containing the `fqcn` and `source` (galaxy server) for the collection.
-        :arg input_dir: **TODO: This needs to move to a higher level* The directory to scan for
-            plugin information
+        :arg plugin_record: Information about the plugin
         """
         # Set the directory that the plugin doc will be written to
-        plugin_doc_dir = os.path.join(self.collection_doc_dir, collection['fqcn'])
+        plugin_doc_dir = os.path.join(self.collection_doc_dir, plugin_record['collection']['fqcn'])
         if not os.path.exists(plugin_doc_dir):
             os.mkdir(plugin_doc_dir)
 
@@ -338,33 +250,15 @@ class CollectionWriter:
             if not os.path.exists(plugin_doc_dir):
                 os.mkdir(plugin_doc_dir)
 
-        ### FIXME: Move this higher and then pass it in
-        # Determine which file in the collection has the plugin's docs
+        # Normalize the plugin_type name
         if plugin_type in ('module', 'module_util'):
             normalized_plugin_type = '{0}s'.format(plugin_type)
         else:
             normalized_plugin_type = plugin_type
 
-        plugin_file = os.path.join(input_dir, collection['fqcn'], 'plugins', normalized_plugin_type,
-                                   '%s.py' % plugin_name)
-
-        # Get the documentation data from the plugin
-        try:
-            plugin_data = get_plugin_info(plugin_name, plugin_file, input_dir)
-        except Exception as e:
-            print("*** ERROR: Malformed documentation in %s: %s ***" % (plugin_file, to_native(e)))
-        ### END FIXME (?) Or should normalize be run higher up as well?
-        # Format the data into the form the templates expect
-        aliases = set()  # Current collections implementation does not have aliases
-        normalize_plugin_info(plugin_data['doc'], plugin_name, collection['fqcn'],
-                              collection['source'], plugin_data['source'], plugin_type,
-                              plugin_data['deprecated'], aliases, plugin_data['metadata'],
-                              plugin_data['examples'], plugin_data['returndocs'])
-        plugin_data = plugin_data['doc']
-
         # Pass the documentation into the jinja2 render function
         plugin_template = self.jinja_env.get_template('plugin.rst.j2')
-        plugin_file = plugin_template.render(**plugin_data)
+        plugin_file = plugin_template.render(**plugin_record['plugin'])
 
         # Write the docs to the plugin_name.rst file
         if _STYLE_DIRECTORY:
@@ -413,7 +307,182 @@ class CollectionWriter:
             f.write(collection_file)
 
 
-async def write_docs(plugin_mapping, template_dir, input_dir, output_dir):
+#
+# Subcommand validate
+#
+
+def validate(args):
+    """
+    Validate the structure of the yaml file
+
+    :args args: The parsed command line arguments
+
+    Schema example:
+    .. code-block:: yaml
+
+        modules:
+          ec2:
+            fqcn: "ansible_aws_sig.amazon"
+            source: "https://galaxy.ansible.com"
+          ec2_remove_host:
+            fqcn: "ansible_aws_sig.ec2"
+            source: "https://dev.ansible.redhat.com/api/automation-hub"
+        filters:
+          ipaddress:
+            fqcn: "ansible_ipadress.ipaddress"
+            source: "https://galaxy.ansible.com"
+    """
+    # Import voluptuous here so that it is only a dependency of the validation, not of the rest of
+    # the script
+    import voluptuous as v
+
+    collection_mapping_schema = v.Schema({v.Any(*PLUGIN_TYPES): {
+        str: {'fqcn': str,
+              'source': str}
+    }})
+
+    with open(args.plugin_to_collection_file, 'rb') as f:
+        plugin_mapping = yaml.safe_load(f.read())
+    return collection_mapping_schema(plugin_mapping)
+
+
+#
+# Subcommand full
+#
+
+async def fetch_collections(destdir, fqcns):
+    """
+    Fetch all of the collections to the destdir
+    """
+    loop = get_running_loop()
+
+    requestors = []
+    for server in fqcns:
+        fetcher = CollectionFetcher(server, destdir)
+        for fqcn in fqcns[server]:
+            requestors.append(loop.run_in_executor(None, fetcher.fetch_collection,
+                                                   *fqcn.split('.', 1)))
+
+    try:
+        await asyncio.gather(*requestors, return_exceptions=False)
+    except Exception as e:
+        print("*** Error: Unable to download collection: %s" % to_native(e))
+        tasks = []
+        for task in asyncio.all_tasks():
+            if task is not asyncio.current_task():
+                task.cancel()
+                tasks.append(task)
+        await asyncio.gather(*tasks, return_exceptions=True)
+        loop.stop()
+
+
+def expand_collection(tar_file, expand_dir):
+    # TODO: Is the filename normalized by galaxy or could we get a filename that was arbitrarily
+    # determined by the uploading user?
+    # According to rich, the filename is validated by galaxy so if it doesn't match
+    # namespace.collection-version.tar.gz, then it is rejected.
+
+    # Derive the fqcn from the tar_file name
+    tar_name_parts = os.path.basename(tar_file).split('-')
+    if len(tar_name_parts) != 3:
+        raise UnknownCollectionNameFormat('The name of the tarball for a collection did not meet'
+                                          ' our assumptions.  This code has to be recoded to allow'
+                                          ' for this name: {0}'.format(tar_file))
+    fqcn = '.'.join(tar_name_parts[0:2])
+
+    dir_name = os.path.join(expand_dir, fqcn)
+
+    with tarfile.open(tar_file, 'r') as collection_tar:
+        return collection_tar.extractall(path=dir_name)
+
+
+async def expand_collections(tar_dir, expand_dir):
+    """
+    Expand all collections in the tar_dir into expand_dir
+
+    :tar_dir: Directory where the collections have been placed
+    :expand_dir: Directory where the expanded collections will live
+    """
+    loop = get_running_loop()
+
+    expanders = []
+    for filename in os.listdir(tar_dir):
+        tar_file = os.path.join(tar_dir, filename)
+        expanders.append((tar_file, loop.run_in_executor(None, expand_collection, tar_file,
+                                                         expand_dir)))
+
+    results = await asyncio.gather(*[e[-1] for e in expanders], return_exceptions=True)
+    for idx, result in enumerate(results):
+        if isinstance(result, BaseException):
+            collection_tar_file = expanders[idx][0]
+            print("*** ERROR: expanding a collection: %s: %s (skipped)***"
+                  % (collection_tar_file, to_native(result)))
+            continue
+
+
+def get_plugin_data(plugin_type, plugin_name, collection_name, input_dir):
+    # Determine which file in the collection has the plugin's docs
+    if plugin_type in ('module', 'module_util'):
+        normalized_plugin_type = '{0}s'.format(plugin_type)
+    else:
+        normalized_plugin_type = plugin_type
+
+    plugin_file = os.path.join(input_dir, collection_name, 'plugins', normalized_plugin_type,
+                               '%s.py' % plugin_name)
+
+    # Get the documentation data from the plugin
+
+    # Note: this could raise an exception
+    plugin_data = get_plugin_info(plugin_name, plugin_file, input_dir)
+
+    return plugin_data
+
+
+async def get_all_plugin_data(plugin_mapping, input_dir):
+    """
+    Retrieve information from all plugins in plugin_mapping from files in input_dir
+
+    :arg plugin_mapping: Mapping of plugin data.
+    :arg input_dir: The directory to scan for plugin information
+
+    .. warning::
+        This function operates by side effect.  The plugin_mapping is modified to contain the
+        new plugin information
+    """
+    loop = get_running_loop()
+
+    parsers = []
+    for plugin_type in DOCUMENTED_PLUGIN_TYPES:
+        for plugin_name, plugin_record in plugin_mapping[plugin_type].items():
+            collection = plugin_record['collection']
+            parsers.append((plugin_name, plugin_type, collection,
+                            loop.run_in_executor(None, get_plugin_data, plugin_type, plugin_name,
+                                                 collection['fqcn'], input_dir)))
+
+    results = await asyncio.gather(*[p[-1] for p in parsers], return_exceptions=True)
+    for idx, result in enumerate(results):
+        plugin_name = parsers[idx][0]
+        plugin_type = parsers[idx][1]
+        collection = parsers[idx][2]
+
+        if isinstance(result, Exception):
+            print("*** ERROR: Malformed documentation in %s: %s"
+                  " (skipped)***" % (plugin_name, to_native(result)))
+            continue
+
+        # Format the data into the form the templates expect
+        aliases = set()  # Current collections implementation does not have aliases
+        normalize_plugin_info(result['doc'], plugin_name, collection['fqcn'],
+                              collection['source'], result['source'], plugin_type,
+                              result['deprecated'], aliases, result['metadata'],
+                              result['examples'], result['returndocs'])
+        plugin_data = result['doc']
+
+        # Add the plugin information to the plugin's record
+        plugin_mapping[plugin_type][plugin_name]['plugin'] = plugin_data
+
+
+async def write_docs(plugin_mapping, template_dir, output_dir):
     loop = get_running_loop()
 
     writer = CollectionWriter(template_dir, output_dir)
@@ -421,25 +490,27 @@ async def write_docs(plugin_mapping, template_dir, input_dir, output_dir):
     writers = []
     # We only provide backwards compatible documentation for a subset of the plugin types
     for plugin_type in DOCUMENTED_PLUGIN_TYPES:
-        for plugin_name, collection in plugin_mapping[plugin_type].items():
+        for plugin_name, plugin_record in plugin_mapping[plugin_type].items():
+            collection = plugin_record['collection']
+
             writers.append(loop.run_in_executor(None, writer.write_stubs, plugin_type, plugin_name,
                                                 collection['fqcn']))
             # TODO: In the future we may want to look at documenting all of the plugins in the
             # collection, not just the ones that have moved.  This is in part because the index
-            # pages are per-collection but they don't currently document plugins i nthe collection
+            # pages are per-collection but they don't currently document plugins in the collection
             # which were not in ansible/ansible to begin with
             writers.append(loop.run_in_executor(None, writer.write_collection_plugin_doc,
-                                                plugin_type, plugin_name, collection, input_dir))
+                                                plugin_type, plugin_name, plugin_record))
 
     # Construct a collection mapping which is:
     # collection_name: plugin_type: plugin_name: plugin_info
     collection_mapping = defaultdict(partial(defaultdict, dict))
     # Note: we only document modules right now
-    for plugin_type, plugin_info in ((t, i) for (t, i) in plugin_mapping.items() if t == 'module'):
-        for plugin_name, collection in plugin_info.items():
-            # TODO: Extract plugin_info in the full docs function so we can use it here and in
-            # write_collection_doc
-            collection_mapping[collection['fqcn']][plugin_type][plugin_name] = None
+    for plugin_type, plugin_info in ((typ, info) for (typ, info) in plugin_mapping.items()
+                                     if typ in DOCUMENTED_PLUGIN_TYPES):
+        for plugin_name, plugin_record in plugin_info.items():
+            collection = plugin_record['collection']
+            collection_mapping[collection['fqcn']][plugin_type][plugin_name] = plugin_record['plugin']
 
     writers.append(loop.run_in_executor(None, writer.write_toplevel_index,
                                         collection_mapping.keys()))
@@ -448,35 +519,39 @@ async def write_docs(plugin_mapping, template_dir, input_dir, output_dir):
         writers.append(loop.run_in_executor(None, writer.write_index, collection_name,
                                             collection_plugins))
 
-    await asyncio.gather(*writers)
+    results = await asyncio.gather(*writers, return_exceptions=True)
+    for result in results:
+        if isinstance(result, BaseException):
+            print("*** ERROR: writing documentation: %s (skipped)***" % to_native(result))
+            continue
 
 
-def generate_full_docs(args):
+async def generate_full_docs(args):
     """Regenerate the documentation for all plugins listed in the plugin_to_collection_file"""
-    loop = None
-    if sys.version_info < (3, 7):
-        # Event loop hasn't started yet, so don't use get_running_loop()
-        loop = asyncio.get_event_loop()
-        asyncio_run = loop.run_until_complete
-    else:
-        asyncio_run = asyncio.run
-
     fqcns_by_server = defaultdict(set)
     plugin_mapping = plugin_to_collection_mapping(args.plugin_to_collection_file)
-    for plugins in plugin_mapping.values():
-        for collection in plugins.values():
+
+    # We only need the collection info from plugin_mapping:
+    plugins = (p for p in plugin_mapping.values())  # Iterator of all the plugin_types
+    records = ((k, v) for p in plugins for k, v in p.items())  # Squash them into a single dict
+    collection_info = (r[1]['collection'] for r in records)  # Collection info for each plugin
+
+    for collection in collection_info:
             fqcns_by_server[collection['source']].add(collection['fqcn'])
 
     with TemporaryDirectory() as tmpdir:
         download_dir = os.path.join(tmpdir, 'download')
         os.mkdir(download_dir)
-        asyncio_run(fetch_collections(download_dir, fqcns_by_server))
+        await fetch_collections(download_dir, fqcns_by_server)
 
         expanded_dir = os.path.join(tmpdir, 'expanded')
         os.mkdir(expanded_dir)
-        asyncio_run(expand_collections(download_dir, expanded_dir))
+        await expand_collections(download_dir, expanded_dir)
 
-        asyncio_run(write_docs(plugin_mapping, args.template_dir, expanded_dir, args.output_dir))
+        # Add the plugin information to the plugin_mapping
+        await get_all_plugin_data(plugin_mapping, expanded_dir)
+        # Write out the documentation files
+        await write_docs(plugin_mapping, args.template_dir, args.output_dir)
 
 
 #
@@ -562,6 +637,14 @@ class CollectionPluginDocs(Command):
         if not args.output_dir:
             args.output_dir = os.path.abspath(str(DEFAULT_OUTPUT_DIR))
 
+        loop = None
+        if sys.version_info < (3, 7):
+            # Event loop hasn't started yet, so don't use get_running_loop()
+            loop = asyncio.get_event_loop()
+            asyncio_run = loop.run_until_complete
+        else:
+            asyncio_run = asyncio.run
+
         if args.action == 'validate':
             try:
                 validate(args)
@@ -572,7 +655,7 @@ class CollectionPluginDocs(Command):
                 print('{0} was *valid*'.format(args.plugin_to_collection_file))
 
         elif args.action == 'full':
-            generate_full_docs(args)
+            asyncio_run(generate_full_docs(args))
 
         else:
             # args.action == 'incremental' (Invalid actions are caught by argparse)
