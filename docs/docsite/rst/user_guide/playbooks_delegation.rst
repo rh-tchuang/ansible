@@ -18,7 +18,7 @@ Some tasks always execute on the controller. These tasks, including ``include``,
 Setting the batch size with ``serial``
 --------------------------------------
 
-By default, Ansible will run against all the hosts specified in the ``hosts:`` field of each play in parallel. The batch size is all the hosts in the :ref:`pattern<playbooks_patterns>`specified in the ``hosts:`` field.For a rolling update, you only want to manage a few machines at a time. You can define how many hosts Ansible should manage at a single time using the ``serial`` keyword::
+By default, Ansible will run against all the hosts specified in the ``hosts:`` field of each play in parallel. The batch size is all the hosts in the :ref:`pattern<playbooks_patterns>` you set in the ``hosts:`` field. For a rolling update, you only want to manage a few machines at a time. You can define how many hosts Ansible should manage at a single time using the ``serial`` keyword::
 
     ---
     - name: test play
