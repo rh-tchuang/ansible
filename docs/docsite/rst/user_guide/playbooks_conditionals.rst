@@ -3,32 +3,23 @@
 Conditionals
 ============
 
-.. contents:: Topics
-
-
-Often the result of a play may depend on the value of a variable, fact (something learned about the remote system), or previous task result.
-In some cases, the values of variables may depend on other variables.
-Additional groups can be created to manage hosts based on whether the hosts match other criteria. This topic covers how conditionals are used in playbooks.
+You may want to execute different tasks, or have different goals, depending on the value of a variable, a fact (something learned about the remote system), or the result of a previous task. You may want the value of some variables to depend on the value of other variables. Or you may want to create additional groups of hosts based on whether the hosts match other criteria. You can do all of these things with conditionals.
 
 .. note::
 
   There are many options to control execution flow in Ansible. More examples of supported conditionals can be located here: https://jinja.palletsprojects.com/en/master/templates/#comparisons.
 
+.. contents::
+   :local:
 
 .. _the_when_statement:
 
 The When Statement
 ``````````````````
 
-Sometimes you will want to skip a particular step on a particular host.
-This could be something as simple as not installing a certain package if the operating system is a particular version,
-or it could be something like performing some cleanup steps if a filesystem is getting full.
+Sometimes you want to skip a particular step on a particular host. For example, you may not want to install a certain package if the operating system is a particular version. Or you may want to perform some cleanup steps if a filesystem is getting full.
 
-This is easy to do in Ansible with the ``when`` clause, which contains a raw `Jinja2 expression <https://jinja.palletsprojects.com/en/master/templates/#expressions>`_ without double curly braces (see :ref:`group_by_module`).
-
-.. note:: Jinja2 expressions are built up from comparisons, filters, tests, and logical combinations thereof. The below examples will give you an impression how to use them. However, for a more complete overview over all operators to use, please refer to the official `Jinja2 documentation <https://jinja.palletsprojects.com/en/master/templates/#expressions>`_ .
-
-It's actually pretty simple::
+This is easy to do in Ansible with the ``when`` clause, which contains a raw `Jinja2 expression <https://jinja.palletsprojects.com/en/master/templates/#expressions>`_ without double curly braces (see :ref:`group_by_module`). The ``when`` statement is simple::
 
     tasks:
       - name: "shut down Debian flavored systems"
@@ -53,8 +44,9 @@ Multiple conditions that all need to be true (that is, a logical ``and``) can al
           - ansible_facts['distribution'] == "CentOS"
           - ansible_facts['distribution_major_version'] == "6"
 
-A number of Jinja2 `"tests" and "filters" <https://jinja.palletsprojects.com/en/master/templates/#other-operators>`_ can also be used in when statements, some of which are unique and provided by Ansible.
-Suppose we want to ignore the error of one statement and then decide to do something conditionally based on success or failure::
+.. note:: Jinja2 expressions are built up from comparisons, filters, tests, and logical combinations thereof. These examples show some basic uses. For a more complete overview over all operators to use, please refer to the official `Jinja2 documentation <https://jinja.palletsprojects.com/en/master/templates/#expressions>`_ .
+
+You can use Jinja2 :ref:`tests <playbooks_tests>` and :ref:`filters <playbooks_filters>` in when statements. Ansible supports all the `standard tests and filters <https://jinja.palletsprojects.com/en/master/templates/#other-operators>`_, and adds some unique ones as well. Suppose you want to ignore the error of one statement and then decide to do something conditionally based on success or failure::
 
     tasks:
       - command: /bin/false
@@ -124,9 +116,10 @@ As the examples show, you don't need to use ``{{ }}`` to use variables inside co
 
 .. _loops_and_conditionals:
 
-Loops and Conditionals
-``````````````````````
-Combining ``when`` with loops (see :ref:`playbooks_loops`), be aware that the ``when`` statement is processed separately for each item. This is by design::
+Using conditionals in loops
+---------------------------
+
+If you combine a ``when`` statement with a :ref:`loop <playbooks_loops>`, be aware that the `when` statement is processed separately for each item. This is by design::
 
     tasks:
         - command: echo {{ item }}
@@ -148,12 +141,10 @@ If using a dict in a loop::
 
 .. _loading_in_custom_facts:
 
-Loading in Custom Facts
-```````````````````````
+Loading custom facts
+--------------------
 
-It's also easy to provide your own facts if you want, which is covered in :ref:`developing_modules`.  To run them, just
-make a call to your own custom fact gathering module at the top of your list of tasks, and variables returned
-there will be accessible to future tasks::
+You can provide provide your own facts if you want, which is covered in :ref:`developing_modules`.  To run them, just make a call to your own custom fact gathering module at the top of your list of tasks, and variables returned there will be accessible to future tasks::
 
     tasks:
         - name: gather site specific fact data
@@ -341,8 +332,8 @@ You may check the registered variable's string contents for emptiness::
               msg: "Directory is empty"
             when: contents.stdout == ""
 
-Commonly Used Facts
-```````````````````
+Commonly-used facts
+-------------------
 
 The following Facts are frequently used in Conditionals - see above for examples.
 
