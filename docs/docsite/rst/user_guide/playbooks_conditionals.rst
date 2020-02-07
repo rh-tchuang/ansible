@@ -250,7 +250,7 @@ falling back on 'vars/os_defaults.yml'.
 Ansible's approach to configuration -- separating variables from tasks, keeping your playbooks
 from turning into arbitrary code with nested conditionals - results in more streamlined and auditable configuration rules because there are fewer decision points to track.
 
-Selecting Files And Templates Based On Variables
+Selecting files and templates based on variables
 ````````````````````````````````````````````````
 
 .. note:: This is an advanced topic that is infrequently used.  You can probably skip this section.
@@ -271,8 +271,8 @@ The following example shows how to template out a configuration file that was ve
           -  default.conf
         mypaths: ['search_location_one/somedir/', '/opt/other_location/somedir/']
 
-Register Variables
-``````````````````
+Registering variables
+---------------------
 
 Often in a playbook it may be useful to store the result of a given command in a variable and access
 it later.  Use of the command module in this way can in many ways eliminate the need to write site specific facts, for
@@ -333,7 +333,7 @@ You may check the registered variable's string contents for emptiness::
             when: contents.stdout == ""
 
 Commonly-used facts
--------------------
+===================
 
 The following Facts are frequently used in Conditionals - see above for examples.
 
