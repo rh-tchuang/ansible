@@ -1,31 +1,24 @@
 .. _playbooks_delegation:
 
-Delegation, Rolling Updates, and Local Actions
+Delegation, rolling updates, and local actions
 ==============================================
 
-.. contents:: Topics
+Because it was designed for multi-tier deployments from the beginning, Ansible is great at delegating tasks: doing things on one host on behalf of another, or doing local steps with reference to some remote hosts. You can use this capability to interact with load balancers or monitoring systems, set up a continuous deployment pipeline, or execute zero downtime rolling updates. Ansible also lets you tune the order in which things complete, and assign a batch window size for how many machines to process at once during a rolling update. For examples of these items in use, review `the ansible-examples repository <https://github.com/ansible/ansible-examples/>`_. There are quite a few examples of zero-downtime update procedures for different kinds of applications.
 
-Being designed for multi-tier deployments since the beginning, Ansible is great at doing things on one host on behalf of another, or doing local steps with reference to some remote hosts.
+.. contents::
+   :local:
 
-This in particular is very applicable when setting up continuous deployment infrastructure or zero downtime rolling updates, where you might be talking with load balancers or monitoring systems.
+Ansible has modules for interacting with most load-balancing and monitoring solutions. For example, the :ref:`ec2_elb<ec2_elb_module>`, :ref:`nagios<nagios_module>`, :ref:`bigip_pool<bigip_pool_module>`, and other :ref:`network_modules` dovetail neatly with the concepts mentioned here. You'll also want to read up on :ref:`playbooks_reuse_roles`, as the 'pre_task' and 'post_task' concepts are the places where you would typically call these modules.
 
-Additional features allow for tuning the orders in which things complete, and assigning a batch window size for how many machines to process at once during a rolling update.
-
-This section covers all of these features.  For examples of these items in use, `please see the ansible-examples repository <https://github.com/ansible/ansible-examples/>`_. There are quite a few examples of zero-downtime update procedures for different kinds of applications.
-
-You should also consult the :ref:`module documentation<modules_by_category>` section. Modules like :ref:`ec2_elb<ec2_elb_module>`, :ref:`nagios<nagios_module>`, :ref:`bigip_pool<bigip_pool_module>`, and other :ref:`network_modules` dovetail neatly with the concepts mentioned here.
-
-You'll also want to read up on :ref:`playbooks_reuse_roles`, as the 'pre_task' and 'post_task' concepts are the places where you would typically call these modules.
-
-Be aware that certain tasks are impossible to delegate, i.e. `include`, `add_host`, `debug`, etc as they always execute on the controller.
+Some tasks always execute on the controller. These tasks, including ``include``, ``add_host``, and ``debug``, cannot be delegated.
 
 
 .. _rolling_update_batch_size:
 
-Rolling Update Batch Size
-`````````````````````````
+Setting the batch size with ``serial``
+--------------------------------------
 
-By default, Ansible will try to manage all of the machines referenced in a play in parallel.  For a rolling update use case, you can define how many hosts Ansible should manage at a single time by using the ``serial`` keyword::
+By default, Ansible will run against all the hosts specified in the ``hosts:`` field of each play in parallel. The batch size is all the hosts in the :ref:`pattern<playbooks_patterns>`specified in the ``hosts:`` field.For a rolling update, you only want to manage a few machines at a time. You can define how many hosts Ansible should manage at a single time using the ``serial`` keyword::
 
     ---
     - name: test play
@@ -34,32 +27,31 @@ By default, Ansible will try to manage all of the machines referenced in a play 
       gather_facts: False
 
       tasks:
-        - name: task one
+        - name: first task
           command: hostname
-        - name: task two
+        - name: second task
           command: hostname
 
-In the above example, if we had 4 hosts in the group 'webservers', 2
-would complete the play completely before moving on to the next 2 hosts::
+In the above example, if we had 4 hosts in the group 'webservers', Ansible would execute the play completely (both tasks) on 2 of the hosts before moving on to the next 2 hosts::
 
 
     PLAY [webservers] ****************************************
 
-    TASK [task one] ******************************************
+    TASK [first task] ****************************************
     changed: [web2]
     changed: [web1]
 
-    TASK [task two] ******************************************
+    TASK [second task] ***************************************
     changed: [web1]
     changed: [web2]
 
     PLAY [webservers] ****************************************
 
-    TASK [task one] ******************************************
+    TASK [first task] ****************************************
     changed: [web3]
     changed: [web4]
 
-    TASK [task two] ******************************************
+    TASK [second task] ***************************************
     changed: [web3]
     changed: [web4]
 
@@ -70,17 +62,16 @@ would complete the play completely before moving on to the next 2 hosts::
     web4      : ok=2    changed=2    unreachable=0    failed=0
 
 
-The ``serial`` keyword can also be specified as a percentage, which will be applied to the total number of hosts in a
-play, in order to determine the number of hosts per pass::
+You can also specify a percentage with the ``serial`` keyword. Ansible applies the percentage to the total number of hosts in a play to determine the number of hosts per pass::
 
     ---
     - name: test play
       hosts: webservers
       serial: "30%"
 
-If the number of hosts does not divide equally into the number of passes, the final pass will contain the remainder.
+If the number of hosts does not divide equally into the number of passes, the final pass contains the remainder. In this example, if you had 20 hosts in the webservers group, the first batch would contain 6 hosts, the second batch would contain 6 hosts, the third batch would contain 6 hosts, and the last batch would contain 2 hosts.
 
-As of Ansible 2.2, the batch sizes can be specified as a list, as follows::
+You can also specify batch sizes as a list. For example::
 
     ---
     - name: test play
@@ -91,7 +82,7 @@ As of Ansible 2.2, the batch sizes can be specified as a list, as follows::
         - 10
 
 In the above example, the first batch would contain a single host, the next would contain 5 hosts, and (if there are any hosts left),
-every following batch would contain 10 hosts until all available hosts are used.
+every following batch would contain either 10 hosts or all the remaining hosts, if fewer than 10 hosts remained.
 
 It is also possible to list multiple batch sizes as percentages::
 
@@ -119,10 +110,10 @@ You can also mix and match the values::
 
 .. _maximum_failure_percentage:
 
-Maximum Failure Percentage
-``````````````````````````
+Maximum failure percentage
+--------------------------
 
-By default, Ansible will continue executing actions as long as there are hosts in the batch that have not yet failed. The batch size for a play is determined by the ``serial`` parameter. If ``serial`` is not set, then batch size is all the hosts specified in the ``hosts:`` field.
+By default, Ansible will continue executing actions as long as there are hosts in the batch that have not yet failed. The batch size for a play is determined by the ``serial`` parameter.
 In some situations, such as with the rolling updates described above, it may be desirable to abort the play when a
 certain threshold of failures have been reached. To achieve this, you can set a maximum failure
 percentage on a play as follows::
@@ -132,7 +123,7 @@ percentage on a play as follows::
       max_fail_percentage: 30
       serial: 10
 
-In the above example, if more than 3 of the 10 servers in the group were to fail, the rest of the play would be aborted.
+In the above example, if more than 3 of the 10 servers in the first (or any) group of servers failed, the rest of the play would be aborted.
 
 .. note::
 
@@ -142,14 +133,11 @@ In the above example, if more than 3 of the 10 servers in the group were to fail
 .. _delegation:
 
 Delegation
-``````````
-
-
-This isn't actually rolling update specific but comes up frequently in those cases.
+----------
 
 If you want to perform a task on one host with reference to other hosts, use the 'delegate_to' keyword on a task.
 This is ideal for placing nodes in a load balanced pool, or removing them.  It is also very useful for controlling outage windows.
-Be aware that it does not make sense to delegate all tasks, debug, add_host, include, etc always get executed on the controller.
+It does not make sense to delegate all tasks, debug, add_host, include, etc always get executed on the controller.
 Using this with the 'serial' keyword to control the number of hosts executing at one time is also a good idea::
 
     ---
