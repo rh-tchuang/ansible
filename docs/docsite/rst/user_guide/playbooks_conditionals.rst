@@ -100,7 +100,9 @@ You create the name of the registered variable using the ``register`` keyword. Y
           - shell: echo "motd contains the word hi"
             when: motd_contents.stdout.find('hi') != -1
 
-You can access the string contents of the registered variable using the 'stdout' value. You can us registered results in the loop of a task if the variable is a list or is converted into a list. You can either use "stdout_lines" or call "home_dirs.stdout.split()". You can also split the lines by other fields::
+Ansible always registers something in a registered variable, even when it skips a task because the condition is not met. This way you can query the variable for `` is skipped`` to know if task was attempted or not.
+
+You can access the string contents of the registered variable using the 'stdout' value. You can use registered results in the loop of a task if the variable is a list. If the variabe is not a list, you can convert it into a list. You can either use "stdout_lines" or call "home_dirs.stdout.split()". You can also split the lines by other fields::
 
     - name: registered variable usage as a loop list
       hosts: all
@@ -118,7 +120,6 @@ You can access the string contents of the registered variable using the 'stdout'
           loop: "{{ home_dirs.stdout_lines }}"
           # same as loop: "{{ home_dirs.stdout.split() }}"
 
-.. note:: Registration happens even when a task is skipped due to the conditional. This way you can query the variable for `` is skipped`` to know if task was attempted or not.
 
 As shown previously, the registered variable's string contents are accessible with the 'stdout' value.
 You may check the registered variable's string contents for emptiness::
