@@ -14,10 +14,10 @@ You may want to execute different tasks, or have different goals, depending on t
 
 .. _the_when_statement:
 
-The When Statement
-``````````````````
+Basic conditionals with ``when``
+--------------------------------
 
-Sometimes you want to skip a particular step on a particular host. For example, you may not want to install a certain package if the operating system is a particular version. Or you may want to perform some cleanup steps if a filesystem is getting full.
+Sometimes you want to skip a particular step on a particular host. For example, you may not want to install a certain package if the operating system is a particular version. Or you may want to perform some cleanup steps only if a filesystem is getting full.
 
 This is easy to do in Ansible with the ``when`` clause, which contains a raw `Jinja2 expression <https://jinja.palletsprojects.com/en/master/templates/#expressions>`_ without double curly braces (see :ref:`group_by_module`). The ``when`` statement is simple::
 
@@ -27,7 +27,7 @@ This is easy to do in Ansible with the ``when`` clause, which contains a raw `Ji
         when: ansible_facts['os_family'] == "Debian"
         # note that all variables can be used directly in conditionals without double curly braces
 
-You can also use `parentheses to group and logical operators <https://jinja.palletsprojects.com/en/master/templates/#logic>`_ to combine conditions::
+You can apply multiple conditions, using parentheses to group them::
 
     tasks:
       - name: "shut down CentOS 6 and Debian 7 systems"
@@ -35,7 +35,7 @@ You can also use `parentheses to group and logical operators <https://jinja.pall
         when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") or
               (ansible_facts['distribution'] == "Debian" and ansible_facts['distribution_major_version'] == "7")
 
-Multiple conditions that all need to be true (that is, a logical ``and``) can also be specified as a list::
+You can use logical operators <https://jinja.palletsprojects.com/en/master/templates/#logic>`_ to combine conditions. When you have multiple conditions that all need to be true (that is, a logical ``and``), you can specify them as a list::
 
     tasks:
       - name: "shut down CentOS 6 systems"
@@ -56,7 +56,6 @@ You can use Jinja2 :ref:`tests <playbooks_tests>` and :ref:`filters <playbooks_f
       - command: /bin/something
         when: result is failed
 
-      # Both `succeeded` and `success` both work. The former, however, is newer and uses the correct tense, while the latter is mainly used in older versions of Ansible.
       - command: /bin/something_else
         when: result is succeeded
 
@@ -64,7 +63,8 @@ You can use Jinja2 :ref:`tests <playbooks_tests>` and :ref:`filters <playbooks_f
         when: result is skipped
 
 
-.. note:: both `success` and `succeeded` work (`similarly for fail`/`failed`, etc).
+.. note:: Older versions of Ansible used ``success`` and ``fail``, but ``succeeded`` and ``failed`` use the correct tense. All of these options are now valid.
+
 .. warning:: You might expect a variable of a skipped task to be undefined and use `defined` or `default` to check that. **This is incorrect**! Even when a task is failed or skipped the variable is still registered with a failed or skipped status. See :ref:`registered_variables`.
 
 
@@ -119,21 +119,21 @@ As the examples show, you don't need to use ``{{ }}`` to use variables inside co
 Using conditionals in loops
 ---------------------------
 
-If you combine a ``when`` statement with a :ref:`loop <playbooks_loops>`, be aware that the `when` statement is processed separately for each item. This is by design::
+If you combine a ``when`` statement with a :ref:`loop <playbooks_loops>`, Ansible processes the `when` statement separately for each item. This is by design, so you can execute the task on some items in the loop and skip it on other items. For example::
 
     tasks:
         - command: echo {{ item }}
           loop: [ 0, 2, 4, 6, 8, 10 ]
           when: item > 5
 
-If you need to skip the whole task depending on the loop variable being defined, used the ``|default`` filter to provide an empty iterator::
+If you need to skip the whole task when the loop variable is undefined, use the `|default` filter to provide an empty iterator. For example, when looping over a list::
 
         - command: echo {{ item }}
           loop: "{{ mylist|default([]) }}"
           when: item > 5
 
 
-If using a dict in a loop::
+You can do the same thing when looping over a dict::
 
         - command: echo {{ item.key }}
           loop: "{{ query('dict', mydict|default({})) }}"
@@ -155,29 +155,37 @@ You can provide provide your own facts if you want, which is covered in :ref:`de
 .. _when_roles_and_includes:
 
 Applying 'when' to roles, imports, and includes
-```````````````````````````````````````````````
+-----------------------------------------------
 
-Note that if you have several tasks that all share the same conditional statement, you can affix the conditional
-to a task include statement as below.  All the tasks get evaluated, but the conditional is applied to each and every task::
+Note that if you have several tasks that all share the same conditional statement, you can place those tasks in a tasks file, playbook, or role and apply the conditional when you incorporate them with ``roles``, imports, or includes. Ansible will return a 'skipped' message when you use this approach on systems that do not match the criteria. In many cases the :ref:`group_by module <group_by_module>` can be a more streamlined way to accomplish the same thing; see :ref:`os_variance`.
+
+
+Conditionals with imports
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When you use a conditional on an import statement, all the tasks get evaluated, but the conditional is applied to each and every task::
 
     - import_tasks: tasks/sometasks.yml
       when: "'reticulating splines' in output"
 
-.. note:: In versions prior to 2.0 this worked with task includes but not playbook includes. 2.0 allows it to work with both.
+Starting with Ansible 2.0, you can apply conditions to ``import_tasks`` and to ``import_playbook``.
 
-Or with a role::
+Conditionals with roles
+^^^^^^^^^^^^^^^^^^^^^^^
+
+You can apply a conditional to a role::
 
     - hosts: webservers
       roles:
          - role: debian_stock_config
            when: ansible_facts['os_family'] == 'Debian'
 
-You will note a lot of ``skipped`` output by default in Ansible when using this approach on systems that don't match the criteria.
-In many cases the :ref:`group_by module <group_by_module>` can be a more streamlined way to accomplish the same thing; see
-:ref:`os_variance`.
+You will note a lot of ``skipped`` output by default in Ansible when using this approach on systems that don't match the criteria. In many cases the :ref:`group_by module <group_by_module>` can be a more streamlined way to accomplish the same thing; see :ref:`os_variance`.
 
-When a conditional is used with ``include_*`` tasks instead of imports, it is applied `only` to the include task itself and not
-to any other tasks within the included file(s). A common situation where this distinction is important is as follows::
+Conditionals with includes
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When a conditional is used with ``include_*`` tasks instead of imports, it is applied `only` to the include task itself and not to any other tasks within the included file(s). A common situation where this distinction is important is as follows::
 
     # We wish to include a file to define a variable when it is not
     # already defined
@@ -208,19 +216,21 @@ For more information on the differences between ``include`` v ``import`` see :re
 
 .. _conditional_imports:
 
-Conditional Imports
-```````````````````
+Conditional variable values
+---------------------------
 
-.. note:: This is an advanced topic that is infrequently used.
-
-Sometimes you will want to do certain things differently in a playbook based on certain criteria.
-Having one playbook that works on multiple platforms and OS versions is a good example.
-
-As an example, the name of the Apache package may be different between CentOS and Debian,
-but it is easily handled with a minimum of syntax in an Ansible Playbook::
+Sometimes you want to set the value of a variable differently in a playbook based on certain criteria.
+For example, the names of many packages are different on CentOS and on Debian. You can create a playbook that works on multiple platforms and OS versions with a minimum of syntax by placing your variable values in vars files and conditionally importing them. If you want to install Apache on some CentOS and some Debian servers, create variables files with YAML keys and values. For example::
 
     ---
-    - hosts: all
+    # for vars/RedHat.yml
+    apache: httpd
+    somethingelse: 42
+
+Then import those variables files based on the facts you gather on the hosts in your playbook::
+
+    ---
+    - hosts: webservers
       remote_user: root
       vars_files:
         - "vars/common.yml"
@@ -229,29 +239,12 @@ but it is easily handled with a minimum of syntax in an Ansible Playbook::
       - name: make sure apache is started
         service: name={{ apache }} state=started
 
-.. note::
-   The variable "ansible_facts['os_family']" is being interpolated into
-   the list of filenames being defined for vars_files.
+Ansible gathers facts on the hosts in the webservers group, then interpolates the variable "ansible_facts['os_family']" into a list of filenames. If you have hosts with Red Hat operating systems ('CentOS', for example), Ansible looks for 'vars/RedHat.yml'. If that file does not exist, Ansible attempts to load 'vars/os_defaults.yml'. For Debian hosts, Ansible first looks for 'vars/Debian.yml', before falling back on 'vars/os_defaults.yml'. If no files in the list are found, Ansible raises an error.
 
-As a reminder, the various YAML files contain just keys and values::
-
-    ---
-    # for vars/RedHat.yml
-    apache: httpd
-    somethingelse: 42
-
-How does this work?  For Red Hat operating systems ('CentOS', for example), the first file Ansible tries to import
-is 'vars/RedHat.yml'. If that file does not exist, Ansible attempts to load 'vars/os_defaults.yml'. If no files in
-the list were found, an error is raised.
-
-On Debian, Ansible first looks for 'vars/Debian.yml' instead of 'vars/RedHat.yml', before
-falling back on 'vars/os_defaults.yml'.
-
-Ansible's approach to configuration -- separating variables from tasks, keeping your playbooks
-from turning into arbitrary code with nested conditionals - results in more streamlined and auditable configuration rules because there are fewer decision points to track.
+Ansible separates variables from tasks, keeping your playbooks from turning into arbitrary code with nested conditionals. This approach results in more streamlined and auditable configuration rules because there are fewer decision points to track.
 
 Selecting files and templates based on variables
-````````````````````````````````````````````````
+------------------------------------------------
 
 .. note:: This is an advanced topic that is infrequently used.  You can probably skip this section.
 
@@ -275,8 +268,7 @@ Registering variables
 ---------------------
 
 Often in a playbook it may be useful to store the result of a given command in a variable and access
-it later.  Use of the command module in this way can in many ways eliminate the need to write site specific facts, for
-instance, you could test for the existence of a particular program.
+it later.  Use of the command module in this way can in many ways eliminate the need to write site specific facts, for instance, you could test for the existence of a particular program.
 
 .. note:: Registration happens even when a task is skipped due to the conditional. This way you can query the variable for `` is skipped`` to know if task was attempted or not.
 
@@ -372,7 +364,7 @@ Possible values (sample, not complete list)::
 ansible_facts['distribution_major_version']
 -------------------------------------------
 
-This will be the major version of the operating system. For example, the value will be `16` for Ubuntu 16.04.
+The major version of the operating system. For example, the value is `16` for Ubuntu 16.04.
 
 .. _ansible_os_family:
 
