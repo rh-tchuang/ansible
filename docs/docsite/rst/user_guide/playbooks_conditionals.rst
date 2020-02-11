@@ -82,7 +82,7 @@ Tip: If a fact or variable is a string, and you need to run a mathematical compa
 Conditions based on registered variables
 ----------------------------------------
 
-Often in a playbook you want to execute or skip a task based on the outcome of an earlier task. For example, you might want to configure a package only if it was upgraded by an earlier task. To create a conditional based on a registered variable:
+Often in a playbook you want to execute or skip a task based on the outcome of an earlier task. For example, you might want to configure a service after it is upgraded by an earlier task. To create a conditional based on a registered variable:
 
   # register the outcome of the earlier task as a variable
   # create a conditional test based on the registered variable
@@ -100,7 +100,7 @@ You create the name of the registered variable using the ``register`` keyword. Y
           - shell: echo "motd contains the word hi"
             when: motd_contents.stdout.find('hi') != -1
 
-Ansible always registers something in a registered variable, even when it skips a task because the condition is not met. This way you can query the variable for `` is skipped`` to know if task was attempted or not.
+Ansible always registers something in a registered variable for every host, even on hosts where Ansible skips a task because a condition is not met. This way you can query the variable for ``is skipped`` to know if task was attempted or not.
 
 You can access the string contents of the registered variable using the 'stdout' value. You can use registered results in the loop of a task if the variable is a list. If the variabe is not a list, you can convert it into a list. You can either use "stdout_lines" or call "home_dirs.stdout.split()". You can also split the lines by other fields::
 
