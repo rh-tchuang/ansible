@@ -282,17 +282,7 @@ Ansible expands this at execution time to the equivalent of::
 
 Thus if ``x`` is initially undefined, the ``debug`` task will be skipped. If this is not the behavior you want, use an ``include_*`` statement to apply a condition only to that statement itself.
 
-Starting with Ansible 2.0, you can apply conditions to ``import_tasks`` and to ``import_playbook``. When you use this approach, Ansible returns a 'skipped' message for every task on every host that does not match the criteria, creating a lot of useless output. In many cases the :ref:`group_by module <group_by_module>` can be a more streamlined way to accomplish the same objective; see :ref:`os_variance`.
-
-Conditionals with roles
-^^^^^^^^^^^^^^^^^^^^^^^
-
-You can apply a conditional to a role::
-
-    - hosts: webservers
-      roles:
-         - role: debian_stock_config
-           when: ansible_facts['os_family'] == 'Debian'
+Starting with Ansible 2.0, you can apply conditions to ``import_playbook`` as well as to the other ``import_*`` statements. When you use this approach, Ansible returns a 'skipped' message for every task on every host that does not match the criteria, creating repetitive output. In many cases the :ref:`group_by module <group_by_module>` can be a more streamlined way to accomplish the same objective; see :ref:`os_variance`.
 
 .. _conditional_includes:
 
@@ -328,6 +318,24 @@ Ansible expands this at execution time to the equivalent of::
       # no condition applied to this task, Ansible prints the debug statement
 
 By using ``include_tasks`` instead of ``import_tasks``, both tasks from ``other_tasks.yml`` will be executed as expected. For more information on the differences between ``include`` v ``import`` see :ref:`playbooks_reuse`.
+
+Conditionals with roles
+^^^^^^^^^^^^^^^^^^^^^^^
+
+There are three ways to apply conditions to roles:
+
+  #. Add the same condition or conditions to all tasks in the role by placing your ``when`` statement under the ``roles`` keyword. See the example in this section.
+  #. Add the same condition or conditions to all tasks in the role by placing your ``when`` statement on a static ``import_role`` in your playbook.
+  #. Add a condition or conditions to individual tasks or blocks within the role itself. This is the only approach that allows you to select or skip some tasks within the role based on your ``when`` statement. To select or skip tasks within the role, you must have conditions set on individual tasks or blocks, use the dynamic ``include_role`` in your playbook, and add the condition or conditions to the include. When you use this approach, Ansible applies the condition to the include itself plus any tasks in the role that also have that ``when`` statement.
+
+When you incorporate a role in your playbook statically with the ``roles`` keyword, Ansible adds the conditions you define to all the tasks in the role. For example:
+
+.. code-block:: yaml
+
+   - hosts: webservers
+     roles:
+        - role: debian_stock_config
+          when: ansible_facts['os_family'] == 'Debian'
 
 .. _conditional_variable_and_files:
 
