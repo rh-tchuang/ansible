@@ -243,7 +243,7 @@ You can provide provide your own facts if you want, which is covered in :ref:`de
         - command: /usr/bin/thingy
           when: my_custom_fact_just_retrieved_from_the_remote_system == '1234'
 
-.. _when_roles_and_includes:
+.. _when_with_reuse:
 
 Conditionals with re-use
 ------------------------
