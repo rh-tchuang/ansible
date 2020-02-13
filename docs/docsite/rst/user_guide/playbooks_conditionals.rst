@@ -79,6 +79,8 @@ If a fact or variable is a string, and you need to run a mathematical comparison
 
 .. note:: the above example requires the lsb_release package on the target host in order to return the 'lsb major_release' fact.
 
+.. _conditionals_registered_vars:
+
 Conditions based on registered variables
 ----------------------------------------
 
