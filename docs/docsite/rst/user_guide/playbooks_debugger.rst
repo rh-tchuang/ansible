@@ -4,7 +4,7 @@
 Debugging tasks
 ***************
 
-Ansible includes a task debugger as part of the strategy plugins. With the debugger you can try to fix errors during execution instead of fixing them in the playbook and then running it again. You have access to all of the features of the debugger in the context of the task. You can check or set the value of variables, update module arguments, and re-run the task with the new variables and arguments. The debugger lets you resolve the cause of the failure and continue with playbook execution.
+Ansible offers a task debugger so you can try to fix errors during execution instead of fixing them in the playbook and then running it again. You have access to all of the features of the debugger in the context of the task. You can check or set the value of variables, update module arguments, and re-run the task with the new variables and arguments. The debugger lets you resolve the cause of the failure and continue with playbook execution.
 
 .. contents::
    :local:
@@ -39,7 +39,7 @@ The ``debugger`` keyword can be used on any block where you provide a ``name`` a
 
 When you use the ``debugger`` keyword, the setting you use overrides any global configuration to enable or disable the debugger. If you define ``debugger`` at two different levels, for example in a role and in a task, the more specific definition wins: the definition on a task overrides the definition on a block, which overrides the definition on a role or play.
 
-Here are examples of defining the debugger::
+Here are examples of invoking the debugger with the ``debugger`` keyword::
 
     # on a task
     - name: Execute a command
@@ -70,17 +70,18 @@ In configuration or an environment variable
 
 .. versionadded:: 2.5
 
-You can set global defaults for the task debugger in ansible.cfg::
+You can turn the task debugger on or off globally with a setting in ansible.cfg or with an environment variable. The only options are ``True`` or ``False``. If you set the configuration option or environment variable to ``True``, Ansible runs the debugger on failed tasks by default.
+
+To invoke task debugger from ansible.cfg::
 
     [defaults]
     enable_task_debugger = True
 
-Alternatively, you can set the task debugger as an environment variable::
+To use an an environment variable to invoke the task debugger::
 
     ANSIBLE_ENABLE_TASK_DEBUGGER=True ansible-playbook -i hosts site.yml
 
-When using this method, any failed or unreachable task will invoke the debugger,
-unless it is explicitly disabled for that role, play, block, or task.
+When you invoke the debugger using this method, any failed task will invoke the debugger, unless it is explicitly disabled for that role, play, block, or task. If you need more granular control what conditions trigger the debugger, use the ``debugger`` keyword.
 
 As a strategy
 -------------
@@ -96,8 +97,7 @@ To use the ``debug`` strategy, change the ``strategy`` attribute like this::
       tasks:
       ...
 
-If you don't want change the code, you can define ``ANSIBLE_STRATEGY=debug``
-environment variable in order to enable the debugger, or modify ``ansible.cfg`` such as::
+You can also set the strategy to ``debug`` with the environment variable ``ANSIBLE_STRATEGY=debug``, or by modifying ``ansible.cfg``::
 
     [defaults]
     strategy = debug
@@ -106,7 +106,7 @@ environment variable in order to enable the debugger, or modify ``ansible.cfg`` 
 Using the debugger
 ==================
 
-Once you invoke the debugger, you can use the seven :ref:`available_commands` to work through any errors.  For example, if you run the playbook below, Ansible invokes the debugger because the variable *wrong_var* is undefined::
+Once you invoke the debugger, you can use the seven :ref:`available_commands` to work through the error Ansible encountered. For example, if you run the playbook below, Ansible invokes the debugger because the variable *wrong_var* is undefined::
 
     - hosts: test
       debugger: on_failed
@@ -204,7 +204,7 @@ Update a module argument. This sample playbook has an invalid package name::
         - name: install package
           apt: name={{ pkg_name }}
 
-When you run the playbook, the invalid package name triggers an error, and Ansible invokes the debugger. You can fix the package name by updating the module argument::
+When you run the playbook, the invalid package name triggers an error, and Ansible invokes the debugger. You can fix the package name by viewing, then updating the module argument::
 
     [192.0.2.10] TASK: install package (debug)> p task.args
     {u'name': u'{{ pkg_name }}'}
@@ -213,14 +213,14 @@ When you run the playbook, the invalid package name triggers an error, and Ansib
     {u'name': 'bash'}
     [192.0.2.10] TASK: install package (debug)> redo
 
-Then use ``redo`` to run the task again with new args.
+When the module argument is correct, use ``redo`` to run the task again with new args.
 
 .. _update_vars_command:
 
 task_vars[*key*] = *value*
 --------------------------
 
-Update ``task_vars``. You can fix the same playbook above by updating the task variables instead of the module args::
+Update ``task_vars``. You could fix the same playbook above by viewing, then updating the task variables instead of the module args::
 
     [192.0.2.10] TASK: install package (debug)> p task_vars['pkg_name']
     u'not_exist'
