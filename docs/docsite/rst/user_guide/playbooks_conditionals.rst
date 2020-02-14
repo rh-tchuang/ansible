@@ -4,9 +4,9 @@
 Conditionals
 ************
 
-In a playbook, you may want to execute different tasks, or have different goals, depending on the value of a fact (something learned about the remote system), a variable, or the result of a previous task. You may want the value of some variables to depend on the value of other variables. Or you may want to create additional groups of hosts based on whether the hosts match other criteria. You can do all of these things with conditionals, also known as ``when`` statements.
+In a playbook, you may want to execute different tasks, or have different goals, depending on the value of a fact (data about the remote system), a variable, or the result of a previous task. You may want the value of some variables to depend on the value of other variables. Or you may want to create additional groups of hosts based on whether the hosts match other criteria. You can do all of these things with conditionals.
 
-Ansible uses Jinja2 :ref:`tests <playbooks_tests>` and :ref:`filters <playbooks_filters>` in when statements. Ansible supports all the standard tests and filters, and adds some unique ones as well.
+Ansible uses Jinja2 :ref:`tests <playbooks_tests>` and :ref:`filters <playbooks_filters>` in conditionals. Ansible supports all the standard tests and filters, and adds some unique ones as well.
 
 .. note::
 
@@ -35,11 +35,15 @@ Conditionals based on ansible_facts
 
 Facts are data about hosts, and they are frequently the basis for conditionals. Facts include things like the IP address or operating system of a remote host, or the status of a filesystem. Many conditionals evaluate Ansible facts. Here are some use cases for conditionals based on facts:
 
-  - Install a certain package only if the operating system is a particular version.
+  - Install a certain package only when the operating system is a particular version.
   - Skip configuring a firewall on hosts with internal IP addresses.
-  - Perform some cleanup steps only if a filesystem is getting full.
+  - Perform some cleanup steps only when a filesystem is getting full.
 
-See :ref:`commonly_used_facts` for a list of facts that frequently appear in conditional statements. Here is a sample conditional based on a fact:
+See :ref:`commonly_used_facts` for a list of facts that frequently appear in conditional statements. Not all facts exist for all hosts. For example, the 'lsb_major_release' fact used in an example below only exists when the lsb_release package is installed on the target host. To see what facts are available on your systems, add a debug task to your playbook::
+
+    - debug: var=ansible_facts
+
+Here is a sample conditional based on a fact:
 
 .. code-block:: yaml
 
@@ -67,17 +71,11 @@ You can use logical operators <https://jinja.palletsprojects.com/en/master/templ
           - ansible_facts['distribution'] == "CentOS"
           - ansible_facts['distribution_major_version'] == "6"
 
-To see what facts are available on a particular system, add a debug task to your playbook::
-
-    - debug: var=ansible_facts
-
 If a fact or variable is a string, and you need to run a mathematical comparison on it, use a filter to ensure that Ansible reads the value as an integer::
 
     tasks:
       - shell: echo "only on Red Hat 6, derivatives, and later"
         when: ansible_facts['os_family'] == "RedHat" and ansible_facts['lsb']['major_release'] | int >= 6
-
-.. note:: the above example requires the lsb_release package on the target host in order to return the 'lsb major_release' fact.
 
 .. _conditionals_registered_vars:
 
@@ -102,7 +100,7 @@ You create the name of the registered variable using the ``register`` keyword. A
           - shell: echo "motd contains the word hi"
             when: motd_contents.stdout.find('hi') != -1
 
- You can use registered results in the loop of a task if the variable is a list. If the variable is not a list, you can convert it into a list, with either "stdout_lines" or with "variable.stdout.split()". You can also split the lines by other fields::
+You can use registered results in the loop of a task if the variable is a list. If the variable is not a list, you can convert it into a list, with either "stdout_lines" or with "variable.stdout.split()". You can also split the lines by other fields::
 
     - name: registered variable usage as a loop list
       hosts: all
