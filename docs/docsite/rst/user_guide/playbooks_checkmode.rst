@@ -43,7 +43,7 @@ For example::
       check_mode: yes
       register: changes_to_important_config
 
-Running single tasks with ``check_mode: yes`` can be useful for testing Ansible modules, either to test the module itself or to test the conditions under which a module would make changes. You can register variables (see :ref:`playbooks_conditionals`) on these tasks for even more detail on the potential changes. Instead of ``yes``/``no`` you can use a Jinja2 expression, just like the ``when`` clause.
+Running single tasks with ``check_mode: yes`` can be useful for testing Ansible modules, either to test the module itself or to test the conditions under which a module would make changes. You can register variables (see :ref:`playbooks_conditionals`) on these tasks for even more detail on the potential changes.
 
 .. note:: Prior to version 2.2 only the equivalent of ``check_mode: no`` existed. The notation for that was ``always_run: yes``.
 
@@ -52,8 +52,7 @@ Skipping tasks or ignoring errors in check mode
 
 .. versionadded:: 2.1
 
-If you want to skip a task or ignore errors on a task when you run Ansible in check mode,
-you can use a boolean magic variable ``ansible_check_mode``, which is set to ``True`` when Ansible runs in check mode. For example::
+If you want to skip a task or ignore errors on a task when you run Ansible in check mode, you can use a boolean magic variable ``ansible_check_mode``, which is set to ``True`` when Ansible runs in check mode. For example::
 
   tasks:
 
