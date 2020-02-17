@@ -10,15 +10,12 @@ Because it was designed for multi-tier deployments from the beginning, Ansible i
 
 Ansible has modules for interacting with most load-balancing and monitoring solutions. For example, the :ref:`ec2_elb<ec2_elb_module>`, :ref:`nagios<nagios_module>`, :ref:`bigip_pool<bigip_pool_module>`, and other :ref:`network_modules` dovetail neatly with the concepts mentioned here. You'll also want to read up on :ref:`playbooks_reuse_roles`, as the 'pre_task' and 'post_task' concepts are the places where you would typically call these modules.
 
-Some tasks always execute on the controller. These tasks, including ``include``, ``add_host``, and ``debug``, cannot be delegated.
-
-
 .. _rolling_update_batch_size:
 
 Setting the batch size with ``serial``
 --------------------------------------
 
-By default, Ansible will run against all the hosts specified in the ``hosts:`` field of each play in parallel. The batch size is all the hosts in the :ref:`pattern<playbooks_patterns>` you set in the ``hosts:`` field. For a rolling update, you only want to manage a few machines at a time. You can define how many hosts Ansible should manage at a single time using the ``serial`` keyword::
+By default, Ansible runs in parallel against all the hosts in the :ref:`pattern <playbooks_patterns>` you set in the ``hosts:`` field of each play. For a rolling update, you only want to manage a few machines at a time. You can define how many hosts Ansible should manage at a single time using the ``serial`` keyword::
 
     ---
     - name: test play
@@ -113,10 +110,7 @@ You can also mix and match the values::
 Maximum failure percentage
 --------------------------
 
-By default, Ansible will continue executing actions as long as there are hosts in the batch that have not yet failed. The batch size for a play is determined by the ``serial`` parameter.
-In some situations, such as with the rolling updates described above, it may be desirable to abort the play when a
-certain threshold of failures have been reached. To achieve this, you can set a maximum failure
-percentage on a play as follows::
+By default, Ansible will continue executing actions as long as there are hosts that have not yet failed. The batch size for a play is determined by the ``serial`` parameter. In some situations, such as with the rolling updates described above, it may be desirable to abort the play when a certain threshold of failures have been reached. To achieve this, you can set a maximum failure percentage on a play as follows::
 
     ---
     - hosts: webservers
@@ -127,18 +121,18 @@ In the above example, if more than 3 of the 10 servers in the first (or any) gro
 
 .. note::
 
-     The percentage set must be exceeded, not equaled. For example, if serial were set to 4 and you wanted the task to abort
-     when 2 of the systems failed, the percentage should be set at 49 rather than 50.
+     The percentage set must be exceeded, not equaled. For example, if serial were set to 4 and you wanted the task to abort the play when 2 of the systems failed, set the max_fail_percentage at 49 rather than 50.
 
 .. _delegation:
 
 Delegation
 ----------
 
-If you want to perform a task on one host with reference to other hosts, use the 'delegate_to' keyword on a task.
-This is ideal for placing nodes in a load balanced pool, or removing them.  It is also very useful for controlling outage windows.
-It does not make sense to delegate all tasks, debug, add_host, include, etc always get executed on the controller.
-Using this with the 'serial' keyword to control the number of hosts executing at one time is also a good idea::
+If you want to perform a task on one host with reference to other hosts, use the 'delegate_to' keyword on a task. This is ideal for placing nodes in a load balanced pool, or removing them. It is also very useful for controlling outage windows.
+
+Some tasks always execute on the controller. These tasks, including ``include``, ``add_host``, and ``debug``, cannot be delegated.
+
+Using delegation with the 'serial' keyword to control the number of hosts executing at one time is also a good idea::
 
     ---
     - hosts: webservers
@@ -159,7 +153,7 @@ Using this with the 'serial' keyword to control the number of hosts executing at
           delegate_to: 127.0.0.1
 
 
-These commands will run on 127.0.0.1, which is the machine running Ansible. There is also a shorthand syntax that you can use on a per-task basis: 'local_action'. Here is the same playbook as above, but using the shorthand syntax for delegating to 127.0.0.1::
+The first and third tasks in this play run on 127.0.0.1, which is the machine running Ansible. There is also a shorthand syntax that you can use on a per-task basis: 'local_action'. Here is the same playbook as above, but using the shorthand syntax for delegating to 127.0.0.1::
 
     ---
     # ...
@@ -207,8 +201,7 @@ The `ansible_host` variable (`ansible_ssh_host` in 1.x or specific to ssh/parami
 Delegated facts
 ```````````````
 
-By default, any fact gathered by a delegated task are assigned to the `inventory_hostname` (the current host) instead of the host which actually produced the facts (the delegated to host).
-The directive `delegate_facts` may be set to `True` to assign the task's gathered facts to the delegated host instead of the current one.::
+By default, any facts gathered by a delegated task are assigned to the `inventory_hostname` (the current host) instead of the host which actually produced the facts (the delegated to host). The directive `delegate_facts` may be set to `True` to assign the task's gathered facts to the delegated host instead of the current one::
 
     ---
     - hosts: app_servers
@@ -220,8 +213,7 @@ The directive `delegate_facts` may be set to `True` to assign the task's gathere
           delegate_facts: True
           loop: "{{groups['dbservers']}}"
 
-The above will gather facts for the machines in the dbservers group and assign the facts to those machines and not to app_servers.
-This way you can lookup `hostvars['dbhost1']['ansible_default_ipv4']['address']` even though dbservers were not part of the play, or left out by using `--limit`.
+The above will gather facts for the machines in the dbservers group and assign the facts to those machines and not to app_servers. This way you can lookup `hostvars['dbhost1']['ansible_default_ipv4']['address']` even though dbservers were not part of the play, or left out by using `--limit`.
 
 
 .. _run_once:
