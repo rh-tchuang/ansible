@@ -13,8 +13,25 @@ We suggest you read this page along with `Ansible Changelog for 2.10 <https://gi
 
 This document is part of a collection on porting. The complete list of porting guides can be found at :ref:`porting guides <porting_guides>`.
 
-.. contents:: Topics
+.. contents::
+   :local:
 
+Move to Collections
+===================
+
+The biggest change released in Ansible 2.10 is the migration of most modules and other plugins out of the core repository into collections.
+
+Modules and action plugins:
+- inherit the playbook collection directive
+- inherit the role meta/main.yml collection directive when in a role
+- in a collection's role, inherit the name of that collection
+- may use the fully qualified module/action plugin name
+- in 2.9 and installed with ACD, can remain short named
+- unless in a classic standalone role, can remain short named
+Other plugins:
+- always need to use the fully qualified collection name
+- unless in 2.9 and installed with ACD
+- unless in a classic standalone role, can remain short named
 
 Playbook
 ========
