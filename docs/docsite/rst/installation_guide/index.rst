@@ -1,13 +1,11 @@
 ******************
-Installation Guide
+インストールガイド
 ******************
 
-Welcome to the Ansible Installation Guide!
+本書は Ansible インストールガイドです。
 
 
-.. toctree::
-   :maxdepth: 2
+.. toctree:: :maxdepth:2
 
-   intro_installation
-   intro_configuration
+   intro\_installation intro\_configuration
 
