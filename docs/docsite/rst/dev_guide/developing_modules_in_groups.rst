@@ -118,8 +118,8 @@ We realize this may be your first use of Git or GitHub. The following guides may
 * `How to sync (update) your fork <https://help.github.com/articles/syncing-a-fork/>`_
 * `How to create a Pull Request (PR) <https://help.github.com/articles/about-pull-requests/>`_
 
-Please note that in the Ansible Git Repo the main branch is called ``devel`` rather than ``master``, which is used in the official GitHub documentation
+Please note that in the Ansible Git Repo the main branch is called ``devel`` rather than ``master``, which is used in the official GitHub documentation.
 
-After your first PR has been merged ensure you "sync your fork" with ``ansible/ansible`` to ensure you've pulled in the directory structure and and shared code or documentation previously created.
+After your first PR has been merged, you must "sync your fork" with ``ansible/ansible`` to ensure you've pulled in the directory structure and and shared code or documentation previously created.
 
 As stated in the GitHub documentation, always use feature branches for your PRs, never commit directly into ``devel``.
