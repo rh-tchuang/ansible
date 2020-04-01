@@ -107,8 +107,8 @@ You can also mix and match the values::
 
 .. _maximum_failure_percentage:
 
-Maximum failure percentage
---------------------------
+Setting a maximum failure percentage
+------------------------------------
 
 By default, Ansible will continue executing actions as long as there are hosts that have not yet failed. The batch size for a play is determined by the ``serial`` parameter. In some situations, such as with the rolling updates described above, it may be desirable to abort the play when a certain threshold of failures have been reached. To achieve this, you can set a maximum failure percentage on a play as follows::
 
@@ -167,8 +167,7 @@ The first and third tasks in this play run on 127.0.0.1, which is the machine ru
         - name: add back to load balancer pool
           local_action: command /usr/bin/add_back_to_pool {{ inventory_hostname }}
 
-A common pattern is to use a local action to call 'rsync' to recursively copy files to the managed servers.
-Here is an example::
+You can use a local action to call 'rsync' to recursively copy files to the managed servers::
 
     ---
     # ...
@@ -180,7 +179,7 @@ Here is an example::
 Note that you must have passphrase-less SSH keys or an ssh-agent configured for this to work, otherwise rsync
 will need to ask for a passphrase.
 
-In case you have to specify more arguments you can use the following syntax::
+To specify more arguments, use the following syntax::
 
     ---
     # ...
@@ -194,12 +193,12 @@ In case you have to specify more arguments you can use the following syntax::
             body: "{{ mail_body }}"
           run_once: True
 
-The `ansible_host` variable (`ansible_ssh_host` in 1.x or specific to ssh/paramiko plugins) reflects the host a task is delegated to.
+The `ansible_host` variable reflects the host a task is delegated to.
 
 .. _delegate_facts:
 
 Delegated facts
-```````````````
+---------------
 
 By default, any facts gathered by a delegated task are assigned to the `inventory_hostname` (the current host) instead of the host which actually produced the facts (the delegated to host). The directive `delegate_facts` may be set to `True` to assign the task's gathered facts to the delegated host instead of the current one::
 
@@ -332,7 +331,6 @@ For datacenter "A", the playbook can be written this way::
       tasks:
         - name: 'Starting datacenter [ A ]'
           command: /usr/bin/enable-dc
-
 
 In this example Ansible will start the software upgrade on the front ends only if all of the load balancers are successfully disabled.
 
