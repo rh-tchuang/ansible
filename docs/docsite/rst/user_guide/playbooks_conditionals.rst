@@ -10,7 +10,7 @@ Ansible uses Jinja2 :ref:`tests <playbooks_tests>` and :ref:`filters <playbooks_
 
 .. note::
 
-  There are many options to control execution flow in Ansible. More examples of supported conditionals can be located here: https://jinja.palletsprojects.com/en/master/templates/#comparisons.
+  There are many options to control execution flow in Ansible. You can find more examples of supported conditionals at `https://jinja.palletsprojects.com/en/master/templates/#comparisons`_.
 
 .. contents::
    :local:
@@ -20,7 +20,7 @@ Ansible uses Jinja2 :ref:`tests <playbooks_tests>` and :ref:`filters <playbooks_
 Basic conditionals with ``when``
 ================================
 
-The simplest conditional statement applies to a single task. Create the task, then add a ``when`` statement that applies a test. When you run the task or playbook, Ansible evaluates the test for all hosts. On any host where the test passes (returns a value of True), Ansible runs that task. For example, if you are installing mysql on multiple machines, some of which have SELinux enabled, you might have a task to configure SELinux to allow mysql to run. You would only want that task to run on machines that have SELinux enabled. This is easy to do in Ansible with a conditional, or ``when`` clause, which contains a raw Jinja2 expression without double curly braces (see :ref:`group_by_module`):
+The simplest conditional statement applies to a single task. Create the task, then add a ``when`` statement that applies a test. The ``when`` clause is a raw Jinja2 expression without double curly braces (see :ref:`group_by_module`). When you run the task or playbook, Ansible evaluates the test for all hosts. On any host where the test passes (returns a value of True), Ansible runs that task. For example, if you are installing mysql on multiple machines, some of which have SELinux enabled, you might have a task to configure SELinux to allow mysql to run. You would only want that task to run on machines that have SELinux enabled:
 
 .. code-block:: yaml
 
@@ -33,11 +33,11 @@ The simplest conditional statement applies to a single task. Create the task, th
 Conditionals based on ansible_facts
 -----------------------------------
 
-Facts are data about hosts, and they are frequently the basis for conditionals. Facts include things like the IP address or operating system of a remote host, or the status of a filesystem. Many conditionals evaluate Ansible facts. Here are some use cases for conditionals based on facts:
+Often you want to execute or skip a task based on facts. Facts are attributes of individual hosts, including IP address, operating system, the status of a filesystem, and many more. With conditionals based on facts:
 
-  - Install a certain package only when the operating system is a particular version.
-  - Skip configuring a firewall on hosts with internal IP addresses.
-  - Perform some cleanup steps only when a filesystem is getting full.
+  - You can install a certain package only when the operating system is a particular version.
+  - You can skip configuring a firewall on hosts with internal IP addresses.
+  - You can perform cleanup tasks only when a filesystem is getting full.
 
 See :ref:`commonly_used_facts` for a list of facts that frequently appear in conditional statements. Not all facts exist for all hosts. For example, the 'lsb_major_release' fact used in an example below only exists when the lsb_release package is installed on the target host. To see what facts are available on your systems, add a debug task to your playbook::
 
@@ -160,7 +160,7 @@ Ansible always registers something in a registered variable for every host, even
 Conditionals based on variables
 -------------------------------
 
-You can also create conditionals based on variables defined in the playbooks or inventory, just make sure to apply the ``| bool`` filter to non boolean variables, such as string variables with content like 'yes', 'on', '1', or 'true'. You can define variables like this:
+You can also create conditionals based on variables defined in the playbooks or inventory. Because conditionals require boolean input (a test must evaluate as True to trigger the condition), you must apply the ``| bool`` filter to non boolean variables, such as string variables with content like 'yes', 'on', '1', or 'true'. You can define variables like this:
 
 .. code-block:: yaml
 
@@ -179,14 +179,9 @@ With the variables above, Ansible would run one of these tasks and skip the othe
         - shell: echo "This certainly isn't epic!"
           when: not epic
 
-<<<<<<< HEAD
-If a required variable has not been set, you can skip or fail using Jinja2's ``defined`` test.
-For example::
-=======
 If a required variable has not been set, you can skip or fail using Jinja2's `defined` test. For example:
 
 .. code-block:: yaml
->>>>>>> clarify import vs include
 
     tasks:
         - shell: echo "I've got '{{ foo }}' and am not afraid to use it!"
@@ -203,7 +198,7 @@ As the examples show, you do not need to use `{{ }}` to use variables inside con
 Using conditionals in loops
 ---------------------------
 
-If you combine a ``when`` statement with a :ref:`loop <playbooks_loops>`, Ansible processes the `when` statement separately for each item. This is by design, so you can execute the task on some items in the loop and skip it on other items. For example:
+If you combine a ``when`` statement with a :ref:`loop <playbooks_loops>`, Ansible processes the condition separately for each item. This is by design, so you can execute the task on some items in the loop and skip it on other items. For example:
 
 .. code-block:: yaml
 
@@ -233,7 +228,7 @@ You can do the same thing when looping over a dict:
 Loading custom facts
 --------------------
 
-You can provide provide your own facts if you want, which is covered in :ref:`developing_modules`.  To run them, just make a call to your own custom fact gathering module at the top of your list of tasks, and variables returned there will be accessible to future tasks:
+You can provide your own facts, as described in :ref:`developing_modules`.  To run them, just make a call to your own custom fact gathering module at the top of your list of tasks, and variables returned there will be accessible to future tasks:
 
 .. code-block:: yaml
 
