@@ -295,20 +295,18 @@ use the default remote connection type::
 Interrupt execution on any error
 ````````````````````````````````
 
-With the ''any_errors_fatal'' option, any failure on any host in a multi-host play will be treated as fatal and Ansible will exit as soon as all hosts in the current batch have finished the fatal task. Subsequent tasks and plays will not be executed. You can recover from what would be a fatal error by adding a rescue section to the block.
+With the ''any_errors_fatal'' option, any failure on any host in a multi-host play is treated as fatal and Ansible exits as soon as all hosts in the current batch finish the fatal task. Subsequent tasks and plays are not executed. You can recover from fatal errors by adding a rescue section to the block.
 
 Sometimes ''serial'' execution is unsuitable; the number of hosts is unpredictable (because of dynamic inventory) and speed is crucial (simultaneous execution is required), but all tasks must be 100% successful to continue playbook execution.
 
-For example, consider a service located in many datacenters with some load balancers to pass traffic from users to the service. There is a deploy playbook to upgrade service deb-packages. The playbook has the stages:
+For example, if you run a service on machines in multiple data centers with load balancers to pass traffic from users to the service, your playbook to upgrade deb-packages would have four stages:
 
 - disable traffic on load balancers (must be turned off simultaneously)
 - gracefully stop the service
 - upgrade software (this step includes tests and starting the service)
 - enable traffic on the load balancers (which should be turned on simultaneously)
 
-The service can't be stopped with "alive" load balancers; they must be disabled first. Because of this, the second stage can't be played if any server failed in the first stage.
-
-For datacenter "A", the playbook can be written this way::
+The load balancers must be disabled before you stop the service. Because of this, you want your playbook to stop if any host fails in the first stage. For datacenter "A", the playbook can be written this way::
 
     ---
     - hosts: load_balancers_dc_a
@@ -332,7 +330,7 @@ For datacenter "A", the playbook can be written this way::
         - name: 'Starting datacenter [ A ]'
           command: /usr/bin/enable-dc
 
-In this example Ansible will start the software upgrade on the front ends only if all of the load balancers are successfully disabled.
+In this example Ansible starts the software upgrade on the front ends only if all of the load balancers are successfully disabled.
 
 .. seealso::
 
