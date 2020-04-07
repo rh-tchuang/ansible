@@ -3,17 +3,20 @@
 Delegation, rolling updates, and local actions
 ==============================================
 
-Because it was designed for multi-tier deployments from the beginning, Ansible is great at delegating tasks: doing things on one host on behalf of another, or doing local steps with reference to some remote hosts. You can use this capability to interact with load balancers or monitoring systems, set up a continuous deployment pipeline, or execute zero downtime rolling updates. Ansible also lets you tune the order in which things complete, and assign a batch window size for how many machines to process at once during a rolling update. For examples of these items in use, review `the ansible-examples repository <https://github.com/ansible/ansible-examples/>`_. There are quite a few examples of zero-downtime update procedures for different kinds of applications.
+Ansible has the flexibility to manage multi-tier deployments. You can control how many hosts you change at a time and how many hosts can fail before you abort a playbook. You can perform a task on one host on behalf of another, or do local steps with reference to some remote hosts. You can use Ansible to interact with load balancers or monitoring systems, set up a continuous deployment pipeline, or execute zero downtime rolling updates. Ansible also lets you tune the order in which things complete, and assign a batch window size for how many machines to process at once during a rolling update. For examples of these items in use, review `the ansible-examples repository <https://github.com/ansible/ansible-examples/>`_. There are quite a few examples of zero-downtime update procedures for different kinds of applications.
 
 .. contents::
    :local:
 
-Ansible has modules for interacting with most load-balancing and monitoring solutions. For example, the :ref:`ec2_elb<ec2_elb_module>`, :ref:`nagios<nagios_module>`, :ref:`bigip_pool<bigip_pool_module>`, and other :ref:`network_modules` dovetail neatly with the concepts mentioned here. You'll also want to read up on :ref:`playbooks_reuse_roles`, as the 'pre_task' and 'post_task' concepts are the places where you would typically call these modules.
+Controlling rolling updates
+---------------------------
+
+For zero-downtime rolling updates, you will likely interact with your load-balancing and monitoring solutions. Ansible has modules for many solutions, including :ref:`ec2_elb<ec2_elb_module>`, :ref:`nagios<nagios_module>`, :ref:`bigip_pool<bigip_pool_module>`, and other :ref:`network_modules`. In addition to the concepts covered here, read up on :ref:`playbooks_reuse_roles`, as the 'pre_task' and 'post_task' concepts are the places where you would typically call these modules.
 
 .. _rolling_update_batch_size:
 
 Setting the batch size with ``serial``
---------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 By default, Ansible runs in parallel against all the hosts in the :ref:`pattern <playbooks_patterns>` you set in the ``hosts:`` field of each play. For a rolling update, you only want to manage a few machines at a time. You can define how many hosts Ansible should manage at a single time using the ``serial`` keyword::
 
@@ -108,7 +111,7 @@ You can also mix and match the values::
 .. _maximum_failure_percentage:
 
 Setting a maximum failure percentage
-------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 By default, Ansible will continue executing actions as long as there are hosts that have not yet failed. The batch size for a play is determined by the ``serial`` parameter. In some situations, such as with the rolling updates described above, it may be desirable to abort the play when a certain threshold of failures have been reached. To achieve this, you can set a maximum failure percentage on a play as follows::
 
@@ -198,7 +201,7 @@ The `ansible_host` variable reflects the host a task is delegated to.
 .. _delegate_facts:
 
 Delegated facts
----------------
+^^^^^^^^^^^^^^^
 
 By default, any facts gathered by a delegated task are assigned to the `inventory_hostname` (the current host) instead of the host which actually produced the facts (the delegated to host). The directive `delegate_facts` may be set to `True` to assign the task's gathered facts to the delegated host instead of the current one::
 
