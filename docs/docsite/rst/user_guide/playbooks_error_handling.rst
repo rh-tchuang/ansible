@@ -27,10 +27,7 @@ Ignoring unreachable host errors
 
 .. versionadded:: 2.7
 
-You may ignore task failure due to the host instance being 'UNREACHABLE' with the ``ignore_unreachable`` keyword.
-Note that task errors are what's being ignored, not the unreachable host.
-
-Here's an example explaining the behavior for an unreachable host at the task level::
+You may ignore task failure due to the host instance being 'UNREACHABLE' with the ``ignore_unreachable`` keyword. Ansible ignores the task errors, but continues to execute future tasks against the unreachable host. For example, at the task level::
 
     - name: this executes, fails, and the failure is ignored
       command: /bin/true
@@ -218,14 +215,14 @@ In this example Ansible starts the software upgrade on the front ends only if al
 Setting a maximum failure percentage
 ------------------------------------
 
-By default, Ansible will continue executing actions as long as there are hosts that have not yet failed. In some situations, such as when executing a rolling update, you may want to abort the play when a certain threshold of failures has been reached. To achieve this, you can set a maximum failure percentage on a play as follows::
+By default, Ansible will continue executing actions as long as there are hosts that have not yet failed. In some situations, such as when executing a rolling update, you may want to abort the play when a certain threshold of failures has been reached. To achieve this, you can set a maximum failure percentage on a play::
 
     ---
     - hosts: webservers
       max_fail_percentage: 30
       serial: 10
 
-In the above example, if more than 3 of the 10 servers in the first (or any) group of servers failed, the rest of the play would be aborted.
+In this example, if more than 3 of the 10 servers in the first (or any) group of servers failed, the rest of the play would be aborted.
 
 .. note::
 

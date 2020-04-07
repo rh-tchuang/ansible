@@ -3,10 +3,15 @@
 Delegation and local actions
 ============================
 
-By default Ansible executes tasks on the remote machines that match the ``hosts`` line of your playbook. Some tasks always execute on the controller. These tasks, including ``include``, ``add_host``, and ``debug``, cannot be delegated. In most cases, however, you can perform a task on one host on behalf of another, or do local steps with reference to remote hosts.
+By default Ansible executes all tasks on the machines that match the ``hosts`` line of your playbook. If you want to run some tasks on a different machine, you can use delegation. For example, when updating webservers, you might want to retrieve information about your database servers. In this scenario, your play would target the webservers group and you would delegate the database tasks to your dbservers group. With delegation, you can perform a task on one host on behalf of another, or do local steps with reference to remote hosts.
 
 .. contents::
    :local:
+
+Tasks that cannot be delegated
+------------------------------
+
+Some tasks always execute on the controller. These tasks, including ``include``, ``add_host``, and ``debug``, cannot be delegated.
 
 .. _delegation:
 
@@ -80,7 +85,7 @@ The `ansible_host` variable reflects the host a task is delegated to.
 Delegating facts
 ----------------
 
-By default, any facts gathered by a delegated task are assigned to the `inventory_hostname` (the current host) instead of the host which actually produced the facts (the delegated to host). The directive `delegate_facts` may be set to `True` to assign the task's gathered facts to the delegated host instead of the current one::
+Delegating Ansible tasks is like delegating tasks in the real world - your groceries belong to you, even if someone else delivers them to your home. Similarly, any facts gathered by a delegated task are assigned by default to the `inventory_hostname` (the current host), not to the host which produced the facts (the delegated to host). To assign gathered facts to the delegated host instead of the current host, set `delegate_facts` to `True`::
 
     ---
     - hosts: app_servers
@@ -92,7 +97,7 @@ By default, any facts gathered by a delegated task are assigned to the `inventor
           delegate_facts: True
           loop: "{{groups['dbservers']}}"
 
-The above will gather facts for the machines in the dbservers group and assign the facts to those machines and not to app_servers. This way you can lookup `hostvars['dbhost1']['ansible_default_ipv4']['address']` even though dbservers were not part of the play, or left out by using `--limit`.
+This task gathers facts for the machines in the dbservers group and assigns the facts to those machines, even though the play targets the app_servers group. This way you can lookup `hostvars['dbhost1']['ansible_default_ipv4']['address']` even though dbservers were not part of the play, or left out by using `--limit`.
 
 .. _run_once:
 
@@ -118,9 +123,7 @@ Ansible executes this task on the first host in the current batch and applies al
         - command: /opt/application/upgrade_db.py
           when: inventory_hostname == webservers[0]
 
-But the results are applied to all the hosts.
-
-Like most tasks, this can be optionally paired with "delegate_to" to specify an individual host to execute on::
+However, with ``run_once``, the results are applied to all the hosts. To specify an individual host to execute on, delegate the task::
 
         - command: /opt/application/upgrade_db.py
           run_once: true
@@ -136,15 +139,14 @@ As always with delegation, the action will be executed on the delegated host, bu
     Any conditional (i.e `when:`) will use the variables of the 'first host' to decide if the task runs or not, no other hosts will be tested.
 
 .. note::
-    If you want to avoid the default behaviour of setting the fact for all hosts, set `delegate_facts: True` for the specific task or block.
+    If you want to avoid the default behavior of setting the fact for all hosts, set `delegate_facts: True` for the specific task or block.
 
 .. _local_playbooks:
 
-Local Playbooks
+Local playbooks
 ```````````````
 
-It may be useful to use a playbook locally, rather than by connecting over SSH.  This can be useful
-for assuring the configuration of a system by putting a playbook in a crontab.  This may also be used
+It may be useful to use a playbook locally on a remote host, rather than by connecting over SSH.  This can be useful for assuring the configuration of a system by putting a playbook in a crontab.  This may also be used
 to run a playbook inside an OS installer, such as an Anaconda kickstart.
 
 To run an entire playbook locally, just set the "hosts:" line to "hosts: 127.0.0.1" and then run the playbook like so::
