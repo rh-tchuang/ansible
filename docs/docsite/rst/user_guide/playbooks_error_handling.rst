@@ -162,7 +162,12 @@ The :ref:`command <command_module>` and :ref:`shell <shell_module>` modules care
 Aborting a play on all hosts
 ============================
 
-Sometimes you want a failure on a single host to abort the entire play on all hosts. If you set ``any_errors_fatal`` and a task returns an error, Ansible lets all hosts in the current batch finish the fatal task and then stops executing the play on all hosts. You can set ``any_errors_fatal`` at the play or block level::
+Sometimes you want a failure on a single host, or failures on a certain percentage of hosts, to abort the entire play on all hosts.
+
+Aborting on the first error: any_errors_fatal
+---------------------------------------------
+
+If you set ``any_errors_fatal`` and a task returns an error, Ansible lets all hosts in the current batch finish the fatal task and then stops executing the play on all hosts. You can set ``any_errors_fatal`` at the play or block level::
 
      - hosts: somehosts
        any_errors_fatal: true
@@ -176,6 +181,24 @@ Sometimes you want a failure on a single host to abort the entire play on all ho
            any_errors_fatal: true
 
 For finer-grained control, you can use ``max_fail_percentage`` to abort the run after a given percentage of hosts has failed.
+
+.. _maximum_failure_percentage:
+
+Setting a maximum failure percentage
+------------------------------------
+
+By default, Ansible will continue executing actions as long as there are hosts that have not yet failed. In some situations, such as when executing a rolling update, you may want to abort the play when a certain threshold of failures has been reached. To achieve this, you can set a maximum failure percentage on a play as follows::
+
+    ---
+    - hosts: webservers
+      max_fail_percentage: 30
+      serial: 10
+
+In the above example, if more than 3 of the 10 servers in the first (or any) group of servers failed, the rest of the play would be aborted.
+
+.. note::
+
+     The percentage set must be exceeded, not equaled. For example, if serial were set to 4 and you wanted the task to abort the play when 2 of the systems failed, set the max_fail_percentage at 49 rather than 50.
 
 Controlling errors in blocks
 ============================
