@@ -3,7 +3,7 @@
 Delegation and local actions
 ============================
 
-By default Ansible executes tasks on the remote machines that match the ``hosts`` line of your playbook. Some tasks always execute on the controller. These tasks, including ``include``, ``add_host``, and ``debug``, cannot be delegated. In most cases, however, you can perform a task on one host on behalf of another, or do local steps with reference to some remote hosts.
+By default Ansible executes tasks on the remote machines that match the ``hosts`` line of your playbook. Some tasks always execute on the controller. These tasks, including ``include``, ``add_host``, and ``debug``, cannot be delegated. In most cases, however, you can perform a task on one host on behalf of another, or do local steps with reference to remote hosts.
 
 .. contents::
    :local:
@@ -13,9 +13,7 @@ By default Ansible executes tasks on the remote machines that match the ``hosts`
 Delegating tasks
 ----------------
 
-If you want to perform a task on one host with reference to other hosts, use the 'delegate_to' keyword on a task. This is ideal for placing nodes in a load balanced pool, or removing them. It is also very useful for controlling outage windows.
-
-You can use delegation with the :ref:`serial <rolling_update_batch_size>` keyword to control the number of hosts executing at one time::
+If you want to perform a task on one host with reference to other hosts, use the 'delegate_to' keyword on a task. This is ideal for managing nodes in a load balanced pool or for controlling outage windows. You can use delegation with the :ref:`serial <rolling_update_batch_size>` keyword to control the number of hosts executing at one time::
 
     ---
     - hosts: webservers
@@ -101,8 +99,7 @@ The above will gather facts for the machines in the dbservers group and assign t
 Run once
 --------
 
-In some cases there may be a need to only run a task one time for a batch of hosts.
-This can be achieved by configuring "run_once" on a task::
+If you want a task to run only on the first host in your batch of hosts, set ``run_once`` to true on that task::
 
     ---
     # ...
@@ -116,9 +113,7 @@ This can be achieved by configuring "run_once" on a task::
 
         # ...
 
-This directive forces the task to attempt execution on the first host in the current batch and then applies all results and facts to all the hosts in the same batch.
-
-This approach is similar to applying a conditional to a task such as::
+Ansible executes this task on the first host in the current batch and applies all results and facts to all the hosts in the same batch. This approach is similar to applying a conditional to a task such as::
 
         - command: /opt/application/upgrade_db.py
           when: inventory_hostname == webservers[0]
@@ -134,8 +129,7 @@ Like most tasks, this can be optionally paired with "delegate_to" to specify an 
 As always with delegation, the action will be executed on the delegated host, but the information is still that of the original host in the task.
 
 .. note::
-     When used together with "serial", tasks marked as "run_once" will be run on one host in *each* serial batch.
-     If it's crucial that the task is run only once regardless of "serial" mode, use
+     When used together with "serial", tasks marked as "run_once" will be run on one host in *each* serial batch. If the task must run only once regardless of "serial" mode, use
      :code:`when: inventory_hostname == ansible_play_hosts_all[0]` construct.
 
 .. note::
@@ -169,49 +163,6 @@ use the default remote connection type::
     under {{ ansible_playbook_python }}. Be sure to set ansible_python_interpreter: "{{ ansible_playbook_python }}" in
     host_vars/localhost.yml, for example. You can avoid this issue by using ``local_action`` or ``delegate_to: localhost`` instead.
 
-
-
-.. _interrupt_execution_on_any_error:
-
-Interrupt execution on any error
-````````````````````````````````
-
-With the ''any_errors_fatal'' option, any failure on any host in a multi-host play is treated as fatal and Ansible exits as soon as all hosts in the current batch finish the fatal task. Subsequent tasks and plays are not executed. You can recover from fatal errors by adding a rescue section to the block.
-
-Sometimes ''serial'' execution is unsuitable; the number of hosts is unpredictable (because of dynamic inventory) and speed is crucial (simultaneous execution is required), but all tasks must be 100% successful to continue playbook execution.
-
-For example, if you run a service on machines in multiple data centers with load balancers to pass traffic from users to the service, your playbook to upgrade deb-packages would have four stages:
-
-- disable traffic on load balancers (must be turned off simultaneously)
-- gracefully stop the service
-- upgrade software (this step includes tests and starting the service)
-- enable traffic on the load balancers (which should be turned on simultaneously)
-
-The load balancers must be disabled before you stop the service. Because of this, you want your playbook to stop if any host fails in the first stage. For datacenter "A", the playbook can be written this way::
-
-    ---
-    - hosts: load_balancers_dc_a
-      any_errors_fatal: True
-
-      tasks:
-        - name: 'shutting down datacenter [ A ]'
-          command: /usr/bin/disable-dc
-
-    - hosts: frontends_dc_a
-
-      tasks:
-        - name: 'stopping service'
-          command: /usr/bin/stop-software
-        - name: 'updating software'
-          command: /usr/bin/upgrade-software
-
-    - hosts: load_balancers_dc_a
-
-      tasks:
-        - name: 'Starting datacenter [ A ]'
-          command: /usr/bin/enable-dc
-
-In this example Ansible starts the software upgrade on the front ends only if all of the load balancers are successfully disabled.
 
 .. seealso::
 

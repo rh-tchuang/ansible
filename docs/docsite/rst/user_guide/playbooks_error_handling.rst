@@ -167,7 +167,7 @@ Sometimes you want a failure on a single host, or failures on a certain percenta
 Aborting on the first error: any_errors_fatal
 ---------------------------------------------
 
-If you set ``any_errors_fatal`` and a task returns an error, Ansible lets all hosts in the current batch finish the fatal task and then stops executing the play on all hosts. You can set ``any_errors_fatal`` at the play or block level::
+If you set ``any_errors_fatal`` and a task returns an error, Ansible finishes the fatal task on all hosts in the current batch, then stops executing the play on all hosts. Subsequent tasks and plays are not executed. You can recover from fatal errors by adding a :ref:`rescue section <:ref:`block_error_handling`>` to the block. You can set ``any_errors_fatal`` at the play or block level::
 
      - hosts: somehosts
        any_errors_fatal: true
@@ -180,7 +180,38 @@ If you set ``any_errors_fatal`` and a task returns an error, Ansible lets all ho
              - include_tasks: mytasks.yml
            any_errors_fatal: true
 
-For finer-grained control, you can use ``max_fail_percentage`` to abort the run after a given percentage of hosts has failed.
+You can use this feature when all tasks must be 100% successful to continue playbook execution. For example, if you run a service on machines in multiple data centers with load balancers to pass traffic from users to the service, your playbook to upgrade deb-packages would have four stages:
+
+- disable traffic on load balancers (must be turned off simultaneously)
+- gracefully stop the service
+- upgrade software (this step includes tests and starting the service)
+- enable traffic on the load balancers (which should be turned on simultaneously)
+
+The load balancers must be disabled before you stop the service, so you want your playbook to stop if any host fails in the first stage. For datacenter "A", the playbook can be written this way::
+
+    ---
+    - hosts: load_balancers_dc_a
+      any_errors_fatal: True
+
+      tasks:
+        - name: 'shutting down datacenter [ A ]'
+          command: /usr/bin/disable-dc
+
+    - hosts: frontends_dc_a
+
+      tasks:
+        - name: 'stopping service'
+          command: /usr/bin/stop-software
+        - name: 'updating software'
+          command: /usr/bin/upgrade-software
+
+    - hosts: load_balancers_dc_a
+
+      tasks:
+        - name: 'Starting datacenter [ A ]'
+          command: /usr/bin/enable-dc
+
+In this example Ansible starts the software upgrade on the front ends only if all of the load balancers are successfully disabled. For finer-grained control, you can use ``max_fail_percentage`` to abort the run after a given percentage of hosts has failed.
 
 .. _maximum_failure_percentage:
 
