@@ -3,7 +3,7 @@
 Delegation and local actions
 ============================
 
-By default Ansible executes all tasks on the machines that match the ``hosts`` line of your playbook. If you want to run some tasks on a different machine, you can use delegation. For example, when updating webservers, you might want to retrieve information about your database servers. In this scenario, your play would target the webservers group and you would delegate the database tasks to your dbservers group. With delegation, you can perform a task on one host on behalf of another, or do local steps with reference to remote hosts.
+By default Ansible executes all tasks on the machines that match the ``hosts`` line of your playbook. If you want to run some tasks on a different machine, you can use delegation. For example, when updating webservers, you might want to retrieve information from your database servers. In this scenario, your play would target the webservers group and you would delegate the database tasks to your dbservers group. With delegation, you can perform a task on one host on behalf of another, or execute tasks locally on behalf of remote hosts.
 
 .. contents::
    :local:
