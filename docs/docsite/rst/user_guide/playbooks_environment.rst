@@ -5,7 +5,9 @@ Setting environment variables
 
 .. versionadded:: 1.1
 
-If you need to set an environment variable for an action on a remote host, use the ``environment`` keyword. With this keyword, you can set a proxy for a task that does http requests, set the required environment variables for language-specific version managers, and more. Variables set with ``environment:`` only affect the context of the specific play or task. They do not affect Ansible itself, Ansible configuration settings, or the execution of other plugins, including lookups, filters, and so on.
+You can use the ``environment`` keyword at the play, block, or task level to set an environment variable for an action on a remote host. With this keyword, you can set a proxy for a task that does http requests, set the required environment variables for language-specific version managers, and more.
+
+When you set an environment variable with ``environment:`` at the play or block level, it is available to all tasks within the play or block that are executed by the same user. Environment variables set with ``environment:`` do not affect Ansible itself, Ansible configuration settings, the environment for other users, or the execution of other plugins like lookups and filters. Environment variables set with ``environment:`` do not automatically become Ansible facts.
 
 .. contents::
    :local:
@@ -13,7 +15,7 @@ If you need to set an environment variable for an action on a remote host, use t
 Setting environment variables in a task
 ---------------------------------------
 
-You can set the proxy server directly at the task level::
+You can set environment variables directly at the task level::
 
     - hosts: all
       remote_user: root
@@ -45,7 +47,7 @@ You can re-use environment settings by defining them as variables in your play a
             state: present
           environment: "{{ proxy_env }}"
 
-You can define an environment hash in a group_vars file::
+You can store environment settings for re-use in multiple playbooks by defining them in a group_vars file::
 
     ---
     # file: group_vars/boston
@@ -109,7 +111,7 @@ Some language-specific version managers (such as rbenv and nvm) require you to s
         when: packagejson.stat.exists
 
 .. note::
-   ``ansible_env:`` is normally populated by fact gathering (M(gather_facts)), so the value of the variables depends on the remote_user or become_user Ansible used when gathering those facts. If you change remote_user/become_user you might end up using the wrong values for those variables.
+   This example uses ``ansible_env`` as part of the PATH. Basing variable on ``ansible_env`` can be risky. Ansible populates ``ansible_env`` values by fact gathering (M(gather_facts)), so the value of the variables depends on the remote_user or become_user Ansible used when gathering those facts. If you change remote_user/become_user the values in ``ansible-env`` may not be the ones you expect.
 
 You can also specify the environment at the task level::
 
