@@ -10,8 +10,7 @@ By default, Ansible runs each task on all hosts affected by a play before starti
 
 Selecting a strategy
 --------------------
-The default behavior described above is the :ref:`linear strategy<linear_strategy>`. Ansible offers other strategies, including the :ref:`debug strategy<debug_strategy>` (see also  :ref:`playbook_debugger`) and the :ref:`free strategy<free_strategy>`, which allows
-each host to run until the end of the play as fast as it can::
+The default behavior described above is the :ref:`linear strategy<linear_strategy>`. Ansible offers other strategies, including the :ref:`debug strategy<debug_strategy>` (see also  :ref:`playbook_debugger`) and the :ref:`free strategy<free_strategy>`, which allows each host to run until the end of the play as fast as it can::
 
     - hosts: all
       strategy: free
