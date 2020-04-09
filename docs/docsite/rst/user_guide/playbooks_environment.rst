@@ -5,9 +5,9 @@ Setting environment variables
 
 .. versionadded:: 1.1
 
-You can use the ``environment`` keyword at the play, block, or task level to set an environment variable for an action on a remote host. With this keyword, you can set a proxy for a task that does http requests, set the required environment variables for language-specific version managers, and more.
+You can use the ``environment`` keyword at the play, block, or task level to set an environment variable for an action on a remote host. With this keyword, you can enable using a proxy for a task that does http requests, set the required environment variables for language-specific version managers, and more.
 
-When you set an environment variable with ``environment:`` at the play or block level, it is available to all tasks within the play or block that are executed by the same user. Environment variables set with ``environment:`` do not affect Ansible itself, Ansible configuration settings, the environment for other users, or the execution of other plugins like lookups and filters. Environment variables set with ``environment:`` do not automatically become Ansible facts.
+When you set an environment variable with ``environment:`` at the play or block level, it is available only to tasks within the play or block that are executed by the same user. Environment variables set with ``environment:`` do not affect Ansible itself, Ansible configuration settings, the environment for other users, or the execution of other plugins like lookups and filters. Environment variables set with ``environment:`` do not automatically become Ansible facts, even when you set them at the play level. You must include an explicit ``gather_facts`` task in your playbook and set the ``environment`` keyword on that task to turn your environment variables into Ansible facts for the rest of your play.
 
 .. contents::
    :local:
