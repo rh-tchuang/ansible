@@ -273,6 +273,8 @@ If you use the debugger with the ``free`` strategy, Ansible will not queue or ex
 
 .. seealso::
 
+   :ref:`playbooks_start_and_step`
+       Running playbooks while debugging or testing
    :ref:`playbooks_intro`
        An introduction to playbooks
    `User Mailing List <https://groups.google.com/group/ansible-devel>`_
