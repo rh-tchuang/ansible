@@ -1,21 +1,21 @@
 .. _playbooks_environment:
 
-Setting environment variables
-=============================
+Setting the remote environment
+==============================
 
 .. versionadded:: 1.1
 
 You can use the ``environment`` keyword at the play, block, or task level to set an environment variable for an action on a remote host. With this keyword, you can enable using a proxy for a task that does http requests, set the required environment variables for language-specific version managers, and more.
 
-When you set an environment variable with ``environment:`` at the play or block level, it is available only to tasks within the play or block that are executed by the same user. Environment variables set with ``environment:`` do not affect Ansible itself, Ansible configuration settings, the environment for other users, or the execution of other plugins like lookups and filters. Environment variables set with ``environment:`` do not automatically become Ansible facts, even when you set them at the play level. You must include an explicit ``gather_facts`` task in your playbook and set the ``environment`` keyword on that task to turn your environment variables into Ansible facts for the rest of your play.
+When you set a value with ``environment:`` at the play or block level, it is available only to tasks within the play or block that are executed by the same user. The ``environment:`` keyword does not affect Ansible itself, Ansible configuration settings, the environment for other users, or the execution of other plugins like lookups and filters. Variables set with ``environment:`` do not automatically become Ansible facts, even when you set them at the play level. You must include an explicit ``gather_facts`` task in your playbook and set the ``environment`` keyword on that task to turn these values into Ansible facts.
 
 .. contents::
    :local:
 
-Setting environment variables in a task
----------------------------------------
+Setting the remote environment in a task
+----------------------------------------
 
-You can set environment variables directly at the task level::
+You can set the environment directly at the task level::
 
     - hosts: all
       remote_user: root
@@ -58,7 +58,7 @@ You can store environment settings for re-use in multiple playbooks by defining 
       http_proxy: http://proxy.bos.example.com:8080
       https_proxy: http://proxy.bos.example.com:8080
 
-You can set environment variables at the play level::
+You can set the remote environment at the play level::
 
     - hosts: testing
 
