@@ -4,27 +4,21 @@
 Using Variables
 ***************
 
+Ansible uses variables to manage differences and connections between systems. With Ansible, you can execute tasks and playbooks on multiple systems with a single command. However, not all systems are exactly alike; some require different configuration than others. In some cases, you may want to use the behavior or state of one system as configuration on other systems. For example, you might use the IP address of one system as a configuration value on another system. To use variables, you must place the variable in a task or play and set or retrieve variable values.
+
+You can reference variables in module arguments, in :ref:`conditional "when" statements <playbooks_conditionals>` and in :ref:`loops <playbooks_loops>`, and so on. The `ansible-examples github repository <https://github.com/ansible/ansible-examples>`_ contains many examples of referencing variables in Ansible.
+
+You must use standard YAML syntax for variable values. You can set variable values in your playbooks, in your :ref:`inventory <intro_inventory>`, in included files or roles, or at the command line. You can also retrieve values from your remote systems (Ansible facts), from external data sources (lookups), or from related APIs (``*_info`` modules).
+
 .. contents::
    :local:
-
-While automation exists to make it easier to make things repeatable, all systems are not exactly alike; some may require configuration that is slightly different from others. In some instances, the observed behavior or state of one system might influence how you configure other systems. For example, you might need to find out the IP address of a system and use it as a configuration value on another system.
-
-Ansible uses *variables* to help deal with differences between systems.
-
-To understand variables you'll also want to read :ref:`playbooks_conditionals` and :ref:`playbooks_loops`.
-Useful things like the **group_by** module
-and the ``when`` conditional can also be used with variables, and to help manage differences between systems.
-
-The `ansible-examples github repository <https://github.com/ansible/ansible-examples>`_ contains many examples of how variables are used in Ansible.
 
 .. _valid_variable_names:
 
 Creating valid variable names
 =============================
 
-Before you start using variables, it's important to know what are valid variable names.
-
-Variable names should be letters, numbers, and underscores.  Variables should always start with a letter.
+Not all strings are valid Ansible variable names. A variable name must start with a letter, and can only include letters, numbers, and underscores.
 
 ``foo_port`` is a great variable.  ``foo5`` is fine too.
 
@@ -32,62 +26,67 @@ Variable names should be letters, numbers, and underscores.  Variables should al
 
 `Python keywords <https://docs.python.org/3/reference/lexical_analysis.html#keywords>`_  such as ``async`` and ``lambda`` are not valid variable names and thus must be avoided.
 
-YAML also supports dictionaries which map keys to values.  For instance::
+Variable syntax
+===============
+
+Setting simple variable values
+------------------------------
+
+Ansible uses YAML syntax to define variable values. For example::
+
+  foo_port: 1495
+
+Setting variable values as key:value dictionaries
+-------------------------------------------------
+
+Ansible also accepts YAML dictionaries, which map keys to values.  For example::
 
   foo:
     field1: one
     field2: two
 
-You can then reference a specific field in the dictionary using either bracket
-notation or dot notation::
+When you define values in a dictionary, you can reference a specific field in the dictionary using either bracket notation or dot notation::
 
   foo['field1']
   foo.field1
 
-These will both reference the same value ("one").  However, if you choose to
-use dot notation be aware that some keys can cause problems because they
-collide with attributes and methods of python dictionaries.  You should use
-bracket notation instead of dot notation if you use keys which start and end
-with two underscores (Those are reserved for special meanings in python) or
-are any of the known public attributes:
+These will both reference the same value ("one"). Bracket notation always works. Dot notation can cause problems because some keys collide with attributes and methods of python dictionaries. Use bracket notation if you use keys which start and end with two underscores (which are reserved for special meanings in python) or are any of the known public attributes:
 
 ``add``, ``append``, ``as_integer_ratio``, ``bit_length``, ``capitalize``, ``center``, ``clear``, ``conjugate``, ``copy``, ``count``, ``decode``, ``denominator``, ``difference``, ``difference_update``, ``discard``, ``encode``, ``endswith``, ``expandtabs``, ``extend``, ``find``, ``format``, ``fromhex``, ``fromkeys``, ``get``, ``has_key``, ``hex``, ``imag``, ``index``, ``insert``, ``intersection``, ``intersection_update``, ``isalnum``, ``isalpha``, ``isdecimal``, ``isdigit``, ``isdisjoint``, ``is_integer``, ``islower``, ``isnumeric``, ``isspace``, ``issubset``, ``issuperset``, ``istitle``, ``isupper``, ``items``, ``iteritems``, ``iterkeys``, ``itervalues``, ``join``, ``keys``, ``ljust``, ``lower``, ``lstrip``, ``numerator``, ``partition``, ``pop``, ``popitem``, ``real``, ``remove``, ``replace``, ``reverse``, ``rfind``, ``rindex``, ``rjust``, ``rpartition``, ``rsplit``, ``rstrip``, ``setdefault``, ``sort``, ``split``, ``splitlines``, ``startswith``, ``strip``, ``swapcase``, ``symmetric_difference``, ``symmetric_difference_update``, ``title``, ``translate``, ``union``, ``update``, ``upper``, ``values``, ``viewitems``, ``viewkeys``, ``viewvalues``, ``zfill``.
 
 .. _variables_in_inventory:
 
-Defining variables in inventory
-===============================
+Setting variable values in inventory
+------------------------------------
 
-Often you'll want to set variables for an individual host, or for a group of hosts in your inventory. For instance, machines in Boston
-may all use 'boston.ntp.example.com' as an NTP server. The :ref:`intro_inventory` page has details on setting :ref:`host_variables` and :ref:`group_variables` in inventory.
+You can set a different variable value for each individual host, or set a single shared value for a group of hosts in your inventory. For example, if all machines in the ``[Boston]`` group use 'boston.ntp.example.com' as an NTP server, you can set that value as a group variable. The :ref:`intro_inventory` page has details on setting :ref:`host_variables` and :ref:`group_variables` in inventory.
 
 .. _playbook_variables:
 
-Defining variables in a playbook
-================================
+Setting variable values in a playbook
+-------------------------------------
 
-You can define variables directly in a playbook::
+You can define variable values directly in a playbook::
 
    - hosts: webservers
      vars:
        http_port: 80
 
-This can be nice as it's right there when you are reading the playbook.
+When you set variables in a playbook, they are visible to anyone who runs that playbook.
 
 .. _included_variables:
 
-Defining variables in included files and roles
-==============================================
+Setting variable values in included files and roles
+---------------------------------------------------
 
-As described in :ref:`playbooks_reuse_roles`, variables can also be included in the playbook via include files, which may or may
-not be part of an Ansible Role.  Usage of roles is preferred as it provides a nice organizational system.
+You can set variable As described in :ref:`playbooks_reuse_roles`, variables can also be included in the playbook via include files, which may or may not be part of an Ansible Role.  Usage of roles is preferred as it provides a nice organizational system.
 
 .. _about_jinja2:
 
-Using variables with Jinja2
-===========================
+Referencing variables: Jinja2
+=============================
 
-Once you've defined variables, you can use them in your playbooks using the Jinja2 templating system.  Here's a simple Jinja2 template::
+Once you have defined your variable values, you can reference the variables in playbooks using the Jinja2 templating system. For example::
 
     My amp goes to {{ max_amp_value }}
 
@@ -141,26 +140,25 @@ Do it like this and you'll be fine::
 
 .. _vars_and_facts:
 
-Variables discovered from systems: Facts
-========================================
+Retrieving variable values
+==========================
 
-There are other places where variables can come from, but these are a type of variable that are discovered, not set by the user.
+With Ansible you can retrieve or discover certain variable values, including information about your remote systems.
 
-Facts are information derived from speaking with your remote systems. You can find a complete set under the ``ansible_facts`` variable,
-most facts are also 'injected' as top level variables preserving the ``ansible_`` prefix, but some are dropped due to conflicts.
-This can be disabled via the :ref:`INJECT_FACTS_AS_VARS` setting.
+Ansible facts
+-------------
 
-An example of this might be the IP address of the remote host, or what the operating system is.
+Ansible facts are data related to your remote systems, including their operating systems, IP addresses, attached filesystems, and more. All Ansible facts are stored in the ``ansible_facts`` variable. Some are also available as top-level variables with the ``ansible_`` prefix. You can disable this behavior using the :ref:`INJECT_FACTS_AS_VARS` setting. You can use facts to group your inventory using the **group_by** module.
 
-To see what information is available, try the following in a play::
+To see all available facts, add this task to a play::
 
     - debug: var=ansible_facts
 
-To see the 'raw' information as gathered::
+To see the 'raw' information as gathered, run this command at the command line::
 
-    ansible hostname -m setup
+    ansible <hostname> -m setup
 
-This will return a large amount of variable data, which may look like this on Ansible 2.7:
+Facts include a large amount of variable data, which may look like this on Ansible 2.7:
 
 .. code-block:: json
 
@@ -620,11 +618,11 @@ This will return a large amount of variable data, which may look like this on An
         "module_setup": true
     }
 
-In the above the model of the first disk may be referenced in a template or playbook as::
+You can reference the model of the first disk in a template or playbook as::
 
     {{ ansible_facts['devices']['xvda']['model'] }}
 
-Similarly, the hostname as the system reports it is::
+To reference the system hostname::
 
     {{ ansible_facts['nodename'] }}
 
@@ -637,9 +635,7 @@ Facts can be also used to create dynamic groups of hosts that match particular c
 Disabling facts
 ---------------
 
-If you know you don't need any fact data about your hosts, and know everything about your systems centrally, you
-can turn off fact gathering.  This has advantages in scaling Ansible in push mode with very large numbers of
-systems, mainly, or if you are using Ansible on experimental platforms.   In any play, just do this::
+If you know know everything about your systems centrally, you can turn off fact gathering at the play level to improve scalability, especially in push mode with very large numbers of systems, or if you are using Ansible on experimental platforms. To disable fact gathering::
 
     - hosts: whatever
       gather_facts: no
@@ -731,20 +727,14 @@ structure::
 
 .. _fact_caching:
 
-Caching Facts
+Caching facts
 -------------
 
-.. versionadded:: 1.8
-
-As shown elsewhere in the docs, it is possible for one server to reference variables about another, like so::
+By default, Ansible uses the memory cache plugin, which stores facts in memory for the duration of the current playbook run. If you want to retain Ansible facts for repeated use, you can select a different cache plugin. See :ref:`<cache_plugins` for details. With cached facts, you can refer to facts from one system when configuring a second system, even if Ansible executes the current play on the second system first. For example::
 
     {{ hostvars['asdf.example.com']['ansible_facts']['os_family'] }}
 
-With "Fact Caching" disabled, in order to do this, Ansible must have already talked to 'asdf.example.com' in the
-current play, or another play up higher in the playbook.  This is the default configuration of ansible.
-
-To avoid this, Ansible 1.8 allows the ability to save facts between playbook runs, but this feature must be manually
-enabled.  Why might this be useful?
+For more information on fact caching, including how to enable iWith "Fact Caching" disabled, Ansible must have already talked to 'asdf.example.com' in the current play, or another play up higher in the playbook.
 
 With a very large infrastructure with thousands of hosts, fact caching could be configured to run nightly. Configuration of a small set of servers could run ad-hoc or periodically throughout the day. With fact caching enabled, it would
 not be necessary to "hit" all servers to reference variables and information about them.
@@ -753,39 +743,6 @@ With fact caching enabled, it is possible for machine in one group to reference 
 
 To benefit from cached facts, you will want to change the ``gathering`` setting to ``smart`` or ``explicit`` or set ``gather_facts`` to ``False`` in most plays.
 
-Currently, Ansible ships with two persistent cache plugins: redis and jsonfile.
-
-To configure fact caching using redis, enable it in ``ansible.cfg`` as follows::
-
-    [defaults]
-    gathering = smart
-    fact_caching = redis
-    fact_caching_timeout = 86400
-    # seconds
-
-To get redis up and running, perform the equivalent OS commands::
-
-    yum install redis
-    service redis start
-    pip install redis
-
-Note that the Python redis library should be installed from pip, the version packaged in EPEL is too old for use by Ansible.
-
-In current embodiments, this feature is in beta-level state and the Redis plugin does not support port or password configuration, this is expected to change in the near future.
-
-To configure fact caching using jsonfile, enable it in ``ansible.cfg`` as follows::
-
-    [defaults]
-    gathering = smart
-    fact_caching = jsonfile
-    fact_caching_connection = /path/to/cachedir
-    fact_caching_timeout = 86400
-    # seconds
-
-``fact_caching_connection`` is a local filesystem path to a writeable
-directory (ansible will attempt to create the directory if one does not exist).
-
-``fact_caching_timeout`` is the number of seconds to cache the recorded facts.
 
 .. _registered_variables:
 
@@ -909,10 +866,10 @@ And finally, ``ansible_check_mode`` (added in version 2.1), a boolean magic vari
 
 .. _variable_file_separation_details:
 
-Defining variables in files
-===========================
+Setting variable values in files
+--------------------------------
 
-It's a great idea to keep your playbooks under source control, but
+We recommend keeping your playbooks under source control. To keep sensitive variable values secret while sharing your playbooks with the world, you can set your variable values in separate files , but
 you may wish to make the playbook source public while keeping certain
 important variables private.  Similarly, sometimes you may just
 want to keep certain information in different files, away from
