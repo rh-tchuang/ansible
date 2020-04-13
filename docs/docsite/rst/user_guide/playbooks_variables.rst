@@ -4,11 +4,11 @@
 Using Variables
 ***************
 
-Ansible uses variables to manage differences and connections between systems. With Ansible, you can execute tasks and playbooks on multiple systems with a single command. However, not all systems are exactly alike; some require different configuration than others. In some cases, you may want to use the behavior or state of one system as configuration on other systems. For example, you might use the IP address of one system as a configuration value on another system. To use variables, you must place the variable in a task or play and set or retrieve variable values.
+Ansible uses variables to manage differences and connections between systems. With Ansible, you can execute tasks and playbooks on multiple systems with a single command. However, not all systems are exactly alike; some require different configuration than others. In some cases, you may want to use the behavior or state of one system as configuration on other systems. For example, you might use the IP address of one system as a configuration value on another system. To use variables, you must reference the variable in a task or play and set or retrieve variable values.
 
 You can reference variables in module arguments, in :ref:`conditional "when" statements <playbooks_conditionals>` and in :ref:`loops <playbooks_loops>`, and so on. The `ansible-examples github repository <https://github.com/ansible/ansible-examples>`_ contains many examples of referencing variables in Ansible.
 
-You must use standard YAML syntax for variable values. You can set variable values in your playbooks, in your :ref:`inventory <intro_inventory>`, in included files or roles, or at the command line. You can also retrieve values from your remote systems (Ansible facts), from external data sources (lookups), or from related APIs (``*_info`` modules).
+You must use standard YAML syntax for variable values. You can set variable values in your playbooks, in your :ref:`inventory <intro_inventory>`, in included files or roles, or at the command line. You can also retrieve values from your remote systems (Ansible facts), from external data sources (lookups), or from related APIs (``*_info`` modules). Finally, you can create variable values during a playbook run by registering the output of a task as a new variable.
 
 .. contents::
    :local:
@@ -29,21 +29,24 @@ Not all strings are valid Ansible variable names. A variable name must start wit
 Variable syntax
 ===============
 
-Setting simple variable values
-------------------------------
+Defining simple variable values
+-------------------------------
 
 Ansible uses YAML syntax to define variable values. For example::
 
   foo_port: 1495
 
-Setting variable values as key:value dictionaries
--------------------------------------------------
+Defining variable values as key:value dictionaries
+--------------------------------------------------
 
 Ansible also accepts YAML dictionaries, which map keys to values.  For example::
 
   foo:
     field1: one
     field2: two
+
+Referencing key:value dictionary variables
+------------------------------------------
 
 When you define values in a dictionary, you can reference a specific field in the dictionary using either bracket notation or dot notation::
 
@@ -53,6 +56,12 @@ When you define values in a dictionary, you can reference a specific field in th
 These will both reference the same value ("one"). Bracket notation always works. Dot notation can cause problems because some keys collide with attributes and methods of python dictionaries. Use bracket notation if you use keys which start and end with two underscores (which are reserved for special meanings in python) or are any of the known public attributes:
 
 ``add``, ``append``, ``as_integer_ratio``, ``bit_length``, ``capitalize``, ``center``, ``clear``, ``conjugate``, ``copy``, ``count``, ``decode``, ``denominator``, ``difference``, ``difference_update``, ``discard``, ``encode``, ``endswith``, ``expandtabs``, ``extend``, ``find``, ``format``, ``fromhex``, ``fromkeys``, ``get``, ``has_key``, ``hex``, ``imag``, ``index``, ``insert``, ``intersection``, ``intersection_update``, ``isalnum``, ``isalpha``, ``isdecimal``, ``isdigit``, ``isdisjoint``, ``is_integer``, ``islower``, ``isnumeric``, ``isspace``, ``issubset``, ``issuperset``, ``istitle``, ``isupper``, ``items``, ``iteritems``, ``iterkeys``, ``itervalues``, ``join``, ``keys``, ``ljust``, ``lower``, ``lstrip``, ``numerator``, ``partition``, ``pop``, ``popitem``, ``real``, ``remove``, ``replace``, ``reverse``, ``rfind``, ``rindex``, ``rjust``, ``rpartition``, ``rsplit``, ``rstrip``, ``setdefault``, ``sort``, ``split``, ``splitlines``, ``startswith``, ``strip``, ``swapcase``, ``symmetric_difference``, ``symmetric_difference_update``, ``title``, ``translate``, ``union``, ``update``, ``upper``, ``values``, ``viewitems``, ``viewkeys``, ``viewvalues``, ``zfill``.
+
+
+Setting variable values
+=======================
+
+You can set values for each variable in a variety of places, including in inventory, in playbooks, in re-usable files, in roles, and more. Ansible loads every possible value it finds, then chooses the value to apply based on :ref:`variable precedence rules <ansible_variable_precedence>`.
 
 .. _variables_in_inventory:
 
@@ -86,13 +95,14 @@ You can set variable As described in :ref:`playbooks_reuse_roles`, variables can
 Referencing variables: Jinja2
 =============================
 
+Reference syntax
+----------------
+
 Once you have defined your variable values, you can reference the variables in playbooks using the Jinja2 templating system. For example::
 
     My amp goes to {{ max_amp_value }}
 
-This expression provides the most basic form of variable substitution.
-
-You can use the same syntax in playbooks. For example::
+This expression provides the most basic form of variable substitution. You can use the same syntax in playbooks. For example::
 
     template: src=foo.cfg.j2 dest={{ remote_install_path }}/foo.cfg
 
@@ -101,10 +111,7 @@ Here the variable defines the location of a file, which can vary from one system
 Inside a template you automatically have access to all variables that are in scope for a host.  Actually
 it's more than that -- you can also read variables about other hosts.  We'll show how to do that in a bit.
 
-.. note:: ansible allows Jinja2 loops and conditionals in templates, but in playbooks, we do not use them.  Ansible
-   playbooks are pure machine-parseable YAML.  This is a rather important feature as it means it is possible to code-generate
-   pieces of files, or to have other ecosystem tools read Ansible files.  Not everyone will need this but it can unlock
-   possibilities.
+.. note:: ansible allows Jinja2 loops and conditionals in templates, but in playbooks, we do not use them.  Ansible playbooks are pure machine-parseable YAML.  This is a rather important feature as it means it is possible to code-generate pieces of files, or to have other ecosystem tools read Ansible files.  Not everyone will need this but it can unlock possibilities.
 
 .. seealso::
 
@@ -114,17 +121,16 @@ it's more than that -- you can also read variables about other hosts.  We'll sho
 .. _jinja2_filters:
 
 Transforming variables with Jinja2 filters
-==========================================
+------------------------------------------
 
 Jinja2 filters let you transform the value of a variable within a template expression. For example, the ``capitalize`` filter capitalizes any value passed to it; the ``to_yaml`` and ``to_json`` filters change the format of your variable values. Jinja2 includes many `built-in filters <http://jinja.pocoo.org/docs/templates/#builtin-filters>`_ and Ansible supplies :ref:`many more filters <playbooks_filters>`.
 
 .. _yaml_gotchas:
 
-Hey wait, a YAML gotcha
-=======================
+Quoting variables
+-----------------
 
-YAML syntax requires that if you start a value with ``{{ foo }}`` you quote the whole line, since it wants to be
-sure you aren't trying to start a YAML dictionary.  This is covered on the :ref:`yaml_syntax` documentation.
+YAML syntax requires that if you start a value with ``{{ foo }}`` you quote the whole line, since it wants to be sure you aren't trying to start a YAML dictionary.  This is covered on the :ref:`yaml_syntax` documentation.
 
 This won't work::
 
