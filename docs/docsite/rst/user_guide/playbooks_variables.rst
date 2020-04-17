@@ -24,12 +24,14 @@ Not all strings are valid Ansible variable names. A variable name must start wit
    :class: documentation-table
 
    ====================== ========================================
-    Valid variable names   Not valid variable names
+    Valid variable names   Not valid
    ====================== ========================================
-
    ``foo``                ``*foo``
+
    ``foo_port``           ``foo-port``, ``foo port``, ``foo.port``
+
    ``foo5``               ``5foo``, ``12``
+   ====================== ========================================
 
 Avoid `Python keywords <https://docs.python.org/3/reference/lexical_analysis.html#keywords>`_  such as ``async`` and ``lambda``. These are not valid variable names.
 
@@ -118,7 +120,9 @@ Here the variable defines the location of a file, which can vary from one system
 Inside a template you automatically have access to all variables that are in scope for a host.  Actually
 it's more than that -- you can also read variables about other hosts.  We'll show how to do that in a bit.
 
-.. note:: ansible allows Jinja2 loops and conditionals in templates, but in playbooks, we do not use them.  Ansible playbooks are pure machine-parseable YAML.  This is a rather important feature as it means it is possible to code-generate pieces of files, or to have other ecosystem tools read Ansible files.  Not everyone will need this but it can unlock possibilities.
+.. note::
+
+   Ansible allows Jinja2 loops and conditionals in templates but not in playbooks. Ansible playbooks are pure machine-parseable YAML. This is a rather important feature as it means it is possible to code-generate pieces of files, or to have other ecosystem tools read Ansible files.  Not everyone will need this but it can unlock possibilities.
 
 .. seealso::
 
@@ -153,10 +157,10 @@ Do it like this and you'll be fine::
 
 .. _vars_and_facts:
 
-Retrieving variable values
-==========================
+Remote variables: facts and magic variables
+===========================================
 
-With Ansible you can retrieve or discover certain variable values, including information about your remote systems.
+With Ansible you can retrieve or discover certain variables containing information about your remote systems. Variables related to remote systems are called facts. Variables related to Ansible inventory are called magic variables.
 
 Ansible facts
 -------------
@@ -720,30 +724,12 @@ Here is an example of what that might look like::
 
 In this pattern however, you could also write a fact module as well, and may wish to consider this as an option.
 
-.. _ansible_version:
-
-Ansible version
----------------
-
-.. versionadded:: 1.8
-
-To adapt playbook behavior to specific version of ansible, a variable ansible_version is available, with the following
-structure::
-
-    "ansible_version": {
-        "full": "2.0.0.2",
-        "major": 2,
-        "minor": 0,
-        "revision": 0,
-        "string": "2.0.0.2"
-    }
-
 .. _fact_caching:
 
 Caching facts
 -------------
 
-By default, Ansible uses the memory cache plugin, which stores facts in memory for the duration of the current playbook run. If you want to retain Ansible facts for repeated use, you can select a different cache plugin. See :ref:`<cache_plugins` for details. With cached facts, you can refer to facts from one system when configuring a second system, even if Ansible executes the current play on the second system first. For example::
+By default, Ansible uses the memory cache plugin, which stores facts in memory for the duration of the current playbook run. If you want to retain Ansible facts for repeated use, you can select a different cache plugin. See :ref:`cache_plugins` for details. With cached facts, you can refer to facts from one system when configuring a second system, even if Ansible executes the current play on the second system first. For example::
 
     {{ hostvars['asdf.example.com']['ansible_facts']['os_family'] }}
 
@@ -808,8 +794,8 @@ Similarly, this is how we access the first element of an array::
 
 .. _magic_variables_and_hostvars:
 
-Accessing information about other hosts with magic variables
-============================================================
+Information about Ansible itself: magic variables
+-------------------------------------------------
 
 Whether or not you define any variables, you can access information about your hosts with the :ref:`special_variables` Ansible provides, including "magic" variables, facts, and connection variables. Magic variable names are reserved - do not set variables with these names. The variable ``environment`` is also reserved.
 
@@ -877,10 +863,28 @@ We then have ``role_path`` which will return the current role's pathname (since 
 
 And finally, ``ansible_check_mode`` (added in version 2.1), a boolean magic variable which will be set to ``True`` if you run Ansible with ``--check``.
 
+.. _ansible_version:
+
+Ansible version
+---------------
+
+.. versionadded:: 1.8
+
+To adapt playbook behavior to specific version of ansible, a variable ansible_version is available, with the following
+structure::
+
+    "ansible_version": {
+        "full": "2.0.0.2",
+        "major": 2,
+        "minor": 0,
+        "revision": 0,
+        "string": "2.0.0.2"
+    }
+
 .. _variable_file_separation_details:
 
-Setting variable values in files
---------------------------------
+Setting variables in files
+--------------------------
 
 We recommend keeping your playbooks under source control. To keep sensitive variable values secret while sharing your playbooks with the world, you can set your variable values in separate files , but
 you may wish to make the playbook source public while keeping certain
