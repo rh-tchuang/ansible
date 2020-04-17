@@ -99,6 +99,47 @@ Setting variables in included files and roles
 
 You can set variables in re-usable variables files and/or in re-usable roles. See :ref:`playbooks_reuse_roles` for more details.
 
+.. _variable_file_separation_details:
+
+Setting secret variables in files
+---------------------------------
+
+We recommend keeping your playbooks under source control. To keep sensitive variable values secret while sharing your playbooks with the world, you can set your variable values in separate files , but
+you may wish to make the playbook source public while keeping certain
+important variables private.  Similarly, sometimes you may just
+want to keep certain information in different files, away from
+the main playbook.
+
+You can do this by using an external variables file, or files, just like this::
+
+    ---
+
+    - hosts: all
+      remote_user: root
+      vars:
+        favcolor: blue
+      vars_files:
+        - /vars/external_vars.yml
+
+      tasks:
+
+      - name: this is just a placeholder
+        command: /bin/echo foo
+
+This removes the risk of sharing sensitive data with others when
+sharing your playbook source with them.
+
+The contents of each variables file is a simple YAML dictionary, like this::
+
+    ---
+    # in the above example, this would be vars/external_vars.yml
+    somevar: somevalue
+    password: magic
+
+.. note::
+   It's also possible to keep per-host and per-group variables in very
+   similar files, this is covered in :ref:`splitting_out_vars`.
+
 .. _about_jinja2:
 
 Using variables: Jinja2
@@ -650,7 +691,7 @@ Facts can be also used to create dynamic groups of hosts that match particular c
 .. _disabling_facts:
 
 Disabling facts
----------------
+^^^^^^^^^^^^^^^
 
 If you know know everything about your systems centrally, you can turn off fact gathering at the play level to improve scalability, especially in push mode with very large numbers of systems, or if you are using Ansible on experimental platforms. To disable fact gathering::
 
@@ -660,7 +701,7 @@ If you know know everything about your systems centrally, you can turn off fact 
 .. _local_facts:
 
 Local facts (facts.d)
----------------------
+^^^^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 1.3
 
@@ -727,7 +768,7 @@ In this pattern however, you could also write a fact module as well, and may wis
 .. _fact_caching:
 
 Caching facts
--------------
+^^^^^^^^^^^^^
 
 By default, Ansible uses the memory cache plugin, which stores facts in memory for the duration of the current playbook run. If you want to retain Ansible facts for repeated use, you can select a different cache plugin. See :ref:`cache_plugins` for details. With cached facts, you can refer to facts from one system when configuring a second system, even if Ansible executes the current play on the second system first. For example::
 
@@ -741,56 +782,6 @@ not be necessary to "hit" all servers to reference variables and information abo
 With fact caching enabled, it is possible for machine in one group to reference variables about machines in the other group, despite the fact that they have not been communicated with in the current execution of /usr/bin/ansible-playbook.
 
 To benefit from cached facts, you will want to change the ``gathering`` setting to ``smart`` or ``explicit`` or set ``gather_facts`` to ``False`` in most plays.
-
-
-.. _registered_variables:
-
-Registering variables
-=====================
-
-Another major use of variables is running a command and registering the result of that command as a variable. When you execute a task and save the return value in a variable for use in later tasks, you create a registered variable. There are more examples of this in the
-:ref:`playbooks_conditionals` chapter.
-
-For example::
-
-   - hosts: web_servers
-
-     tasks:
-
-        - shell: /usr/bin/foo
-          register: foo_result
-          ignore_errors: True
-
-        - shell: /usr/bin/bar
-          when: foo_result.rc == 5
-
-Results will vary from module to module. Each module's documentation includes a ``RETURN`` section describing that module's return values. To see the values for a particular task, run your playbook with ``-v``.
-
-Registered variables are similar to facts, with a few key differences. Like facts, registered variables are host-level variables. However, registered variables are only stored in memory. (Ansible facts are backed by whatever cache plugin you have configured.) Registered variables are only valid on the host for the rest of the current playbook run. Finally, registered variables and facts have different :ref:`precedence levels <ansible_variable_precedence>`.
-
-When you register a variable in a task with a loop, the registered variable contains a value for each item in the loop. The data structure placed in the variable during the loop will contain a ``results`` attribute, that is a list of all responses from the module. For a more in-depth example of how this works, see the :ref:`playbooks_loops` section on using register with a loop.
-
-.. note:: If a task fails or is skipped, the variable still is registered with a failure or skipped status, the only way to avoid registering a variable is using tags.
-
-.. _accessing_complex_variable_data:
-
-Accessing complex variable data
-===============================
-
-We already described facts a little higher up in the documentation.
-
-Some provided facts, like networking information, are made available as nested data structures.  To access
-them a simple ``{{ foo }}`` is not sufficient, but it is still easy to do.   Here's how we get an IP address::
-
-    {{ ansible_facts["eth0"]["ipv4"]["address"] }}
-
-OR alternatively::
-
-    {{ ansible_facts.eth0.ipv4.address }}
-
-Similarly, this is how we access the first element of an array::
-
-    {{ foo[0] }}
 
 .. _magic_variables_and_hostvars:
 
@@ -881,46 +872,54 @@ structure::
         "string": "2.0.0.2"
     }
 
-.. _variable_file_separation_details:
+.. _registered_variables:
 
-Setting variables in files
---------------------------
+Registering variables
+=====================
 
-We recommend keeping your playbooks under source control. To keep sensitive variable values secret while sharing your playbooks with the world, you can set your variable values in separate files , but
-you may wish to make the playbook source public while keeping certain
-important variables private.  Similarly, sometimes you may just
-want to keep certain information in different files, away from
-the main playbook.
+Another major use of variables is running a command and registering the result of that command as a variable. When you execute a task and save the return value in a variable for use in later tasks, you create a registered variable. There are more examples of this in the
+:ref:`playbooks_conditionals` chapter.
 
-You can do this by using an external variables file, or files, just like this::
+For example::
 
-    ---
+   - hosts: web_servers
 
-    - hosts: all
-      remote_user: root
-      vars:
-        favcolor: blue
-      vars_files:
-        - /vars/external_vars.yml
+     tasks:
 
-      tasks:
+        - shell: /usr/bin/foo
+          register: foo_result
+          ignore_errors: True
 
-      - name: this is just a placeholder
-        command: /bin/echo foo
+        - shell: /usr/bin/bar
+          when: foo_result.rc == 5
 
-This removes the risk of sharing sensitive data with others when
-sharing your playbook source with them.
+Results will vary from module to module. Each module's documentation includes a ``RETURN`` section describing that module's return values. To see the values for a particular task, run your playbook with ``-v``.
 
-The contents of each variables file is a simple YAML dictionary, like this::
+Registered variables are similar to facts, with a few key differences. Like facts, registered variables are host-level variables. However, registered variables are only stored in memory. (Ansible facts are backed by whatever cache plugin you have configured.) Registered variables are only valid on the host for the rest of the current playbook run. Finally, registered variables and facts have different :ref:`precedence levels <ansible_variable_precedence>`.
 
-    ---
-    # in the above example, this would be vars/external_vars.yml
-    somevar: somevalue
-    password: magic
+When you register a variable in a task with a loop, the registered variable contains a value for each item in the loop. The data structure placed in the variable during the loop will contain a ``results`` attribute, that is a list of all responses from the module. For a more in-depth example of how this works, see the :ref:`playbooks_loops` section on using register with a loop.
 
-.. note::
-   It's also possible to keep per-host and per-group variables in very
-   similar files, this is covered in :ref:`splitting_out_vars`.
+.. note:: If a task fails or is skipped, the variable still is registered with a failure or skipped status, the only way to avoid registering a variable is using tags.
+
+.. _accessing_complex_variable_data:
+
+Accessing complex variable data
+===============================
+
+We already described facts a little higher up in the documentation.
+
+Some provided facts, like networking information, are made available as nested data structures.  To access
+them a simple ``{{ foo }}`` is not sufficient, but it is still easy to do.   Here's how we get an IP address::
+
+    {{ ansible_facts["eth0"]["ipv4"]["address"] }}
+
+OR alternatively::
+
+    {{ ansible_facts.eth0.ipv4.address }}
+
+Similarly, this is how we access the first element of an array::
+
+    {{ foo[0] }}
 
 .. _passing_variables_on_the_command_line:
 
