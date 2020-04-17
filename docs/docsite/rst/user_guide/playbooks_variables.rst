@@ -4,7 +4,7 @@
 Using Variables
 ***************
 
-Ansible uses variables to manage differences and connections between systems. With Ansible, you can execute tasks and playbooks on multiple systems with a single command. However, not all systems are exactly alike; some require different configuration than others. In some cases, you may want to use the behavior or state of one system as configuration on other systems. For example, you might use the IP address of one system as a configuration value on another system. Once you have created your variables, you can use them in a task or play.
+Ansible uses variables to manage differences and connections between systems. With Ansible, you can execute tasks and playbooks on multiple systems with a single command. However, not all systems are exactly alike; some require different configuration than others. In some cases, you may want to use the behavior or state of one system as configuration on other systems. For example, you might use the IP address of one system as a configuration value on another system. Once you have created, discovered, or registered your variables, you can use them in a task or play.
 
 You can use variables in module arguments, in :ref:`conditional "when" statements <playbooks_conditionals>` and in :ref:`loops <playbooks_loops>`, and so on. The `ansible-examples github repository <https://github.com/ansible/ansible-examples>`_ contains many examples of using variables in Ansible.
 
@@ -41,18 +41,44 @@ Variable syntax
 Defining simple variables
 -------------------------
 
-Ansible uses YAML syntax to define variables. For example::
+You can define a simple variable using YAML syntax. For example::
 
   foo_port: 1495
 
 Defining variables as key:value dictionaries
 --------------------------------------------
 
-Ansible also accepts YAML dictionaries, which map keys to values.  For example::
+You can define more complex variables using YAML dictionaries, which map keys to values.  For example::
 
   foo:
     field1: one
     field2: two
+
+.. _registered_variables:
+
+Registering variables
+---------------------
+
+You can create variables from the output of an Ansible task with the task keyword ``register``. You can use registered variables in any later tasks in your play. For example::
+
+   - hosts: web_servers
+
+     tasks:
+
+        - shell: /usr/bin/foo
+          register: foo_result
+          ignore_errors: True
+
+        - shell: /usr/bin/bar
+          when: foo_result.rc == 5
+
+See the :ref:`playbooks_conditionals` section for more examples. Results will vary from module to module. Each module's documentation includes a ``RETURN`` section describing that module's return values. To see the values for a particular task, run your playbook with ``-v``.
+
+Registered variables are similar to facts, with a few key differences. Like facts, registered variables are host-level variables. However, registered variables are only stored in memory. (Ansible facts are backed by whatever cache plugin you have configured.) Registered variables are only valid on the host for the rest of the current playbook run. Finally, registered variables and facts have different :ref:`precedence levels <ansible_variable_precedence>`.
+
+When you register a variable in a task with a loop, the registered variable contains a value for each item in the loop. The data structure placed in the variable during the loop will contain a ``results`` attribute, that is a list of all responses from the module. For a more in-depth example of how this works, see the :ref:`playbooks_loops` section on using register with a loop.
+
+.. note:: If a task fails or is skipped, the variable still is registered with a failure or skipped status, the only way to avoid registering a variable is using tags.
 
 .. _about_jinja2:
 
@@ -86,8 +112,8 @@ it's more than that -- you can also read variables about other hosts.  We'll sho
 
 .. _yaml_gotchas:
 
-Quoting variables
------------------
+When to quote variables
+-----------------------
 
 YAML syntax requires that if you start a value with ``{{ foo }}`` you quote the whole line, since it wants to be sure you aren't trying to start a YAML dictionary.  This is covered on the :ref:`yaml_syntax` documentation.
 
@@ -115,13 +141,6 @@ Both of these examples reference the same value ("one"). Bracket notation always
 
 ``add``, ``append``, ``as_integer_ratio``, ``bit_length``, ``capitalize``, ``center``, ``clear``, ``conjugate``, ``copy``, ``count``, ``decode``, ``denominator``, ``difference``, ``difference_update``, ``discard``, ``encode``, ``endswith``, ``expandtabs``, ``extend``, ``find``, ``format``, ``fromhex``, ``fromkeys``, ``get``, ``has_key``, ``hex``, ``imag``, ``index``, ``insert``, ``intersection``, ``intersection_update``, ``isalnum``, ``isalpha``, ``isdecimal``, ``isdigit``, ``isdisjoint``, ``is_integer``, ``islower``, ``isnumeric``, ``isspace``, ``issubset``, ``issuperset``, ``istitle``, ``isupper``, ``items``, ``iteritems``, ``iterkeys``, ``itervalues``, ``join``, ``keys``, ``ljust``, ``lower``, ``lstrip``, ``numerator``, ``partition``, ``pop``, ``popitem``, ``real``, ``remove``, ``replace``, ``reverse``, ``rfind``, ``rindex``, ``rjust``, ``rpartition``, ``rsplit``, ``rstrip``, ``setdefault``, ``sort``, ``split``, ``splitlines``, ``startswith``, ``strip``, ``swapcase``, ``symmetric_difference``, ``symmetric_difference_update``, ``title``, ``translate``, ``union``, ``update``, ``upper``, ``values``, ``viewitems``, ``viewkeys``, ``viewvalues``, ``zfill``.
 
-.. _jinja2_filters:
-
-Transforming variables with Jinja2 filters
-------------------------------------------
-
-Jinja2 filters let you transform the value of a variable within a template expression. For example, the ``capitalize`` filter capitalizes any value passed to it; the ``to_yaml`` and ``to_json`` filters change the format of your variable values. Jinja2 includes many `built-in filters <http://jinja.pocoo.org/docs/templates/#builtin-filters>`_ and Ansible supplies :ref:`many more filters <playbooks_filters>`.
-
 .. _accessing_complex_variable_data:
 
 Referencing complex variable data
@@ -138,6 +157,13 @@ Using the dot notation::
 To reference the first element of an array::
 
     {{ foo[0] }}
+
+.. _jinja2_filters:
+
+Transforming variables with Jinja2 filters
+------------------------------------------
+
+Jinja2 :ref:`filters <playbooks_filters>` let you transform the value of a variable within a template expression. For example, the ``capitalize`` filter capitalizes any value passed to it; the ``to_yaml`` and ``to_json`` filters change the format of your variable values. Jinja2 includes many `built-in filters <http://jinja.pocoo.org/docs/templates/#builtin-filters>`_ and Ansible supplies :ref:`many more filters <playbooks_filters>`.
 
 Where to set variables
 ======================
@@ -214,10 +240,10 @@ The contents of each variables file is a simple YAML dictionary, like this::
 
 .. _vars_and_facts:
 
-Remote variables: facts and magic variables
-===========================================
+Discoverable variables: facts and magic variables
+=================================================
 
-With Ansible you can retrieve or discover certain variables containing information about your remote systems. Variables related to remote systems are called facts. Variables related to Ansible inventory are called magic variables.
+With Ansible you can retrieve or discover certain variables containing information about your remote systems or about Ansible itself. Variables related to remote systems are called facts. Variables related to Ansible are called magic variables.
 
 Ansible facts
 -------------
@@ -887,35 +913,6 @@ structure::
         "revision": 0,
         "string": "2.0.0.2"
     }
-
-.. _registered_variables:
-
-Registering variables
-=====================
-
-Another major use of variables is running a command and registering the result of that command as a variable. When you execute a task and save the return value in a variable for use in later tasks, you create a registered variable. There are more examples of this in the
-:ref:`playbooks_conditionals` chapter.
-
-For example::
-
-   - hosts: web_servers
-
-     tasks:
-
-        - shell: /usr/bin/foo
-          register: foo_result
-          ignore_errors: True
-
-        - shell: /usr/bin/bar
-          when: foo_result.rc == 5
-
-Results will vary from module to module. Each module's documentation includes a ``RETURN`` section describing that module's return values. To see the values for a particular task, run your playbook with ``-v``.
-
-Registered variables are similar to facts, with a few key differences. Like facts, registered variables are host-level variables. However, registered variables are only stored in memory. (Ansible facts are backed by whatever cache plugin you have configured.) Registered variables are only valid on the host for the rest of the current playbook run. Finally, registered variables and facts have different :ref:`precedence levels <ansible_variable_precedence>`.
-
-When you register a variable in a task with a loop, the registered variable contains a value for each item in the loop. The data structure placed in the variable during the loop will contain a ``results`` attribute, that is a list of all responses from the module. For a more in-depth example of how this works, see the :ref:`playbooks_loops` section on using register with a loop.
-
-.. note:: If a task fails or is skipped, the variable still is registered with a failure or skipped status, the only way to avoid registering a variable is using tags.
 
 .. _passing_variables_on_the_command_line:
 
