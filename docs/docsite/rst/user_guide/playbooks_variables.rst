@@ -1070,13 +1070,9 @@ You can decide where to set a variable based on the scope you want that value to
 Examples of where to set a variable
 -----------------------------------
 
- Let's show some examples and where you would choose to put what based on the kind of control you might want over values.
+These examples will help you decide where to define a variable based on the kind of control you might want over values.
 
-First off, group variables are powerful.
-
-Site-wide defaults should be defined as a ``group_vars/all`` setting.  Group variables are generally placed alongside
-your inventory file.  They can also be returned by a dynamic inventory script (see :ref:`intro_dynamic_inventory`) or defined
-in things like :ref:`ansible_tower` from the UI or API::
+Group variables are powerful. Site-wide defaults should be defined as a ``group_vars/all`` setting.  Group variables are generally placed alongside your inventory file.  They can also be returned by a dynamic inventory script (see :ref:`intro_dynamic_inventory`) or defined in things like :ref:`ansible_tower` from the UI or API::
 
     ---
     # file: /etc/ansible/group_vars/all
@@ -1089,41 +1085,31 @@ Regional information might be defined in a ``group_vars/region`` variable.  If t
     # file: /etc/ansible/group_vars/boston
     ntp_server: boston-time.example.com
 
-If for some crazy reason we wanted to tell just a specific host to use a specific NTP server, it would then override the group variable!::
+If one host used a different NTP server, you could set that in a host_vars file, which would override the group variable::
 
     ---
     # file: /etc/ansible/host_vars/xyz.boston.example.com
     ntp_server: override.example.com
 
-So that covers inventory and what you would normally set there.  It's a great place for things that deal with geography or behavior.  Since groups are frequently the entity that maps roles onto hosts, it is sometimes a shortcut to set variables on the group instead of defining them on a role.  You could go either way.
+Setting variables in inventory helps you manage values that deal with geography or behavior.  Since groups are frequently the entity that maps roles onto hosts, it is sometimes a shortcut to set variables on the group instead of defining them on a role.  You could go either way.
 
 Remember:  Child groups override parent groups, and hosts always override their groups.
 
-Next up: learning about role variable precedence.
-
-We'll pretty much assume you are using roles at this point.  You should be using roles for sure.  Roles are great.  You are using
-roles aren't you?  Hint hint.
-
-If you are writing a redistributable role with reasonable defaults, put those in the ``roles/x/defaults/main.yml`` file.  This means
-the role will bring along a default value but ANYTHING in Ansible will override it.
-See :ref:`playbooks_reuse_roles` for more info about this::
+Setting default variables in roles helps you avoid undefined-variable errors. If you are writing a redistributable role with reasonable defaults, put those in the ``roles/x/defaults/main.yml`` file.  This means the role will bring along a default value but ANYTHING in Ansible will override it. See :ref:`playbooks_reuse_roles` for more info about this::
 
     ---
     # file: roles/x/defaults/main.yml
     # if not overridden in inventory or as a parameter, this is the value that will be used
     http_port: 80
 
-If you are writing a role and want to ensure the value in the role is absolutely used in that role, and is not going to be overridden
-by inventory, you should put it in ``roles/x/vars/main.yml`` like so, and inventory values cannot override it.  ``-e`` however, still will::
+If you are writing a role and want to ensure the value in the role is absolutely used in that role, and is not going to be overridden by inventory, put it in ``roles/x/vars/main.yml``. In this location, your variable will override inventory values. However, values set with ``-e`` will still override these::
 
     ---
     # file: roles/x/vars/main.yml
     # this will absolutely be used in this role
     http_port: 80
 
-This is one way to plug in constants about the role that are always true.  If you are not sharing your role with others,
-app specific behaviors like ports is fine to put in here.  But if you are sharing roles with others, putting variables in here might
-be bad. Nobody will be able to override them with inventory, but they still can by passing a parameter to the role.
+If you are not sharing your role with others, you can define app-specific behaviors like ports in the ``vars/main.yml`` file. But if you are sharing roles with others, putting variables in here might be bad. Nobody will be able to override them with inventory, but they still can by passing a parameter to the role.
 
 Parameterized roles are useful.
 
@@ -1134,9 +1120,7 @@ If you are using a role and want to override a default, pass it as a parameter t
          vars:
             http_port: 8080
 
-This makes it clear to the playbook reader that you've made a conscious choice to override some default in the role, or pass in some
-configuration that the role can't assume by itself.  It also allows you to pass something site-specific that isn't really part of the
-role you are sharing with others.
+This makes it clear to the playbook reader that you've made a conscious choice to override some default in the role, or pass in some configuration that the role can't assume by itself.  It also allows you to pass something site-specific that isn't really part of the role you are sharing with others.
 
 This can often be used for things that might apply to some hosts multiple times. For example::
 
@@ -1154,13 +1138,11 @@ This can often be used for things that might apply to some hosts multiple times.
          vars:
            myname: John
 
-In this example, the same role was invoked multiple times.  It's quite likely there was
-no default for ``myname`` supplied at all.  Ansible can warn you when variables aren't defined -- it's the default behavior in fact.
+In this example, the same role was invoked multiple times.  It's quite likely there was no default for ``myname`` supplied at all.  Ansible can warn you when variables aren't defined -- it's the default behavior in fact.
 
 There are a few other things that go on with roles.
 
-Generally speaking, variables set in one role are available to others.  This means if you have a ``roles/common/vars/main.yml`` you
-can set variables in there and make use of them in other roles and elsewhere in your playbook::
+Generally speaking, variables set in one role are available to others.  This means if you have a ``roles/common/vars/main.yml`` you can set variables in there and make use of them in other roles and elsewhere in your playbook::
 
      roles:
         - role: common_settings
@@ -1170,12 +1152,9 @@ can set variables in there and make use of them in other roles and elsewhere in 
         - role: something_else
 
 .. note:: There are some protections in place to avoid the need to namespace variables.
-          In the above, variables defined in common_settings are most definitely available to 'something' and 'something_else' tasks, but if
-          "something's" guaranteed to have foo set at 12, even if somewhere deep in common settings it set foo to 20.
+          In the above, variables defined in common_settings are most definitely available to 'something' and 'something_else' tasks, but if "something's" guaranteed to have foo set at 12, even if somewhere deep in common settings it set foo to 20.
 
-So, that's precedence, explained in a more direct way.  Don't worry about precedence, just think about if your role is defining a
-variable that is a default, or a "live" variable you definitely want to use.  Inventory lies in precedence right in the middle, and
-if you want to forcibly override something, use ``-e``.
+So, that's precedence, explained in a more direct way.  Don't worry about precedence, just think about if your role is defining a variable that is a default, or a "live" variable you definitely want to use.  Inventory lies in precedence right in the middle, and if you want to forcibly override something, use ``-e``.
 
 If you found that a little hard to understand, take a look at the `ansible-examples <https://github.com/ansible/ansible-examples>`_ repo on GitHub for a bit more about how all of these things can work together.
 
