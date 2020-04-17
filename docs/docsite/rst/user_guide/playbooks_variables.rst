@@ -18,22 +18,22 @@ You must use standard YAML syntax to create variables. You can create variables 
 Creating valid variable names
 =============================
 
-Not all strings are valid Ansible variable names. A variable name must start with a letter, and can only include letters, numbers, and underscores. For example:
+Not all strings are valid Ansible variable names. A variable name must start with a letter, and can only include letters, numbers, and underscores. `Python keywords`_ are not valid variable names.
 
 .. table::
    :class: documentation-table
 
-   ====================== ========================================
+   ====================== ====================================================================
     Valid variable names   Not valid
-   ====================== ========================================
-   ``foo``                ``*foo``
+   ====================== ====================================================================
+   ``foo``                ``*foo``, `Python keywords`_ such as ``async`` and ``lambda``
 
    ``foo_port``           ``foo-port``, ``foo port``, ``foo.port``
 
    ``foo5``               ``5foo``, ``12``
-   ====================== ========================================
+   ====================== ====================================================================
 
-Avoid `Python keywords <https://docs.python.org/3/reference/lexical_analysis.html#keywords>`_  such as ``async`` and ``lambda``. These are not valid variable names.
+.. _Python keywords: https://docs.python.org/3/reference/lexical_analysis.html#keywords
 
 Variable syntax
 ===============
