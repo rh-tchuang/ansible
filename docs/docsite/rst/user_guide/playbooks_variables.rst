@@ -122,6 +122,23 @@ Transforming variables with Jinja2 filters
 
 Jinja2 filters let you transform the value of a variable within a template expression. For example, the ``capitalize`` filter capitalizes any value passed to it; the ``to_yaml`` and ``to_json`` filters change the format of your variable values. Jinja2 includes many `built-in filters <http://jinja.pocoo.org/docs/templates/#builtin-filters>`_ and Ansible supplies :ref:`many more filters <playbooks_filters>`.
 
+.. _accessing_complex_variable_data:
+
+Referencing complex variable data
+---------------------------------
+
+Many registered variables and facts, like networking information, are made available as nested data structures.  To access them a simple ``{{ foo }}`` is not sufficient, but it is still easy to do. To reference an IP address from your facts using the bracket notation::
+
+    {{ ansible_facts["eth0"]["ipv4"]["address"] }}
+
+Using the dot notation::
+
+    {{ ansible_facts.eth0.ipv4.address }}
+
+To reference the first element of an array::
+
+    {{ foo[0] }}
+
 Where to set variables
 ======================
 
@@ -899,26 +916,6 @@ Registered variables are similar to facts, with a few key differences. Like fact
 When you register a variable in a task with a loop, the registered variable contains a value for each item in the loop. The data structure placed in the variable during the loop will contain a ``results`` attribute, that is a list of all responses from the module. For a more in-depth example of how this works, see the :ref:`playbooks_loops` section on using register with a loop.
 
 .. note:: If a task fails or is skipped, the variable still is registered with a failure or skipped status, the only way to avoid registering a variable is using tags.
-
-.. _accessing_complex_variable_data:
-
-Accessing complex variable data
-===============================
-
-We already described facts a little higher up in the documentation.
-
-Some provided facts, like networking information, are made available as nested data structures.  To access
-them a simple ``{{ foo }}`` is not sufficient, but it is still easy to do.   Here's how we get an IP address::
-
-    {{ ansible_facts["eth0"]["ipv4"]["address"] }}
-
-OR alternatively::
-
-    {{ ansible_facts.eth0.ipv4.address }}
-
-Similarly, this is how we access the first element of an array::
-
-    {{ foo[0] }}
 
 .. _passing_variables_on_the_command_line:
 
