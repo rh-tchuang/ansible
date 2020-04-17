@@ -54,10 +54,59 @@ Ansible also accepts YAML dictionaries, which map keys to values.  For example::
     field1: one
     field2: two
 
+.. _about_jinja2:
+
+Using variables: Jinja2
+=======================
+
+Referencing simple variables
+----------------------------
+
+Once you have defined your variables, you can use them in playbooks with the Jinja2 templating system. For example::
+
+    My amp goes to {{ max_amp_value }}
+
+This expression provides the most basic form of variable substitution. You can use the same syntax in playbooks. For example::
+
+    template: src=foo.cfg.j2 dest={{ remote_install_path }}/foo.cfg
+
+Here the variable defines the location of a file, which can vary from one system to another.
+
+Inside a template you automatically have access to all variables that are in scope for a host.  Actually
+it's more than that -- you can also read variables about other hosts.  We'll show how to do that in a bit.
+
+.. note::
+
+   Ansible allows Jinja2 loops and conditionals in templates but not in playbooks. Ansible playbooks are pure machine-parseable YAML. This is a rather important feature as it means it is possible to code-generate pieces of files, or to have other ecosystem tools read Ansible files.  Not everyone will need this but it can unlock possibilities.
+
+.. seealso::
+
+    :ref:`playbooks_templating`
+        More information about Jinja2 templating
+
+.. _yaml_gotchas:
+
+Quoting variables
+-----------------
+
+YAML syntax requires that if you start a value with ``{{ foo }}`` you quote the whole line, since it wants to be sure you aren't trying to start a YAML dictionary.  This is covered on the :ref:`yaml_syntax` documentation.
+
+This won't work::
+
+    - hosts: app_servers
+      vars:
+          app_path: {{ base_path }}/22
+
+Do it like this and you'll be fine::
+
+    - hosts: app_servers
+      vars:
+           app_path: "{{ base_path }}/22"
+
 Referencing key:value dictionary variables
 ------------------------------------------
 
-When you define variables in a dictionary, you can use individual, specific fields from that dictionary using either bracket notation or dot notation::
+When you use variables defined as a key:value dictionary, you can use individual, specific fields from that dictionary using either bracket notation or dot notation::
 
   foo['field1']
   foo.field1
@@ -66,6 +115,12 @@ Both of these examples reference the same value ("one"). Bracket notation always
 
 ``add``, ``append``, ``as_integer_ratio``, ``bit_length``, ``capitalize``, ``center``, ``clear``, ``conjugate``, ``copy``, ``count``, ``decode``, ``denominator``, ``difference``, ``difference_update``, ``discard``, ``encode``, ``endswith``, ``expandtabs``, ``extend``, ``find``, ``format``, ``fromhex``, ``fromkeys``, ``get``, ``has_key``, ``hex``, ``imag``, ``index``, ``insert``, ``intersection``, ``intersection_update``, ``isalnum``, ``isalpha``, ``isdecimal``, ``isdigit``, ``isdisjoint``, ``is_integer``, ``islower``, ``isnumeric``, ``isspace``, ``issubset``, ``issuperset``, ``istitle``, ``isupper``, ``items``, ``iteritems``, ``iterkeys``, ``itervalues``, ``join``, ``keys``, ``ljust``, ``lower``, ``lstrip``, ``numerator``, ``partition``, ``pop``, ``popitem``, ``real``, ``remove``, ``replace``, ``reverse``, ``rfind``, ``rindex``, ``rjust``, ``rpartition``, ``rsplit``, ``rstrip``, ``setdefault``, ``sort``, ``split``, ``splitlines``, ``startswith``, ``strip``, ``swapcase``, ``symmetric_difference``, ``symmetric_difference_update``, ``title``, ``translate``, ``union``, ``update``, ``upper``, ``values``, ``viewitems``, ``viewkeys``, ``viewvalues``, ``zfill``.
 
+.. _jinja2_filters:
+
+Transforming variables with Jinja2 filters
+------------------------------------------
+
+Jinja2 filters let you transform the value of a variable within a template expression. For example, the ``capitalize`` filter capitalizes any value passed to it; the ``to_yaml`` and ``to_json`` filters change the format of your variable values. Jinja2 includes many `built-in filters <http://jinja.pocoo.org/docs/templates/#builtin-filters>`_ and Ansible supplies :ref:`many more filters <playbooks_filters>`.
 
 Where to set variables
 ======================
@@ -139,62 +194,6 @@ The contents of each variables file is a simple YAML dictionary, like this::
 .. note::
    It's also possible to keep per-host and per-group variables in very
    similar files, this is covered in :ref:`splitting_out_vars`.
-
-.. _about_jinja2:
-
-Using variables: Jinja2
-=======================
-
-Reference syntax
-----------------
-
-Once you have defined your variables, you can use them in playbooks with the Jinja2 templating system. For example::
-
-    My amp goes to {{ max_amp_value }}
-
-This expression provides the most basic form of variable substitution. You can use the same syntax in playbooks. For example::
-
-    template: src=foo.cfg.j2 dest={{ remote_install_path }}/foo.cfg
-
-Here the variable defines the location of a file, which can vary from one system to another.
-
-Inside a template you automatically have access to all variables that are in scope for a host.  Actually
-it's more than that -- you can also read variables about other hosts.  We'll show how to do that in a bit.
-
-.. note::
-
-   Ansible allows Jinja2 loops and conditionals in templates but not in playbooks. Ansible playbooks are pure machine-parseable YAML. This is a rather important feature as it means it is possible to code-generate pieces of files, or to have other ecosystem tools read Ansible files.  Not everyone will need this but it can unlock possibilities.
-
-.. seealso::
-
-    :ref:`playbooks_templating`
-        More information about Jinja2 templating
-
-.. _jinja2_filters:
-
-Transforming variables with Jinja2 filters
-------------------------------------------
-
-Jinja2 filters let you transform the value of a variable within a template expression. For example, the ``capitalize`` filter capitalizes any value passed to it; the ``to_yaml`` and ``to_json`` filters change the format of your variable values. Jinja2 includes many `built-in filters <http://jinja.pocoo.org/docs/templates/#builtin-filters>`_ and Ansible supplies :ref:`many more filters <playbooks_filters>`.
-
-.. _yaml_gotchas:
-
-Quoting variables
------------------
-
-YAML syntax requires that if you start a value with ``{{ foo }}`` you quote the whole line, since it wants to be sure you aren't trying to start a YAML dictionary.  This is covered on the :ref:`yaml_syntax` documentation.
-
-This won't work::
-
-    - hosts: app_servers
-      vars:
-          app_path: {{ base_path }}/22
-
-Do it like this and you'll be fine::
-
-    - hosts: app_servers
-      vars:
-           app_path: "{{ base_path }}/22"
 
 .. _vars_and_facts:
 
