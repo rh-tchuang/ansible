@@ -4,11 +4,11 @@
 Using Variables
 ***************
 
-Ansible uses variables to manage differences and connections between systems. With Ansible, you can execute tasks and playbooks on multiple systems with a single command. However, not all systems are exactly alike; some require different configuration than others. In some cases, you may want to use the behavior or state of one system as configuration on other systems. For example, you might use the IP address of one system as a configuration value on another system. To use variables, you must reference the variable in a task or play and set or retrieve variable values.
+Ansible uses variables to manage differences and connections between systems. With Ansible, you can execute tasks and playbooks on multiple systems with a single command. However, not all systems are exactly alike; some require different configuration than others. In some cases, you may want to use the behavior or state of one system as configuration on other systems. For example, you might use the IP address of one system as a configuration value on another system. Once you have created your variables, you can use them in a task or play.
 
-You can reference variables in module arguments, in :ref:`conditional "when" statements <playbooks_conditionals>` and in :ref:`loops <playbooks_loops>`, and so on. The `ansible-examples github repository <https://github.com/ansible/ansible-examples>`_ contains many examples of referencing variables in Ansible.
+You can use variables in module arguments, in :ref:`conditional "when" statements <playbooks_conditionals>` and in :ref:`loops <playbooks_loops>`, and so on. The `ansible-examples github repository <https://github.com/ansible/ansible-examples>`_ contains many examples of using variables in Ansible.
 
-You must use standard YAML syntax for variable values. You can set variable values in your playbooks, in your :ref:`inventory <intro_inventory>`, in included files or roles, or at the command line. You can also retrieve values from your remote systems (Ansible facts), from external data sources (lookups), or from related APIs (``*_info`` modules). Finally, you can create variable values during a playbook run by registering the output of a task as a new variable.
+You must use standard YAML syntax to create variables. You can create variables in your playbooks, in your :ref:`inventory <intro_inventory>`, in included files or roles, or at the command line. You can also retrieve variables from your remote systems (Ansible facts), from external data sources (lookups), or from related APIs (``*_info`` modules). Finally, you can create variables during a playbook run by registering the output of a task as a new variable.
 
 .. contents::
    :local:
@@ -18,26 +18,33 @@ You must use standard YAML syntax for variable values. You can set variable valu
 Creating valid variable names
 =============================
 
-Not all strings are valid Ansible variable names. A variable name must start with a letter, and can only include letters, numbers, and underscores.
+Not all strings are valid Ansible variable names. A variable name must start with a letter, and can only include letters, numbers, and underscores. For example:
 
-``foo_port`` is a great variable.  ``foo5`` is fine too.
+.. table::
+   :class: documentation-table
 
-``foo-port``, ``foo port``, ``foo.port`` and ``12`` are not valid variable names.
+   ====================== ========================================
+    Valid variable names   Not valid variable names
+   ====================== ========================================
 
-`Python keywords <https://docs.python.org/3/reference/lexical_analysis.html#keywords>`_  such as ``async`` and ``lambda`` are not valid variable names and thus must be avoided.
+   ``foo``                ``*foo``
+   ``foo_port``           ``foo-port``, ``foo port``, ``foo.port``
+   ``foo5``               ``5foo``, ``12``
+
+Avoid `Python keywords <https://docs.python.org/3/reference/lexical_analysis.html#keywords>`_  such as ``async`` and ``lambda``. These are not valid variable names.
 
 Variable syntax
 ===============
 
-Defining simple variable values
--------------------------------
+Defining simple variables
+-------------------------
 
-Ansible uses YAML syntax to define variable values. For example::
+Ansible uses YAML syntax to define variables. For example::
 
   foo_port: 1495
 
-Defining variable values as key:value dictionaries
---------------------------------------------------
+Defining variables as key:value dictionaries
+--------------------------------------------
 
 Ansible also accepts YAML dictionaries, which map keys to values.  For example::
 
@@ -48,34 +55,34 @@ Ansible also accepts YAML dictionaries, which map keys to values.  For example::
 Referencing key:value dictionary variables
 ------------------------------------------
 
-When you define values in a dictionary, you can reference a specific field in the dictionary using either bracket notation or dot notation::
+When you define variables in a dictionary, you can use individual, specific fields from that dictionary using either bracket notation or dot notation::
 
   foo['field1']
   foo.field1
 
-These will both reference the same value ("one"). Bracket notation always works. Dot notation can cause problems because some keys collide with attributes and methods of python dictionaries. Use bracket notation if you use keys which start and end with two underscores (which are reserved for special meanings in python) or are any of the known public attributes:
+Both of these examples reference the same value ("one"). Bracket notation always works. Dot notation can cause problems because some keys collide with attributes and methods of python dictionaries. Use bracket notation if you use keys which start and end with two underscores (which are reserved for special meanings in python) or are any of the known public attributes:
 
 ``add``, ``append``, ``as_integer_ratio``, ``bit_length``, ``capitalize``, ``center``, ``clear``, ``conjugate``, ``copy``, ``count``, ``decode``, ``denominator``, ``difference``, ``difference_update``, ``discard``, ``encode``, ``endswith``, ``expandtabs``, ``extend``, ``find``, ``format``, ``fromhex``, ``fromkeys``, ``get``, ``has_key``, ``hex``, ``imag``, ``index``, ``insert``, ``intersection``, ``intersection_update``, ``isalnum``, ``isalpha``, ``isdecimal``, ``isdigit``, ``isdisjoint``, ``is_integer``, ``islower``, ``isnumeric``, ``isspace``, ``issubset``, ``issuperset``, ``istitle``, ``isupper``, ``items``, ``iteritems``, ``iterkeys``, ``itervalues``, ``join``, ``keys``, ``ljust``, ``lower``, ``lstrip``, ``numerator``, ``partition``, ``pop``, ``popitem``, ``real``, ``remove``, ``replace``, ``reverse``, ``rfind``, ``rindex``, ``rjust``, ``rpartition``, ``rsplit``, ``rstrip``, ``setdefault``, ``sort``, ``split``, ``splitlines``, ``startswith``, ``strip``, ``swapcase``, ``symmetric_difference``, ``symmetric_difference_update``, ``title``, ``translate``, ``union``, ``update``, ``upper``, ``values``, ``viewitems``, ``viewkeys``, ``viewvalues``, ``zfill``.
 
 
-Setting variable values
-=======================
+Where to set variables
+======================
 
-You can set values for each variable in a variety of places, including in inventory, in playbooks, in re-usable files, in roles, and more. Ansible loads every possible value it finds, then chooses the value to apply based on :ref:`variable precedence rules <ansible_variable_precedence>`.
+You can set variables in a variety of places, including in inventory, in playbooks, in re-usable files, in roles, and more. Ansible loads every possible variable it finds, then chooses the variable to apply based on :ref:`variable precedence rules <ansible_variable_precedence>`.
 
 .. _variables_in_inventory:
 
-Setting variable values in inventory
-------------------------------------
+Setting variables in inventory
+------------------------------
 
-You can set a different variable value for each individual host, or set a single shared value for a group of hosts in your inventory. For example, if all machines in the ``[Boston]`` group use 'boston.ntp.example.com' as an NTP server, you can set that value as a group variable. The :ref:`intro_inventory` page has details on setting :ref:`host_variables` and :ref:`group_variables` in inventory.
+You can set different variables for each individual host, or set shared variables for a group of hosts in your inventory. For example, if all machines in the ``[Boston]`` group use 'boston.ntp.example.com' as an NTP server, you can set a group variable. The :ref:`intro_inventory` page has details on setting :ref:`host_variables` and :ref:`group_variables` in inventory.
 
 .. _playbook_variables:
 
-Setting variable values in a playbook
--------------------------------------
+Setting variables in a playbook
+-------------------------------
 
-You can define variable values directly in a playbook::
+You can define variables directly in a playbook::
 
    - hosts: webservers
      vars:
@@ -85,20 +92,20 @@ When you set variables in a playbook, they are visible to anyone who runs that p
 
 .. _included_variables:
 
-Setting variable values in included files and roles
----------------------------------------------------
+Setting variables in included files and roles
+---------------------------------------------
 
-You can set variable As described in :ref:`playbooks_reuse_roles`, variables can also be included in the playbook via include files, which may or may not be part of an Ansible Role.  Usage of roles is preferred as it provides a nice organizational system.
+You can set variables in re-usable variables files and/or in re-usable roles. See :ref:`playbooks_reuse_roles` for more details.
 
 .. _about_jinja2:
 
-Referencing variables: Jinja2
-=============================
+Using variables: Jinja2
+=======================
 
 Reference syntax
 ----------------
 
-Once you have defined your variable values, you can reference the variables in playbooks using the Jinja2 templating system. For example::
+Once you have defined your variables, you can use them in playbooks with the Jinja2 templating system. For example::
 
     My amp goes to {{ max_amp_value }}
 
