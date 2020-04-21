@@ -115,15 +115,15 @@ it's more than that -- you can also read variables about other hosts.  We'll sho
 When to quote variables (a YAML gotcha)
 ---------------------------------------
 
-YAML syntax requires that if you start a value with ``{{ foo }}`` you quote the whole line, since it wants to be sure you aren't trying to start a YAML dictionary.  This is covered on the :ref:`yaml_syntax` documentation.
+If you start a value with ``{{ foo }}``, you must quote the whole line to create valid YAML syntax. If you do not quote the whole line, the YAML parser cannot interpret the syntax - it might be a variable or it might be the start of a YAML dictionary. This is covered on the :ref:`yaml_syntax` documentation.
 
-This won't work::
+If you use a variable without quotes like this::
 
     - hosts: app_servers
       vars:
           app_path: {{ base_path }}/22
 
-Do it like this and you'll be fine::
+You will see an error message: ``ERROR! Syntax Error while loading YAML.`` If you add quotes, Ansible works correctly::
 
     - hosts: app_servers
       vars:
@@ -739,18 +739,13 @@ In this pattern however, you could also write a fact module as well, and may wis
 Caching facts
 ^^^^^^^^^^^^^
 
-Like registered variables, facts are stored in memory by default. Howver, unlike registered variables, facts can be cached for repeated use. Ansible uses the memory cache plugin, which stores facts in memory for the duration of the current playbook run, by default. If you want to retain Ansible facts for repeated use, you can select a different cache plugin. See :ref:`cache_plugins` for details. With cached facts, you can refer to facts from one system when configuring a second system, even if Ansible executes the current play on the second system first. For example::
+Like registered variables, facts are stored in memory by default. However, unlike registered variables, facts can be gathered independently and cached for repeated use. With cached facts, you can refer to facts from one system when configuring a second system, even if Ansible executes the current play on the second system first. For example::
 
     {{ hostvars['asdf.example.com']['ansible_facts']['os_family'] }}
 
-For more information on fact caching, including how to enable iWith "Fact Caching" disabled, Ansible must have already talked to 'asdf.example.com' in the current play, or another play up higher in the playbook.
+Caching is controlled by the cache plugins. By default, Ansible uses the memory cache plugin, which stores facts in memory for the duration of the current playbook run. To retain Ansible facts for repeated use, select a different cache plugin. See :ref:`cache_plugins` for details.
 
-With a very large infrastructure with thousands of hosts, fact caching could be configured to run nightly. Configuration of a small set of servers could run ad-hoc or periodically throughout the day. With fact caching enabled, it would
-not be necessary to "hit" all servers to reference variables and information about them.
-
-With fact caching enabled, it is possible for machine in one group to reference variables about machines in the other group, despite the fact that they have not been communicated with in the current execution of /usr/bin/ansible-playbook.
-
-To benefit from cached facts, you will want to change the ``gathering`` setting to ``smart`` or ``explicit`` or set ``gather_facts`` to ``False`` in most plays.
+Fact caching can improve performance. If you manage thousands of hosts, you can configure fact caching to run nightly, then configure a smaller set of servers periodically throughout the day. With cached facts, you have access to variables and information about all hosts even when you were only managing a small number of servers.
 
 .. _magic_variables_and_hostvars:
 
