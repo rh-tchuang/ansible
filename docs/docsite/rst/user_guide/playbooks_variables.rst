@@ -743,14 +743,14 @@ Like registered variables, facts are stored in memory by default. However, unlik
 
 Caching is controlled by the cache plugins. By default, Ansible uses the memory cache plugin, which stores facts in memory for the duration of the current playbook run. To retain Ansible facts for repeated use, select a different cache plugin. See :ref:`cache_plugins` for details.
 
-Fact caching can improve performance. If you manage thousands of hosts, you can configure fact caching to run nightly, then configure a smaller set of servers periodically throughout the day. With cached facts, you have access to variables and information about all hosts even when you were only managing a small number of servers.
+Fact caching can improve performance. If you manage thousands of hosts, you can configure fact caching to run nightly, then manage configuration on a smaller set of servers periodically throughout the day. With cached facts, you have access to variables and information about all hosts even when you are only managing a small number of servers.
 
 .. _magic_variables_and_hostvars:
 
 Information about Ansible itself: magic variables
 -------------------------------------------------
 
-Whether or not you define any variables, you can access information about your hosts with the :ref:`special_variables` Ansible provides, including "magic" variables, facts, and connection variables. Magic variable names are reserved - do not set variables with these names. The variable ``environment`` is also reserved.
+You can access information about your hosts with the :ref:`special_variables` Ansible provides, including "magic" variables and connection variables. Magic variable names are reserved - do not set variables with these names. The variable ``environment`` is also reserved.
 
 The most commonly used magic variables are ``hostvars``, ``groups``, ``group_names``, and ``inventory_hostname``.
 
@@ -823,8 +823,7 @@ Ansible version
 
 .. versionadded:: 1.8
 
-To adapt playbook behavior to specific version of ansible, a variable ansible_version is available, with the following
-structure::
+To adapt playbook behavior to specific version of ansible, a variable ansible_version is available, with the following structure::
 
     "ansible_version": {
         "full": "2.0.0.2",
@@ -909,12 +908,10 @@ The contents of each variables file is a simple YAML dictionary, like this::
 
 .. _passing_variables_on_the_command_line:
 
-Setting variables at the command line
--------------------------------------
+Setting variables at runtime
+----------------------------
 
-In addition to ``vars_prompt`` and ``vars_files``, you can set variables at the
-command line using the ``--extra-vars`` (or ``-e``) argument.  Variables can be defined using
-a single quoted string (containing one or more variables) using one of the formats below
+You can set variables when you run your playbook, either by requesting user input with a ``vars_prompt`` or buy passing variables at the command line using the ``--extra-vars`` (or ``-e``) argument.  Variables can be defined using a single quoted string (containing one or more variables) using one of the formats below.
 
 key=value format::
 
