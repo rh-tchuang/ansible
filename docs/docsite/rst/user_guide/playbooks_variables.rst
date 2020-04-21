@@ -4,11 +4,11 @@
 Using Variables
 ***************
 
-Ansible uses variables to manage differences and connections between systems. With Ansible, you can execute tasks and playbooks on multiple systems with a single command. However, not all systems are exactly alike; some require different configuration than others. In some cases, you may want to use the behavior or state of one system as configuration on other systems. For example, you might use the IP address of one system as a configuration value on another system. Once you have created, discovered, or registered your variables, you can use them in a task or play.
-
-You can use variables in module arguments, in :ref:`conditional "when" statements <playbooks_conditionals>` and in :ref:`loops <playbooks_loops>`, and so on. The `ansible-examples github repository <https://github.com/ansible/ansible-examples>`_ contains many examples of using variables in Ansible.
+Ansible uses variables to manage differences and connections between systems. With Ansible, you can execute tasks and playbooks on multiple different systems with a single command. You can use the behavior or state of one system as configuration on other systems. For example, you can use the IP address of one system as a configuration value on another system. Once you have created, discovered, or registered your variables, you can use them in a task or play.
 
 You must use standard YAML syntax to create variables. You can create variables in your playbooks, in your :ref:`inventory <intro_inventory>`, in included files or roles, or at the command line. You can also retrieve variables from your remote systems (Ansible facts), from external data sources (lookups), or from related APIs (``*_info`` modules). Finally, you can create variables during a playbook run by registering the output of a task as a new variable.
+
+You can use the variables you created or discovered in module arguments, in :ref:`conditional "when" statements <playbooks_conditionals>` and in :ref:`loops <playbooks_loops>`, and so on. The `ansible-examples github repository <https://github.com/ansible/ansible-examples>`_ contains many examples of using variables in Ansible.
 
 .. contents::
    :local:
@@ -48,7 +48,7 @@ You can define a simple variable using YAML syntax. For example::
 Defining variables as key:value dictionaries
 --------------------------------------------
 
-You can define more complex variables using YAML dictionaries, which map keys to values.  For example::
+You can define more complex variables using YAML dictionaries. A YAML dictionary maps keys to values.  For example::
 
   foo:
     field1: one
@@ -74,9 +74,9 @@ You can create variables from the output of an Ansible task with the task keywor
 
 See the :ref:`playbooks_conditionals` section for more examples. Results will vary from module to module. Each module's documentation includes a ``RETURN`` section describing that module's return values. To see the values for a particular task, run your playbook with ``-v``.
 
-Registered variables are similar to facts, with a few key differences. Like facts, registered variables are host-level variables. However, registered variables are only stored in memory. (Ansible facts are backed by whatever cache plugin you have configured.) Registered variables are only valid on the host for the rest of the current playbook run. Finally, registered variables and facts have different :ref:`precedence levels <ansible_variable_precedence>`.
+Registered variables are stored in memory. You cannot cache registered variables for use in future plays. Registered variables are only valid on the host for the rest of the current playbook run.
 
-When you register a variable in a task with a loop, the registered variable contains a value for each item in the loop. The data structure placed in the variable during the loop will contain a ``results`` attribute, that is a list of all responses from the module. For a more in-depth example of how this works, see the :ref:`playbooks_loops` section on using register with a loop.
+Registered variables are host-level variables. When you register a variable in a task with a loop, the registered variable contains a value for each item in the loop. The data structure placed in the variable during the loop will contain a ``results`` attribute, that is a list of all responses from the module. For a more in-depth example of how this works, see the :ref:`playbooks_loops` section on using register with a loop.
 
 .. note:: If a task fails or is skipped, the variable still is registered with a failure or skipped status, the only way to avoid registering a variable is using tags.
 
@@ -112,8 +112,8 @@ it's more than that -- you can also read variables about other hosts.  We'll sho
 
 .. _yaml_gotchas:
 
-When to quote variables
------------------------
+When to quote variables (a YAML gotcha)
+---------------------------------------
 
 YAML syntax requires that if you start a value with ``{{ foo }}`` you quote the whole line, since it wants to be sure you aren't trying to start a YAML dictionary.  This is covered on the :ref:`yaml_syntax` documentation.
 
@@ -164,79 +164,6 @@ Transforming variables with Jinja2 filters
 ------------------------------------------
 
 Jinja2 :ref:`filters <playbooks_filters>` let you transform the value of a variable within a template expression. For example, the ``capitalize`` filter capitalizes any value passed to it; the ``to_yaml`` and ``to_json`` filters change the format of your variable values. Jinja2 includes many `built-in filters <http://jinja.pocoo.org/docs/templates/#builtin-filters>`_ and Ansible supplies :ref:`many more filters <playbooks_filters>`.
-
-Where to set variables
-======================
-
-You can set variables in a variety of places, including in inventory, in playbooks, in re-usable files, in roles, and more. Ansible loads every possible variable it finds, then chooses the variable to apply based on :ref:`variable precedence rules <ansible_variable_precedence>`.
-
-.. _variables_in_inventory:
-
-Setting variables in inventory
-------------------------------
-
-You can set different variables for each individual host, or set shared variables for a group of hosts in your inventory. For example, if all machines in the ``[Boston]`` group use 'boston.ntp.example.com' as an NTP server, you can set a group variable. The :ref:`intro_inventory` page has details on setting :ref:`host_variables` and :ref:`group_variables` in inventory.
-
-.. _playbook_variables:
-
-Setting variables in a playbook
--------------------------------
-
-You can define variables directly in a playbook::
-
-   - hosts: webservers
-     vars:
-       http_port: 80
-
-When you set variables in a playbook, they are visible to anyone who runs that playbook.
-
-.. _included_variables:
-
-Setting variables in included files and roles
----------------------------------------------
-
-You can set variables in re-usable variables files and/or in re-usable roles. See :ref:`playbooks_reuse_roles` for more details.
-
-.. _variable_file_separation_details:
-
-Setting secret variables in files
----------------------------------
-
-We recommend keeping your playbooks under source control. To keep sensitive variable values secret while sharing your playbooks with the world, you can set your variable values in separate files , but
-you may wish to make the playbook source public while keeping certain
-important variables private.  Similarly, sometimes you may just
-want to keep certain information in different files, away from
-the main playbook.
-
-You can do this by using an external variables file, or files, just like this::
-
-    ---
-
-    - hosts: all
-      remote_user: root
-      vars:
-        favcolor: blue
-      vars_files:
-        - /vars/external_vars.yml
-
-      tasks:
-
-      - name: this is just a placeholder
-        command: /bin/echo foo
-
-This removes the risk of sharing sensitive data with others when
-sharing your playbook source with them.
-
-The contents of each variables file is a simple YAML dictionary, like this::
-
-    ---
-    # in the above example, this would be vars/external_vars.yml
-    somevar: somevalue
-    password: magic
-
-.. note::
-   It's also possible to keep per-host and per-group variables in very
-   similar files, this is covered in :ref:`splitting_out_vars`.
 
 .. _vars_and_facts:
 
@@ -812,7 +739,7 @@ In this pattern however, you could also write a fact module as well, and may wis
 Caching facts
 ^^^^^^^^^^^^^
 
-By default, Ansible uses the memory cache plugin, which stores facts in memory for the duration of the current playbook run. If you want to retain Ansible facts for repeated use, you can select a different cache plugin. See :ref:`cache_plugins` for details. With cached facts, you can refer to facts from one system when configuring a second system, even if Ansible executes the current play on the second system first. For example::
+Like registered variables, facts are stored in memory by default. Howver, unlike registered variables, facts can be cached for repeated use. Ansible uses the memory cache plugin, which stores facts in memory for the duration of the current playbook run, by default. If you want to retain Ansible facts for repeated use, you can select a different cache plugin. See :ref:`cache_plugins` for details. With cached facts, you can refer to facts from one system when configuring a second system, even if Ansible executes the current play on the second system first. For example::
 
     {{ hostvars['asdf.example.com']['ansible_facts']['os_family'] }}
 
@@ -914,12 +841,85 @@ structure::
         "string": "2.0.0.2"
     }
 
+Where to set variables
+======================
+
+You can set variables in a variety of places, including in inventory, in playbooks, in re-usable files, in roles, and at the command line. Ansible loads every possible variable it finds, then chooses the variable to apply based on :ref:`variable precedence rules <ansible_variable_precedence>`.
+
+.. _variables_in_inventory:
+
+Setting variables in inventory
+------------------------------
+
+You can set different variables for each individual host, or set shared variables for a group of hosts in your inventory. For example, if all machines in the ``[Boston]`` group use 'boston.ntp.example.com' as an NTP server, you can set a group variable. The :ref:`intro_inventory` page has details on setting :ref:`host_variables` and :ref:`group_variables` in inventory.
+
+.. _playbook_variables:
+
+Setting variables in a playbook
+-------------------------------
+
+You can define variables directly in a playbook::
+
+   - hosts: webservers
+     vars:
+       http_port: 80
+
+When you set variables in a playbook, they are visible to anyone who runs that playbook.
+
+.. _included_variables:
+
+Setting variables in included files and roles
+---------------------------------------------
+
+You can set variables in re-usable variables files and/or in re-usable roles. See :ref:`playbooks_reuse_roles` for more details.
+
+.. _variable_file_separation_details:
+
+Setting secret variables in files
+---------------------------------
+
+We recommend keeping your playbooks under source control. To keep sensitive variable values secret while sharing your playbooks with the world, you can set your variable values in separate files , but
+you may wish to make the playbook source public while keeping certain
+important variables private.  Similarly, sometimes you may just
+want to keep certain information in different files, away from
+the main playbook.
+
+You can do this by using an external variables file, or files, just like this::
+
+    ---
+
+    - hosts: all
+      remote_user: root
+      vars:
+        favcolor: blue
+      vars_files:
+        - /vars/external_vars.yml
+
+      tasks:
+
+      - name: this is just a placeholder
+        command: /bin/echo foo
+
+This removes the risk of sharing sensitive data with others when
+sharing your playbook source with them.
+
+The contents of each variables file is a simple YAML dictionary, like this::
+
+    ---
+    # in the above example, this would be vars/external_vars.yml
+    somevar: somevalue
+    password: magic
+
+.. note::
+   It's also possible to keep per-host and per-group variables in very
+   similar files, this is covered in :ref:`splitting_out_vars`.
+
 .. _passing_variables_on_the_command_line:
 
-Passing variables on the command line
-=====================================
+Setting variables at the command line
+-------------------------------------
 
-In addition to ``vars_prompt`` and ``vars_files``, it is possible to set variables at the
+In addition to ``vars_prompt`` and ``vars_files``, you can set variables at the
 command line using the ``--extra-vars`` (or ``-e``) argument.  Variables can be defined using
 a single quoted string (containing one or more variables) using one of the formats below
 
