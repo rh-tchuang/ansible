@@ -175,15 +175,15 @@ With Ansible you can retrieve or discover certain variables containing informati
 Ansible facts
 -------------
 
-Ansible facts are data related to your remote systems, including their operating systems, IP addresses, attached filesystems, and more. All Ansible facts are stored in the ``ansible_facts`` variable. Some are also available as top-level variables with the ``ansible_`` prefix. You can disable this behavior using the :ref:`INJECT_FACTS_AS_VARS` setting. You can use facts to group your inventory using the **group_by** module.
-
-To see all available facts, add this task to a play::
+Ansible facts are data related to your remote systems, including operating systems, IP addresses, attached filesystems, and more. All Ansible facts are stored in the ``ansible_facts`` variable. To see all available facts, add this task to a play::
 
     - debug: var=ansible_facts
 
 To see the 'raw' information as gathered, run this command at the command line::
 
     ansible <hostname> -m setup
+
+By default, you can access some Ansible facts as top-level variables with the ``ansible_`` prefix. You can disable this behavior using the :ref:`INJECT_FACTS_AS_VARS` setting.
 
 Facts include a large amount of variable data, which may look like this on Ansible 2.7:
 
@@ -653,9 +653,7 @@ To reference the system hostname::
 
     {{ ansible_facts['nodename'] }}
 
-Facts are frequently used in conditionals (see :ref:`playbooks_conditionals`) and also in templates.
-
-Facts can be also used to create dynamic groups of hosts that match particular criteria, see the :ref:`modules` documentation on **group_by** for details, as well as in generalized conditional statements as discussed in the :ref:`playbooks_conditionals` chapter.
+You can use facts in conditionals (see :ref:`playbooks_conditionals`) and also in templates. You can also use facts to create dynamic groups of hosts that match particular criteria, see the :ref:`group_by module <group_by_module>` documentation for details.
 
 .. _disabling_facts:
 
