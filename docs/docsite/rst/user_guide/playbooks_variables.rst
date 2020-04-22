@@ -35,8 +35,8 @@ Not all strings are valid Ansible variable names. A variable name must start wit
 
 .. _Python keywords: https://docs.python.org/3/reference/lexical_analysis.html#keywords
 
-Variable syntax
-===============
+Simple variables
+================
 
 Defining simple variables
 -------------------------
@@ -44,6 +44,52 @@ Defining simple variables
 You can define a simple variable using YAML syntax. For example::
 
   foo_port: 1495
+
+Referencing simple variables
+----------------------------
+
+Once you have defined a variable, you can use it in playbooks with the Jinja2 templating system. For example::
+
+    My amp goes to {{ max_amp_value }}
+
+This expression provides the most basic form of variable substitution. You can use the same syntax in playbooks. For example::
+
+    template: src=foo.cfg.j2 dest={{ remote_install_path }}/foo.cfg
+
+Here the variable defines the location of a file, which can vary from one system to another.
+
+Inside a template you automatically have access to all variables that are in scope for a host, plus any registered variables, facts, and magic variables.
+
+.. note::
+
+   Ansible allows Jinja2 loops and conditionals in templates but not in playbooks. Ansible playbooks are pure machine-parseable YAML. This is a rather important feature as it means it is possible to code-generate pieces of files, or to have other ecosystem tools read Ansible files.  Not everyone will need this but it can unlock possibilities.
+
+.. seealso::
+
+    :ref:`playbooks_templating`
+        More information about Jinja2 templating
+
+.. _yaml_gotchas:
+
+When to quote variables (a YAML gotcha)
+=======================================
+
+If you start a value with ``{{ foo }}``, you must quote the whole line to create valid YAML syntax. If you do not quote the whole line, the YAML parser cannot interpret the syntax - it might be a variable or it might be the start of a YAML dictionary. See the :ref:`yaml_syntax` documentation for more guidance on writing YAML.
+
+If you use a variable without quotes like this::
+
+    - hosts: app_servers
+      vars:
+          app_path: {{ base_path }}/22
+
+You will see an error message: ``ERROR! Syntax Error while loading YAML.`` If you add quotes, Ansible works correctly::
+
+    - hosts: app_servers
+      vars:
+           app_path: "{{ base_path }}/22"
+
+Dictionary variables
+====================
 
 Defining variables as key:value dictionaries
 --------------------------------------------
@@ -54,10 +100,22 @@ You can define more complex variables using YAML dictionaries. A YAML dictionary
     field1: one
     field2: two
 
+Referencing key:value dictionary variables
+------------------------------------------
+
+When you use variables defined as a key:value dictionary, you can use individual, specific fields from that dictionary using either bracket notation or dot notation::
+
+  foo['field1']
+  foo.field1
+
+Both of these examples reference the same value ("one"). Bracket notation always works. Dot notation can cause problems because some keys collide with attributes and methods of python dictionaries. Use bracket notation if you use keys which start and end with two underscores (which are reserved for special meanings in python) or are any of the known public attributes:
+
+``add``, ``append``, ``as_integer_ratio``, ``bit_length``, ``capitalize``, ``center``, ``clear``, ``conjugate``, ``copy``, ``count``, ``decode``, ``denominator``, ``difference``, ``difference_update``, ``discard``, ``encode``, ``endswith``, ``expandtabs``, ``extend``, ``find``, ``format``, ``fromhex``, ``fromkeys``, ``get``, ``has_key``, ``hex``, ``imag``, ``index``, ``insert``, ``intersection``, ``intersection_update``, ``isalnum``, ``isalpha``, ``isdecimal``, ``isdigit``, ``isdisjoint``, ``is_integer``, ``islower``, ``isnumeric``, ``isspace``, ``issubset``, ``issuperset``, ``istitle``, ``isupper``, ``items``, ``iteritems``, ``iterkeys``, ``itervalues``, ``join``, ``keys``, ``ljust``, ``lower``, ``lstrip``, ``numerator``, ``partition``, ``pop``, ``popitem``, ``real``, ``remove``, ``replace``, ``reverse``, ``rfind``, ``rindex``, ``rjust``, ``rpartition``, ``rsplit``, ``rstrip``, ``setdefault``, ``sort``, ``split``, ``splitlines``, ``startswith``, ``strip``, ``swapcase``, ``symmetric_difference``, ``symmetric_difference_update``, ``title``, ``translate``, ``union``, ``update``, ``upper``, ``values``, ``viewitems``, ``viewkeys``, ``viewvalues``, ``zfill``.
+
 .. _registered_variables:
 
 Registering variables
----------------------
+=====================
 
 You can create variables from the output of an Ansible task with the task keyword ``register``. You can use registered variables in any later tasks in your play. For example::
 
@@ -72,98 +130,13 @@ You can create variables from the output of an Ansible task with the task keywor
         - shell: /usr/bin/bar
           when: foo_result.rc == 5
 
-See the :ref:`playbooks_conditionals` section for more examples. Results will vary from module to module. Each module's documentation includes a ``RETURN`` section describing that module's return values. To see the values for a particular task, run your playbook with ``-v``.
+See :ref:`playbooks_conditionals` for more examples. Results vary from module to module. Each module's documentation includes a ``RETURN`` section describing that module's return values. To see the values for a particular task, run your playbook with ``-v``.
 
 Registered variables are stored in memory. You cannot cache registered variables for use in future plays. Registered variables are only valid on the host for the rest of the current playbook run.
 
 Registered variables are host-level variables. When you register a variable in a task with a loop, the registered variable contains a value for each item in the loop. The data structure placed in the variable during the loop will contain a ``results`` attribute, that is a list of all responses from the module. For a more in-depth example of how this works, see the :ref:`playbooks_loops` section on using register with a loop.
 
-.. note:: If a task fails or is skipped, the variable still is registered with a failure or skipped status, the only way to avoid registering a variable is using tags.
-
-.. _about_jinja2:
-
-Using variables: Jinja2
-=======================
-
-Referencing simple variables
-----------------------------
-
-Once you have defined your variables, you can use them in playbooks with the Jinja2 templating system. For example::
-
-    My amp goes to {{ max_amp_value }}
-
-This expression provides the most basic form of variable substitution. You can use the same syntax in playbooks. For example::
-
-    template: src=foo.cfg.j2 dest={{ remote_install_path }}/foo.cfg
-
-Here the variable defines the location of a file, which can vary from one system to another.
-
-Inside a template you automatically have access to all variables that are in scope for a host.  Actually
-it's more than that -- you can also read variables about other hosts.  We'll show how to do that in a bit.
-
-.. note::
-
-   Ansible allows Jinja2 loops and conditionals in templates but not in playbooks. Ansible playbooks are pure machine-parseable YAML. This is a rather important feature as it means it is possible to code-generate pieces of files, or to have other ecosystem tools read Ansible files.  Not everyone will need this but it can unlock possibilities.
-
-.. seealso::
-
-    :ref:`playbooks_templating`
-        More information about Jinja2 templating
-
-.. _yaml_gotchas:
-
-When to quote variables (a YAML gotcha)
----------------------------------------
-
-If you start a value with ``{{ foo }}``, you must quote the whole line to create valid YAML syntax. If you do not quote the whole line, the YAML parser cannot interpret the syntax - it might be a variable or it might be the start of a YAML dictionary. This is covered on the :ref:`yaml_syntax` documentation.
-
-If you use a variable without quotes like this::
-
-    - hosts: app_servers
-      vars:
-          app_path: {{ base_path }}/22
-
-You will see an error message: ``ERROR! Syntax Error while loading YAML.`` If you add quotes, Ansible works correctly::
-
-    - hosts: app_servers
-      vars:
-           app_path: "{{ base_path }}/22"
-
-Referencing key:value dictionary variables
-------------------------------------------
-
-When you use variables defined as a key:value dictionary, you can use individual, specific fields from that dictionary using either bracket notation or dot notation::
-
-  foo['field1']
-  foo.field1
-
-Both of these examples reference the same value ("one"). Bracket notation always works. Dot notation can cause problems because some keys collide with attributes and methods of python dictionaries. Use bracket notation if you use keys which start and end with two underscores (which are reserved for special meanings in python) or are any of the known public attributes:
-
-``add``, ``append``, ``as_integer_ratio``, ``bit_length``, ``capitalize``, ``center``, ``clear``, ``conjugate``, ``copy``, ``count``, ``decode``, ``denominator``, ``difference``, ``difference_update``, ``discard``, ``encode``, ``endswith``, ``expandtabs``, ``extend``, ``find``, ``format``, ``fromhex``, ``fromkeys``, ``get``, ``has_key``, ``hex``, ``imag``, ``index``, ``insert``, ``intersection``, ``intersection_update``, ``isalnum``, ``isalpha``, ``isdecimal``, ``isdigit``, ``isdisjoint``, ``is_integer``, ``islower``, ``isnumeric``, ``isspace``, ``issubset``, ``issuperset``, ``istitle``, ``isupper``, ``items``, ``iteritems``, ``iterkeys``, ``itervalues``, ``join``, ``keys``, ``ljust``, ``lower``, ``lstrip``, ``numerator``, ``partition``, ``pop``, ``popitem``, ``real``, ``remove``, ``replace``, ``reverse``, ``rfind``, ``rindex``, ``rjust``, ``rpartition``, ``rsplit``, ``rstrip``, ``setdefault``, ``sort``, ``split``, ``splitlines``, ``startswith``, ``strip``, ``swapcase``, ``symmetric_difference``, ``symmetric_difference_update``, ``title``, ``translate``, ``union``, ``update``, ``upper``, ``values``, ``viewitems``, ``viewkeys``, ``viewvalues``, ``zfill``.
-
-.. _accessing_complex_variable_data:
-
-Referencing complex variable data
----------------------------------
-
-Many registered variables and facts, like networking information, are made available as nested data structures.  To access them a simple ``{{ foo }}`` is not sufficient, but it is still easy to do. To reference an IP address from your facts using the bracket notation::
-
-    {{ ansible_facts["eth0"]["ipv4"]["address"] }}
-
-Using the dot notation::
-
-    {{ ansible_facts.eth0.ipv4.address }}
-
-To reference the first element of an array::
-
-    {{ foo[0] }}
-
-.. _jinja2_filters:
-
-Transforming variables with Jinja2 filters
-------------------------------------------
-
-Jinja2 :ref:`filters <playbooks_filters>` let you transform the value of a variable within a template expression. For example, the ``capitalize`` filter capitalizes any value passed to it; the ``to_yaml`` and ``to_json`` filters change the format of your variable values. Jinja2 includes many `built-in filters <http://jinja.pocoo.org/docs/templates/#builtin-filters>`_ and Ansible supplies :ref:`many more filters <playbooks_filters>`.
+.. note:: If a task fails or is skipped, Ansible still registers a variable with a failure or skipped status. The only way to avoid registering a variable is to skip the task using :ref:`tags`.
 
 .. _vars_and_facts:
 
@@ -832,6 +805,32 @@ To adapt playbook behavior to specific version of ansible, a variable ansible_ve
         "revision": 0,
         "string": "2.0.0.2"
     }
+
+.. _accessing_complex_variable_data:
+
+Referencing nested variables
+============================
+
+Ansible provides many registered variables and facts as nested data structures. You cannot access values from these nested data structures with the simple ``{{ foo }}`` syntax. You must use either bracket notation or dot notation. To reference an IP address from your facts using the bracket notation::
+
+    {{ ansible_facts["eth0"]["ipv4"]["address"] }}
+
+Using the dot notation::
+
+    {{ ansible_facts.eth0.ipv4.address }}
+
+To reference the first element of an array::
+
+    {{ foo[0] }}
+
+.. _about_jinja2:
+.. _jinja2_filters:
+
+Transforming variables with Jinja2 filters
+------------------------------------------
+
+Jinja2 :ref:`filters <playbooks_filters>` let you transform the value of a variable within a template expression. For example, the ``capitalize`` filter capitalizes any value passed to it; the ``to_yaml`` and ``to_json`` filters change the format of your variable values. Jinja2 includes many `built-in filters <http://jinja.pocoo.org/docs/templates/#builtin-filters>`_ and Ansible supplies :ref:`many more filters <playbooks_filters>`.
+
 
 Where to set variables
 ======================
