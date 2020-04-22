@@ -38,6 +38,8 @@ Not all strings are valid Ansible variable names. A variable name must start wit
 Simple variables
 ================
 
+Simple variables are very easy to define and use. See :ref:`setting_variables` for information on the many places you can use this syntax to set variables.
+
 Defining simple variables
 -------------------------
 
@@ -48,11 +50,11 @@ You can define a simple variable using YAML syntax. For example::
 Referencing simple variables
 ----------------------------
 
-Once you have defined a variable, you can use it in playbooks with the Jinja2 templating system. For example::
+Once you have defined a variable, you can reference it with the Jinja2 templating system. For example::
 
     My amp goes to {{ max_amp_value }}
 
-This expression provides the most basic form of variable substitution. You can use the same syntax in playbooks. For example::
+This expression provides the most basic form of variable substitution. You can use this syntax in playbooks. For example::
 
     template: src=foo.cfg.j2 dest={{ remote_install_path }}/foo.cfg
 
@@ -74,7 +76,7 @@ Inside a template you automatically have access to all variables that are in sco
 When to quote variables (a YAML gotcha)
 =======================================
 
-If you start a value with ``{{ foo }}``, you must quote the whole line to create valid YAML syntax. If you do not quote the whole line, the YAML parser cannot interpret the syntax - it might be a variable or it might be the start of a YAML dictionary. See the :ref:`yaml_syntax` documentation for more guidance on writing YAML.
+If you start a value with ``{{ foo }}``, you must quote the whole expression to create valid YAML syntax. If you do not quote the whole expression, the YAML parser cannot interpret the syntax - it might be a variable or it might be the start of a YAML dictionary. See the :ref:`yaml_syntax` documentation for more guidance on writing YAML.
 
 If you use a variable without quotes like this::
 
@@ -136,7 +138,7 @@ Registered variables are stored in memory. You cannot cache registered variables
 
 Registered variables are host-level variables. When you register a variable in a task with a loop, the registered variable contains a value for each item in the loop. The data structure placed in the variable during the loop will contain a ``results`` attribute, that is a list of all responses from the module. For a more in-depth example of how this works, see the :ref:`playbooks_loops` section on using register with a loop.
 
-.. note:: If a task fails or is skipped, Ansible still registers a variable with a failure or skipped status. The only way to avoid registering a variable is to skip the task using :ref:`tags`.
+.. note:: If a task fails or is skipped, Ansible still registers a variable with a failure or skipped status, unless the task is skipped based on tags. See :ref:`tags` for information on adding and using tags.
 
 .. _vars_and_facts:
 
@@ -640,22 +642,14 @@ If you know know everything about your systems centrally, you can turn off fact 
 
 .. _local_facts:
 
-Local facts (facts.d)
-^^^^^^^^^^^^^^^^^^^^^
+Adding facts: facts.d or local facts
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 1.3
 
-As discussed in the playbooks chapter, Ansible facts are a way of getting data about remote systems for use in playbook variables.
+The setup module in Ansible automatically discovers a standard set of facts about each host. If you want to add custom values to your facts, you can write a custom facts module, or you can provide custom facts using the facts.d directory. You can add static facts by adding static files to facts.d, or add dynamic facts by adding executable scripts to facts.d. For example, you can add a list of all users on a host to your facts using facts.d.
 
-Usually these are discovered automatically by the ``setup`` module in Ansible. Users can also write custom facts modules, as described in the API guide. However, what if you want to have a simple way to provide system or user provided data for use in Ansible variables, without writing a fact module?
-
-"Facts.d" is one mechanism for users to control some aspect of how their systems are managed.
-
-.. note:: Perhaps "local facts" is a bit of a misnomer, it means "locally supplied user values" as opposed to "centrally supplied user values", or what facts are -- "locally dynamically determined values".
-
-If a remotely managed system has an ``/etc/ansible/facts.d`` directory, any files in this directory
-ending in ``.fact``, can be JSON, INI, or executable files returning JSON, and these can supply local facts in Ansible.
-An alternate directory can be specified using the ``fact_path`` play keyword.
+To use facts.d, create an ``/etc/ansible/facts.d`` directory on the remote host or hosts. If you prefer a different directory, create it and specify it using the ``fact_path`` play keyword. Add files to the directory to supply your custom facts. All file names must end with ``.fact``. The files can be JSON, INI, or executable files returning JSON.
 
 For example, assume ``/etc/ansible/facts.d/preferences.fact`` contains::
 
@@ -679,7 +673,7 @@ And you will see the following fact added::
             }
      }
 
-And this data can be accessed in a ``template/playbook`` as::
+You can access this data in a template or playbook as::
 
      {{ ansible_local['preferences']['general']['asdf'] }}
 
@@ -690,16 +684,17 @@ The local namespace prevents any user supplied fact from overriding system facts
 .. _ConfigParser: https://docs.python.org/2/library/configparser.html
 .. _optionxform: https://docs.python.org/2/library/configparser.html#ConfigParser.RawConfigParser.optionxform
 
-If you have a playbook that is copying over a custom fact and then running it, making an explicit call to re-run the setup module
-can allow that fact to be used during that particular play.  Otherwise, it will be available in the next play that gathers fact information.
-Here is an example of what that might look like::
+By default, fact gathering runs once at the beginning of a play. If you create a custom fact in facts.d in a playbook, it will be available in the next play that gathers facts. If you want to use it in the same play where you created it, you must explicitly re-run the setup module. For example::
 
   - hosts: webservers
     tasks:
+
       - name: create directory for ansible custom facts
         file: state=directory recurse=yes path=/etc/ansible/facts.d
+
       - name: install custom ipmi fact
         copy: src=ipmi.fact dest=/etc/ansible/facts.d
+
       - name: re-read facts after adding custom fact
         setup: filter=ansible_local
 
@@ -831,6 +826,7 @@ Transforming variables with Jinja2 filters
 
 Jinja2 :ref:`filters <playbooks_filters>` let you transform the value of a variable within a template expression. For example, the ``capitalize`` filter capitalizes any value passed to it; the ``to_yaml`` and ``to_json`` filters change the format of your variable values. Jinja2 includes many `built-in filters <http://jinja.pocoo.org/docs/templates/#builtin-filters>`_ and Ansible supplies :ref:`many more filters <playbooks_filters>`.
 
+.. _setting_variables:
 
 Where to set variables
 ======================
