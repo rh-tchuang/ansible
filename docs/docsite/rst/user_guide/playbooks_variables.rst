@@ -167,7 +167,7 @@ Registered variables are host-level variables. When you register a variable in a
 Referencing nested variables
 ============================
 
-Ansible provides many registered variables and facts as nested YAML or JSON data structures. You cannot access values from these nested data structures with the simple ``{{ foo }}`` syntax. You must use either bracket notation or dot notation. For example, to reference an IP address from your facts using the bracket notation::
+Many registered variables (and :ref:`facts <vars_and_facts>`) are nested YAML or JSON data structures. You cannot access values from these nested data structures with the simple ``{{ foo }}`` syntax. You must use either bracket notation or dot notation. For example, to reference an IP address from your facts using the bracket notation::
 
     {{ ansible_facts["eth0"]["ipv4"]["address"] }}
 
@@ -215,24 +215,14 @@ You can define variables directly in a playbook::
 When you set variables in a playbook, they are visible to anyone who runs that playbook.
 
 .. _included_variables:
+.. _variable_file_separation_details:
 
 Setting variables in included files and roles
 ---------------------------------------------
 
 You can set variables in re-usable variables files and/or in re-usable roles. See :ref:`playbooks_reuse_roles` for more details.
 
-.. _variable_file_separation_details:
-
-Setting secret variables in files
----------------------------------
-
-We recommend keeping your playbooks under source control. To keep sensitive variable values secret while sharing your playbooks with the world, you can set your variable values in separate files , but
-you may wish to make the playbook source public while keeping certain
-important variables private.  Similarly, sometimes you may just
-want to keep certain information in different files, away from
-the main playbook.
-
-You can do this by using an external variables file, or files, just like this::
+Setting variables in included variables files lets you separate sensitive variables from playbooks, so you can keep your playbooks under source control and even share them without exposing passwords or other private information. You can do this by using an external variables file, or files, just like this::
 
     ---
 
@@ -248,9 +238,6 @@ You can do this by using an external variables file, or files, just like this::
       - name: this is just a placeholder
         command: /bin/echo foo
 
-This removes the risk of sharing sensitive data with others when
-sharing your playbook source with them.
-
 The contents of each variables file is a simple YAML dictionary, like this::
 
     ---
@@ -259,8 +246,7 @@ The contents of each variables file is a simple YAML dictionary, like this::
     password: magic
 
 .. note::
-   It's also possible to keep per-host and per-group variables in very
-   similar files, this is covered in :ref:`splitting_out_vars`.
+   You can keep per-host and per-group variables in similar files, see :ref:`splitting_out_vars`.
 
 .. _passing_variables_on_the_command_line:
 
@@ -304,9 +290,9 @@ Variable precedence: Where should I put a variable?
 
 You can set multiple variables with the same name in many different places. When you do this, Ansible chooses which variable to use based on variable precedence. In other words, the different variables will override each other in a certain order.
 
-We prefer to define each variable in one place. Figure out where to define a variable, and keep it simple. If you set guidelines for your team on which variables are defined where, you may avoid variable precedence concerns.
+Teams and projects that agree on guidelines for defining variables (where to define certain types of variables) usually avoid variable precedence concerns. We prefer to define each variable in one place: figure out where to define a variable, and keep it simple. However, this is not always possible.
 
-However, variable precedence does exist, and you might have a use for it. Here is the order of precedence from least to greatest (the last listed variables winning prioritization):
+Variable precedence does exist, and you might have a use for it. Here is the order of precedence from least to greatest (the last listed variables winning prioritization):
 
   #. command line values (for example, ``-u my_user``, different from extra vars)
   #. role defaults (defined in role/defaults/main.yml) [1]_
@@ -364,18 +350,15 @@ For plays/tasks this is also true for ``remote_user``. Assuming the same invento
 
 will have the value of ``remote_user`` overwritten by ``ansible_user`` in the inventory.
 
-This is done so host-specific settings can override the general settings. These variables are normally defined per host or group in inventory,
-but they behave like other variables.
+This is done so host-specific settings can override the general settings. These variables are normally defined per host or group in inventory, but they behave like other variables.
 
-If you want to override the remote user globally (even over inventory) you can use extra vars. For instance, if you run::
+If you want to override the remote user globally (even over inventory), use extra vars. For instance, if you run::
 
     ansible... -e "ansible_user=maria" -u lola
 
 the ``lola`` value is still ignored, but ``ansible_user=maria`` takes precedence over all other places where ``ansible_user`` (or ``remote_user``) might be set.
 
-A connection-specific version of a variable takes precedence over more generic
-versions.  For example, ``ansible_ssh_user`` specified as a group_var would have
-a higher precedence than ``ansible_user`` specified as a host_var.
+A connection-specific version of a variable takes precedence over more generic versions.  For example, ``ansible_ssh_user`` specified as a group_var would have a higher precedence than ``ansible_user`` specified as a host_var.
 
 You can also override as a normal variable in a play::
 
