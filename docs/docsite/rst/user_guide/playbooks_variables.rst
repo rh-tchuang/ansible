@@ -38,14 +38,14 @@ Not all strings are valid Ansible variable names. A variable name must start wit
 Simple variables
 ================
 
-Simple variables are very easy to define and use. See :ref:`setting_variables` for information on the many places you can use this syntax to set variables.
+Simple variables combine a variable name with a single value. You can use this syntax (and the list and dictionary syntax shown below) in a variety of places. See :ref:`setting_variables` for information on where to set variables.
 
 Defining simple variables
 -------------------------
 
 You can define a simple variable using YAML syntax. For example::
 
-  foo_port: 1495
+  remote_install_path: /opt/my_app_config
 
 Referencing simple variables
 ----------------------------
@@ -58,7 +58,7 @@ This expression provides the most basic form of variable substitution. You can u
 
     template: src=foo.cfg.j2 dest={{ remote_install_path }}/foo.cfg
 
-Here the variable defines the location of a file, which can vary from one system to another.
+In this example, the variable defines the location of a file, which can vary from one system to another.
 
 Inside a template you automatically have access to all variables that are in scope for a host, plus any registered variables, facts, and magic variables.
 
@@ -84,11 +84,33 @@ If you use a variable without quotes like this::
       vars:
           app_path: {{ base_path }}/22
 
-You will see an error message: ``ERROR! Syntax Error while loading YAML.`` If you add quotes, Ansible works correctly::
+You will see: ``ERROR! Syntax Error while loading YAML.`` If you add quotes, Ansible works correctly::
 
     - hosts: app_servers
       vars:
            app_path: "{{ base_path }}/22"
+
+List variables
+==============
+
+Defining variables as lists
+---------------------------
+
+You can define variables with multiple values using YAML lists. For example::
+
+  regions:
+    - northeast
+    - southeast
+    - midwest
+
+Referencing list variables
+--------------------------
+
+When you use variables defined as a list, you can use individual, specific fields from that list. The first item in a list is item 0, the second item is item 1. For example::
+
+  region[0]
+
+The value of this expression would be "northeast".
 
 Dictionary variables
 ====================
@@ -132,7 +154,7 @@ You can create variables from the output of an Ansible task with the task keywor
         - shell: /usr/bin/bar
           when: foo_result.rc == 5
 
-See :ref:`playbooks_conditionals` for more examples. Results vary from module to module. Each module's documentation includes a ``RETURN`` section describing that module's return values. To see the values for a particular task, run your playbook with ``-v``.
+See :ref:`playbooks_conditionals` for more examples. Registered variables may be simple variables, list variables, dictionary variables, or complex nested variables. The documentation for each module includes a ``RETURN`` section describing the return values for that module. To see the values for a particular task, run your playbook with ``-v``.
 
 Registered variables are stored in memory. You cannot cache registered variables for use in future plays. Registered variables are only valid on the host for the rest of the current playbook run.
 
