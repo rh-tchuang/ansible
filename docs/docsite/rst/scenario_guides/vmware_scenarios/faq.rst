@@ -1,26 +1,26 @@
-.. _vmware_faq:
+.. \_vmware\_faq:
 
 ******************
 Ansible VMware FAQ
 ******************
 
-vmware_guest
+vmware\_guest
 ============
 
-Can I deploy a virtual machine on a standalone ESXi server ?
+スタンドアロンの ESXi サーバーに仮想マシンをデプロイすることはできますか。
 ------------------------------------------------------------
 
-Yes. ``vmware_guest`` can deploy a virtual machine with required settings on a standalone ESXi server.
+はい。``vmware_guest`` は、必要な設定で仮想マシンをスタンドアロンの ESXi サーバーにデプロイできます。
 
 
-Is ``/vm`` required for ``vmware_guest`` module ?
+``/vm`` には ``vmware_guest`` モジュールが必要ですか。
 -------------------------------------------------
 
-Prior to Ansible version 2.5, ``folder`` was an optional parameter with a default value of ``/vm``.
+Ansible バージョン 2.5 よりも前のバージョンでは、``folder`` は、``/vm`` のデフォルト値を使用した任意のパラメーターです。
 
-The folder parameter was used to discover information about virtual machines in the given infrastructure.
+folder パラメーターは、指定したインフラストラクチャーの仮想マシンに関する情報を検出するために使用されます。
 
-Starting with Ansible version 2.5, ``folder`` is still an optional parameter with no default value.
-This parameter will be now used to identify a user's virtual machine, if multiple virtual machines or virtual
-machine templates are found with same name. VMware does not restrict the system administrator from creating virtual
-machines with same name.
+Ansible バージョン 2.5 以降、``folder`` は、デフォルト値のない任意のパラメーターです。
+このパラメーターは、複数の仮想マシンまたは仮想マシンのテンプレートが同じ名前で見つかった場合は、
+ユーザーの仮想マシンを識別するのに使用されます。VMware では、
+システム管理者が、同じ名前で仮想マシンを作成することは制限されません。

@@ -1,61 +1,61 @@
-.. _vmware_guest_remove_virtual_machine:
+.. \_vmware\_guest\_remove\_virtual\_machine:
 
 *****************************************
-Remove an existing VMware virtual machine
+既存の VMware 仮想マシンの削除
 *****************************************
 
-.. contents:: Topics
+.. contents:: トピック
 
-Introduction
+はじめに
 ============
 
-This guide will show you how to utilize Ansible to remove an existing VMware virtual machine.
+本ガイドでは、Ansible を使用して既存の VMware 仮想マシンを削除する方法を説明します。
 
-Scenario Requirements
+シナリオの要件
 =====================
 
-* Software
+* ソフトウェア
 
-    * Ansible 2.5 or later must be installed.
+    * Ansible 2.5 以降がインストールされています。
 
-    * The Python module ``Pyvmomi`` must be installed on the Ansible control node (or Target host if not executing against localhost).
+    * Ansible コントロールノード (またはローカルホストで実行していない場合はターゲットホスト) に、Python モジュール ``Pyvmomi`` をインストールしている必要があります。
 
-    * We recommend installing the latest version with pip: ``pip install Pyvmomi`` (as the OS packages are usually out of date and incompatible).
+    * pip で最新バージョンをインストールすることが推奨されます。インストールするには ``pip install Pyvmomi`` を実行してください (通常は OS パッケージが古く、互換性がないため)。
 
-* Hardware
+* ハードウェア
 
-    * At least one standalone ESXi server or
+    * 少なくともスタンドアロンの ESXi サーバー 1 台、または
 
-    * vCenter Server with at least one ESXi server
+    * ESXi サーバーが 1 台以上搭載されている vCenter Server
 
-* Access / Credentials
+* アクセス/認証情報
 
-    * Ansible (or the target server) must have network access to the either vCenter server or the ESXi server
+    * Ansible (またはターゲットサーバー) には、vCenter サーバーまたは ESXi サーバーへのネットワークアクセスが必要です。
 
-    * Username and Password for vCenter or ESXi server
+    * vCenter サーバーまたは ESXi サーバーのユーザー名およびパスワード
 
-    * Hosts in the ESXi cluster must have access to the datastore that the template resides on.
+    * ESXi クラスター内のホストが、テンプレートが存在するデータストアにアクセスできる必要があります。
 
-Caveats
+注意事項
 =======
 
-- All variable names and VMware object names are case sensitive.
-- You need to use Python 2.7.9 version in order to use ``validate_certs`` option, as this version is capable of changing the SSL verification behaviours.
-- ``vmware_guest`` module tries to mimic VMware Web UI and workflow, so the virtual machine must be in powered off state in order to remove it from the VMware inventory.
+- 変数名および VMware オブジェクト名はすべて大文字と小文字を区別します。
+- ``validate_certs`` オプションを使用するには、Python 2.7.9 バージョンを使用する必要があります。このバージョンは、SSL 検証の動作を変更できるためです。
+- ``vmware_guest`` モジュールは、VMware Web UI およびワークフローを模倣するため、VMware インベントリーから仮想マシンを削除するには、電源がオフになっている必要があります。
 
 .. warning::
 
-   The removal VMware virtual machine using ``vmware_guest`` module is destructive operation and can not be reverted, so it is strongly recommended to take the backup of virtual machine and related files (vmx and vmdk files) before proceeding.
+   ``vmware_guest`` モジュールを使用して VMware 仮想マシンを削除することは破壊的な操作であり、元に戻すことができないため、先に進む前に仮想マシンと関連ファイル (vmx ファイルおよび vmdk ファイル) のバックアップを作成することが強く推奨されます。
 
-Example Description
+例の説明
 ===================
 
-In this use case / example, user will be removing a virtual machine using name. The following Ansible playbook showcases the basic parameters that are needed for this.
+このユースケース/例では、名前を使用して仮想マシンを削除します。以下の Ansible Playbook は、これに必要な基本的なパラメーターを示しています。
 
 .. code-block:: yaml
 
     ---
-    - name: Remove virtual machine
+    - name:Remove virtual machine
       gather_facts: no
       vars_files:
         - vcenter_vars.yml
@@ -64,47 +64,47 @@ In this use case / example, user will be removing a virtual machine using name. 
       hosts: localhost
       tasks:
         - set_fact:
-            vm_name: "VM_0003"
-            datacenter: "DC1"
+            vm_name:"VM_0003"
+            datacenter:"DC1"
 
-        - name: Remove "{{ vm_name }}"
-          vmware_guest:
-            hostname: "{{ vcenter_server }}"
-            username: "{{ vcenter_user }}"
-            password: "{{ vcenter_pass }}"
-            validate_certs: no
-            cluster: "DC1_C1"
-            name: "{{ vm_name }}"
+        - name:Remove "{{ vm_name }}"
+      vmware_guest:
+        hostname: "{{ vcenter_server }}"
+        username: "{{ vcenter_user }}"
+        password: "{{ vcenter_pass }}"
+        validate_certs: no
+        cluster: "DC1_C1"
+        name: "{{ vm_name }}"
             state: absent
           delegate_to: localhost
           register: facts
+    
+
+Ansible は VMware API を使用してアクションを実行するため、このユースケースではローカルホストから API に直接接続されます。
+
+つまり、Playbook は vCenter サーバーまたは ESXi サーバーから実行されないことを示しています。
+
+ローカルホストに関するファクトは収集しないため、このプレイは ``gather_facts`` パラメーターを無効にすることに注意してください。
+
+ローカルホストが vCenter サーバーにアクセスできない場合は、API に接続する別のサーバーに対してこのモジュールを実行できます。その場合は、必要な Python モジュールをターゲットサーバーにインストールする必要があります。pip で最新バージョンをインストールすることが推奨されます。インストールするには ``pip install Pyvmomi`` を実行してください (通常は OS パッケージが古く、互換性がないため)。
+
+開始する前に、以下の点を確認してください。
+
+- ESXi サーバーまたは vCenter サーバーのホスト名
+- ESXi サーバーまたは vCenter サーバーのユーザー名およびパスワード
+- 削除する既存の仮想マシンの名前
+
+現時点では直接入力しますが、より高度な Playbook では、:ref:`ansible-vault` または `Ansible Tower 認証情報<https://docs.ansible.com/ansible-tower/latest/html/userguide/credentials.html>`_ を使用して、より安全な方法でこれを抽象化し、保存できます。
+
+vCenter サーバーまたは ESXi サーバーが Ansible サーバーから検証できる適切な CA 証明書で設定されていない場合は、``validate_certs`` パラメーターを使用してこの証明書の検証を無効にする必要があります。これを実行するには、Playbook に ``validate_certs=False`` を設定する必要があります。
+
+既存の仮想マシンの名前は、``name`` パラメーターで ``vmware_guest`` モジュールの入力として使用されます。
 
 
-Since Ansible utilizes the VMware API to perform actions, in this use case it will be connecting directly to the API from localhost.
-
-This means that playbooks will not be running from the vCenter or ESXi Server.
-
-Note that this play disables the ``gather_facts`` parameter, since you don't want to collect facts about localhost.
-
-You can run these modules against another server that would then connect to the API if localhost does not have access to vCenter. If so, the required Python modules will need to be installed on that target server. We recommend installing the latest version with pip: ``pip install Pyvmomi`` (as the OS packages are usually out of date and incompatible).
-
-Before you begin, make sure you have:
-
-- Hostname of the ESXi server or vCenter server
-- Username and password for the ESXi or vCenter server
-- Name of the existing Virtual Machine you want to remove
-
-For now, you will be entering these directly, but in a more advanced playbook this can be abstracted out and stored in a more secure fashion using :ref:`ansible-vault` or using `Ansible Tower credentials <https://docs.ansible.com/ansible-tower/latest/html/userguide/credentials.html>`_.
-
-If your vCenter or ESXi server is not setup with proper CA certificates that can be verified from the Ansible server, then it is necessary to disable validation of these certificates by using the ``validate_certs`` parameter. To do this you need to set ``validate_certs=False`` in your playbook.
-
-The name of existing virtual machine will be used as input for ``vmware_guest`` module via ``name`` parameter.
-
-
-What to expect
+予想されること
 --------------
 
-- You will not see any JSON output after this playbook completes as compared to other operations performed using ``vmware_guest`` module.
+- この Playbook の完了後に、``vmware_guest`` モジュールを使用して実行した他の操作と比較した JSON 出力は表示されません。
 
 .. code-block:: yaml
 
@@ -112,15 +112,15 @@ What to expect
         "changed": true
     }
 
-- State is changed to ``True`` which notifies that the virtual machine is removed from the VMware inventory. This can take some time depending upon your environment and network connectivity.
+- 状態が ``True`` に変更になり、仮想マシンが VMware インベントリーから削除されることを通知します。環境やネットワーク接続によっては、時間がかかる場合があります。
 
 
-Troubleshooting
+トラブルシューティング
 ---------------
 
-If your playbook fails:
+Playbook が失敗した場合は、以下を行います。
 
-- Check if the values provided for username and password are correct.
-- Check if the datacenter you provided is available.
-- Check if the virtual machine specified exists and you have permissions to access the datastore.
-- Ensure the full folder path you specified already exists. It will not create folders automatically for you.
+- ユーザー名およびパスワードの値が正しいことを確認します。
+- 指定したデータセンターが利用可能かどうかを確認します。
+- 指定した仮想マシンが存在しているかどうか、およびデータストアにアクセスするパーミッションがあるかどうかを確認します。
+- 指定したディレクトリーの完全パスが存在していることを確認します。ディレクトリーが自動的に作成されることはありません。

@@ -1,53 +1,53 @@
-.. _vmware_ansible_intro:
+.. \_vmware\_ansible\_intro:
 
 **********************************
-Introduction to Ansible for VMware
+VMware 向け Ansible の概要
 **********************************
 
-.. contents:: Topics
+.. contents:: トピック
 
-Introduction
+はじめに
 ============
 
-Ansible provides various modules to manage VMware infrastructure, which includes datacenter, cluster,
-host system and virtual machine.
+Ansible は、
+データセンター、クラスター、ホストシステム、仮想マシンなどの VMware インフラストラクチャーを管理するさまざまなモジュールを提供します。
 
-Requirements
+要件
 ============
 
-Ansible VMware modules are written on top of `pyVmomi <https://github.com/vmware/pyvmomi>`_.
-pyVmomi is the Python SDK for the VMware vSphere API that allows user to manage ESX, ESXi,
-and vCenter infrastructure. You can install pyVmomi using pip:
+Ansible VMware モジュールは、`pyVmomi <https://github.com/vmware/pyvmomi>`_ に記述されます。
+pyVmomi は、
+ユーザーが ESX、ESXi、vCenter インフラストラクチャーを管理できるようにする VMware vSphere API の Python SDK です。pip を使用して pyVmomi をインストールできます。
 
 .. code-block:: bash
 
     $ pip install pyvmomi
 
-Ansible VMware modules leveraging latest vSphere(6.0+) features are using `vSphere Automation Python SDK <https://github.com/vmware/vsphere-automation-sdk-python>`_. The vSphere Automation Python SDK also has client libraries, documentation, and sample code for VMware Cloud on AWS Console APIs, NSX VMware Cloud on AWS integration APIs, VMware Cloud on AWS site recovery APIs, NSX-T APIs.
+最新の vSphere(6.0 以降の) 機能を使用する Ansible VMware モジュールは、`vSphere Automation Python SDK` <https://github.com/vmware/vsphere-automation-sdk-python>_ を使用します。VSphere Automation Python SDK には、AWS Console API 向け VMware Cloud、AWS 統合 API 向け NSX VMware Cloud、AWS サイトリカバリー API 向け VMware Cloud、NSX-T API に対するクライアントライブラリー、ドキュメント、サンプルコードもあります。
 
-You can install vSphere Automation Python SDK using pip:
+VSphere Automation Python SDK は、pip を使用してインストールできます。
 
 .. code-block:: bash
 
      $ pip install --upgrade git+https://github.com/vmware/vsphere-automation-sdk-python.git
 
-Note:
-   Installing vSphere Automation Python SDK also installs ``pyvmomi``. A separate installation of ``pyvmomi`` is not required.
+注記:
+   VSphere Automation Python SDK をインストールすると、``pyvmomi`` もインストールされます。``pyvmomi`` の個別インストールは必要ありません。
    
-vmware_guest module
+vmware\_guest モジュール
 ===================
 
-The :ref:`vmware_guest<vmware_guest_module>` module manages various operations related to virtual machines in the given ESXi or vCenter server.
+:ref:`vmware_guest<vmware_guest_module>` モジュールは、特定の ESXi サーバーまたは vCenter サーバーで仮想マシンに関連するさまざまな操作を管理します。
 
 
 .. seealso::
 
     `pyVmomi <https://github.com/vmware/pyvmomi>`_
-        The GitHub Page of pyVmomi
+        pyVmomi の GitHub ページ
     `pyVmomi Issue Tracker <https://github.com/vmware/pyvmomi/issues>`_
-        The issue tracker for the pyVmomi project
+        pyVmomi プロジェクトの問題トラッカー
     `govc <https://github.com/vmware/govmomi/tree/master/govc>`_
-        govc is a vSphere CLI built on top of govmomi
+        govc は、govmomi に構築された vSphere CLI です。
     :ref:`working_with_playbooks`
-        An introduction to playbooks
+        Playbook の概要
 

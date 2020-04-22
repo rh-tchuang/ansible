@@ -1,44 +1,44 @@
-.. _vmware_requirements:
+.. \_vmware\_requirements:
 
 ********************
-VMware Prerequisites
+VMware の要件
 ********************
 
 .. contents::
    :local:
 
-Installing SSL Certificates
+SSL 証明書のインストール
 ===========================
 
-All vCenter and ESXi servers require SSL encryption on all connections to enforce secure communication. You must enable SSL encryption for Ansible by installing the server's SSL certificates on your Ansible control node or delegate node.
+すべての vCenter サーバーおよび ESXi サーバーでは、セキュアな通信を強制するために、すべての接続で SSL 暗号化が必要です。Ansible の SSL 暗号化は、サーバーの SSL 証明書を Ansible コントールノードまたは委譲ノードにインストールして SSL 証明書を有効にする必要があります。
 
-If the SSL certificate of your vCenter or ESXi server is not correctly installed on your Ansible control node, you will see the following warning when using Ansible VMware modules:
+vCenter サーバーまたは ESXi サーバーの SSL 証明書が Ansible コントロールノードに正しくインストールされていない場合は、Ansible VMware モジュールを使用する際に以下の警告が表示されます。
 
 ``Unable to connect to vCenter or ESXi API at xx.xx.xx.xx on TCP/443: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:777)``
 
-To install the SSL certificate for your VMware server,  and run your Ansible VMware modules in encrypted mode, please follow the instructions for the server you are running with VMware.
+VMware サーバーの SSL 証明書をインストールし、Ansible VMware モジュールを暗号化モードで実行するには、VMware で実行しているサーバーの手順に従ってください。
 
-Installing vCenter SSL certificates for Ansible
+Ansible 用の vCenter SSL 証明書のインストール
 -----------------------------------------------
 
-* From any web browser, go to the base URL of the vCenter Server without port number like ``https://vcenter-domain.example.com``
+* 任意の Web ブラウザーから、``https://vcenter-domain.example.com`` などのポート番号のない vCenter Server のベース URL に移動します。
 
-* Click the "Download trusted root CA certificates" link at the bottom of the grey box on the right and download the file.
+* 右側の灰色の領域の下部にある「Download trusted root CA certificates (信頼されたルート CA 証明書のダウンロード)」のリンクをクリックして、ファイルをダウンロードします。
 
-* Change the extension of the file to .zip. The file is a ZIP file of all root certificates and all CRLs.
+* ファイルの拡張子を .zip に変更します。このファイルは、すべてのルート証明書とすべての CRL の ZIP ファイルです。
 
-* Extract the contents of the zip file. The extracted directory contains a ``.certs`` directory that contains two types of files. Files with a number as the extension (.0, .1, and so on) are root certificates.
+* zip ファイルの内容を展開します。展開したディレクトリーには、両タイプのファイルが含まれる ``.certs`` ディレクトリーが含まれます。数字が拡張子 (.0、.1 など) になっているファイルは、ルート証明書です。
 
-* Install the certificate files are trusted certificates by the process that is appropriate for your operating system.
+* 証明書ファイルを、オペレーティングシステムに適したプロセスで信頼されている証明書にインストールします。
 
 
-Installing ESXi SSL certificates for Ansible
+Ansible 用の ESXi SSL 証明書のインストール
 --------------------------------------------
 
-* Enable SSH Service on ESXi either by using Ansible VMware module `vmware_host_service_manager <https://github.com/ansible/ansible/blob/devel/lib/ansible/modules/cloud/vmware/vmware_host_config_manager.py>`_ or manually using vSphere Web interface.
+* Ansible VMware モジュール `vmware_host_service_manager` <https://github.com/ansible/ansible/blob/devel/lib/ansible/modules/cloud/vmware/vmware\_host\_config\_manager.py>_ を使用するか、vSphere Web インターフェースを使用して手動で、ESXi で SSH サービスを有効にします。
 
-* SSH to ESXi server using administrative credentials, and navigate to directory ``/etc/vmware/ssl``
+* 管理認証情報を使用して ESXi サーバーに SSH 接続し、``/etc/vmware/ssl`` ディレクトリーに移動します。
 
-* Secure copy (SCP) ``rui.crt`` located in ``/etc/vmware/ssl`` directory to Ansible control node.
+* ``/etc/vmware/ssl`` ディレクトリーにある SCP (Secure Copy) ``rui.crt`` を Ansible コントロールノードへ置きます。
 
-* Install the certificate file by the process that is appropriate for your operating system.
+* オペレーティングシステムに適したプロセスで、証明書ファイルをインストールします。

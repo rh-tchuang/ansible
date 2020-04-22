@@ -1,9 +1,9 @@
 :orphan:
 
-.. _vmware_ansible_getting_started:
+.. \_vmware\_ansible\_getting\_started:
 
 ***************************************
-Getting Started with Ansible for VMware
+Ansible for VMware の概要
 ***************************************
 
-This will have a basic "hello world" scenario/walkthrough that gets the user introduced to the basics.
+ここでは、基本動作を紹介する基本的な「hello world」シナリオおよびウォークスルーが紹介されます。

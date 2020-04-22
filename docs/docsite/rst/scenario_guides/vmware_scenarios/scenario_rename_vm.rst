@@ -1,57 +1,57 @@
-.. _vmware_guest_rename_virtual_machine:
+.. \_vmware\_guest\_rename\_virtual\_machine:
 
 **********************************
-Rename an existing virtual machine
+既存の仮想マシンの名前変更
 **********************************
 
-.. contents:: Topics
+.. contents:: トピック
 
-Introduction
+はじめに
 ============
 
-This guide will show you how to utilize Ansible to rename an existing virtual machine.
+本ガイドでは、Ansible を使用して既存の仮想マシンの名前を変更する方法を説明します。
 
-Scenario Requirements
+シナリオの要件
 =====================
 
-* Software
+* ソフトウェア
 
-    * Ansible 2.5 or later must be installed.
+    * Ansible 2.5 以降がインストールされています。
 
-    * The Python module ``Pyvmomi`` must be installed on the Ansible control node (or Target host if not executing against localhost).
+    * Ansible コントロールノード (またはローカルホストで実行していない場合はターゲットホスト) に、Python モジュール ``Pyvmomi`` をインストールしている必要があります。
 
-    * We recommend installing the latest version with pip: ``pip install Pyvmomi`` (as the OS packages are usually out of date and incompatible).
+    * pip で最新バージョンをインストールすることが推奨されます。インストールするには ``pip install Pyvmomi`` を実行してください (通常は OS パッケージが古く、互換性がないため)。
 
-* Hardware
+* ハードウェア
 
-    * At least one standalone ESXi server or
+    * 少なくともスタンドアロンの ESXi サーバー 1 台、または
 
-    * vCenter Server with at least one ESXi server
+    * ESXi サーバーが 1 台以上搭載されている vCenter Server
 
-* Access / Credentials
+* アクセス/認証情報
 
-    * Ansible (or the target server) must have network access to the either vCenter server or the ESXi server
+    * Ansible (またはターゲットサーバー) には、vCenter サーバーまたは ESXi サーバーへのネットワークアクセスが必要です。
 
-    * Username and Password for vCenter or ESXi server
+    * vCenter サーバーまたは ESXi サーバーのユーザー名およびパスワード
 
-    * Hosts in the ESXi cluster must have access to the datastore that the template resides on.
+    * ESXi クラスター内のホストが、テンプレートが存在するデータストアにアクセスできる必要があります。
 
-Caveats
+注意事項
 =======
 
-- All variable names and VMware object names are case sensitive.
-- You need to use Python 2.7.9 version in order to use ``validate_certs`` option, as this version is capable of changing the SSL verification behaviours.
+- 変数名および VMware オブジェクト名はすべて大文字と小文字を区別します。
+- ``validate_certs`` オプションを使用するには、Python 2.7.9 バージョンを使用する必要があります。このバージョンは、SSL 検証の動作を変更できるためです。
 
 
-Example Description
+例の説明
 ===================
 
-With the following Ansible playbook you can rename an existing virtual machine by changing the UUID.
+以下の Ansible Playbook を使用して、UUID を変更して既存の仮想マシンの名前を変更できます。
 
 .. code-block:: yaml
 
     ---
-    - name: Rename virtual machine from old name to new name using UUID
+    - name:Rename virtual machine from old name to new name using UUID
       gather_facts: no
       vars_files:
         - vcenter_vars.yml
@@ -62,56 +62,56 @@ With the following Ansible playbook you can rename an existing virtual machine b
         - set_fact:
             vm_name: "old_vm_name"
             new_vm_name: "new_vm_name"
-            datacenter: "DC1"
-            cluster_name: "DC1_C1"
+            datacenter:"DC1"
+            cluster_name:"DC1_C1"
 
-        - name: Get VM "{{ vm_name }}" uuid
-          vmware_guest_facts:
-            hostname: "{{ vcenter_server }}"
-            username: "{{ vcenter_user }}"
-            password: "{{ vcenter_pass }}"
-            validate_certs: False
-            datacenter: "{{ datacenter }}"
-            folder: "/{{datacenter}}/vm"
-            name: "{{ vm_name }}"
-          register: vm_facts
+        - name:Get VM "{{ vm_name }}" uuid
+      vmware_guest_facts:
+        hostname: "{{ vcenter_server }}"
+        username: "{{ vcenter_user }}"
+        password: "{{ vcenter_pass }}"
+        validate_certs: False
+        datacenter: "{{ datacenter }}"
+        folder: "/{{datacenter}}/vm"
+        name: "{{ vm_name }}"
+      register: vm_facts
 
-        - name: Rename "{{ vm_name }}" to "{{ new_vm_name }}"
-          vmware_guest:
-            hostname: "{{ vcenter_server }}"
-            username: "{{ vcenter_user }}"
-            password: "{{ vcenter_pass }}"
-            validate_certs: False
-            cluster: "{{ cluster_name }}"
-            uuid: "{{ vm_facts.instance.hw_product_uuid }}"
-            name: "{{ new_vm_name }}"
+    - name: Rename "{{ vm_name }}" to "{{ new_vm_name }}"
+      vmware_guest:
+        hostname: "{{ vcenter_server }}"
+        username: "{{ vcenter_user }}"
+        password: "{{ vcenter_pass }}"
+        validate_certs: False
+        cluster: "{{ cluster_name }}"
+        uuid: "{{ vm_facts.instance.hw_product_uuid }}"
+        name: "{{ new_vm_name }}"
+    
+Ansible は VMware API を使用してアクションを実行するため、このユースケースではローカルホストから API に直接接続されます。
 
-Since Ansible utilizes the VMware API to perform actions, in this use case it will be connecting directly to the API from localhost.
+つまり、Playbook は vCenter サーバーまたは ESXi サーバーから実行されないことを示しています。
 
-This means that playbooks will not be running from the vCenter or ESXi Server.
+ローカルホストに関するファクトは収集しないため、このプレイは ``gather_facts`` パラメーターを無効にすることに注意してください。
 
-Note that this play disables the ``gather_facts`` parameter, since you don't want to collect facts about localhost.
+ローカルホストが vCenter サーバーにアクセスできない場合は、API に接続する別のサーバーに対してこのモジュールを実行できます。その場合は、必要な Python モジュールをターゲットサーバーにインストールする必要があります。pip で最新バージョンをインストールすることが推奨されます。インストールするには ``pip install Pyvmomi`` を実行してください (通常は OS パッケージが古く、互換性がないため)。
 
-You can run these modules against another server that would then connect to the API if localhost does not have access to vCenter. If so, the required Python modules will need to be installed on that target server. We recommend installing the latest version with pip: ``pip install Pyvmomi`` (as the OS packages are usually out of date and incompatible).
+開始する前に、以下の点を確認してください。
 
-Before you begin, make sure you have:
+- ESXi サーバーまたは vCenter サーバーのホスト名
+- ESXi サーバーまたは vCenter サーバーのユーザー名およびパスワード
+- 名前を変更する既存の仮想マシンの UUID
 
-- Hostname of the ESXi server or vCenter server
-- Username and password for the ESXi or vCenter server
-- The UUID of the existing Virtual Machine you want to rename
+現時点では直接入力しますが、より高度な Playbook では、:ref:`ansible-vault` または `Ansible Tower 認証情報<https://docs.ansible.com/ansible-tower/latest/html/userguide/credentials.html>`_ を使用して、より安全な方法でこれを抽象化し、保存できます。
 
-For now, you will be entering these directly, but in a more advanced playbook this can be abstracted out and stored in a more secure fashion using :ref:`ansible-vault` or using `Ansible Tower credentials <https://docs.ansible.com/ansible-tower/latest/html/userguide/credentials.html>`_.
+vCenter サーバーまたは ESXi サーバーが Ansible サーバーから検証できる適切な CA 証明書で設定されていない場合は、``validate_certs`` パラメーターを使用してこの証明書の検証を無効にする必要があります。これを実行するには、Playbook に ``validate_certs=False`` を設定する必要があります。
 
-If your vCenter or ESXi server is not setup with proper CA certificates that can be verified from the Ansible server, then it is necessary to disable validation of these certificates by using the ``validate_certs`` parameter. To do this you need to set ``validate_certs=False`` in your playbook.
+次に、名前を変更する既存の仮想マシンに関する情報を指定する必要があります。仮想マシンの名前変更のために、``vmware_guest`` モジュールは VMware UUID を使用します。これは、vCenter 環境全体で一意です。この値は自動生成され、変更できません。``vmware_guest_facts`` モジュールを使用して仮想マシンを検索し、仮想マシンの VMware UUID に関する情報を取得します。
 
-Now you need to supply the information about the existing virtual machine which will be renamed. For renaming virtual machine, ``vmware_guest`` module uses VMware UUID, which is unique across vCenter environment. This value is autogenerated and can not be changed. You will use ``vmware_guest_facts`` module to find virtual machine and get information about VMware UUID of the virtual machine.
+この値は、``vmware_guest`` モジュールの入力に使用されます。``name`` パラメーターとして命名規則のすべての VMware 要件に準拠する仮想マシンに新しい名前を指定します。また、``uuid`` を VMware UUID の値として提供します。
 
-This value will be used input for ``vmware_guest`` module. Specify new name to virtual machine which conforms to all VMware requirements for naming conventions as ``name`` parameter. Also, provide ``uuid`` as the value of VMware UUID.
-
-What to expect
+予想されること
 --------------
 
-Running this playbook can take some time, depending on your environment and network connectivity. When the run is complete you will see
+環境やネットワーク接続によっては、この Playbook の実行に時間がかかる場合があります。実行が完了すると、以下が表示されます。
 
 .. code-block:: yaml
 
@@ -124,19 +124,19 @@ Running this playbook can take some time, depending on your environment and netw
             "guest_consolidation_needed": false,
             "guest_question": null,
             "guest_tools_status": "guestToolsNotRunning",
-            "guest_tools_version": "10247",
-            "hw_cores_per_socket": 1,
+            "guest_tools_version":"10247",
+            "hw_cores_per_socket":1,
             "hw_datastores": ["ds_204_2"],
-            "hw_esxi_host": "10.x.x.x",
+            "hw_esxi_host":"10.x.x.x",
             "hw_eth0": {
                 "addresstype": "assigned",
                 "ipaddresses": [],
-                "label": "Network adapter 1",
-                "macaddress": "00:50:56:8c:b8:42",
-                "macaddress_dash": "00-50-56-8c-b8-42",
+                "label":"Network adapter 1",
+                "macaddress":"00:50:56:8c:b8:42",
+                "macaddress_dash":"00-50-56-8c-b8-42",
                 "portgroup_key": "dvportgroup-31",
-                "portgroup_portkey": "15",
-                "summary": "DVSwitch: 50 0c 3a 69 df 78 2c 7b-6e 08 0a 89 e3 a6 31 17"
+                "portgroup_portkey":"15",
+                "summary":"DVSwitch:50 0c 3a 69 df 78 2c 7b-6e 08 0a 89 e3 a6 31 17"
             },
             "hw_files": ["[ds_204_2] old_vm_name/old_vm_name.vmx", "[ds_204_2] old_vm_name/old_vm_name.nvram", "[ds_204_2] old_vm_name/old_vm_name.vmsd", "[ds_204_2] old_vm_name/vmware.log", "[ds_204_2] old_vm_name/old_vm_name.vmdk"],
             "hw_folder": "/DC1/vm",
@@ -145,13 +145,13 @@ Running this playbook can take some time, depending on your environment and netw
             "hw_guest_id": null,
             "hw_interfaces": ["eth0"],
             "hw_is_template": false,
-            "hw_memtotal_mb": 1024,
+            "hw_memtotal_mb":1024,
             "hw_name": "new_vm_name",
             "hw_power_status": "poweredOff",
-            "hw_processor_count": 1,
-            "hw_product_uuid": "420cbebb-835b-980b-7050-8aea9b7b0a6d",
+            "hw_processor_count":1,
+            "hw_product_uuid":"420cbebb-835b-980b-7050-8aea9b7b0a6d",
             "hw_version": "vmx-13",
-            "instance_uuid": "500c60a6-b7b4-8ae5-970f-054905246a6f",
+            "instance_uuid":"500c60a6-b7b4-8ae5-970f-054905246a6f",
             "ipv4": null,
             "ipv6": null,
             "module_hw": true,
@@ -159,15 +159,15 @@ Running this playbook can take some time, depending on your environment and netw
         }
     }
 
-confirming that you've renamed the virtual machine.
+仮想マシンの名前が変更されたことを確認します。
 
 
-Troubleshooting
+トラブルシューティング
 ---------------
 
-If your playbook fails:
+Playbook が失敗した場合は、以下を行います。
 
-- Check if the values provided for username and password are correct.
-- Check if the datacenter you provided is available.
-- Check if the virtual machine specified exists and you have permissions to access the datastore.
-- Ensure the full folder path you specified already exists.
+- ユーザー名およびパスワードの値が正しいことを確認します。
+- 指定したデータセンターが利用可能かどうかを確認します。
+- 指定した仮想マシンが存在しているかどうか、およびデータストアにアクセスするパーミッションがあるかどうかを確認します。
+- 指定したディレクトリーの完全パスが存在していることを確認します。

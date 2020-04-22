@@ -1,12 +1,12 @@
-.. _vmware_external_doc_links:
+.. \_vmware\_external\_doc\_links:
 
 *****************************
-Other useful VMware resources
+他の便利な VMware リソース
 *****************************
 
-* `PyVmomi Documentation <https://github.com/vmware/pyvmomi/tree/master/docs>`_
-* `VMware API and SDK Documentation <https://www.vmware.com/support/pubs/sdk_pubs.html>`_
-* `VCSIM test container image <https://quay.io/repository/ansible/vcenter-test-container>`_
-* `Ansible VMware community wiki page <https://github.com/ansible/community/wiki/VMware>`_
-* `VMware's official Guest Operating system customization matrix <https://partnerweb.vmware.com/programs/guestOS/guest-os-customization-matrix.pdf>`_
-* `VMware Compatibility Guide <https://www.vmware.com/resources/compatibility/search.php>`_
+* `PyVmomi ドキュメント <https://github.com/vmware/pyvmomi/tree/master/docs>`_
+* `VMware API および SDK ドキュメント <https://www.vmware.com/support/pubs/sdk_pubs.html>`_
+* `VCSIM テストコンテナーイメージ <https://quay.io/repository/ansible/vcenter-test-container>`_
+* `Ansible VMware コミュニティー wiki ページ <https://github.com/ansible/community/wiki/VMware>`_
+* `VMware の公式ゲストオペレーティングシステムのカスタマイズマトリックス <https://partnerweb.vmware.com/programs/guestOS/guest-os-customization-matrix.pdf>`_
+* `VMware 互換性ガイド <https://www.vmware.com/resources/compatibility/search.php>`_

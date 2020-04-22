@@ -1,119 +1,119 @@
-.. _vmware_guest_from_template:
+.. \_vmware\_guest\_from\_template:
 
 ****************************************
-Deploy a virtual machine from a template
+テンプレートからの仮想マシンのデプロイメント
 ****************************************
 
-.. contents:: Topics
+.. contents:: トピック
 
-Introduction
+はじめに
 ============
 
-This guide will show you how to utilize Ansible to clone a virtual machine from already existing VMware template or existing VMware guest.
+本ガイドでは、Ansible を使用して、既存の VMware テンプレートまたは既存の VMware ゲストから仮想マシンのクローンを作成する方法を説明します。
 
-Scenario Requirements
+シナリオの要件
 =====================
 
-* Software
+* ソフトウェア
 
-    * Ansible 2.5 or later must be installed
+    * Ansible 2.5 以降がインストールされています。
 
-    * The Python module ``Pyvmomi`` must be installed on the Ansible (or Target host if not executing against localhost)
+    * Ansible (ローカルホストで実行していない場合はターゲットホスト) に、Python モジュール ``Pyvmomi`` をインストールしている必要があります。
 
-    * Installing the latest ``Pyvmomi`` via ``pip`` is recommended [as the OS provided packages are usually out of date and incompatible]
+    * \[通常は、OS が提供するパッケージが古くなり、互換性がないため]、``pip`` から最新の ``Pyvmomi`` をインストールすることが推奨されます。
 
-* Hardware
+* ハードウェア
 
-    * vCenter Server with at least one ESXi server
+    * ESXi サーバーが 1 台以上搭載されている vCenter Server
 
-* Access / Credentials
+* アクセス/認証情報
 
-    * Ansible (or the target server) must have network access to the either vCenter server or the ESXi server you will be deploying to
+    * Ansible (またはターゲットサーバー) には、デプロイする vCenter サーバーまたは ESXi サーバーへのネットワークアクセスが必要です。
 
-    * Username and Password
+    * ユーザー名とパスワード
 
-    * Administrator user with following privileges
+    * 以下の権限を持つユーザー
 
-        - ``Datastore.AllocateSpace`` on the destination datastore or datastore folder
-        - ``Network.Assign`` on the network to which the virtual machine will be assigned
-        - ``Resource.AssignVMToPool`` on the destination host, cluster, or resource pool
-        - ``VirtualMachine.Config.AddNewDisk`` on the datacenter or virtual machine folder
-        - ``VirtualMachine.Config.AddRemoveDevice`` on the datacenter or virtual machine folder
-        - ``VirtualMachine.Interact.PowerOn`` on the datacenter or virtual machine folder
-        - ``VirtualMachine.Inventory.CreateFromExisting`` on the datacenter or virtual machine folder
-        - ``VirtualMachine.Provisioning.Clone`` on the virtual machine you are cloning
-        - ``VirtualMachine.Provisioning.Customize`` on the virtual machine or virtual machine folder if you are customizing the guest operating system
-        - ``VirtualMachine.Provisioning.DeployTemplate`` on the template you are using
-        - ``VirtualMachine.Provisioning.ReadCustSpecs`` on the root vCenter Server if you are customizing the guest operating system
+        - 宛先データストアまたはデータストアディレクトリーの ``Datastore.AllocateSpace``
+        - 仮想マシンを割り当てるネットワークの ``Network.Assign``
+        - 移行先ホスト、クラスター、またはリソースプールの ``Resource.AssignVMToPool``
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Config.AddNewDisk``
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Config.AddRemoveDevice``
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Interact.PowerOn``
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Inventory.CreateFromExisting``
+        - クローンを作成している仮想マシンの ``VirtualMachine.Provisioning.Clone``
+        - ゲストオペレーティングシステムをカスタマイズする場合、仮想マシンまたは仮想マシンディレクトリーの ``VirtualMachine.Provisioning.Customize``
+        - 使用しているテンプレートの ``VirtualMachine.Provisioning.DeployTemplate``
+        - ゲストオペレーティングシステムをカスタマイズする場合、ルート vCenter Server の ``VirtualMachine.Provisioning.ReadCustSpecs``
         
-        Depending on your requirements, you could also need one or more of the following privileges: 
+        要件によっては、以下の権限が 1 つ以上必要になる場合があります。 
 
-        - ``VirtualMachine.Config.CPUCount`` on the datacenter or virtual machine folder
-        - ``VirtualMachine.Config.Memory`` on the datacenter or virtual machine folder
-        - ``VirtualMachine.Config.DiskExtend`` on the datacenter or virtual machine folder
-        - ``VirtualMachine.Config.Annotation`` on the datacenter or virtual machine folder
-        - ``VirtualMachine.Config.AdvancedConfig`` on the datacenter or virtual machine folder
-        - ``VirtualMachine.Config.EditDevice`` on the datacenter or virtual machine folder
-        - ``VirtualMachine.Config.Resource`` on the datacenter or virtual machine folder
-        - ``VirtualMachine.Config.Settings`` on the datacenter or virtual machine folder
-        - ``VirtualMachine.Config.UpgradeVirtualHardware`` on the datacenter or virtual machine folder
-        - ``VirtualMachine.Interact.SetCDMedia`` on the datacenter or virtual machine folder
-        - ``VirtualMachine.Interact.SetFloppyMedia`` on the datacenter or virtual machine folder
-        - ``VirtualMachine.Interact.DeviceConnection`` on the datacenter or virtual machine folder
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Config.CPUCount``
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Config.Memory``
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Config.DiskExtend``
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Config.Annotation``
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Config.AdvancedConfig``
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Config.EditDevice``
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Config.Resource``
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Config.Settings``
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Config.UpgradeVirtualHardware``
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Interact.SetCDMedia``
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Interact.SetFloppyMedia``
+        - データセンターまたは仮想マシンディレクトリーの ``VirtualMachine.Interact.DeviceConnection``
 
-Assumptions
+前提条件
 ===========
 
-- All variable names and VMware object names are case sensitive
-- VMware allows creation of virtual machine and templates with same name across datacenters and within datacenters
-- You need to use Python 2.7.9 version in order to use ``validate_certs`` option, as this version is capable of changing the SSL verification behaviours
+- 変数名および VMware オブジェクト名はすべて大文字と小文字を区別します。
+- VMware では、データセンター間およびデータセンター内で、同じ名前の仮想マシンとテンプレートを作成できます。
+- ``validate_certs`` オプションを使用するには、Python 2.7.9 バージョンを使用する必要があります。このバージョンは、SSL 検証の動作を変更できるためです。
 
-Caveats
+注意事項
 =======
 
-- Hosts in the ESXi cluster must have access to the datastore that the template resides on.
-- Multiple templates with the same name will cause module failures.
-- In order to utilize Guest Customization, VMware Tools must be installed on the template. For Linux, the ``open-vm-tools`` package is recommended, and it requires that ``Perl`` be installed.
+- ESXi クラスター内のホストが、テンプレートが存在するデータストアにアクセスできる必要があります。
+- 同じ名前のテンプレートが複数存在する場合、モジュールは失敗します。
+- ゲストのカスタマイズを使用するには、テンプレートに VMware ツールをインストールする必要があります。Linux の場合は ``open-vm-tools`` パッケージが推奨されます。``Perl`` がインストールされている必要があります。
 
 
-Example Description
+例の説明
 ===================
 
-In this use case / example, we will be selecting a virtual machine template and cloning it into a specific folder in our Datacenter / Cluster.  The following Ansible playbook showcases the basic parameters that are needed for this.
+このユースケース/例では、仮想マシンテンプレートを選択して、データセンター/クラスターの特定のフォルダーにクローンを作成します。 以下の Ansible Playbook は、これに必要な基本的なパラメーターを示しています。
 
 .. code-block:: yaml
 
     ---
-    - name: Create a VM from a template
+    - name:Create a VM from a template
       hosts: localhost
       gather_facts: no
       tasks:
-      - name: Clone the template
+      - name:Clone the template
         vmware_guest:
           hostname: "{{ vcenter_ip }}"
-          username: "{{ vcenter_username }}"
-          password: "{{ vcenter_password }}"
-          validate_certs: False
-          name: testvm_2
-          template: template_el7
-          datacenter: "{{ datacenter_name }}"
-          folder: /DC1/vm
-          state: poweredon
-          cluster: "{{ cluster_name }}"
+      username: "{{ vcenter_username }}"
+      password: "{{ vcenter_password }}"
+      validate_certs: False
+      name: testvm_2
+      template: template_el7
+      datacenter: "{{ datacenter_name }}"
+      folder: /DC1/vm
+      state: poweredon
+      cluster: "{{ cluster_name }}"
           wait_for_ip_address: yes
+    
+
+Ansible は VMware API を使用してアクションを実行するため、このユースケースではローカルホストから API に直接接続されます。つまり、Playbook は vCenter サーバーまたは ESXi サーバーから実行しないことを意味します。必ずしもローカルホストに関するファクトを収集する必要がないため、``gather_facts`` パラメーターが無効になります。ローカルホストが vCenter サーバーにアクセスできない場合は、API に接続する別のサーバーに対してこのモジュールを実行できます。その場合は、必要な Python モジュールをターゲットサーバーにインストールする必要があります。
+
+まず、必要な情報がいくつかあります。第一に、ESXi サーバーまたは vCenter サーバーのホスト名です。その後、このサーバーのユーザー名とパスワードが必要になります。現時点では直接入力しますが、より高度な Playbook では、:ref:`ansible-vault` または `Ansible Tower 認証情報<https://docs.ansible.com/ansible-tower/latest/html/userguide/credentials.html>`_ を使用して、より安全な方法でこれを抽象化し、保存できます。vCenter サーバーまたは ESXi サーバーが Ansible サーバーから検証できる適切な CA 証明書で設定されていない場合は、``validate_certs`` パラメーターを使用してこの証明書の検証を無効にする必要があります。これを実行するには、Playbook に ``validate_certs=False`` を設定する必要があります。
+
+次に、作成する仮想マシンに関する情報を指定する必要があります。仮想マシンに名前を付けます。命名規則のすべての VMware 要件に準拠する名前を付けます。 次に、新しい仮想マシンのクローンを作成するテンプレートの表示名を選択します。これは、VMware Web UI で表示されるものと完全に一致している必要があります。次に、この新しい仮想マシンを配置するディレクトリーを指定できます。このパスは、相対パスまたはデータセンターを含むディレクトリーへの完全パスのいずれかになります。仮想マシン状態の指定が必要になる場合があります。 これにより、実行するアクションがモジュールに指示されます。この場合は、仮想マシンが存在し、電源が入っていることを確認します。 任意のパラメーターは ``wait_for_ip_address`` です。これにより、これは仮想マシンが完全に起動し、VMware ツールが実行してからこのタスクが完了するのを待機するように Ansible に指示します。
 
 
-Since Ansible utilizes the VMware API to perform actions, in this use case we will be connecting directly to the API from our localhost. This means that our playbooks will not be running from the vCenter or ESXi Server. We do not necessarily need to collect facts about our localhost, so the ``gather_facts`` parameter will be disabled. You can run these modules against another server that would then connect to the API if your localhost does not have access to vCenter. If so, the required Python modules will need to be installed on that target server.
-
-To begin, there are a few bits of information we will need. First and foremost is the hostname of the ESXi server or vCenter server. After this, you will need the username and password for this server. For now, you will be entering these directly, but in a more advanced playbook this can be abstracted out and stored in a more secure fashion using  :ref:`ansible-vault` or using `Ansible Tower credentials <https://docs.ansible.com/ansible-tower/latest/html/userguide/credentials.html>`_. If your vCenter or ESXi server is not setup with proper CA certificates that can be verified from the Ansible server, then it is necessary to disable validation of these certificates by using the ``validate_certs`` parameter. To do this you need to set ``validate_certs=False`` in your playbook.
-
-Now you need to supply the information about the virtual machine which will be created. Give your virtual machine a name, one that conforms to all VMware requirements for naming conventions.  Next, select the display name of the template from which you want to clone new virtual machine. This must match what's displayed in VMware Web UI exactly. Then you can specify a folder to place this new virtual machine in. This path can either be a relative path or a full path to the folder including the Datacenter. You may need to specify a state for the virtual machine.  This simply tells the module which action you want to take, in this case you will be ensure that the virtual machine exists and is powered on.  An optional parameter is ``wait_for_ip_address``, this will tell Ansible to wait for the virtual machine to fully boot up and VMware Tools is running before completing this task.
-
-
-What to expect
+予想されること
 --------------
 
-- You will see a bit of JSON output after this playbook completes. This output shows various parameters that are returned from the module and from vCenter about the newly created VM.
+- この Playbook が完了すると、JSON の出力が表示されます。この出力は、新たに作成された仮想マシンについてモジュールおよび vCenter から返されるさまざまなパラメーターを表示します。
 
 .. code-block:: yaml
 
@@ -126,24 +126,24 @@ What to expect
             "guest_consolidation_needed": false,
             "guest_question": null,
             "guest_tools_status": "guestToolsNotRunning",
-            "guest_tools_version": "0",
-            "hw_cores_per_socket": 1,
+            "guest_tools_version":"0",
+            "hw_cores_per_socket":1,
             "hw_datastores": [
-                "ds_215"
-            ],
-            "hw_esxi_host": "192.0.2.44",
+            "ds_215"
+        ],
+            "hw_esxi_host":"192.0.2.44",
             "hw_eth0": {
                 "addresstype": "assigned",
                 "ipaddresses": null,
-                "label": "Network adapter 1",
-                "macaddress": "00:50:56:8c:19:f4",
-                "macaddress_dash": "00-50-56-8c-19-f4",
+                "label":"Network adapter 1",
+                "macaddress":"00:50:56:8c:19:f4",
+                "macaddress_dash":"00-50-56-8c-19-f4",
                 "portgroup_key": "dvportgroup-17",
-                "portgroup_portkey": "0",
-                "summary": "DVSwitch: 50 0c 5b 22 b6 68 ab 89-fc 0b 59 a4 08 6e 80 fa"
+                "portgroup_portkey":"0",
+                "summary":"DVSwitch:50 0c 5b 22 b6 68 ab 89-fc 0b 59 a4 08 6e 80 fa"
             },
             "hw_files": [
-                "[ds_215] testvm_2/testvm_2.vmx",
+            "[ds_215] testvm_2/testvm_2.vmx",
                 "[ds_215] testvm_2/testvm_2.vmsd",
                 "[ds_215] testvm_2/testvm_2.vmdk"
             ],
@@ -152,16 +152,16 @@ What to expect
             "hw_guest_ha_state": null,
             "hw_guest_id": null,
             "hw_interfaces": [
-                "eth0"
-            ],
+            "eth0"
+        ],
             "hw_is_template": false,
-            "hw_memtotal_mb": 512,
+            "hw_memtotal_mb":512,
             "hw_name": "testvm_2",
             "hw_power_status": "poweredOff",
-            "hw_processor_count": 2,
-            "hw_product_uuid": "420cb25b-81e8-8d3b-dd2d-a439ee54fcc5",
+            "hw_processor_count":2,
+            "hw_product_uuid":"420cb25b-81e8-8d3b-dd2d-a439ee54fcc5",
             "hw_version": "vmx-13",
-            "instance_uuid": "500cd53b-ed57-d74e-2da8-0dc0eddf54d5",
+            "instance_uuid":"500cd53b-ed57-d74e-2da8-0dc0eddf54d5",
             "ipv4": null,
             "ipv6": null,
             "module_hw": true,
@@ -171,29 +171,29 @@ What to expect
             "module_args": {
                 "annotation": null,
                 "cdrom": {},
-                "cluster": "DC1_C1",
+                "cluster":"DC1_C1",
                 "customization": {},
                 "customization_spec": null,
                 "customvalues": [],
-                "datacenter": "DC1",
+                "datacenter":"DC1",
                 "disk": [],
                 "esxi_hostname": null,
                 "folder": "/DC1/vm",
                 "force": false,
                 "guest_id": null,
                 "hardware": {},
-                "hostname": "192.0.2.44",
+                "hostname":"192.0.2.44",
                 "is_template": false,
                 "linked_clone": false,
                 "name": "testvm_2",
                 "name_match": "first",
                 "networks": [],
-                "password": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
-                "port": 443,
+                "password":"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+                "port":443,
                 "resource_pool": null,
                 "snapshot_src": null,
                 "state": "present",
-                "state_change_timeout": 0,
+                "state_change_timeout":0,
                 "template": "template_el7",
                 "username": "administrator@vsphere.local",
                 "uuid": null,
@@ -203,20 +203,20 @@ What to expect
             }
         }
     }
+    
+- 状態が ``True`` に変更になり、仮想マシンが指定したテンプレートを使用して仮想マシンが構築されたことを通知します。モジュールは、VMware のクローンタスクが終了するまで完了しません。これは、環境に応じて多少時間がかかる場合があります。
 
-- State is changed to ``True`` which notifies that the virtual machine is built using given template. The module will not complete until the clone task in VMware is finished. This can take some time depending on your environment.
-
-- If you utilize the ``wait_for_ip_address`` parameter, then it will also increase the clone time as it will wait until virtual machine boots into the OS and an IP Address has been assigned to the given NIC.
+- ``wait_for_ip_address`` パラメーターを使用すると、仮想マシンが OS で起動し、指定の NIC に IP アドレスが割り当てられているまで待機するため、クローン時間も増加します。
 
 
 
-Troubleshooting
+トラブルシューティング
 ---------------
 
-Things to inspect
+調べること
 
-- Check if the values provided for username and password are correct
-- Check if the datacenter you provided is available
-- Check if the template specified exists and you have permissions to access the datastore
-- Ensure the full folder path you specified already exists. It will not create folders automatically for you
+- ユーザー名およびパスワードの値が正しいかどうかを確認します。
+- 指定したデータセンターが利用可能かどうかを確認します。
+- 指定したテンプレートが存在しているかどうか、およびデータストアにアクセスするパーミッションがあるかどうかを確認します。
+- 指定したディレクトリーの完全パスが存在していることを確認します。ディレクトリーが自動的に作成されることはありません。
 

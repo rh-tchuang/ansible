@@ -1,9 +1,9 @@
 :orphan:
 
-.. _vmware_ansible_module_index:
+.. \_vmware\_ansible\_module\_index:
 
 ***************************
-Ansible VMware Module Guide
+Ansible VMware モジュールガイド
 ***************************
 
-This will be a listing similar to the module index in our core docs.
+これは、コアドキュメントのモジュールインデックスと同様のリストになります。

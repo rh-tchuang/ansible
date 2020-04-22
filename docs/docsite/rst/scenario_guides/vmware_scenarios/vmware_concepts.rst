@@ -1,44 +1,44 @@
-.. _vmware_concepts:
+.. \_vmware\_concepts:
 
 ***************************
-Ansible for VMware Concepts
+Ansible for VMware の概念
 ***************************
 
-Some of these concepts are common to all uses of Ansible, including VMware automation; some are specific to VMware. You need to understand them to use Ansible for VMware automation. This introduction provides the background you need to follow the :ref:`scenarios<vmware_scenarios>` in this guide.
+この概念の一部は、VMware の自動化を含む Ansible のすべての用途に共通します。VMware に固有の概念もあります。VMWare の自動化に Ansible を活用するには、この概念を理解しておく必要があります。この概要では、本ガイドの :ref:`シナリオ<vmware_scenarios>` に従う必要がある背景を説明します。
 
 .. contents::
    :local:
 
-Control Node
+コントロールノード
 ============
 
-Any machine with Ansible installed. You can run commands and playbooks, invoking ``/usr/bin/ansible`` or ``/usr/bin/ansible-playbook``, from any control node. You can use any computer that has Python installed on it as a control node - laptops, shared desktops, and servers can all run Ansible. However, you cannot use a Windows machine as a control node. You can have multiple control nodes.
+Ansible がインストールされているマシン。``/usr/bin/ansible`` または ``/usr/bin/ansible-playbook`` を任意のコントロールノードから起動して、コマンドと Playbook を実行できます。Python がインストールされたコンピューターは、コントロールノード (ノートパソコン、共有デスクトップ、およびサーバーがすべて Ansible を実行) として使用できます。ただし、Windows マシンをコントロールノードとして使用することはできません。複数のコントロールノードを使用できます。
 
-Delegation
+委譲
 ==========
 
-Delegation allows you to select the system that executes a given task. If you do not have ``pyVmomi`` installed on your control node, use the ``delegate_to`` keyword on VMware-specific tasks to execute them on any host where you have ``pyVmomi`` installed.
+委譲では、特定タスクを実行するシステムを選択できます。コントロールノードに ``pyVmomi`` がインストールされていない場合は、VMware 固有のタスクで ``delegate_to`` キーワードを使用して、``pyVmomi`` がインストールされているホストで特定タスクを実行します。
 
-Modules
+モジュール
 =======
 
-The units of code Ansible executes. Each module has a particular use, from creating virtual machines on vCenter to managing distributed virtual switches in the vCenter environment. You can invoke a single module with a task, or invoke several different modules in a playbook. For an idea of how many modules Ansible includes, take a look at the :ref:`list of cloud modules<cloud_modules>`, which includes VMware modules.
+Ansible が実行するコード単位。各モジュールには、vCenter での仮想マシン作成から、vCenter 環境で分散型仮想スイッチの管理まで、特定の用途があります。タスクを使用して 1 つのモジュールを起動することも、Playbook で複数の異なるモジュールを呼び出すこともできます。Ansible に含まれるモジュール数を理解するには、VMware モジュールを含む :ref:`クラウドモジュールの一覧<cloud_modules>` を確認してください。
 
-Playbooks
+Playbook
 =========
 
-Ordered lists of tasks, saved so you can run those tasks in that order repeatedly. Playbooks can include variables as well as tasks. Playbooks are written in YAML and are easy to read, write, share and understand.
+順序付けされたタスク一覧を保存し、このタスクを順番に繰り返し実行できるようにします。Playbook には、変数やタスクを追加できます。Playbook は YAML で記述され、読み取り、書き込み、共有、および理解が簡単にできます。
 
 pyVmomi
 =======
 
-Ansible VMware modules are written on top of `pyVmomi <https://github.com/vmware/pyvmomi>`_. ``pyVmomi`` is the official Python SDK for the VMware vSphere API that allows user to manage ESX, ESXi, and vCenter infrastructure.
+Ansible VMware モジュールは `pyVmomi <https://github.com/vmware/pyvmomi>`_ に記述されます。``pyVmomi`` は、ユーザーが ESX、ESXi、および vCenter インフラストラクチャーを管理できるようにする VMware vSphere API の公式の Python SDK です。
 
-You need to install this Python SDK on host from where you want to invoke VMware automation. For example, if you are using control node then ``pyVmomi`` must be installed on control node.
+この Python SDK を、VMware 自動化を起動するホストからホストにインストールする必要があります。たとえば、コントロールノードを使用している場合は、``pyVmomi`` をコントロールノードにインストールする必要があります。
 
-If you are using any ``delegate_to`` host which is different from your control node then you need to install ``pyVmomi`` on that ``delegate_to`` node.
+お使いのコントロールノードとは異なる ``delegate_to`` ホストを使用している場合は、その ``delegate_to`` ノードに ``pyVmomi`` をインストールする必要があります。
 
-You can install pyVmomi using pip:
+pip を使用して pyVmomi をインストールできます。
 
 .. code-block:: bash
 

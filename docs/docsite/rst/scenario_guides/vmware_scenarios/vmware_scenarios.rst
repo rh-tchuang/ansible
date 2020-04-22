@@ -1,16 +1,16 @@
-.. _vmware_scenarios:
+.. \_vmware\_scenarios:
 
 ****************************
-Ansible for VMware Scenarios
+VMware シナリオにおける Ansible
 ****************************
 
-These scenarios teach you how to accomplish common VMware tasks using Ansible. To get started, please select the task you want to accomplish.
+以下のシナリオでは、Ansible を使用して一般的な VMware タスクを実現する方法を説明します。最初に、達成するタスクを選択してください。
 
 .. toctree::
    :maxdepth: 1
 
-   scenario_clone_template
-   scenario_rename_vm
-   scenario_remove_vm
-   scenario_find_vm_folder
-   scenario_vmware_http
+   scenario\_clone\_template
+   scenario\_rename\_vm
+   scenario\_remove\_vm
+   scenario\_find\_vm\_folder
+   scenario\_vmware\_http
