@@ -345,19 +345,21 @@ You can decide where to set a variable based on the scope you want that value to
 
 .. _variable_examples:
 
-Examples of where to set a variable
------------------------------------
+Tips on where to set variables
+------------------------------
 
-These examples will help you decide where to define a variable based on the kind of control you might want over values.
+You should choose where to define a variable based on the kind of control you might want over values.
 
-Group variables are powerful. Site-wide defaults should be defined as a ``group_vars/all`` setting.  Group variables are generally placed alongside your inventory file.  They can also be returned by a dynamic inventory script (see :ref:`intro_dynamic_inventory`) or defined in things like :ref:`ansible_tower` from the UI or API::
+Set variables in inventory that deal with geography or behavior. Since groups are frequently the entity that maps roles onto hosts, you can often set variables on the group instead of defining them on a role. Remember:  Child groups override parent groups, and host variables override group variables. See :ref:`variables_in_inventory` for details on setting host and group variables.
+
+Set common defaults in a ``group_vars/all`` file. See :ref:`splitting_out_vars` for details on how to organize host and group variables in your inventory. Group variables are generally placed alongside your inventory file, but they can also be returned by dynamic inventory (see :ref:`intro_dynamic_inventory`) or defined in :ref:`ansible_tower` from the UI or API::
 
     ---
     # file: /etc/ansible/group_vars/all
     # this is the site wide default
     ntp_server: default-time.example.com
 
-Regional information might be defined in a ``group_vars/region`` variable.  If this group is a child of the ``all`` group (which it is, because all groups are), it will override the group that is higher up and more general::
+Set location-specific variables in ``group_vars/my_location`` files. All groups are children of the ``all`` group, so variables set here override those set in ``group_vars/all``::
 
     ---
     # file: /etc/ansible/group_vars/boston
@@ -369,38 +371,28 @@ If one host used a different NTP server, you could set that in a host_vars file,
     # file: /etc/ansible/host_vars/xyz.boston.example.com
     ntp_server: override.example.com
 
-Setting variables in inventory helps you manage values that deal with geography or behavior.  Since groups are frequently the entity that maps roles onto hosts, it is sometimes a shortcut to set variables on the group instead of defining them on a role.  You could go either way.
-
-Remember:  Child groups override parent groups, and hosts always override their groups.
-
-Setting default variables in roles helps you avoid undefined-variable errors. If you are writing a redistributable role with reasonable defaults, put those in the ``roles/x/defaults/main.yml`` file.  This means the role will bring along a default value but ANYTHING in Ansible will override it. See :ref:`playbooks_reuse_roles` for more info about this::
+Set defaults in roles to avoid undefined-variable errors. If you share your roles, other users can rely on the reasonable defaults you added in the ``roles/x/defaults/main.yml`` file, or they can easily override those values in inventory or at the command line. See :ref:`playbooks_reuse_roles` for more info. For example::
 
     ---
     # file: roles/x/defaults/main.yml
-    # if not overridden in inventory or as a parameter, this is the value that will be used
+    # if no other value is supplied in inventory or as a parameter, this value will be used
     http_port: 80
 
-If you are writing a role and want to ensure the value in the role is absolutely used in that role, and is not going to be overridden by inventory, put it in ``roles/x/vars/main.yml``. In this location, your variable will override inventory values. However, values set with ``-e`` will still override these::
+Set variables in roles to ensure a value is used in that role, and is not overridden by inventory variables. If you are not sharing your role with others, you can define app-specific behaviors like ports this way, in ``roles/x/vars/main.yml``. If you are sharing roles with others, putting variables here makes them harder to override, although they still can by passing a parameter to the role or setting a variable with ``-e``::
 
     ---
     # file: roles/x/vars/main.yml
     # this will absolutely be used in this role
     http_port: 80
 
-If you are not sharing your role with others, you can define app-specific behaviors like ports in the ``vars/main.yml`` file. But if you are sharing roles with others, putting variables in here might be bad. Nobody will be able to override them with inventory, but they still can by passing a parameter to the role.
-
-Parameterized roles are useful.
-
-If you are using a role and want to override a default, pass it as a parameter to the role like so::
+Pass variables as parameters when you call roles for maximum clarity, flexibility, and visibility. This approach overrides any defaults that exist for a role. For example::
 
     roles:
        - role: apache
          vars:
             http_port: 8080
 
-This makes it clear to the playbook reader that you've made a conscious choice to override some default in the role, or pass in some configuration that the role can't assume by itself.  It also allows you to pass something site-specific that isn't really part of the role you are sharing with others.
-
-This can often be used for things that might apply to some hosts multiple times. For example::
+When you read this playbook it is clear that you have chosen to set a variable or override a default. You can also pass multiple values, which allows you to run the same role multiple times. See :ref:`run_role_twice` for more details. For example::
 
     roles:
        - role: app_user
@@ -416,11 +408,7 @@ This can often be used for things that might apply to some hosts multiple times.
          vars:
            myname: John
 
-In this example, the same role was invoked multiple times.  It's quite likely there was no default for ``myname`` supplied at all.  Ansible can warn you when variables aren't defined -- it's the default behavior in fact.
-
-There are a few other things that go on with roles.
-
-Generally speaking, variables set in one role are available to others.  This means if you have a ``roles/common/vars/main.yml`` you can set variables in there and make use of them in other roles and elsewhere in your playbook::
+Variables set in one role are available to later roles. You can set variables in a ``roles/common_settings/vars/main.yml`` file and use them in other roles and elsewhere in your playbook::
 
      roles:
         - role: common_settings
@@ -430,11 +418,9 @@ Generally speaking, variables set in one role are available to others.  This mea
         - role: something_else
 
 .. note:: There are some protections in place to avoid the need to namespace variables.
-          In the above, variables defined in common_settings are most definitely available to 'something' and 'something_else' tasks, but if "something's" guaranteed to have foo set at 12, even if somewhere deep in common settings it set foo to 20.
+          In this example, variables defined in 'common_settings' are available to 'something' and 'something_else' tasks, but tasks in 'something' have foo set at 12, even if 'common_settings' sets foo to 20.
 
-So, that's precedence, explained in a more direct way.  Don't worry about precedence, just think about if your role is defining a variable that is a default, or a "live" variable you definitely want to use.  Inventory lies in precedence right in the middle, and if you want to forcibly override something, use ``-e``.
-
-If you found that a little hard to understand, take a look at the `ansible-examples <https://github.com/ansible/ansible-examples>`_ repo on GitHub for a bit more about how all of these things can work together.
+Instead of worrying about variable precedence, we encourage you to think about how easily or how often you want to override a variable when deciding where to set it. If you are not sure what other variables are defined, and you need a particular value, use ``--extra-vars`` (``-e``) to override all other variables.
 
 Using advanced variable syntax
 ==============================
