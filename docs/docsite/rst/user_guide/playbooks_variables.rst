@@ -4,7 +4,7 @@
 Using Variables
 ***************
 
-Ansible uses variables to manage differences between systems. With Ansible, you can execute tasks and playbooks on multiple different systems with a single command. You can create variables with standard YAML syntax, including lists and dictionaries, to represent the variations among those different systems. You can store variables in your playbooks, in your :ref:`inventory <intro_inventory>`, in included files or roles, or at the command line. You can also create variables during a playbook run by registering the output of a task as a new variable.
+Ansible uses variables to manage differences between systems. With Ansible, you can execute tasks and playbooks on multiple different systems with a single command. To represent the variations among those different systems, you can create variables with standard YAML syntax, including lists and dictionaries. You can set these variables in your playbooks, in your :ref:`inventory <intro_inventory>`, in included files or roles, or at the command line. You can also create variables during a playbook run by registering the return value or values of a task as a new variable.
 
 You can use the variables you created in module arguments, in :ref:`conditional "when" statements <playbooks_conditionals>`, in :ref:`templates <playbooks_templating>`, and in :ref:`loops <playbooks_loops>`. The `ansible-examples github repository <https://github.com/ansible/ansible-examples>`_ contains many examples of using variables in Ansible.
 
@@ -50,7 +50,7 @@ You can define a simple variable using standard YAML syntax. For example::
 Referencing simple variables
 ----------------------------
 
-Once you have defined a variable, you can reference it in :ref:`Jinja2 templates <playbooks_templating>`. An expression like ``My amp goes to {{ max_amp_value }}`` demonstrates the most basic form of variable substitution. You can also use Jinja2 syntax in playbooks. For example::
+Once you have defined a variable, use Jinja2 syntax to reference it. Jinja2 variables use double curly braces. For example, the expression ``My amp goes to {{ max_amp_value }}`` demonstrates the most basic form of variable substitution. You can use Jinja2 syntax in playbooks. For example::
 
     template: src=foo.cfg.j2 dest={{ remote_install_path }}/foo.cfg
 
