@@ -106,9 +106,9 @@ You can define variables with multiple values using YAML lists. For example::
 Referencing list variables
 --------------------------
 
-When you use variables defined as a list, you can use individual, specific fields from that list. The first item in a list is item 0, the second item is item 1. For example::
+When you use variables defined as a list (also called an array), you can use individual, specific fields from that list. The first item in a list is item 0, the second item is item 1. For example::
 
-  region[0]
+  region: "{{ region[0] }}"
 
 The value of this expression would be "northeast".
 
@@ -652,6 +652,19 @@ To reference the system hostname::
 
 You can use facts in conditionals (see :ref:`playbooks_conditionals`) and also in templates. You can also use facts to create dynamic groups of hosts that match particular criteria, see the :ref:`group_by module <group_by_module>` documentation for details.
 
+.. _fact_caching:
+
+Caching facts
+^^^^^^^^^^^^^
+
+Like registered variables, facts are stored in memory by default. However, unlike registered variables, facts can be gathered independently and cached for repeated use. With cached facts, you can refer to facts from one system when configuring a second system, even if Ansible executes the current play on the second system first. For example::
+
+    {{ hostvars['asdf.example.com']['ansible_facts']['os_family'] }}
+
+Caching is controlled by the cache plugins. By default, Ansible uses the memory cache plugin, which stores facts in memory for the duration of the current playbook run. To retain Ansible facts for repeated use, select a different cache plugin. See :ref:`cache_plugins` for details.
+
+Fact caching can improve performance. If you manage thousands of hosts, you can configure fact caching to run nightly, then manage configuration on a smaller set of servers periodically throughout the day. With cached facts, you have access to variables and information about all hosts even when you are only managing a small number of servers.
+
 .. _disabling_facts:
 
 Disabling facts
@@ -706,7 +719,7 @@ The local namespace prevents any user supplied fact from overriding system facts
 .. _ConfigParser: https://docs.python.org/2/library/configparser.html
 .. _optionxform: https://docs.python.org/2/library/configparser.html#ConfigParser.RawConfigParser.optionxform
 
-By default, fact gathering runs once at the beginning of a play. If you create a custom fact in facts.d in a playbook, it will be available in the next play that gathers facts. If you want to use it in the same play where you created it, you must explicitly re-run the setup module. For example::
+By default, fact gathering runs once at the beginning of each play. If you create a custom fact in facts.d in a playbook, it will be available in the next play that gathers facts. If you want to use it in the same play where you created it, you must explicitly re-run the setup module. For example::
 
   - hosts: webservers
     tasks:
@@ -720,20 +733,7 @@ By default, fact gathering runs once at the beginning of a play. If you create a
       - name: re-read facts after adding custom fact
         setup: filter=ansible_local
 
-In this pattern however, you could also write a fact module as well, and may wish to consider this as an option.
-
-.. _fact_caching:
-
-Caching facts
-^^^^^^^^^^^^^
-
-Like registered variables, facts are stored in memory by default. However, unlike registered variables, facts can be gathered independently and cached for repeated use. With cached facts, you can refer to facts from one system when configuring a second system, even if Ansible executes the current play on the second system first. For example::
-
-    {{ hostvars['asdf.example.com']['ansible_facts']['os_family'] }}
-
-Caching is controlled by the cache plugins. By default, Ansible uses the memory cache plugin, which stores facts in memory for the duration of the current playbook run. To retain Ansible facts for repeated use, select a different cache plugin. See :ref:`cache_plugins` for details.
-
-Fact caching can improve performance. If you manage thousands of hosts, you can configure fact caching to run nightly, then manage configuration on a smaller set of servers periodically throughout the day. With cached facts, you have access to variables and information about all hosts even when you are only managing a small number of servers.
+If you use this pattern frequently, a custom facts module would be more efficient than facts.d.
 
 .. _magic_variables_and_hostvars:
 
@@ -828,7 +828,7 @@ To adapt playbook behavior to specific version of ansible, a variable ansible_ve
 Referencing nested variables
 ============================
 
-Ansible provides many registered variables and facts as nested data structures. You cannot access values from these nested data structures with the simple ``{{ foo }}`` syntax. You must use either bracket notation or dot notation. To reference an IP address from your facts using the bracket notation::
+Ansible provides many registered variables and facts as nested JSON data structures. You cannot access values from these nested data structures with the simple ``{{ foo }}`` syntax. You must use either bracket notation or dot notation. To reference an IP address from your facts using the bracket notation::
 
     {{ ansible_facts["eth0"]["ipv4"]["address"] }}
 
