@@ -960,22 +960,13 @@ In these cases, it's probably best to use a JSON or YAML file containing the var
 Variable precedence: Where should I put a variable?
 ===================================================
 
-A lot of folks may ask about how variables override another.  Ultimately it's Ansible's philosophy that it's better you know where to put a variable, and then you have to think about it a lot less.
+You can set multiple variables with the same name in many different places. When you do this, Ansible chooses which variable to use based on variable precedence. In other words, the different variables will override each other in a certain order.
 
-Avoid defining the variable "x" in 47 places and then ask the question "which x gets used".
-Why?  Because that's not Ansible's Zen philosophy of doing things.
+We prefer to define each variable in one place. Figure out where to define a variable, and keep it simple. If you set guidelines for your team on which variables are defined where, you may avoid variable precedence concerns.
 
-There is only one Empire State Building. One Mona Lisa, etc.  Figure out where to define a variable, and don't make
-it complicated.
+However, variable precedence does exist, and you might have a use for it. Here is the order of precedence from least to greatest (the last listed variables winning prioritization):
 
-However, let's go ahead and get precedence out of the way!  It exists.  It's a real thing, and you might have
-a use for it.
-
-If multiple variables of the same name are defined in different places, they get overwritten in a certain order.
-
-Here is the order of precedence from least to greatest (the last listed variables winning prioritization):
-
-  #. command line values (eg "-u user")
+  #. command line values (for example, ``-u my_user``, different from extra vars)
   #. role defaults (defined in role/defaults/main.yml) [1]_
   #. inventory file or script group vars [2]_
   #. inventory group_vars/all [3]_
@@ -996,9 +987,9 @@ Here is the order of precedence from least to greatest (the last listed variable
   #. set_facts / registered vars
   #. role (and include_role) params
   #. include params
-  #. extra vars (always win precedence)
+  #. extra vars (for example, ``-e "user=my_user")(always win precedence)
 
-Basically, anything that goes into "role defaults" (the defaults folder inside the role) is the most malleable and easily overridden. Anything in the vars directory of the role overrides previous versions of that variable in namespace.  The idea here to follow is that the more explicit you get in scope, the more precedence it takes with command line ``-e`` extra vars always winning.  Host and/or inventory variables can win over role defaults, but not explicit includes like the vars directory or an ``include_vars`` task.
+Basically, anything that goes into "role defaults" (the defaults folder inside the role) is the most malleable and easily overridden. Anything in the vars directory of the role overrides previous versions of that variable in namespace. The idea here to follow is that the more explicit you get in scope, the more precedence it takes with command line ``-e`` extra vars always winning.  Host and/or inventory variables can win over role defaults, but not over explicit includes like the vars directory or an ``include_vars`` task.
 
 .. rubric:: Footnotes
 
