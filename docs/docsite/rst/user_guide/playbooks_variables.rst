@@ -825,7 +825,7 @@ To adapt playbook behavior to specific version of ansible, a variable ansible_ve
 Referencing nested variables
 ============================
 
-Ansible provides many registered variables and facts as nested JSON data structures. You cannot access values from these nested data structures with the simple ``{{ foo }}`` syntax. You must use either bracket notation or dot notation. To reference an IP address from your facts using the bracket notation::
+Ansible provides many registered variables and facts as nested YAML or JSON data structures. You cannot access values from these nested data structures with the simple ``{{ foo }}`` syntax. You must use either bracket notation or dot notation. For example, to reference an IP address from your facts using the bracket notation::
 
     {{ ansible_facts["eth0"]["ipv4"]["address"] }}
 
@@ -841,7 +841,7 @@ To reference the first element of an array::
 .. _jinja2_filters:
 
 Transforming variables with Jinja2 filters
-------------------------------------------
+==========================================
 
 Jinja2 :ref:`filters <playbooks_filters>` let you transform the value of a variable within a template expression. For example, the ``capitalize`` filter capitalizes any value passed to it; the ``to_yaml`` and ``to_json`` filters change the format of your variable values. Jinja2 includes many `built-in filters <http://jinja.pocoo.org/docs/templates/#builtin-filters>`_ and Ansible supplies :ref:`many more filters <playbooks_filters>`.
 
@@ -925,7 +925,7 @@ The contents of each variables file is a simple YAML dictionary, like this::
 Setting variables at runtime
 ----------------------------
 
-You can set variables when you run your playbook, either by requesting user input with a ``vars_prompt`` or buy passing variables at the command line using the ``--extra-vars`` (or ``-e``) argument.  Variables can be defined using a single quoted string (containing one or more variables) using one of the formats below.
+You can set variables when you run your playbook, either by requesting user input with a ``vars_prompt`` (see :ref:`playbooks_prompts`) or by passing variables at the command line using the ``--extra-vars`` (or ``-e``) argument. When you pass variables at the command line, use a single quoted string (containing one or more variables) in one of the formats below.
 
 key=value format::
 
@@ -947,23 +947,20 @@ This is useful for, among other things, setting the hosts group or the user for 
 
 Escaping quotes and other special characters:
 
-Ensure you're escaping quotes appropriately for both your markup (e.g. JSON), and for
-the shell you're operating in.::
+Ensure you're escaping quotes appropriately for both your markup (e.g. JSON), and for the shell you're operating in.::
 
     ansible-playbook arcade.yml --extra-vars "{\"name\":\"Conan O\'Brien\"}"
     ansible-playbook arcade.yml --extra-vars '{"name":"Conan O'\\\''Brien"}'
     ansible-playbook script.yml --extra-vars "{\"dialog\":\"He said \\\"I just can\'t get enough of those single and double-quotes"\!"\\\"\"}"
 
-In these cases, it's probably best to use a JSON or YAML file containing the variable
-definitions.
+In these cases, it's probably best to use a JSON or YAML file containing the variable definitions.
 
 .. _ansible_variable_precedence:
 
 Variable precedence: Where should I put a variable?
 ===================================================
 
-A lot of folks may ask about how variables override another.  Ultimately it's Ansible's philosophy that it's better
-you know where to put a variable, and then you have to think about it a lot less.
+A lot of folks may ask about how variables override another.  Ultimately it's Ansible's philosophy that it's better you know where to put a variable, and then you have to think about it a lot less.
 
 Avoid defining the variable "x" in 47 places and then ask the question "which x gets used".
 Why?  Because that's not Ansible's Zen philosophy of doing things.
