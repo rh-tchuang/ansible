@@ -127,7 +127,7 @@ You can define more complex variables using YAML dictionaries. A YAML dictionary
 Referencing key:value dictionary variables
 ------------------------------------------
 
-When you use variables defined as a key:value dictionary, you can use individual, specific fields from that dictionary using either bracket notation or dot notation::
+When you use variables defined as a key:value dictionary (also called a hash), you can use individual, specific fields from that dictionary using either bracket notation or dot notation::
 
   foo['field1']
   foo.field1
@@ -686,18 +686,17 @@ The setup module in Ansible automatically discovers a standard set of facts abou
 
 To use facts.d, create an ``/etc/ansible/facts.d`` directory on the remote host or hosts. If you prefer a different directory, create it and specify it using the ``fact_path`` play keyword. Add files to the directory to supply your custom facts. All file names must end with ``.fact``. The files can be JSON, INI, or executable files returning JSON.
 
-For example, assume ``/etc/ansible/facts.d/preferences.fact`` contains::
+To add static facts, simply add a file with the ``.facts`` extension. For example, create ``/etc/ansible/facts.d/preferences.fact`` with this content::
 
     [general]
     asdf=1
     bar=2
 
-This will produce a hash variable fact named ``general`` with ``asdf`` and ``bar`` as members.
-To validate this, run the following::
+The next time fact gathering runs, your facts will include a hash variable fact named ``general`` with ``asdf`` and ``bar`` as members. To validate this, run the following::
 
     ansible <hostname> -m setup -a "filter=ansible_local"
 
-And you will see the following fact added::
+And you will see your custom fact added::
 
     "ansible_local": {
             "preferences": {
@@ -708,11 +707,9 @@ And you will see the following fact added::
             }
      }
 
-You can access this data in a template or playbook as::
+The ansible_local namespace separates custom facts created by facts.d from system facts or variables defined elsewhere in the playbook, so variables will not override each other. You can access this custom fact in a template or playbook as::
 
      {{ ansible_local['preferences']['general']['asdf'] }}
-
-The local namespace prevents any user supplied fact from overriding system facts or variables defined elsewhere in the playbook.
 
 .. note:: The key part in the key=value pairs will be converted into lowercase inside the ansible_local variable. Using the example above, if the ini file contained ``XYZ=3`` in the ``[general]`` section, then you should expect to access it as: ``{{ ansible_local['preferences']['general']['xyz'] }}`` and not ``{{ ansible_local['preferences']['general']['XYZ'] }}``. This is because Ansible uses Python's `ConfigParser`_ which passes all option names through the `optionxform`_ method and this method's default implementation converts option names to lower case.
 
