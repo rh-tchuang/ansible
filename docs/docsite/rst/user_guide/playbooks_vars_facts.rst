@@ -518,7 +518,7 @@ If you know know everything about your systems centrally, you can turn off fact 
 Adding custom facts
 -------------------
 
-The setup module in Ansible automatically discovers a standard set of facts about each host. If you want to add custom values to your facts, you can write a custom facts module, you can set temporary facts with the ``set_fact`` keyword, or you can provide permanent custom facts using the facts.d directory.
+The setup module in Ansible automatically discovers a standard set of facts about each host. If you want to add custom values to your facts, you can write a custom facts module, set temporary facts with the :ref:`set_fact <set_fact_module>` module, or provide permanent custom facts using the facts.d directory.
 
 .. _local_facts:
 
@@ -527,7 +527,7 @@ facts.d or local facts
 
 .. versionadded:: 1.3
 
-You can add static facts by adding static files to facts.d, or add dynamic facts by adding executable scripts to facts.d. For example, you can add a list of all users on a host to your facts using facts.d.
+You can add static custom facts by adding static files to facts.d, or add dynamic facts by adding executable scripts to facts.d. For example, you can add a list of all users on a host to your facts using facts.d.
 
 To use facts.d, create an ``/etc/ansible/facts.d`` directory on the remote host or hosts. If you prefer a different directory, create it and specify it using the ``fact_path`` play keyword. Add files to the directory to supply your custom facts. All file names must end with ``.fact``. The files can be JSON, INI, or executable files returning JSON.
 
