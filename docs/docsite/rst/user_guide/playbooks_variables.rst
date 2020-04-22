@@ -4,11 +4,11 @@
 Using Variables
 ***************
 
-Ansible uses variables to manage differences and connections between systems. With Ansible, you can execute tasks and playbooks on multiple different systems with a single command. You can use the behavior or state of one system as configuration on other systems. For example, you can use the IP address of one system as a configuration value on another system. Once you have created, discovered, or registered your variables, you can use them in a task or play.
+Ansible uses variables to manage differences and connections between systems. With Ansible, you can execute tasks and playbooks on multiple different systems with a single command. You can create variables with standard YAML syntax, including lists and dictionaries. You can store variables in your playbooks, in your :ref:`inventory <intro_inventory>`, in included files or roles, or at the command line. You can also create variables during a playbook run by registering the output of a task as a new variable.
 
-You must use standard YAML syntax to create variables. You can create variables in your playbooks, in your :ref:`inventory <intro_inventory>`, in included files or roles, or at the command line. You can also retrieve variables from your remote systems (Ansible facts), from external data sources (lookups), or from related APIs (``*_info`` modules). Finally, you can create variables during a playbook run by registering the output of a task as a new variable.
+You can use the variables you created in module arguments, in :ref:`conditional "when" statements <playbooks_conditionals>` and in :ref:`loops <playbooks_loops>`, and so on. The `ansible-examples github repository <https://github.com/ansible/ansible-examples>`_ contains many examples of using variables in Ansible.
 
-You can use the variables you created or discovered in module arguments, in :ref:`conditional "when" statements <playbooks_conditionals>` and in :ref:`loops <playbooks_loops>`, and so on. The `ansible-examples github repository <https://github.com/ansible/ansible-examples>`_ contains many examples of using variables in Ansible.
+Once you understand the concepts and examples on this page, read about :ref:`Ansible facts <vars_and_facts>`, which are variables you retrieving from remote systems.
 
 .. contents::
    :local:
@@ -50,11 +50,7 @@ You can define a simple variable using YAML syntax. For example::
 Referencing simple variables
 ----------------------------
 
-Once you have defined a variable, you can reference it with the Jinja2 templating system. For example::
-
-    My amp goes to {{ max_amp_value }}
-
-This expression provides the most basic form of variable substitution. You can use this syntax in playbooks. For example::
+Once you have defined a variable, you can reference it with the :ref:`Jinja2 templates <playbooks_templating>`. An expression like ``My amp goes to {{ max_amp_value }}`` demonstrates the most basic form of variable substitution. You can use this syntax in playbooks. For example::
 
     template: src=foo.cfg.j2 dest={{ remote_install_path }}/foo.cfg
 
@@ -64,12 +60,7 @@ Inside a template you automatically have access to all variables that are in sco
 
 .. note::
 
-   Ansible allows Jinja2 loops and conditionals in templates but not in playbooks. Ansible playbooks are pure machine-parseable YAML. This is a rather important feature as it means it is possible to code-generate pieces of files, or to have other ecosystem tools read Ansible files.  Not everyone will need this but it can unlock possibilities.
-
-.. seealso::
-
-    :ref:`playbooks_templating`
-        More information about Jinja2 templating
+   Ansible allows Jinja2 loops and conditionals in :ref:`templates <playbooks_templating>` but not in playbooks. Ansible playbooks are pure machine-parseable YAML. This is a rather important feature as it means it is possible to code-generate pieces of files, or to have other ecosystem tools read Ansible files.  Not everyone will need this but it can unlock possibilities.
 
 .. _yaml_gotchas:
 
@@ -98,7 +89,7 @@ Defining variables as lists
 
 You can define variables with multiple values using YAML lists. For example::
 
-  regions:
+  region:
     - northeast
     - southeast
     - midwest

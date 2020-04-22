@@ -4,7 +4,10 @@
 Discovering variables: facts and magic variables
 ************************************************
 
-With Ansible you can retrieve or discover certain variables containing information about your remote systems or about Ansible itself. Variables related to remote systems are called facts. Variables related to Ansible are called magic variables.
+With Ansible you can retrieve or discover certain variables containing information about your remote systems or about Ansible itself. Variables related to remote systems are called facts. With facts, you can use the behavior or state of one system as configuration on other systems. For example, you can use the IP address of one system as a configuration value on another system. Variables related to Ansible are called magic variables.
+
+.. contents::
+   :local:
 
 Ansible facts
 =============
