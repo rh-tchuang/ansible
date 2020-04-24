@@ -1,63 +1,63 @@
-.. _resource_modules:
+.. \_resource\_modules:
 
 ************************
-Network resource modules
+ネットワークリソースモジュール
 ************************
 
-Ansible 2.9 introduced network resource modules to simplify and standardize how you manage different network devices.
+Ansible 2.9 では、さまざまなネットワークデバイスの管理を単純化し、標準化するネットワークリソースモジュールが導入されました。
 
 
 .. contents::
    :local:
 
-Understanding network resource modules
+ネットワークリソースモジュールの概要
 =======================================
 
-Network devices separate configuration into sections (such as interfaces, VLANS, etc) that apply to a network service. Ansible network resource modules take advantage of this to allow you to configure subsections or *resources* within the network device configuration. Network resource modules provide a consistent experience across different network devices.
+ネットワークデバイスは、設定を、ネットワークサービスに適用するセクション (インターフェース、VLAN など) に分割します。Ansible ネットワークリソースモジュールは、これを利用してネットワークデバイス設定内のサブセクションや *リソース* の設定を可能にします。ネットワークリソースモジュールは、ネットワークデバイスが異なっても、ユーザーが体験する内容は同じになります。
 
 
-Network resource module states
+ネットワークリソースモジュールの状態
 ===============================
 
-You use the network resource modules by assigning a state to what you want the module to do. The resource modules support the following states:
+ネットワークリソースモジュールを使用するには、モジュールの実行内容に状態を割り当てます。リソースモジュールは以下の状態に対応します。
 
 merged
-  Ansible merges the on-device configuration with the provided configuration in the task.
+  Ansible は、デバイス上の設定をタスクに指定した設定と統合します。
 
 replaced
-  Ansible replaces the on-device configuration subsection with the provided configuration subsection in the task.
+  Ansible が、デバイス上の設定のサブセクションを、タスクに指定した設定のサブセクションに置き換えます。
 
 overridden
-  Ansible overrides the on-device configuration for the resource with the provided configuration in the task. Use caution with this state as you could remove your access to the device (for example, by overriding the management interface configuration).
+  Ansible は、タスクに指定した設定で、リソースに対するデバイス上の設定を上書きします。デバイスへのアクセスを削除できるため (たとえば、管理インターフェースの設定を上書きするなど)、この状態には注意してください。
 
 deleted
-  Ansible deletes the on-device configuration subsection and restores any default settings.
+  Ansible は、デバイス上の設定サブセクションを削除して、デフォルト設定を復元します。
 
 gathered
-  Ansible displays the resource details gathered from the network device and accessed with the ``gathered`` key in the result.
+  Ansible は、ネットワークデバイスから収集したリソースの詳細を表示し、結果の ``gathered`` キーでアクセスします。
 
 rendered
-  Ansible renders the provided configuration in the task in the device-native format (for example, Cisco IOS CLI). Ansible returns this rendered configuration in the ``rendered`` key in the result. Note this state does not communicate with the network device and can be used offline.
+  Ansible は、デバイスネイティブ形式 (Cisco IOS CLI など) のタスクで指定される設定をレンダリングします。Ansible は、このレンダリングされた設定を、結果の ``rendered`` キーで返します。この状態はネットワークデバイスと通信せず、オフラインで使用できることに注意してください。
 
 parsed
-  Ansible parses the configuration from the ``running_configuration`` option into Ansible structured data in the ``parsed`` key in the result. Note this does not gather the configuration from the network device so this state can be used offline.
+  Ansible は、``running_configuration`` オプションから、結果の ``parsed`` キーに含まれる Ansible 構造化データに設定を解析します。この状態はオフラインで使用できるように、ネットワークデバイスから設定を収集しないことに注意してください。
 
-Using network resource modules
+ネットワークリソースモジュールの使用
 ==============================
 
-This example configures L3 interface resource on a Cisco IOS device, based on different state settings.
+この例では、異なる状態設定に基づいて、Cisco IOS デバイスで L3 インターフェースリソースを設定します。
 
  .. code-block:: YAML
 
    - name: configure l3 interface
-     ios_l3_interfaces:
+     ios\_l3\_interfaces:
        config: "{{ config }}"
        state: <state>
 
-The following table shows an example of how an initial resource configuration changes with this task for different states.
+以下の表は、このタスクをさまざまな状況で変更した最初のリソースの設定の例を示しています。
 
 +-----------------------------------------+------------------------------------+-----------------------------------------+
-| Resource starting configuration         | task-provided configuration (YAML) | Final resource configuration on device  |
+| リソースの開始設定         | タスクが指定する設定 (YAML) | デバイスでの最終的なリソース設定  |
 +=========================================+====================================+=========================================+
 | .. code-block:: text                    |  .. code-block:: yaml              | *merged*                                |
 |                                         |                                    |  .. code-block:: text                   |
@@ -76,10 +76,10 @@ The following table shows an example of how an initial resource configuration ch
 |                                         |                                    |    ipv6 address FC00:101/64             |
 |                                         |                                    +-----------------------------------------+
 |                                         |                                    | *overridden*                            |
-|                                         |                                    |  Incorrect use case. This would remove  |
-|                                         |                                    |  all interfaces from the device         |
-|                                         |                                    | (including the mgmt interface) except   |
-|                                         |                                    |  the configured loopback100             |
+|                                         |                                    |  誤った使用例。これは、デバイスから  |
+|                                         |                                    |  すべてのインターフェースを削除します。         |
+|                                         |                                    | (mgmt インターフェースを含む) 以下を除く   |
+|                                         |                                    |  設定されている loopback100             |
 |                                         |                                    +-----------------------------------------+
 |                                         |                                    | *deleted*                               |
 |                                         |                                    |  .. code-block:: text                   |
@@ -88,71 +88,71 @@ The following table shows an example of how an initial resource configuration ch
 |                                         |                                    |    no ip address                        |
 +-----------------------------------------+------------------------------------+-----------------------------------------+
 
-Network resource modules return the following details:
+ネットワークリソースモジュールは、以下の詳細を返します。
 
-* The *before* state -  the existing resource configuration before the task was executed.
-* The *after* state - the new resource configuration that exists on the network device after the task was executed.
-* Commands - any commands configured on the device.
+* *before* 状態 - タスクが実行する前の既存リソース設定。
+* *after* 状態 - タスク実行後にネットワークデバイスに存在する新しいリソース設定。
+* Commands - このデバイスに設定されるすべてのコマンド
 
 .. code-block:: yaml
 
-   ok: [nxos101] =>
+   ok: \[nxos101] =>
      result:
        after:
-         contact: IT Support
-         location: Room E, Building 6, Seattle, WA 98134
+         contact:IT Support
+         location:Room E, Building 6, Seattle, WA 98134
          users:
-         - algorithm: md5
+         \- algorithm: md5
            group: network-admin
-           localized_key: true
-           password: '0x73fd9a2cc8c53ed3dd4ed8f4ff157e69'
-           privacy_password: '0x73fd9a2cc8c53ed3dd4ed8f4ff157e69'
+           localized\_key: true
+           password:'0x73fd9a2cc8c53ed3dd4ed8f4ff157e69'
+           privacy\_password:'0x73fd9a2cc8c53ed3dd4ed8f4ff157e69'
            username: admin
        before:
-         contact: IT Support
-         location: Room E, Building 5, Seattle HQ
+         contact:IT Support
+         location:Room E, Building 5, Seattle HQ
          users:
-         - algorithm: md5
+         \- algorithm: md5
            group: network-admin
-           localized_key: true
-           password: '0x73fd9a2cc8c53ed3dd4ed8f4ff157e69'
-           privacy_password: '0x73fd9a2cc8c53ed3dd4ed8f4ff157e69'
+           localized\_key: true
+           password:'0x73fd9a2cc8c53ed3dd4ed8f4ff157e69'
+           privacy\_password:'0x73fd9a2cc8c53ed3dd4ed8f4ff157e69'
            username: admin
        changed: true
        commands:
-       - snmp-server location Room E, Building 6, Seattle, WA 98134
+       \- snmp-server location Room E, Building 6, Seattle, WA 98134
        failed: false
 
 
-Example: Verifying the network device configuration has not changed
+例:ネットワークデバイス設定が変更されていないことを確認
 ====================================================================
 
-The following playbook uses the :ref:`eos_l3_interfaces <eos_l3_interfaces_module>` module to gather a subset of the network device configuration (Layer 3 interfaces only) and verifies the information is accurate and has not changed. This playbook passes the results of :ref:`eos_facts <eos_facts_module>` directly to the ``eos_l3_interfaces`` module.
+以下の Playbook は、:ref:`eos_l3_interfaces <eos_l3_interfaces_module>` モジュールを使用してネットワークデバイス設定のサブセット (レイヤー 3 インターフェースのみ) を収集し、情報が正確であり、変更されていないことを確認します。この Playbook は、:ref:`eos_facts <eos_facts_module>` の結果を、``eos_l3_interfaces`` モジュールに直接渡します。
 
 
 .. code-block:: yaml
 
-  - name: Example of facts being pushed right back to device.
+  - name:Example of facts being pushed right back to device.
     hosts: arista
-    gather_facts: false
+    gather\_facts: false
     tasks:
       - name: grab arista eos facts
-        eos_facts:
-          gather_subset: min
-          gather_network_resources: l3_interfaces
+        eos\_facts:
+          gather\_subset: min
+          gather\_network\_resources: l3\_interfaces
 
-  - name: Ensure that the IP address information is accurate.
-    eos_l3_interfaces:
-      config: "{{ ansible_network_resources['l3_interfaces'] }}"
+  - name:Ensure that the IP address information is accurate.
+    eos\_l3\_interfaces:
+      config: "{{ ansible\_network\_resources\['l3\_interfaces'] }}"
       register: result
 
-  - name: Ensure config did not change.
+  - name:Ensure config did not change.
     assert:
       that: not result.changed
 
 .. seealso::
 
-  `Network Features in Ansible 2.9 <https://www.ansible.com/blog/network-features-coming-soon-in-ansible-engine-2.9>`_
-    A introductory blog post on network resource modules.
-  `Deep Dive into Network Resource Modules <https://www.ansible.com/deep-dive-into-ansible-network-resource-module>`_
-    A deeper dive presentation into network resource modules.
+  `Ansible 2.9 のネットワーク機能<https://www.ansible.com/blog/network-features-coming-soon-in-ansible-engine-2.9>`_
+    ネットワークリソースモジュールに関する入門ブログの投稿。
+  `ネットワークリソースモジュールの詳細<https://www.ansible.com/deep-dive-into-ansible-network-resource-module>`_
+    ネットワークリソースモジュールの詳細な説明

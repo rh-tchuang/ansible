@@ -1,124 +1,124 @@
-.. _iosxr_platform_options:
+.. \_iosxr\_platform\_options:
 
 ***************************************
-IOS-XR Platform Options
+IOS-XR プラットフォームのオプション
 ***************************************
 
-IOS-XR supports multiple connections. This page offers details on how each connection works in Ansible and how to use it.
+IOS-XR は、複数の接続に対応します。このページには、各接続が Ansible でどのように機能するか、およびその使用方法に関する詳細が記載されています。
 
-.. contents:: Topic
+.. contents:: トピック
 
-Connections Available
+利用可能な接続
 ================================================================================
 
 .. table::
     :class: documentation-table
 
     ====================  ==========================================  =========================
-    ..                    CLI                                         NETCONF
+    ..                   CLI                                         NETCONF
 
-                                                                      only for modules ``iosxr_banner``, 
-                                                                      ``iosxr_interface``, ``iosxr_logging``, 
-                                                                      ``iosxr_system``, ``iosxr_user``
+                                                                      ``iosxr_banner``、
+                                                                      ``iosxr_interface``、``iosxr_logging``、
+                                                                      ``iosxr_system``、``iosxr_user`` モジュールに限定
     ====================  ==========================================  =========================
-    Protocol              SSH                                         XML over SSH
+    プロトコル              SSH                                         SSH 経由の XML
 
-    Credentials           uses SSH keys / SSH-agent if present        uses SSH keys / SSH-agent if present
+    認証情報           (存在する場合は) SSH キー / SSH-agent を使用します。        (存在する場合は) SSH キー / SSH-agent を使用します。
 
-                          accepts ``-u myuser -k`` if using password  accepts ``-u myuser -k`` if using password
+                          パスワードを使用する場合は ``-u myuser -k`` を許可します。  パスワードを使用する場合は ``-u myuser -k`` を許可します。
 
-    Indirect Access       via a bastion (jump host)                   via a bastion (jump host)
+    間接アクセス       bastion (ジャンプホスト) を経由                   bastion (ジャンプホスト) を経由
 
-    Connection Settings   ``ansible_connection: network_cli``         ``ansible_connection: netconf``
+    接続設定   ``ansible_connection: network_cli``         ``ansible_connection: netconf``
 
-    |enable_mode|         not supported                               not supported
+    |enable_mode|         対応していません。                               対応していません。
 
-    Returned Data Format  Refer to individual module documentation    Refer to individual module documentation
+    返されるデータ形式  各モジュールのモジュールドキュメントを参照してください。    各モジュールのモジュールドキュメントを参照してください。
     ====================  ==========================================  =========================
 
-.. |enable_mode| replace:: Enable Mode |br| (Privilege Escalation)
+.. |enable\_mode| replace::Enable モード |br| (権限昇格)
 
 
-For legacy playbooks, Ansible still supports ``ansible_connection=local`` on all IOS-XR modules. We recommend modernizing to use ``ansible_connection=netconf`` or ``ansible_connection=network_cli`` as soon as possible.
+レガシー Playbook の場合、Ansible はすべての IOS-XR モジュールで ``ansible_connection=local`` に対応します。できるだけ早期に ``ansible_connection=netconf`` または ``ansible_connection=network_cli`` を使用するモダナイゼーションが推奨されます。
 
-Using CLI in Ansible
+Ansible での CLI の使用
 ====================
 
-Example CLI inventory ``[iosxr:vars]``
+CLI インベントリーの例 ``[iosxr:vars]``
 --------------------------------------
 
 .. code-block:: yaml
 
-   [iosxr:vars]
-   ansible_connection=network_cli
-   ansible_network_os=iosxr
-   ansible_user=myuser
-   ansible_password=!vault...
-   ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   \[iosxr:vars]
+   ansible\_connection=network\_cli
+   ansible\_network\_os=iosxr
+   ansible\_user=myuser
+   ansible\_password=!vault...
+   ansible\_ssh\_common\_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
-- If you are using SSH keys (including an ssh-agent) you can remove the ``ansible_password`` configuration.
-- If you are accessing your host directly (not through a bastion/jump host) you can remove the ``ansible_ssh_common_args`` configuration.
-- If you are accessing your host through a bastion/jump host, you cannot include your SSH password in the ``ProxyCommand`` directive. To prevent secrets from leaking out (for example in ``ps`` output), SSH does not support providing passwords via environment variables.
+- SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
+- (bastion/ジャンプホスト を経由せず) ホストに直接アクセスしている場合は、``ansible_ssh_common_args`` 設定を削除できます。
+- bastion/ジャンプホスト 経由でホストにアクセスしている場合は、SSH パスワードを ``ProxyCommand`` ディレクティブに含めることができません。(``ps`` 出力などで) シークレットの漏えいを防ぐために、SSH は環境変数によるパスワードの提供に対応していません。
 
-Example CLI Task
+CLI タスクの例
 ----------------
 
 .. code-block:: yaml
 
-   - name: Retrieve IOS-XR version
-     iosxr_command:
+   - name:Retrieve IOS-XR version
+     iosxr\_command:
        commands: show version
-     when: ansible_network_os == 'iosxr'
+     when: ansible\_network\_os == 'iosxr'
 
 
-Using NETCONF in Ansible
+Ansible での NETCONF の使用
 ========================
 
-Enabling NETCONF
+NETCONF の有効化
 ----------------
 
-Before you can use NETCONF to connect to a switch, you must:
+NETCONF を使用してスイッチに接続する前に、以下を行う必要があります。
 
-- install the ``ncclient`` python package on your control node(s) with ``pip install ncclient``
-- enable NETCONF on the Cisco IOS-XR device(s)
+- ``pip install ncclient`` を使用して、コントロールノードに python パッケージ ``ncclient`` をインストールします。
+- Cisco IOS-XR デバイスで NETCONF を有効にします。
 
-To enable NETCONF on a new switch via Ansible, use the ``iosxr_netconf`` module via the CLI connection. Set up your platform-level variables just like in the CLI example above, then run a playbook task like this:
+Ansible 経由で新しいスイッチで NETCONF を有効にするには、CLI 接続で ``iosxr_netconf`` モジュールを使用します。上記の CLI の例と同様にプラットフォームレベルの変数を設定し、以下のような Playbook のタスクを実行します。
 
 .. code-block:: yaml
 
-   - name: Enable NETCONF
-     connection: network_cli
-     iosxr_netconf:
-     when: ansible_network_os == 'iosxr'
+   - name:Enable NETCONF
+     connection: network\_cli
+     iosxr\_netconf:
+     when: ansible\_network\_os == 'iosxr'
 
-Once NETCONF is enabled, change your variables to use the NETCONF connection.
+NETCONF を有効にしたら、変数を変更して NETCONF 接続を使用します。
 
-Example NETCONF inventory ``[iosxr:vars]``
+NETCONF インベントリーの例: ``[iosxr:vars]``
 ------------------------------------------
 
 .. code-block:: yaml
 
-   [iosxr:vars]
-   ansible_connection=netconf
-   ansible_network_os=iosxr
-   ansible_user=myuser
-   ansible_password=!vault |
-   ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   \[iosxr:vars]
+   ansible\_connection=netconf
+   ansible\_network\_os=iosxr
+   ansible\_user=myuser
+   ansible\_password=!vault |
+   ansible\_ssh\_common\_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
-Example NETCONF Task
+NETCONF タスクの例
 --------------------
 
 .. code-block:: yaml
 
-   - name: Configure hostname and domain-name
-     iosxr_system:
+   - name:Configure hostname and domain-name
+     iosxr\_system:
        hostname: iosxr01
-       domain_name: test.example.com
-       domain_search:
-         - ansible.com
-         - redhat.com
-         - cisco.com
+       domain\_name: test.example.com
+       domain\_search:
+         \- ansible.com
+         \- redhat.com
+         \- cisco.com
 
-.. include:: shared_snippets/SSH_warning.txt
+.. include:: shared\_snippets/SSH\_warning.txt

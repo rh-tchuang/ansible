@@ -1,180 +1,180 @@
-.. _eos_platform_options:
+.. \_eos\_platform\_options:
 
 ***************************************
-EOS Platform Options
+EOS プラットフォームのオプション
 ***************************************
 
-Arista EOS supports multiple connections. This page offers details on how each connection works in Ansible and how to use it.
+Arista EOS は、複数の接続に対応します。このページには、各接続が Ansible でどのように機能するか、およびその使用方法に関する詳細が記載されています。
 
-.. contents:: Topics
+.. contents:: トピック
 
-Connections Available
+利用可能な接続
 ================================================================================
 
 .. table::
     :class: documentation-table
 
     ====================  ==========================================  =========================
-    ..                    CLI                                         eAPI
+    ..                   CLI                                         eAPI
     ====================  ==========================================  =========================
-    Protocol              SSH                                         HTTP(S)
+    プロトコル              SSH                                         HTTP(S)
 
-    Credentials           uses SSH keys / SSH-agent if present        uses HTTPS certificates if
-                                                                      present
-                          accepts ``-u myuser -k`` if using password
+    認証情報           (存在する場合は) SSH キー / SSH-agent を使用します。        
+                                                                      (存在する場合は) HTTPS 認証情報を使用します。
+                          パスワードを使用する場合は ``-u myuser -k`` を許可します。
 
-    Indirect Access       via a bastion (jump host)                   via a web proxy
+    間接アクセス       bastion (ジャンプホスト) を経由                   Web プロキシーを経由
 
-    Connection Settings   ``ansible_connection: network_cli``         ``ansible_connection: httpapi``
+    接続設定   ``ansible_connection: network_cli``         ``ansible_connection: httpapi``
 
-                                                                      OR
+                                                                      または
 
-                                                                      ``ansible_connection: local``
-                                                                      with ``transport: eapi``
-                                                                      in the ``provider`` dictionary
+                                                                      ``provider`` ディクショナリーで、
+                                                                      ``ansible_connection: local`` を
+                                                                      ``transport: eapi`` とともに使用します
 
-    |enable_mode|         supported: |br|                             supported: |br|
+    |enable_mode|         サポート対象: |br|                             サポート対象: |br|
 
-                          * use ``ansible_become: yes``               * ``httpapi``
-                            with ``ansible_become_method: enable``      uses ``ansible_become: yes``
-                                                                        with ``ansible_become_method: enable``
+                          * ``ansible_become: yes`` を               * ``httpapi`` を
+                            ``ansible_become_method: enable`` とともに使用します。      ``ansible_become: yes`` および
+                                                                        ``ansible_become_method: enable`` とともに使用します。
 
-                                                                      * ``local``
-                                                                        uses ``authorize: yes``
-                                                                        and ``auth_pass:``
-                                                                        in the ``provider`` dictionary
+                                                                      * ``local`` を
+                                                                        ``provider`` ディレクトリーの
+                                                                        ``authorize: yes`` および
+                                                                        ``auth_pass:`` とともに使用します。
 
-    Returned Data Format  ``stdout[0].``                              ``stdout[0].messages[0].``
+    返されるデータ形式  ``stdout[0].``                              ``stdout[0].messages[0].``
     ====================  ==========================================  =========================
 
-.. |enable_mode| replace:: Enable Mode |br| (Privilege Escalation)
+.. |enable\_mode| replace::Enable モード |br| (権限昇格)
 
 
-For legacy playbooks, EOS still supports ``ansible_connection: local``. We recommend modernizing to use ``ansible_connection: network_cli`` or ``ansible_connection: httpapi`` as soon as possible.
+レガシー Playbook の場合でも、EOS は ``ansible_connection: local`` に対応します。できるだけ早期に ``ansible_connection: network_cli`` または ``ansible_connection: httpapi`` を使用するモダナイゼーションが推奨されます。
 
-Using CLI in Ansible
+Ansible での CLI の使用
 ====================
 
-Example CLI ``group_vars/eos.yml``
+CLI の例: ``group_vars/eos.yml``
 ----------------------------------
 
 .. code-block:: yaml
 
-   ansible_connection: network_cli
-   ansible_network_os: eos
-   ansible_user: myuser
-   ansible_password: !vault...
-   ansible_become: yes
-   ansible_become_method: enable
-   ansible_become_password: !vault...
-   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible\_connection: network\_cli
+   ansible\_network\_os: eos
+   ansible\_user: myuser
+   ansible\_password: !vault...
+   ansible\_become: yes
+   ansible\_become\_method: enable
+   ansible\_become\_password: !vault...
+   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
-- If you are using SSH keys (including an ssh-agent) you can remove the ``ansible_password`` configuration.
-- If you are accessing your host directly (not through a bastion/jump host) you can remove the ``ansible_ssh_common_args`` configuration.
-- If you are accessing your host through a bastion/jump host, you cannot include your SSH password in the ``ProxyCommand`` directive. To prevent secrets from leaking out (for example in ``ps`` output), SSH does not support providing passwords via environment variables.
+- SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
+- (bastion/ジャンプホスト を経由せず) ホストに直接アクセスしている場合は、``ansible_ssh_common_args`` 設定を削除できます。
+- bastion/ジャンプホスト 経由でホストにアクセスしている場合は、SSH パスワードを ``ProxyCommand`` ディレクティブに含めることができません。(``ps`` 出力などで) シークレットの漏えいを防ぐために、SSH は環境変数によるパスワードの提供に対応していません。
 
-Example CLI Task
+CLI タスクの例
 ----------------
 
 .. code-block:: yaml
 
-   - name: Backup current switch config (eos)
-     eos_config:
+   - name:Backup current switch config (eos)
+     eos\_config:
        backup: yes
-     register: backup_eos_location
-     when: ansible_network_os == 'eos'
+     register: backup\_eos\_location
+     when: ansible\_network\_os == 'eos'
 
 
 
-Using eAPI in Ansible
+Ansible での eAPI の使用
 =====================
 
-Enabling eAPI
+EAPI の有効化
 -------------
 
-Before you can use eAPI to connect to a switch, you must enable eAPI. To enable eAPI on a new switch via Ansible, use the ``eos_eapi`` module via the CLI connection. Set up group_vars/eos.yml just like in the CLI example above, then run a playbook task like this:
+eAPI を使用してスイッチに接続するには、eAPI を有効にする必要があります。Ansible 経由で新規スイッチで eAPI を有効にするには、CLI 接続で ``eos_eapi`` モジュールを使用します。上記の CLI の例のように group\_vars/EOS.yml を設定し、以下のような Playbook タスクを実行します。
 
 .. code-block:: yaml
 
-   - name: Enable eAPI
-      eos_eapi:
-          enable_http: yes
-          enable_https: yes
+   - name:Enable eAPI
+      eos\_eapi:
+          enable\_http: yes
+          enable\_https: yes
       become: true
-      become_method: enable
-      when: ansible_network_os == 'eos'
+      become\_method: enable
+      when: ansible\_network\_os == 'eos'
 
-You can find more options for enabling HTTP/HTTPS connections in the :ref:`eos_eapi <eos_eapi_module>` module documentation.
+HTTP/HTTPS 接続を有効にするオプションの詳細は、:ref:`eos_eapi <eos_eapi_module>` モジュールのドキュメントを参照してください。
 
-Once eAPI is enabled, change your ``group_vars/eos.yml`` to use the eAPI connection.
+eAPI が有効になったら、eAPI 接続を使用するように ``group_vars/eos.yml`` を変更します。
 
-Example eAPI ``group_vars/eos.yml``
+eAPI の例: ``group_vars/eos.yml``
 -----------------------------------
 
 .. code-block:: yaml
 
-   ansible_connection: httpapi
-   ansible_network_os: eos
-   ansible_user: myuser
-   ansible_password: !vault...
-   ansible_become: yes
-   ansible_become_method: enable
-   proxy_env:
-     http_proxy: http://proxy.example.com:8080
+   ansible\_connection: httpapi
+   ansible\_network\_os: eos
+   ansible\_user: myuser
+   ansible\_password: !vault...
+   ansible\_become: yes
+   ansible\_become\_method: enable
+   proxy\_env:
+     http\_proxy: http://proxy.example.com:8080
 
-- If you are accessing your host directly (not through a web proxy) you can remove the ``proxy_env`` configuration.
-- If you are accessing your host through a web proxy using ``https``, change ``http_proxy`` to ``https_proxy``.
+- (Web プロキシーを経由せず) ホストに直接アクセスしている場合は、``proxy_env`` 設定を削除できます。
+- ``https`` を使用して Web プロキシー経由でホストにアクセスする場合は、``http_proxy`` を ``https_proxy`` に変更します。
 
 
-Example eAPI Task
+eAPI タスクの例
 -----------------
 
 .. code-block:: yaml
 
-   - name: Backup current switch config (eos)
-     eos_config:
+   - name:Backup current switch config (eos)
+     eos\_config:
        backup: yes
-     register: backup_eos_location
-     environment: "{{ proxy_env }}"
-     when: ansible_network_os == 'eos'
+     register: backup\_eos\_location
+     environment: "{{ proxy\_env }}"
+     when: ansible\_network\_os == 'eos'
 
-In this example the ``proxy_env`` variable defined in ``group_vars`` gets passed to the ``environment`` option of the module in the task.
+この例では、``group_vars`` で定義された ``proxy_env`` 変数は、タスクのモジュールの ``environment`` オプションに渡されます。
 
-eAPI examples with ``connection: local``
+``connection: local`` を使用した eAPI の例
 -----------------------------------------
 
 ``group_vars/eos.yml``:
 
 .. code-block:: yaml
 
-   ansible_connection: local
-   ansible_network_os: eos
-   ansible_user: myuser
-   ansible_password: !vault...
+   ansible\_connection: local
+   ansible\_network\_os: eos
+   ansible\_user: myuser
+   ansible\_password: !vault...
    eapi:
-     host: "{{ inventory_hostname }}"
+     host: "{{ inventory\_hostname }}"
      transport: eapi
      authorize: yes
-     auth_pass: !vault...
-   proxy_env:
-     http_proxy: http://proxy.example.com:8080
+     auth\_pass: !vault...
+   proxy\_env:
+     http\_proxy: http://proxy.example.com:8080
 
-eAPI task:
+eAPI タスク:
 
 .. code-block:: yaml
 
-   - name: Backup current switch config (eos)
-     eos_config:
+   - name:Backup current switch config (eos)
+     eos\_config:
        backup: yes
        provider: "{{ eapi }}"
-     register: backup_eos_location
-     environment: "{{ proxy_env }}"
-     when: ansible_network_os == 'eos'
+register: backup\_eos\_location
+environment: "{{ proxy\_env }}"
+     when: ansible\_network\_os == 'eos'
 
-In this example two variables defined in ``group_vars`` get passed to the module of the task:
+この例では、``group_vars`` で定義された 2 つの変数がタスクのモジュールに渡されます。
 
-- the ``eapi`` variable gets passed to the ``provider`` option of the module
-- the ``proxy_env`` variable gets passed to the ``environment`` option of the module
+- ``eapi`` 変数は、モジュールの ``provider`` オプションに渡されます。
+- ``proxy_env`` 変数は、モジュールの ``environment`` オプションに渡されます。
 
-.. include:: shared_snippets/SSH_warning.txt
+.. include:: shared\_snippets/SSH\_warning.txt

@@ -1,123 +1,123 @@
-.. _junos_platform_options:
+.. \_junos\_platform\_options:
 
 ***************************************
-Junos OS Platform Options
+Junos OS プラットフォームのオプション
 ***************************************
 
-Juniper Junos OS supports multiple connections. This page offers details on how each connection works in Ansible and how to use it.
+Juniper Junos OS は、複数の接続に対応します。このページには、各接続が Ansible でどのように機能するか、およびその使用方法に関する詳細が記載されています。
 
-.. contents:: Topics
+.. contents:: トピック
 
-Connections Available
+利用可能な接続
 ================================================================================
 
 .. table::
     :class: documentation-table
 
     ====================  ==========================================  =========================
-    ..                    CLI                                         NETCONF
+    ..                   CLI                                         NETCONF
 
-                          ``junos_netconf`` & ``junos_command``       all modules except ``junos_netconf``,
-                          modules only                                which enables NETCONF
+                          ``junos_netconf`` および ``junos_command``       NETCONF を有効にする ``junos_netconf`` ,
+                          モジュールのみ                      以外のすべてのモジュール
     ====================  ==========================================  =========================
-    Protocol              SSH                                         XML over SSH
+    プロトコル              SSH                                         SSH 経由の XML
 
-    Credentials           uses SSH keys / SSH-agent if present        uses SSH keys / SSH-agent if present
+    認証情報           (存在する場合は) SSH キー / SSH-agent を使用します。        (存在する場合は) SSH キー / SSH-agent を使用します。
 
-                          accepts ``-u myuser -k`` if using password  accepts ``-u myuser -k`` if using password
+                          パスワードを使用する場合は ``-u myuser -k`` を許可します。  パスワードを使用する場合は ``-u myuser -k`` を許可します。
 
-    Indirect Access       via a bastion (jump host)                   via a bastion (jump host)
+    間接アクセス       bastion (ジャンプホスト) を経由                   bastion (ジャンプホスト) を経由
 
-    Connection Settings   ``ansible_connection: network_cli``         ``ansible_connection: netconf``
+    接続設定   ``ansible_connection: network_cli``         ``ansible_connection: netconf``
 
-    |enable_mode|         not supported by Junos OS                   not supported by Junos OS
+    |enable_mode Junos OS は対応していません。 Junos OS は対応していません。
 
-    Returned Data Format  ``stdout[0].``                              * json: ``result[0]['software-information'][0]['host-name'][0]['data'] foo lo0``
+    返されるデータ形式 "stdout[0]." * json: "result[0]['software-information'][0]['host-name'][0]['data'] foo lo0"
                                                                       * text: ``result[1].interface-information[0].physical-interface[0].name[0].data foo lo0``
                                                                       * xml: ``result[1].rpc-reply.interface-information[0].physical-interface[0].name[0].data foo lo0``
     ====================  ==========================================  =========================
 
-.. |enable_mode| replace:: Enable Mode |br| (Privilege Escalation)
+.. |enable\_mode| replace::Enable モード |br| (権限昇格)
 
 
-For legacy playbooks, Ansible still supports ``ansible_connection=local`` on all JUNOS modules. We recommend modernizing to use ``ansible_connection=netconf`` or ``ansible_connection=network_cli`` as soon as possible.
+レガシー Playbook の場合、Ansible はすべての JUNOS モジュールで ``ansible_connection=local`` に対応します。できるだけ早期に ``ansible_connection=netconf`` または ``ansible_connection=network_cli`` を使用するモダナイゼーションが推奨されます。
 
-Using CLI in Ansible
+Ansible での CLI の使用
 ====================
 
-Example CLI inventory ``[junos:vars]``
+CLI インベントリーの例 ``[junos:vars]``
 --------------------------------------
 
 .. code-block:: yaml
 
-   [junos:vars]
-   ansible_connection=network_cli
-   ansible_network_os=junos
-   ansible_user=myuser
-   ansible_password=!vault...
-   ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   \[junos:vars]
+   ansible\_connection=network\_cli
+   ansible\_network\_os=junos
+   ansible\_user=myuser
+   ansible\_password=!vault...
+   ansible\_ssh\_common\_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
-- If you are using SSH keys (including an ssh-agent) you can remove the ``ansible_password`` configuration.
-- If you are accessing your host directly (not through a bastion/jump host) you can remove the ``ansible_ssh_common_args`` configuration.
-- If you are accessing your host through a bastion/jump host, you cannot include your SSH password in the ``ProxyCommand`` directive. To prevent secrets from leaking out (for example in ``ps`` output), SSH does not support providing passwords via environment variables.
+- SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
+- (bastion/ジャンプホスト を経由せず) ホストに直接アクセスしている場合は、``ansible_ssh_common_args`` 設定を削除できます。
+- bastion/ジャンプホスト 経由でホストにアクセスしている場合は、SSH パスワードを ``ProxyCommand`` ディレクティブに含めることができません。(``ps`` 出力などで) シークレットの漏えいを防ぐために、SSH は環境変数によるパスワードの提供に対応していません。
 
-Example CLI Task
+CLI タスクの例
 ----------------
 
 .. code-block:: yaml
 
-   - name: Retrieve Junos OS version
-     junos_command:
+   - name:Retrieve Junos OS version
+     junos\_command:
        commands: show version
-     when: ansible_network_os == 'junos'
+     when: ansible\_network\_os == 'junos'
 
 
-Using NETCONF in Ansible
+Ansible での NETCONF の使用
 ========================
 
-Enabling NETCONF
+NETCONF の有効化
 ----------------
 
-Before you can use NETCONF to connect to a switch, you must:
+NETCONF を使用してスイッチに接続する前に、以下を行う必要があります。
 
-- install the ``ncclient`` python package on your control node(s) with ``pip install ncclient``
-- enable NETCONF on the Junos OS device(s)
+- ``pip install ncclient`` を使用して、コントロールノードに python パッケージ ``ncclient`` をインストールします。
+- Junos OS デバイスの netconf の有効化
 
-To enable NETCONF on a new switch via Ansible, use the ``junos_netconf`` module via the CLI connection. Set up your platform-level variables just like in the CLI example above, then run a playbook task like this:
+Ansible 経由で新規スイッチで NETCONF を有効にするには、CLI 接続で ``junos_netconf`` モジュールを使用します。上記の CLI の例と同様にプラットフォームレベルの変数を設定し、以下のような Playbook のタスクを実行します。
 
 .. code-block:: yaml
 
-   - name: Enable NETCONF
-     connection: network_cli
-     junos_netconf:
-     when: ansible_network_os == 'junos'
+   - name:Enable NETCONF
+     connection: network\_cli
+     junos\_netconf:
+     when: ansible\_network\_os == 'junos'
 
-Once NETCONF is enabled, change your variables to use the NETCONF connection.
+NETCONF を有効にしたら、変数を変更して NETCONF 接続を使用します。
 
-Example NETCONF inventory ``[junos:vars]``
+NETCONF インベントリーの例 ``[junos:vars]``
 ------------------------------------------
 
 .. code-block:: yaml
 
-   [junos:vars]
-   ansible_connection=netconf
-   ansible_network_os=junos
-   ansible_user=myuser
-   ansible_password=!vault |
-   ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   \[junos:vars]
+   ansible\_connection=netconf
+   ansible\_network\_os=junos
+   ansible\_user=myuser
+   ansible\_password=!vault |
+   ansible\_ssh\_common\_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
-Example NETCONF Task
+NETCONF タスクの例
 --------------------
 
 .. code-block:: yaml
 
-   - name: Backup current switch config (junos)
-     junos_config:
+   - name:Backup current switch config (junos)
+     junos\_config:
        backup: yes
-     register: backup_junos_location
-     when: ansible_network_os == 'junos'
+     register: backup\_junos\_location
+     when: ansible\_network\_os == 'junos'
 
 
-.. include:: shared_snippets/SSH_warning.txt
+.. include:: shared\_snippets/SSH\_warning.txt

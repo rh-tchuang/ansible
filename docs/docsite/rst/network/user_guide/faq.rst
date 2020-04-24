@@ -1,76 +1,76 @@
-.. _network_faq:
+.. \_network\_faq:
 
 *******************
 Ansible Network FAQ
 *******************
 
-.. contents:: Topics
+.. contents:: トピック
 
-.. _network_faq_performance:
+.. \_network\_faq\_performance:
 
-How can I improve performance for network playbooks?
+ネットワークの Playbook のパフォーマンスを改善するにはどうすればよいですか?
 ====================================================
 
-.. _network_faq_strategy_free:
+.. \_network\_faq\_strategy\_free:
 
-Consider ``strategy: free`` if you are running on multiple hosts
+複数のホストで実行している場合は、``strategy: free`` を検討
 ---------------------------------------------------------------------------------
 
-The ``strategy`` plugin tells Ansible how to order multiple tasks on multiple hosts. :ref:`Strategy<strategy_plugins>` is set at the playbook level.
+``strategy`` プラグインは、複数のホストで複数のタスクに順序を付ける方法を Ansible に指示します。:ref:`ストラテジー<strategy_plugins>` は Playbook レベルに設定されます。
 
-The default strategy is ``linear``. With strategy set to ``linear``, Ansible waits until the current task has run on all hosts before starting the next task on any host. Ansible may have forks free, but will not use them until all hosts have completed the current task. If each task in your playbook must succeed on all hosts before you run the next task, use the ``linear`` strategy.
+デフォルトのストラテジーは ``linear`` です。ストラテジーを ``linear`` に設定すると、Ansible は現在のタスクがすべてのホストで実行されるまで待ってから、ホストで次のタスクを開始します。Ansible にはフォークを解放できますが、すべてのホストが現在のタスクを完了するまで使用されません。次のタスクを実行する前に、Playbook の各タスクをすべてのホストで成功させる必要がある場合は、``linear`` ストラテジーを使用します。
 
-Using the ``free`` strategy, Ansible uses available forks to execute tasks on each host as quickly as possible. Even if an earlier task is still running on one host, Ansible executes later tasks on other hosts. The ``free`` strategy uses available forks more efficiently. If your playbook stalls on each task, waiting for one slow host, consider using ``strategy: free`` to boost overall performance. 
+``free`` ストラテジーを使用すると、Ansible は利用可能なフォークを使用して、できるだけ迅速に各ホストでタスクを実行します。以前のタスクがホストで実行している場合でも、Ansible は他のホストで後でタスクを実行します。``free`` ストラテジーは、利用可能なフォークをより効率的に使用します。各タスクで Playbook が停止し、単一の低速なホストが待機している場合に、全体のパフォーマンスを向上させるには、``strategy: free`` を使用することを検討してください。 
 
-.. _network_faq_limit_show_running:
+.. \_network\_faq\_limit\_show\_running:
 
-Execute ``show running`` only if you absolutely must
+絶対に必要な場合にのみ ``show running`` を実行
 ---------------------------------------------------------------------------------
 
-The ``show running`` command is the most resource-intensive command to execute on a network device, because of the way queries are handled by the network OS. Using the command in your Ansible playbook will slow performance significantly, especially on large devices; repeating it will multiply the performance hit. If you have a playbook that checks the running config, then executes changes, then checks the running config again, you should expect that playbook to be very slow.
+``show running`` コマンドは、クエリーをネットワーク OS が処理する方法であるため、ネットワークデバイスで実行する最もリソース集約的なコマンドです。Ansible Playbook でこのコマンドを使用すると、特に大きなデバイスでパフォーマンスが大幅に低下します。これを繰り返すと、パフォーマンスへの影響が増大します。実行中の設定を確認する Playbook がある場合には、変更を実行してから、実行中の設定を再度確認すると、Playbook が非常に遅くなるはずです。
 
-.. _network_faq_limit_ProxyCommand:
+.. \_network\_faq\_limit\_ProxyCommand:
 
-Use ``ProxyCommand`` only if you absolutely must
+絶対に必要な場合にのみ ``ProxyCommand`` を使用
 ---------------------------------------------------------------------------------
 
-Network modules support the use of a :ref:`proxy or jump host<network_delegate_to_vs_ProxyCommand>` with the ``ProxyCommand`` parameter. However, when you use a jump host, Ansible must open a new SSH connection for every task, even if you are using a persistent connection type (``network_cli`` or ``netconf``). To maximize the performance benefits of the persistent connection types introduced in version 2.5, avoid using jump hosts whenever possible.
+ネットワークモジュールは、``ProxyCommand`` パラメーターを使用した :ref:`プロキシーまたはジャンプホスト` の<network\_delegate\_to\_vs\_ProxyCommand> 使用をサポートします。ただし、ジャンプホストを使用する場合、Ansible は、永続的な接続タイプ (``network_cli`` または ``netconf``) を使用している場合であっても、すべてのタスクに新しい SSH 接続を開く必要があります。バージョン 2.5 で導入された永続的な接続タイプによるパフォーマンスの利点を最大化するために、可能な場合はジャンプホストを使用しないでください。
 
-.. _network_faq_set_forks:
+.. \_network\_faq\_set\_forks:
 
-Set ``--forks`` to match your needs
+ニーズに合わせて ``--forks`` の設定
 ---------------------------------------------------------------------------------
 
-Every time Ansible runs a task, it forks its own process. The ``--forks`` parameter defines the number of concurrent tasks - if you retain the default setting, which is ``--forks=5``, and you are running a playbook on 10 hosts, five of those hosts will have to wait until a fork is available. Of course, the more forks you allow, the more memory and processing power Ansible will use. Since most network tasks are run on the control host, this means your laptop can quickly become cpu- or memory-bound. 
+Ansible がタスクを実行するたびに、独自のプロセスをフォークします。``--forks`` パラメーターは、同時タスクの数を定義します。デフォルト設定 (``--forks=5``) を保持し、Playbook を 10 台のホストで実行している場合、そのうちの 5 台は、フォークが利用可能になるまで待機する必要があります。当然ながら、許可するフォークが多くなると、Ansible が使用するメモリーおよび処理能力が増えます。ほとんどのネットワークタスクは制御ホスト上で実行されるため、ラップトップはすぐに CPU またはメモリーをバインドできます。 
 
-.. _network_faq_redacted_output:
+.. \_network\_faq\_redacted\_output:
 
-Why is my output sometimes replaced with ``********``?
+出力が ``********`` に置き換えられることがある理由
 ======================================================
 
-Ansible replaces any string marked ``no_log``, including passwords, with ``********`` in Ansible output. This is done by design, to protect your sensitive data. Most users are happy to have their passwords redacted. However, Ansible replaces every string that matches your password with ``********``. If you use a common word for your password, this can be a problem. For example, if you choose ``Admin`` as your password, Ansible will replace every instance of the word ``Admin`` with ``********`` in your output. This may make your output harder to read. To avoid this problem, select a secure password that will not occur elsewhere in your Ansible output.
+Ansible は、パスワードを含む ``no_log`` とマークされたすべての文字列を、Ansible 出力の ``********`` に置き換えます。これは、機密データを保護するために設計上行われます。ほとんどのユーザーは、自身のパスワードが伏字になることを希望します。ただし、Ansible はパスワードと一致するすべての文字列を ``******`` に置き換えます。パスワードに共通する単語を使用する場合は、これが問題になる可能性があります。たとえば、パスワードとして ``Admin`` を選択すると、Ansible は、出力の ``Admin`` という単語の全インスタンスを ``********`` に置き換えます。これにより、出力が読みにくくなります。この問題を回避するには、Ansible 出力の別の場所では使用しない安全なパスワードを選択します。
 
-.. _network_faq_no_abbreviations_with_config:
+.. \_network\_faq\_no\_abbreviations\_with\_config:
 
-Why do the ``*_config`` modules always return ``changed=true`` with abbreviated commands?
+省略されたコマンドで、``*_config`` モジュールが常に ``changed=true`` を返す理由
 =========================================================================================
 
-When you issue commands directly on a network device, you can use abbreviated commands. For example, ``int g1/0/11`` and ``interface GigabitEthernet1/0/11`` do the same thing; ``shut`` and ``shutdown`` do the same thing. Ansible Network ``*_command`` modules work with abbreviations, because they run commands through the network OS.
+ネットワークデバイスで直接コマンドを実行する場合は、短縮コマンドを使用できます。たとえば、``int g1/0/11`` と ``interface GigabitEthernet1/0/11`` の動作は同じです。同様に ``shut`` および ``shutdown`` の動作も同じです。Ansible Network ``*_command`` モジュールは、ネットワーク OS でコマンドを実行するため、省略形で機能します。
 
-When committing configuration, however, the network OS converts abbreviations into long-form commands. Whether you use ``shut`` or ``shutdown`` on ``GigabitEthernet1/0/11``, the result in the configuration is the same: ``shutdown``.
+ただし、設定をコミットすると、ネットワーク OS は省略形を長い形式のコマンドに変換します。``GigabitEthernet1/0/11`` で ``shut`` または ``shutdown`` を使用しているかどうかに関わらず、設定の結果は同じ (``shutdown``) になります。
 
-Ansible Network ``*_config`` modules compare the text of the commands you specify in ``lines`` to the text in the configuration. If you use ``shut`` in the ``lines`` section of your task, and the configuration reads  ``shutdown``, the module returns ``changed=true`` even though the configuration is already correct. Your task will update the configuration every time it runs.
+Ansible Network ``*_config`` モジュールは、``lines`` で指定するコマンドのテキストを、設定のテキストと比較します。タスクの ``lines`` セクションで ``shut`` を使用し、設定が ``shutdown`` を読み込む場合は、設定がすでに正しくても、モジュールは ``changed=true`` を返します。タスクを実行すると、毎回設定が更新されます。
 
-To avoid this problem, use long-form commands with the ``*_config`` modules:
+この問題を回避するには、``*_config`` モジュールで長い形式のコマンドを使用します。
 
 
 .. code-block:: yaml
 
    ---
    - hosts: all
-     gather_facts: no
+     gather\_facts: no
      tasks:
-       - ios_config:
+       - ios\_config:
            lines:
-             - shutdown
+             \- shutdown
            parents: interface GigabitEthernet1/0/11

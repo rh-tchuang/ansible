@@ -1,76 +1,76 @@
-.. _network_debug_troubleshooting:
+.. \_network\_debug\_troubleshooting:
 
 ***************************************
-Network Debug and Troubleshooting Guide
+ネットワークデバッグおよびトラブルシューティングガイド
 ***************************************
 
 .. contents::
    :local:
 
 
-Introduction
+はじめに
 ============
 
-Starting with Ansible version 2.1, you can now use the familiar Ansible models of playbook authoring and module development to manage heterogeneous networking devices. Ansible supports a growing number of network devices using both CLI over SSH and API (when available) transports.
+Ansible バージョン 2.1 以降、使い慣れた Ansible モデルで Playbook のオーサリングとモジュール開発を使用して、異種ネットワークデバイスを管理できるようになりました。Ansible は、SSH 経由の CLI および API (利用可能な場合) のトランスポートの両方を使用して、増加するネットワークデバイスに対応します。
 
-This section discusses how to debug and troubleshoot network modules in Ansible 2.3.
+本セクションでは、Ansible 2.3 でネットワークモジュールをデバッグし、トラブルシューティングを行う方法を説明します。
 
 
 
-How to troubleshoot
+トラブルシューティングの方法
 ===================
 
-This section covers troubleshooting issues with Network Modules.
+本セクションでは、ネットワークモジュールに関するトラブルシューティングを説明します。
 
-Errors generally fall into one of the following categories:
+通常、エラーは以下のカテゴリーのいずれかに分類されます。
 
-:Authentication issues:
-  * Not correctly specifying credentials
-  * Remote device (network switch/router) not falling back to other other authentication methods
-  * SSH key issues
-:Timeout issues:
-  * Can occur when trying to pull a large amount of data
-  * May actually be masking a authentication issue
-:Playbook issues:
-  * Use of ``delegate_to``, instead of ``ProxyCommand``. See :ref:`network proxy guide <network_delegate_to_vs_ProxyCommand>` for more information.
+:認証の問題:
+  \* 認証情報を正しく指定できない
+  \* リモートデバイス (ネットワークスイッチ/ルーター) が他の認証方法にフォールバックしない
+  \* SSH 鍵の問題
+:タイムアウトの問題:
+  \* 大量のデータを取得しようとすると発生することがある
+  \* 認証の問題を実際にマスクする可能性がある
+:Playbook の問題:
+  * ``ProxyCommand`` の代わりに ``delegate_to`` を使用する。詳細は、「:ref:`ネットワークプロキシーガイド<network_delegate_to_vs_ProxyCommand>`」を参照してください。
 
 .. warning:: ``unable to open shell``
 
-  The ``unable to open shell`` message is new in Ansible 2.3, it means that the ``ansible-connection`` daemon has not been able to successfully
-  talk to the remote network device. This generally means that there is an authentication issue. See the "Authentication and connection issues" section
-  in this document for more information.
+  Ansible 2.3 では、``unable to open shell`` メッセージが新しくなりました。これは、``ansible-connection`` デーモンを実行して、
+  リモートネットワークデバイスと対話することに失敗したことを示しています。これは通常、認証に問題があることを意味します。詳細は、本ガイドの
+  「認証および接続の問題」セクションを参照してください。
 
-.. _enable_network_logging:
+.. \_enable\_network\_logging:
 
-Enabling Networking logging and how to read the logfile
+ネットワークロギングの有効化とログファイルの読み取り方法
 -------------------------------------------------------
 
-**Platforms:** Any
+**プラットフォーム:** 任意
 
-Ansible 2.3 features improved logging to help diagnose and troubleshoot issues regarding Ansible Networking modules.
+Ansible 2.3 では、Ansible Networking モジュールに関する問題の診断およびトラブルシューティングに役立つように、ロギングが改善されています。
 
-Because logging is very verbose it is disabled by default. It can be enabled via the :envvar:`ANSIBLE_LOG_PATH` and :envvar:`ANSIBLE_DEBUG` options on the ansible-controller, that is the machine running ansible-playbook.
+ロギングは非常に詳細であるため、デフォルトでは無効になっています。これは、ansible-playbook を実行するマシンである ansible-controller の :envvar:`ANSIBLE_LOG_PATH` オプションおよび :envvar:`ANSIBLE_DEBUG` オプションで有効にできます。
 
-Before running ``ansible-playbook`` run the following commands to enable logging::
+``ansible-playbook`` を実行する前に、以下のコマンドを実行してロギングを有効にします。
 
-   # Specify the location for the log file
-   export ANSIBLE_LOG_PATH=~/ansible.log
-   # Enable Debug
-   export ANSIBLE_DEBUG=True
+   \# Specify the location for the log file
+export ANSIBLE\_LOG\_PATH=~/ansible.log
+\# Enable Debug
+export ANSIBLE\_DEBUG=True
 
-   # Run with 4*v for connection level verbosity
-   ansible-playbook -vvvv ...
+   \# Run with 4\*v for connection level verbosity
+ansible-playbook -vvvv ...
 
-After Ansible has finished running you can inspect the log file which has been created on the ansible-controller:
+Ansible の実行が完了したら、ansible-controller で作成されたログファイルを確認できます。
 
 .. code::
 
-  less $ANSIBLE_LOG_PATH
+  less $ANSIBLE\_LOG\_PATH
 
   2017-03-30 13:19:52,740 p=28990 u=fred |  creating new control socket for host veos01:22 as user admin
   2017-03-30 13:19:52,741 p=28990 u=fred |  control socket path is /home/fred/.ansible/pc/ca5960d27a
   2017-03-30 13:19:52,741 p=28990 u=fred |  current working directory is /home/fred/ansible/test/integration
-  2017-03-30 13:19:52,741 p=28990 u=fred |  using connection plugin network_cli
+  2017-03-30 13:19:52,741 p=28990 u=fred |  using connection plugin network\_cli
   ...
   2017-03-30 13:20:14,771 paramiko.transport userauth is OK
   2017-03-30 13:20:15,283 paramiko.transport Authentication (keyboard-interactive) successful!
@@ -79,240 +79,240 @@ After Ansible has finished running you can inspect the log file which has been c
   2017-03-30 13:20:15,322 p=28990 u=fred |  connection established to veos01 in 0:00:22.580626
 
 
-From the log notice:
+このログ通知は、以下のようになります。
 
-* ``p=28990`` Is the PID (Process ID) of the ``ansible-connection`` process
-* ``u=fred`` Is the user `running` ansible, not the remote-user you are attempting to connect as
-* ``creating new control socket for host veos01:22 as user admin`` host:port as user
-* ``control socket path is`` location on disk where the persistent connection socket is created
-* ``using connection plugin network_cli`` Informs you that persistent connection is being used
-* ``connection established to veos01 in 0:00:22.580626`` Time taken to obtain a shell on the remote device
-
-
-.. note: Port None ``creating new control socket for host veos01:None``
-
-   If the log reports the port as ``None`` this means that the default port is being used.
-   A future Ansible release will improve this message so that the port is always logged.
-
-Because the log files are verbose, you can use grep to look for specific information. For example, once you have identified the ``pid`` from the ``creating new control socket for host`` line you can search for other connection log entries::
-
-  grep "p=28990" $ANSIBLE_LOG_PATH
+* ``p=28990`` は、``ansible-connection`` プロセスの PID (プロセス ID) です。
+* ``u=fred`` は、ansible を `実行` しているユーザーです (接続しようとしているリモートユーザーではありません)。
+* ``creating new control socket for host veos01:22 as user admin`` は、host:port をユーザーとします。
+* ``control socket path is`` は、永続的な接続ソケットが作成されるディスクの場所です。
+* ``using connection plugin network_cli`` は、永続的な接続が使用されていることを示しています。
+* ``connection established to veos01 in 0:00:22.580626`` は、リモートデバイスでシェルを取得するのに要した時間になります。
 
 
-Enabling Networking device interaction logging
+.. 注記:Port None ``creating new control socket for host veos01:None``
+
+   ログでポートが ``None`` と報告される場合は、デフォルトのポートが使用されていることを示しています。
+   今後の Ansible リリースではこのメッセージが改善され、ポートが常にログに記録されるようになります。
+
+ログファイルは詳細情報であるため、grep を使用して特定の情報を検索できます。たとえば、``creating new control socket for host`` 行で ``pid`` を確認したら、他の接続ログエントリーを検索できます。
+
+  grep "p=28990" $ANSIBLE\_LOG\_PATH
+
+
+ネットワークデバイスの対話ロギングの有効化
 ----------------------------------------------
 
-**Platforms:** Any
+**プラットフォーム:** 任意
 
-Ansible 2.8 features added logging of device interaction in log file to help diagnose and troubleshoot
-issues regarding Ansible Networking modules. The messages are logged in file pointed by ``log_path`` configuration
-option in Ansible configuration file or by set :envvar:`ANSIBLE_LOG_PATH` as mentioned in above section.
+Ansible 2.8 の機能により、デバイスの対話のログがログファイルに追加され、
+Ansible Networking モジュールに関する問題の診断とトラブルシューティングに役立ちます。メッセージは、上記のセクションで説明されているように、Ansible 設定ファイルの ``log_path`` 設定オプション、
+または :envvar:`ANSIBLE_LOG_PATH` を設定することで、参照されるファイルに記録されます。
 
 .. warning::
-  The device interaction messages consist of command executed on target device and the returned response, as this
-  log data can contain sensitive information including passwords in plain text it is disabled by default.
-  Additionally, in order to prevent accidental leakage of data, a warning will be shown on every task with this
-  setting enabled specifying which host has it enabled and where the data is being logged.
+  デバイスの対話メッセージは、ターゲットデバイスで実行されたコマンドと返された応答で構成されます。
+  このログデータには、パスワードを含む機密情報がプレーンテキストで含まれる可能性があるため、デフォルトでは無効になっています。
+  さらに、データの偶発的な漏洩を防ぐために、
+  この設定を有効にすると、すべてのタスクで警告が表示され、有効になっているホストと、データが記録されている場所が指定されます。
 
-Be sure to fully understand the security implications of enabling this option. The device interaction logging can be enabled either globally by setting in configuration file or by setting environment or enabled on per task basis by passing special variable to task.
+このオプションを有効にした場合のセキュリティーへの影響を完全に理解してください。デバイス対話ロギングは、設定ファイルで設定するか、環境を設定してグローバルに有効にするか、または特殊な変数をタスクに渡すことでタスクごとに有効にすることができます。
 
-Before running ``ansible-playbook`` run the following commands to enable logging::
+``ansible-playbook`` を実行する前に、以下のコマンドを実行してロギングを有効にします。
 
-   # Specify the location for the log file
-   export ANSIBLE_LOG_PATH=~/ansible.log
+   \# Specify the location for the log file
+export ANSIBLE\_LOG\_PATH=~/ansible.log
 
 
-Enable device interaction logging for a given task
+特定のタスクのデバイス対話ログを有効にします。
 
 .. code-block:: yaml
 
   - name: get version information
-    ios_command:
+    ios\_command:
       commands:
-        - show version
+        \- show version
     vars:
-      ansible_persistent_log_messages: True
+      ansible\_persistent\_log\_messages:True
 
 
-To make this a global setting, add the following to your ``ansible.cfg`` file:
+これをグローバル設定にするには、以下を ``ansible.cfg`` ファイルに追加します。
 
 .. code-block:: ini
 
-   [persistent_connection]
-   log_messages = True
+   \[persistent\_connection]
+   log\_messages = True
 
-or enable environment variable `ANSIBLE_PERSISTENT_LOG_MESSAGES`
+または、環境変数 `ANSIBLE_PERSISTENT_LOG_MESSAGES` を有効にします。
 
-   # Enable device interaction logging
-   export ANSIBLE_PERSISTENT_LOG_MESSAGES=True
+   \# Enable device interaction logging
+export ANSIBLE\_PERSISTENT\_LOG\_MESSAGES=True
 
-If the task is failing at the time on connection initialization itself it is recommended to enable this option
-globally else if an individual task is failing intermittently this option can be enabled for that task itself to
-find the root cause.
+接続の初期化時にタスク自体が失敗する場合は、このオプションをグローバルに有効にすることが推奨されます。
+個別のタスクが断続的に失敗する場合は、
+そのタスクに対してこのオプションを有効にして根本原因を見つけることができます。
 
-After Ansible has finished running you can inspect the log file which has been created on the ansible-controller
+Ansible の実行が完了したら、ansible-controller で作成されたログファイルを確認できます。
 
-.. note:: Be sure to fully understand the security implications of enabling this option as it can log sensitive
-          information in log file thus creating security vulnerability.
+.. note:: このオプションを有効にすると、機密情報がログファイルに記録されてセキュリティの脆弱性が生じる可能性があるため、
+          セキュリティーの影響を十分に理解してください。
 
 
-Isolating an error
+エラーの分離
 ------------------
 
-**Platforms:** Any
+**プラットフォーム:** 任意
 
-As with any effort to troubleshoot it's important to simplify the test case as much as possible.
+トラブルシューティングにおけるあらゆる作業と同様に、テストケースをできるだけ簡略化することが重要です。
 
-For Ansible this can be done by ensuring you are only running against one remote device:
+Ansible の場合は、1 つのリモートデバイスに対してのみ実行するようにすることでこれを実行できます。
 
-* Using ``ansible-playbook --limit switch1.example.net...``
-* Using an ad-hoc ``ansible`` command
+* ``ansible-playbook --limit switch1.example.net...`` の使用
+* アドホックコマンド ``ansible`` の使用
 
-`ad-hoc` refers to running Ansible to perform some quick command using ``/usr/bin/ansible``, rather than the orchestration language, which is ``/usr/bin/ansible-playbook``. In this case we can ensure connectivity by attempting to execute a single command on the remote device::
+`ad-hoc` は、``/usr/bin/ansible-playbook`` というオーケストレーション言語ではなく、Ansible を実行して ``/usr/bin/ansible`` を使用してクイックコマンドを実行することを意味します。この場合は、リモートデバイスで 1 つのコマンドを実行してみると、接続性を確認できます。
 
-  ansible -m eos_command -a 'commands=?' -i inventory switch1.example.net -e 'ansible_connection=local' -u admin -k
+  ansible -m eos\_command -a 'commands=?' -i inventory switch1.example.net -e 'ansible\_connection=local' -u admin -k
 
-In the above example, we:
+上記の例では、以下を行います。
 
-* connect to ``switch1.example.net`` specified in the inventory file ``inventory``
-* use the module ``eos_command``
-* run the command ``?``
-* connect using the username ``admin``
-* inform ansible to prompt for the ssh password by specifying ``-k``
+* インベントリーファイル ``inventory`` で指定された ``switch1.example.net`` に接続する
+* ``eos_command`` モジュールを使用する
+* ``?`` コマンドを実行する
+* ユーザー名 ``admin`` を使用して接続する
+* ``-k`` を指定して ssh パスワードを要求するように Ansible に通知する
 
-If you have SSH keys configured correctly, you don't need to specify the ``-k`` parameter
+SSH キーが正しく設定されている場合は、``-k`` パラメーターを指定する必要はありません。
 
-If the connection still fails you can combine it with the enable_network_logging parameter. For example::
+それでも接続が失敗した場合は、これを enable\_network\_logging パラメーターと組み合わせることができます。例::
 
-   # Specify the location for the log file
-   export ANSIBLE_LOG_PATH=~/ansible.log
-   # Enable Debug
-   export ANSIBLE_DEBUG=True
-   # Run with 4*v for connection level verbosity
-   ansible -m eos_command -a 'commands=?' -i inventory switch1.example.net -e 'ansible_connection=local' -u admin -k
+   \# Specify the location for the log file
+export ANSIBLE\_LOG\_PATH=~/ansible.log
+\# Enable Debug
+export ANSIBLE\_DEBUG=True
+\# Run with 4\*v for connection level verbosity
+ansible -m eos\_command -a 'commands=?' -i inventory switch1.example.net -e 'ansible\_connection=local' -u admin -k
 
-Then review the log file and find the relevant error message in the rest of this document.
+次に、ログファイルを確認し、このドキュメントの残りの部分で、関連するエラーメッセージを見つけます。
 
-.. For details on other ways to authenticate, see LINKTOAUTHHOWTODOCS.
+..他の認証方法の詳細は、LINKTOAUTHHOWTODOCS を参照してください。
 
-.. _socket_path_issue:
+.. \_socket\_path\_issue:
 
-Category "socket_path issue"
+カテゴリー "socket\_path issue"
 ============================
 
-**Platforms:** Any
+**プラットフォーム:** 任意
 
-The ``socket_path does not exist or cannot be found``  and ``unable to connect to socket`` messages are new in Ansible 2.5. These messages indicate that the socket used to communicate with the remote network device is unavailable or does not exist.
+``socket_path does not exist or cannot be found`` メッセージおよび ``unable to connect to socket`` メッセージは、Ansible 2.5 で導入されました。このメッセージは、リモートネットワークデバイスとの通信に使用されるソケットが利用できないか、存在しないことを示しています。
 
 
-For example:
-
-.. code-block:: none
-
-   fatal: [spine02]: FAILED! => {
-       "changed": false,
-       "failed": true,
-       "module_stderr": "Traceback (most recent call last):\n  File \"/tmp/ansible_TSqk5J/ansible_modlib.zip/ansible/module_utils/connection.py\", line 115, in _exec_jsonrpc\nansible.module_utils.connection.ConnectionError: socket_path does not exist or cannot be found\n",
-       "module_stdout": "",
-       "msg": "MODULE FAILURE",
-       "rc": 1
-   }
-
-or
+例:
 
 .. code-block:: none
 
-   fatal: [spine02]: FAILED! => {
+   fatal: \[spine02]:FAILED! => {
        "changed": false,
        "failed": true,
-       "module_stderr": "Traceback (most recent call last):\n  File \"/tmp/ansible_TSqk5J/ansible_modlib.zip/ansible/module_utils/connection.py\", line 123, in _exec_jsonrpc\nansible.module_utils.connection.ConnectionError: unable to connect to socket\n",
-       "module_stdout": "",
-       "msg": "MODULE FAILURE",
-       "rc": 1
+       "module\_stderr":"Traceback (most recent call last):\\n  File \\"/tmp/ansible\_TSqk5J/ansible\_modlib.zip/ansible/module\_utils/connection.py\\", line 115, in \_exec\_jsonrpc\\nansible.module\_utils.connection.ConnectionError: socket\_path does not exist or cannot be found\\n",
+       "module\_stdout": "",
+       "msg":"MODULE FAILURE",
+       "rc":1
    }
 
-Suggestions to resolve:
+または
 
-Follow the steps detailed in :ref:`enable network logging <enable_network_logging>`.
+.. code-block:: none
 
-If the identified error message from the log file is:
+   fatal: \[spine02]:FAILED! => {
+       "changed": false,
+       "failed": true,
+       "module\_stderr":"Traceback (most recent call last):\\n  File \\"/tmp/ansible\_TSqk5J/ansible\_modlib.zip/ansible/module\_utils/connection.py\\", line 123, in \_exec\_jsonrpc\\nansible.module\_utils.connection.ConnectionError: unable to connect to socket\\n",
+       "module\_stdout": "",
+       "msg":"MODULE FAILURE",
+       "rc":1
+   }
+
+解決するためのヒント:
+
+「:ref:`ネットワークロギングの有効化<enable_network_logging>`」の手順に従います。
+
+ログファイルから特定されたエラーメッセージが以下の場合は、
 
 .. code-block:: yaml
 
    2017-04-04 12:19:05,670 p=18591 u=fred |  command timeout triggered, timeout value is 30 secs
 
-or
+または
 
 .. code-block:: yaml
 
    2017-04-04 12:19:05,670 p=18591 u=fred |  persistent connection idle timeout triggered, timeout value is 30 secs
 
-Follow the steps detailed in :ref:`timeout issues <timeout_issues>`
+:ref:`タイムアウトの問題 <timeout_issues>` に記載されている手順に従います。
 
 
-.. _unable_to_open_shell:
+.. \_unable\_to\_open\_shell:
 
-Category "Unable to open shell"
+カテゴリー "Unable to open shell"
 ===============================
 
 
-**Platforms:** Any
+**プラットフォーム:** 任意
 
-The ``unable to open shell`` message is new in Ansible 2.3. This message means that the ``ansible-connection`` daemon has not been able to successfully talk to the remote network device. This generally means that there is an authentication issue. It is a "catch all" message, meaning you need to enable :ref:logging`a_note_about_logging` to find the underlying issues.
-
-
-
-For example:
-
-.. code-block:: none
-
-  TASK [prepare_eos_tests : enable cli on remote device] **************************************************
-  fatal: [veos01]: FAILED! => {"changed": false, "failed": true, "msg": "unable to open shell"}
+Ansible 2.3 では、``unable to open shell`` メッセージが新たに追加されました。このメッセージは、``ansible-connection`` デーモンがリモートネットワークデバイスと正常に対話できないことを示します。これは通常、認証に問題があることを意味します。これは「catch all」メッセージであるため、:ref:logging`a_note_about_logging` を有効にして根本的な問題を見つける必要があります。
 
 
-or:
 
+例:
 
 .. code-block:: none
 
-   TASK [ios_system : configure name_servers] *************************************************************
+  TASK \[prepare\_eos\_tests : enable cli on remote device] \**************************************************
+  fatal: \[veos01]:FAILED! => {"changed": false, "failed": true, "msg": "unable to open shell"}
+
+
+または
+
+
+.. code-block:: none
+
+   TASK \[ios\_system : configure name\_servers] \*************************************************************
    task path:
-   fatal: [ios-csr1000v]: FAILED! => {
+   fatal: \[ios-csr1000v]:FAILED! => {
        "changed": false,
        "failed": true,
        "msg": "unable to open shell",
    }
 
-Suggestions to resolve:
+解決するためのヒント:
 
-Follow the steps detailed in enable_network_logging_.
+enable\_network\_logging_ に記載の手順に従います。
 
-Once you've identified the error message from the log file, the specific solution can be found in the rest of this document.
+ログファイルからエラーメッセージが特定できたら、特定の解決方法は、本ガイドのその他のセクションを参照してください。
 
 
 
-Error: "[Errno -2] Name or service not known"
+Error: "\[Errno -2]Name or service not known"
 ---------------------------------------------
 
-**Platforms:** Any
+**プラットフォーム:** 任意
 
-Indicates that the remote host you are trying to connect to can not be reached
+接続しようとしているリモートホストに到達できないことを示します。
 
-For example:
+例:
 
 .. code-block:: yaml
 
    2017-04-04 11:39:48,147 p=15299 u=fred |  control socket path is /home/fred/.ansible/pc/ca5960d27a
    2017-04-04 11:39:48,147 p=15299 u=fred |  current working directory is /home/fred/git/ansible-inc/stable-2.3/test/integration
-   2017-04-04 11:39:48,147 p=15299 u=fred |  using connection plugin network_cli
+   2017-04-04 11:39:48,147 p=15299 u=fred |  using connection plugin network\_cli
    2017-04-04 11:39:48,340 p=15299 u=fred |  connecting to host veos01 returned an error
-   2017-04-04 11:39:48,340 p=15299 u=fred |  [Errno -2] Name or service not known
+   2017-04-04 11:39:48,340 p=15299 u=fred |  \[Errno -2] Name or service not known
 
 
-Suggestions to resolve:
+解決するためのヒント:
 
-* If you are using the ``provider:`` options ensure that its suboption ``host:`` is set correctly.
-* If you are not using ``provider:`` nor top-level arguments ensure your inventory file is correct.
+* ``provider:`` オプションを使用している場合は、そのサブオプション ``host:`` が正しく設定されていることを確認してください。
+* ``provider:`` またはトップレベルの引数を使用しない場合には、インベントリーファイルが正しいことを確認してください。
 
 
 
@@ -321,13 +321,13 @@ Suggestions to resolve:
 Error: "Authentication failed"
 ------------------------------
 
-**Platforms:** Any
+**プラットフォーム:** 任意
 
-Occurs if the credentials (username, passwords, or ssh keys) passed to ``ansible-connection`` (via ``ansible`` or ``ansible-playbook``) can not be used to connect to the remote device.
+(``ansible`` または ``ansible-playbook`` を使用して) ``ansible-connection`` に渡される認証情報 (ユーザー名、パスワード、または ssh キー) を使用してリモートデバイスに接続できない場合に発生します。
 
 
 
-For example:
+例:
 
 .. code-block:: yaml
 
@@ -335,240 +335,240 @@ For example:
    <ios01> Authentication failed.
 
 
-Suggestions to resolve:
+解決するためのヒント:
 
-If you are specifying credentials via ``password:`` (either directly or via ``provider:``) or the environment variable `ANSIBLE_NET_PASSWORD` it is possible that ``paramiko`` (the Python SSH library that Ansible uses) is using ssh keys, and therefore the credentials you are specifying are being ignored. To find out if this is the case, disable "look for keys". This can be done like this:
+(直接または ``provider:`` を使用して) ``password:`` で認証情報を指定する場合や、環境変数の `ANSIBLE_NET_PASSWORD` を指定する場合は、``paramiko`` (Ansible が使用する Python SSH ライブラリー) が ssh キーを使用している可能性があるため、指定する認証情報は無視されます。これを確認するには、「look for keys」を無効にします。これは以下のように実行できます。
 
 .. code-block:: yaml
 
-   export ANSIBLE_PARAMIKO_LOOK_FOR_KEYS=False
+   export ANSIBLE\_PARAMIKO\_LOOK\_FOR\_KEYS=False
 
-To make this a permanent change, add the following to your ``ansible.cfg`` file:
+これを永続的に変更するには、以下を ``ansible.cfg`` ファイルに追加します。
 
 .. code-block:: ini
 
-   [paramiko_connection]
-   look_for_keys = False
+   \[paramiko\_connection]
+   look\_for\_keys = False
 
 
 Error: "connecting to host <hostname> returned an error" or "Bad address"
 -------------------------------------------------------------------------
 
-This may occur if the SSH fingerprint hasn't been added to Paramiko's (the Python SSH library) know hosts file.
+これは、SSH フィンガープリントが Paramiko の既知のホストファイル (Python SSH ライブラリー) に追加されていない場合に発生する可能性があります。
 
-When using persistent connections with Paramiko, the connection runs in a background process.  If the host doesn't already have a valid SSH key, by default Ansible will prompt to add the host key.  This will cause connections running in background processes to fail.
+Paramiko で永続的な接続を使用すると、接続はバックグラウンドプロセスで実行されます。 ホストに有効な SSH キーがない場合は、デフォルトでは Ansible がホストキーの追加を求めるプロンプトを表示します。 これにより、バックグラウンドプロセスで実行している接続が失敗します。
 
-For example:
+例:
 
 .. code-block:: yaml
 
-   2017-04-04 12:06:03,486 p=17981 u=fred |  using connection plugin network_cli
+   2017-04-04 12:06:03,486 p=17981 u=fred |  using connection plugin network\_cli
    2017-04-04 12:06:04,680 p=17981 u=fred |  connecting to host veos01 returned an error
    2017-04-04 12:06:04,682 p=17981 u=fred |  (14, 'Bad address')
    2017-04-04 12:06:33,519 p=17981 u=fred |  number of connection attempts exceeded, unable to connect to control socket
-   2017-04-04 12:06:33,520 p=17981 u=fred |  persistent_connect_interval=1, persistent_connect_retries=30
+   2017-04-04 12:06:33,520 p=17981 u=fred |  persistent\_connect\_interval=1, persistent\_connect\_retries=30
 
 
-Suggestions to resolve:
+解決するためのヒント:
 
-Use ``ssh-keyscan`` to pre-populate the known_hosts. You need to ensure the keys are correct.
+``ssh-keyscan`` を使用して known\_hosts を事前設定します。キーが正しいことを確認する必要があります。
 
 .. code-block:: shell
 
    ssh-keyscan veos01
 
 
-or
+または
 
-You can tell Ansible to automatically accept the keys
+鍵を自動的に受け入れるように Ansible に設定できます。
 
-Environment variable method::
+環境変数では、以下のようになります::
 
-  export ANSIBLE_PARAMIKO_HOST_KEY_AUTO_ADD=True
+  export ANSIBLE\_PARAMIKO\_HOST\_KEY\_AUTO\_ADD=True
   ansible-playbook ...
 
-``ansible.cfg`` method:
+``ansible.cfg`` メソッド:
 
 ansible.cfg
 
 .. code-block:: ini
 
-  [paramiko_connection]
-  host_key_auto_add = True
+  \[paramiko\_connection]
+  host\_key\_auto\_add = True
 
 
 
-.. warning: Security warning
+.. warning:Security warning
 
    Care should be taken before accepting keys.
 
 Error: "No authentication methods available"
 --------------------------------------------
 
-For example:
+例:
 
 .. code-block:: yaml
 
    2017-04-04 12:19:05,670 p=18591 u=fred |  creating new control socket for host veos01:None as user admin
    2017-04-04 12:19:05,670 p=18591 u=fred |  control socket path is /home/fred/.ansible/pc/ca5960d27a
    2017-04-04 12:19:05,670 p=18591 u=fred |  current working directory is /home/fred/git/ansible-inc/ansible-workspace-2/test/integration
-   2017-04-04 12:19:05,670 p=18591 u=fred |  using connection plugin network_cli
+   2017-04-04 12:19:05,670 p=18591 u=fred |  using connection plugin network\_cli
    2017-04-04 12:19:06,606 p=18591 u=fred |  connecting to host veos01 returned an error
    2017-04-04 12:19:06,606 p=18591 u=fred |  No authentication methods available
    2017-04-04 12:19:35,708 p=18591 u=fred |  connect retry timeout expired, unable to connect to control socket
-   2017-04-04 12:19:35,709 p=18591 u=fred |  persistent_connect_retry_timeout is 15 secs
+   2017-04-04 12:19:35,709 p=18591 u=fred |  persistent\_connect\_retry\_timeout is 15 secs
 
 
-Suggestions to resolve:
+解決するためのヒント:
 
-No password or SSH key supplied
+パスワードまたは SSH キーが指定されていない
 
 Clearing Out Persistent Connections
 -----------------------------------
 
-**Platforms:** Any
+**プラットフォーム:** 任意
 
-In Ansible 2.3, persistent connection sockets are stored in ``~/.ansible/pc`` for all network devices.  When an Ansible playbook runs, the persistent socket connection is displayed when verbose output is specified.
+Ansible 2.3 では、すべてのネットワークデバイスに対する永続的な接続ソケットは ``~/.ansible/pc`` に保存されます。 Ansible Playbook が実行すると、永続ソケット接続は詳細出力が指定されている場合に表示されます。
 
 ``<switch> socket_path: /home/fred/.ansible/pc/f64ddfa760``
 
-To clear out a persistent connection before it times out (the default timeout is 30 seconds
-of inactivity), simple delete the socket file.
+タイムアウトする前に永続的な接続を消去する (アクティブになっていない場合のデフォルトのタイムアウトは 30 秒) には、
+ソケットファイルを削除するだけです。
 
 
-.. _timeout_issues:
+.. \_timeout\_issues:
 
-Timeout issues
+タイムアウトの問題
 ==============
 
-Persistent connection idle timeout
+永続的な接続アイドルタイムアウト
 ----------------------------------
 
-By default, ``ANSIBLE_PERSISTENT_CONNECT_TIMEOUT`` is set to 30 (seconds). You may see the following error if this value is too low:
+デフォルトでは、``ANSIBLE_PERSISTENT_CONNECT_TIMEOUT`` は 30 (秒) に設定されます。この値が低すぎると、以下のエラーが発生することがあります。
 
 .. code-block:: yaml
 
    2017-04-04 12:19:05,670 p=18591 u=fred |  persistent connection idle timeout triggered, timeout value is 30 secs
 
-Suggestions to resolve:
+解決するためのヒント:
 
-Increase value of persistent connection idle timeout:
+永続的な接続アイドルタイムアウトの値を増やします。
 
 .. code-block:: sh
 
-   export ANSIBLE_PERSISTENT_CONNECT_TIMEOUT=60
+   export ANSIBLE\_PERSISTENT\_CONNECT\_TIMEOUT=60
 
-To make this a permanent change, add the following to your ``ansible.cfg`` file:
+これを永続的に変更するには、以下を ``ansible.cfg`` ファイルに追加します。
 
 .. code-block:: ini
 
-   [persistent_connection]
-   connect_timeout = 60
+   \[persistent\_connection]
+   connect\_timeout = 60
 
-Command timeout
+コマンドタイムアウト
 ---------------
 
-By default, ``ANSIBLE_PERSISTENT_COMMAND_TIMEOUT`` is set to 30 (seconds). Prior versions of Ansible had this value set to 10 seconds by default.
-You may see the following error if this value is too low:
+デフォルトでは、``ANSIBLE_PERSISTENT_COMMAND_TIMEOUT`` は 30 (秒) に設定されます。Ansible の以前のバージョンでは、この値はデフォルトで 10 秒に設定されていました。
+この値が低すぎると、以下のエラーが発生することがあります。
 
 
 .. code-block:: yaml
 
    2017-04-04 12:19:05,670 p=18591 u=fred |  command timeout triggered, timeout value is 30 secs
 
-Suggestions to resolve:
+解決するためのヒント:
 
-* Option 1 (Global command timeout setting):
-  Increase value of command timeout in configuration file or by setting environment variable.
+* オプション 1 (グローバルコマンドタイムアウト設定): 
+  設定ファイルを使用するか、環境変数を設定して、コマンドのタイムアウトの値を増やします。
 
   .. code-block:: yaml
 
-     export ANSIBLE_PERSISTENT_COMMAND_TIMEOUT=60
+     export ANSIBLE\_PERSISTENT\_COMMAND\_TIMEOUT=60
 
-  To make this a permanent change, add the following to your ``ansible.cfg`` file:
+  これを永続的に変更するには、以下を ``ansible.cfg`` ファイルに追加します。
 
   .. code-block:: ini
 
-     [persistent_connection]
-     command_timeout = 60
+     \[persistent\_connection]
+     command\_timeout = 60
 
-* Option 2 (Per task command timeout setting):
-  Increase command timeout per task basis. All network modules support a
-  timeout value that can be set on a per task basis.
-  The timeout value controls the amount of time in seconds before the
-  task will fail if the command has not returned.
+* オプション 2 (各タスクコマンドのタイムアウト設定):
+  タスクごとにコマンドのタイムアウトを増やします。すべてのネットワークモジュールが、
+  タスクごとに設定できるタイムアウト値に対応します。
+  タイムアウト値は、
+  コマンドが返さないと、タスクは失敗する前の時間 (秒) を制御します。
 
-  For local connection type:
+  ローカル接続タイプの場合:
 
-  .. FIXME: Detail error here
+  ..FIXME:Detail error here
 
-  Suggestions to resolve:
+  解決するためのヒント:
 
   .. code-block:: yaml
 
       - name: save running-config
-        ios_command:
+        ios\_command:
           commands: copy running-config startup-config
           provider: "{{ cli }}"
-          timeout: 30
+          timeout:30
 
-  For network_cli, netconf connection type (applicable from 2.7 onwards):
+  network\_cli の場合の netconf 接続タイプ (2.7 以降で適用可能):
 
-  .. FIXME: Detail error here
+  ..FIXME:Detail error here
 
-  Suggestions to resolve:
+  解決するためのヒント:
 
   .. code-block:: yaml
 
       - name: save running-config
-        ios_command:
+        ios\_command:
           commands: copy running-config startup-config
         vars:
-          ansible_command_timeout: 60
+          ansible\_command\_timeout:60
 
-Some operations take longer than the default 30 seconds to complete.  One good
-example is saving the current running config on IOS devices to startup config.
-In this case, changing the timeout value from the default 30 seconds to 60
-seconds will prevent the task from failing before the command completes
-successfully.
+一部の操作は、完了する時間がデフォルトの 30 秒よりも長くなります。 一例は、
+IOS デバイスで現在実行されている設定を起動設定に保存する例です。
+この場合は、タイムアウト値をデフォルトの 30 秒から 60 秒に変更すると、
+コマンドが完了するまで
+タスクが失敗しないようになります。
 
-Persistent connection retry timeout
+永続的な接続の再試行タイムアウト
 -----------------------------------
 
-By default, ``ANSIBLE_PERSISTENT_CONNECT_RETRY_TIMEOUT`` is set to 15 (seconds). You may see the following error if this value is too low:
+デフォルトでは、``ANSIBLE_PERSISTENT_CONNECT_RETRY_TIMEOUT`` は 15 (秒) に設定されます。この値が低すぎると、以下のエラーが発生することがあります。
 
 .. code-block:: yaml
 
    2017-04-04 12:19:35,708 p=18591 u=fred |  connect retry timeout expired, unable to connect to control socket
-   2017-04-04 12:19:35,709 p=18591 u=fred |  persistent_connect_retry_timeout is 15 secs
+   2017-04-04 12:19:35,709 p=18591 u=fred |  persistent\_connect\_retry\_timeout is 15 secs
 
-Suggestions to resolve:
+解決するためのヒント:
 
-Increase the value of the persistent connection idle timeout.
-Note: This value should be greater than the SSH timeout value (the timeout value under the defaults
-section in the configuration file) and less than the value of the persistent
-connection idle timeout (connect_timeout).
+永続的な接続のアイドルタイムアウトの値を増やします。
+注記: この値は、
+SSH タイムアウト値 (設定ファイルのデフォルトセクションにあるタイムアウト値 (connect\_timeout)) よりも大きくし、
+永続的な設定アイドルタイムアウトの値より小さくする必要があります。
 
 .. code-block:: yaml
 
-   export ANSIBLE_PERSISTENT_CONNECT_RETRY_TIMEOUT=30
+   export ANSIBLE\_PERSISTENT\_CONNECT\_RETRY\_TIMEOUT=30
 
-To make this a permanent change, add the following to your ``ansible.cfg`` file:
+これを永続的に変更するには、以下を ``ansible.cfg`` ファイルに追加します。
 
 .. code-block:: ini
 
-   [persistent_connection]
-   connect_retry_timeout = 30
+   \[persistent\_connection]
+   connect\_retry\_timeout = 30
 
 
-Timeout issue due to platform specific login menu with ``network_cli`` connection type
+``network_cli`` 接続タイプを持つプラットフォーム固有のログインメニューによるタイムアウトの問題
 --------------------------------------------------------------------------------------
 
-In Ansible 2.9 and later, the network_cli connection plugin configuration options are added
-to handle the platform specific login menu. These options can be set as group/host or tasks
-variables.
+Ansible 2.9 以降では、プラットフォーム固有のログインメニューを処理するために、
+network\_cli 接続プラグイン設定オプションが追加されました。これらのオプションは、
+グループ/ホストまたはタスク変数として設定できます。
 
-Example: Handle single login menu prompts with host variables
+例:ホスト変数を使用した 1 つのログインメニュープロンプトを処理します。
 
 .. code-block:: console
 
@@ -579,7 +579,7 @@ Example: Handle single login menu prompts with host variables
     ansible_terminal_initial_answer:
       - "3"
 
-Example: Handle remote host multiple login menu prompts with host variables
+例:ホスト変数を使用したリモートホストの複数のログインメニュープロンプトを処理します。
 
 .. code-block:: console
 
@@ -591,89 +591,89 @@ Example: Handle remote host multiple login menu prompts with host variables
     ansible_terminal_initial_answer:
       - "\\r"
       - "3"
-    ansible_terminal_initial_prompt_checkall: True
+    ansible_terminal_initial_prompt_checkall:True
 
-To handle multiple login menu prompts:
+複数のログインメニュープロンプトを処理するには、以下を行います。
 
-* The values of ``ansible_terminal_initial_prompt`` and ``ansible_terminal_initial_answer`` should be a list.
-* The prompt sequence should match the answer sequence.
-* The value of ``ansible_terminal_initial_prompt_checkall`` should be set to ``True``.
+* ``ansible_terminal_initial_prompt`` および ``ansible_terminal_initial_answer`` の値はリストである必要があります。
+* プロンプトシーケンスは、応答シーケンスに一致する必要があります。
+* ``ansible_terminal_initial_prompt_checkall`` の値は ``True`` に設定する必要があります。
 
-.. note:: If all the prompts in sequence are not received from remote host at the time connection initialization it will result in a timeout.
+.. note:: 接続の初期化時に、シーケンス内のすべてのプロンプトがリモートホストから受信しないと、タイムアウトが生じます。
 
 
-Playbook issues
+Playbook の問題
 ===============
 
-This section details issues are caused by issues with the Playbook itself.
+本セクションでは、Playbook 自体の問題が原因で発生する問題を詳しく説明します。
 
 Error: "Unable to enter configuration mode"
 -------------------------------------------
 
-**Platforms:** eos and ios
+**プラットフォーム：** eos および ios
 
-This occurs when you attempt to run a task that requires privileged mode in a user mode shell.
+これは、ユーザーモードシェルで特権モードを必要とするタスクを実行しようとすると発生します。
 
-For example:
+例:
 
 .. code-block:: console
 
-  TASK [ios_system : configure name_servers] *****************************************************************************
+  TASK \[ios\_system : configure name\_servers] \*****************************************************************************
   task path:
-  fatal: [ios-csr1000v]: FAILED! => {
+  fatal: \[ios-csr1000v]:FAILED! => {
       "changed": false,
       "failed": true,
      "msg": "unable to enter configuration mode",
   }
 
-Suggestions to resolve:
+解決するためのヒント:
 
-In Ansible prior to 2.5 :
-Add ``authorize: yes`` to the task. For example:
+2.5 よりも前のバージョンの Ansible の場合:
+``authorize: yes`` をタスクに追加します。例:
 
 .. code-block:: yaml
 
   - name: configure hostname
-    ios_system:
+    ios\_system:
       provider:
         hostname: foo
         authorize: yes
     register: result
 
-If the user requires a password to go into privileged mode, this can be specified with ``auth_pass``; if ``auth_pass`` isn't set, the environment variable `ANSIBLE_NET_AUTHORIZE` will be used instead.
+ユーザーが特権モードにパスワードを必要とする場合は、これを ``auth_pass`` で指定できます。``auth_pass`` が設定されていない場合は、代わりに環境変数 `ANSIBLE_NET_AUTHORIZE` が使用されます。
 
 
-Add ``authorize: yes`` to the task. For example:
+``authorize: yes`` をタスクに追加します。例:
 
 .. code-block:: yaml
 
   - name: configure hostname
-    ios_system:
+    ios\_system:
     provider:
       hostname: foo
       authorize: yes
-      auth_pass: "{{ mypasswordvar }}"
+      auth\_pass: "{{ mypasswordvar }}"
   register: result
 
 
-.. note:: Starting with Ansible 2.5 we recommend using ``connection: network_cli`` and ``become: yes``
+.. note:: Ansible 2.5 以降では、``connection: network_cli`` および ``become: yes`` を使用することが推奨されます。
 
 
-Proxy Issues
+プロキシーの問題
 ============
 
- .. _network_delegate_to_vs_ProxyCommand:
+ .. \_network\_delegate\_to\_vs\_ProxyCommand:
 
-delegate_to vs ProxyCommand
+delegate\_to 対 ProxyCommand
 ---------------------------
 
-The new connection framework for Network Modules in Ansible 2.3 that uses ``cli`` transport
-no longer supports the use of the ``delegate_to`` directive.
-In order to use a bastion or intermediate jump host to connect to network devices over ``cli``
-transport, network modules now support the use of ``ProxyCommand``.
+``cli`` トランスポートを使用する Ansible 2.3 のネットワークモジュール用の新しい接続フレームワークでは、
+``delegate_to`` ディレクティブの使用に対応しなくなりました。
+bastion、または中間ジャンプホストを使用して、``cli`` トランスポートでネットワークデバイスに接続するには、
+ネットワークモジュールが ``ProxyCommand`` の使用に対応するようになりました。
 
-To use ``ProxyCommand``, configure the proxy settings in the Ansible inventory
-file to specify the proxy host.
+``ProxyCommand`` を使用するには、Ansible インベントリーファイルでプロキシー設定を指定して、
+プロキシーホストを指定します。
 
 .. code-block:: ini
 
@@ -685,36 +685,36 @@ file to specify the proxy host.
     ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
-With the configuration above, simply build and run the playbook as normal with
-no additional changes necessary.  The network module will now connect to the
-network device by first connecting to the host specified in
-``ansible_ssh_common_args``, which is ``bastion01`` in the above example.
+上記の設定では、以下のように Playbook を構築し、通常どおりに実行します。
+その他の変更は必要ありません。 ネットワークモジュール
+が、
+``ansible_ssh_common_args`` に指定したホストに最初に接続することで、ネットワークデバイスに接続するようになります。これは、上記の例の ``bastion01`` になります。
 
-You can also set the proxy target for all hosts by using environment variables.
+環境変数を使用して、すべてのホストのプロキシーターゲットを設定することもできます。
 
 .. code-block:: sh
 
     export ANSIBLE_SSH_ARGS='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
-Using bastion/jump host with netconf connection
+netconf 接続での bastion/ジャンプホストの使用
 -----------------------------------------------
 
-Enabling jump host setting
+ジャンプホスト設定の有効化
 --------------------------
 
 
-Bastion/jump host with netconf connection can be enabled by:
- - Setting Ansible variable ``ansible_netconf_ssh_config`` either to ``True`` or custom ssh config file path
- - Setting environment variable ``ANSIBLE_NETCONF_SSH_CONFIG`` to ``True`` or custom ssh config file path
- - Setting ``ssh_config = 1`` or ``ssh_config = <ssh-file-path>`` under ``netconf_connection`` section
+netconf 接続を持つ bastion/ジャンプホストは、以下で有効にできます。
+ \- Ansible 変数 ``ansible_netconf_ssh_config`` を ``True`` またはカスタムの ssh 設定ファイルパスに設定します。
+ \- 環境変数 ``ANSIBLE_NETCONF_SSH_CONFIG`` を ``True`` に設定するか、カスタムの ssh 設定ファイルパスを設定します。
+ - ``netconf_connection`` セクションの下に、``ssh_config = 1`` または ``ssh_config = <ssh-file-path>`` セクションを設定します。
 
-If the configuration variable is set to 1 the proxycommand and other ssh variables are read from
-default ssh config file (~/.ssh/config).
+設定変数が 1 に設定されている場合は、proxycommand およびその他の ssh 変数から、
+デフォルトの ssh 設定ファイル (~/.ssh/config) が読み込まれます。
 
-If the configuration variable is set to file path the proxycommand and other ssh variables are read
-from the given custom ssh file path
+設定変数が proxycommand のファイルパスに設定されていると、
+指定したカスタムの ssh ファイルパスから、その他の ssh 変数が読み込まれます。
 
-Example ssh config file (~/.ssh/config)
+ssh 設定ファイルの例 (~/.ssh/config)
 ---------------------------------------
 
 .. code-block:: ini
@@ -725,24 +725,24 @@ Example ssh config file (~/.ssh/config)
     IdentityFile "/path/to/ssh-key.pem"
     Port 22
 
-  # Note: Due to the way that Paramiko reads the SSH Config file,
-  # you need to specify the NETCONF port that the host uses.
-  # i.e. It does not automatically use ansible_port
-  # As a result you need either:
+  \# Note: Due to the way that Paramiko reads the SSH Config file,
+\# you need to specify the NETCONF port that the host uses.
+\# i.e. It does not automatically use ansible\_port
+\# As a result you need either:
 
   Host junos01
     HostName junos01
     ProxyCommand ssh -W %h:22 jumphost
 
-  # OR
+  \# OR
 
   Host junos01
     HostName junos01
     ProxyCommand ssh -W %h:830 jumphost
 
-  # Depending on the netconf port used.
+  \# Depending on the netconf port used.
 
-Example Ansible inventory file
+Ansible インベントリーファイルの例
 
 .. code-block:: ini
 
@@ -756,109 +756,109 @@ Example Ansible inventory file
     ansible_password=!vault...
 
 
-.. note:: Using ``ProxyCommand`` with passwords via variables
+.. note:: 変数によるパスワードを使用した ``ProxyCommand`` の使用
 
-   By design, SSH doesn't support providing passwords via environment variables.
-   This is done to prevent secrets from leaking out, for example in ``ps`` output.
+   設計上、SSH は環境変数によるパスワードの提供に対応しません。
+   これは、``ps`` 出力などでシークレットのリークを防ぐために行われます。
 
-   We recommend using SSH Keys, and if needed an ssh-agent, rather than passwords, where ever possible.
+   SSH 鍵を使用することを推奨します。必要に応じて、可能な場合は、パスワードではなく ssh-agent を使用することが推奨されます。
 
-Miscellaneous Issues
+その他の問題
 ====================
 
 
-Intermittent failure while using ``network_cli`` connection type
+``network_cli`` 接続タイプの使用時の断続的な失敗
 ----------------------------------------------------------------
 
-If the command prompt received in response is not matched correctly within
-the ``network_cli`` connection plugin the task might fail intermittently with truncated
-response or with the error message ``operation requires privilege escalation``.
-Starting in 2.7.1 a new buffer read timer is added to ensure prompts are matched properly
-and a complete response is send in output. The timer default value is 0.2 seconds and
-can be adjusted on a per task basis or can be set globally in seconds.
+応答で受け取ったコマンドプロンプトは、
+``network_cli`` 接続プラグイン内で適切に一致しない場合は、
+切り取られた応答、またはエラーメッセージ ``operation requires privilege escalation`` により、タスクが断続的に失敗することがあります。
+2.7.1 以降、プロンプトが適切に適合するように、新しいバッファー読み取りタイマーが追加されています。
+また、完全な応答が出力で送信されます。タイマーのデフォルト値は 0.2 秒で、
+タスクごとに調整することも、秒単位でグローバルに設定することもできます。
 
-Example Per task timer setting
+タスクタイマーごとの設定例
 
 .. code-block:: yaml
 
   - name: gather ios facts
-    ios_facts:
-      gather_subset: all
+    ios\_facts:
+      gather\_subset: all
     register: result
     vars:
-      ansible_buffer_read_timeout: 2
+      ansible\_buffer\_read\_timeout:2
 
 
-To make this a global setting, add the following to your ``ansible.cfg`` file:
+これをグローバル設定にするには、以下を ``ansible.cfg`` ファイルに追加します。
 
 .. code-block:: ini
 
-   [persistent_connection]
-   buffer_read_timeout = 2
+   \[persistent\_connection]
+   buffer\_read\_timeout = 2
 
-This timer delay per command executed on remote host can be disabled by setting the value to zero.
+リモートホストで実行されるコマンドごとのこのタイマー遅延は、値をゼロに設定すると無効にできます。
 
 
-Task failure due to mismatched error regex within command response using ``network_cli`` connection type
+``network_cli`` 接続タイプを使用したコマンド応答内のエラー正規表現の不一致によるタスクの失敗
 --------------------------------------------------------------------------------------------------------
 
-In Ansible 2.9 and later, the network_cli connection plugin configuration options are added
-to handle the stdout and stderr regex to identify if the command execution response consist
-of a normal response or an error response. These options can be set group/host variables or as
-tasks variables.
+Ansible 2.9 以降では、
+stdout および stderr の正規表現を処理する network\_cli 接続プラグイン設定オプションが追加され、
+コマンド実行の応答に、通常の応答またはエラーの応答が含まれているかどうかを特定します。これらのオプションは、グループ/ホスト変数の設定や、
+タスク変数のように設定できます。
 
-Example: For mismatched error response
+例:不一致のエラー応答の場合
 
 .. code-block:: yaml
 
   - name: fetch logs from remote host
-    ios_command:
+    ios\_command:
       commands:
-        - show logging
+        \- show logging
 
 
-Playbook run output:
+Playbook の実行の出力:
 
 .. code-block:: console
 
-  TASK [first fetch logs] ********************************************************
-  fatal: [ios01]: FAILED! => {
+  TASK \[first fetch logs] \********************************************************
+  fatal: \[ios01]:FAILED! => {
       "changed": false,
-      "msg": "RF Name:\r\n\r\n <--nsip-->
-             \"IPSEC-3-REPLAY_ERROR: Test log\"\r\n*Aug  1 08:36:18.483: %SYS-7-USERLOG_DEBUG:
-              Message from tty578(user id: ansible): test\r\nan-ios-02#"}
+      "msg":"RF Name:\\r\\n\\r\\n <--nsip-->
+             \\"IPSEC-3-REPLAY\_ERROR:Test log\\"\\r\\n\*Aug  1 08:36:18.483: %SYS-7-USERLOG\_DEBUG:
+              Message from tty578(user id: ansible): test\\r\\nan-ios-02\#"}
 
-Suggestions to resolve:
+解決するためのヒント:
 
-Modify the error regex for individual task.
+個々のタスクのエラー正規表現を変更します。
 
 .. code-block:: yaml
 
   - name: fetch logs from remote host
-    ios_command:
+    ios\_command:
       commands:
-        - show logging
+        \- show logging
     vars:
-      ansible_terminal_stderr_re:
-        - pattern: 'connection timed out'
+      ansible\_terminal\_stderr\_re:
+        \- pattern: 'connection timed out'
           flags: 're.I'
 
-The terminal plugin regex options ``ansible_terminal_stderr_re`` and ``ansible_terminal_stdout_re`` have
-``pattern`` and ``flags`` as keys. The value of the ``flags`` key should be a value that is accepted by
-the ``re.compile`` python method.
+ターミナルプラグインの正規表現オプション ``ansible_terminal_stderr_re`` および ``ansible_terminal_stdout_re`` には、
+``pattern`` キーおよび ``flags`` がキーとして含まれます。``flags`` キーの値は、
+python メソッド ``re.compile`` によって許可される値である必要があります。
 
 
-Intermittent failure while using ``network_cli`` connection type due to slower network or remote target host
+低速ネットワークまたはリモートターゲットホストによる ``network_cli`` 接続タイプの使用時の断続的な失敗
 ------------------------------------------------------------------------------------------------------------
 
-In Ansible 2.9 and later, the ``network_cli`` connection plugin configuration option is added to control
-the number of attempts to connect to a remote host. The default number of attempts is three.
-After every retry attempt the delay between retries is increased by power of 2 in seconds until either the
-maximum attempts are exhausted or either the ``persistent_command_timeout`` or ``persistent_connect_timeout`` timers are triggered.
+Ansible 2.9 以降では、``network_cli`` 接続プラグイン設定オプションが、
+リモートホストへの接続試行回数を制御するために追加されます。デフォルトの試行数は 3 です。
+再試行のたびに、最大試行回数がなくなるか、
+``persistent_command_timeout`` タイマーまたは ``persistent_connect_timeout`` タイマーが発生するまで、再試行間の遅延が 2 の累乗 (秒単位) で増加します。
 
-To make this a global setting, add the following to your ``ansible.cfg`` file:
+これをグローバル設定にするには、以下を ``ansible.cfg`` ファイルに追加します。
 
 .. code-block:: ini
 
-   [persistent_connection]
-   network_cli_retries = 5
+   \[persistent\_connection]
+   network\_cli\_retries = 5

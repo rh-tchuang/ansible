@@ -1,44 +1,44 @@
-.. _cliconf_plugins:
+.. \_cliconf\_plugins:
 
-Cliconf Plugins
+Cliconf プラグイン
 ===============
 
 .. contents::
    :local:
    :depth: 2
 
-Cliconf plugins are abstractions over the CLI interface to network devices. They provide a standard interface
-for Ansible to execute tasks on those network devices.
+Cliconf プラグインは、ネットワークデバイスに対する CLI インターフェースを抽象化したものです。これらのネットワークデバイスで
+Ansible がこれらのネットワークデバイスでタスクを実行する標準インターフェースを提供します。
 
-These plugins generally correspond one-to-one to network device platforms. The appropriate cliconf plugin will
-thus be automatically loaded based on the ``ansible_network_os`` variable.
+通常、これらのプラグインはネットワークデバイスプラットフォームに 1 対 1 で対応します。適切な cliconf プラグインは、
+``ansible_network_os`` 変数に基づいて自動的に読み込まれます。
 
-.. _enabling_cliconf:
+.. \_enabling\_cliconf:
 
-Adding cliconf plugins
+cliconf プラグインの追加
 -------------------------
 
-You can extend Ansible to support other network devices by dropping a custom plugin into the ``cliconf_plugins`` directory.
+``cliconf_plugins`` ディレクトリーにカスタムのプラグインをドロップして、Ansible が他のネットワークデバイスをサポートするように拡張できます。
 
-.. _using_cliconf:
+.. \_using\_cliconf:
 
-Using cliconf plugins
+cliconf プラグインの使用
 ------------------------
 
-The cliconf plugin to use is determined automatically from the ``ansible_network_os`` variable. There should be no reason to override this functionality.
+使用する cliconf プラグインは、``ansible_network_os`` 変数から自動的に判断します。この機能をオーバーライドする理由はありません。
 
-Most cliconf plugins can operate without configuration. A few have additional options that can be set to impact how
-tasks are translated into CLI commands.
+cliconf プラグインの多くは設定なしで動作します。タスクを CLI コマンドに変換する方法を左右する設定が
+可能な追加オプションがあります。
 
-Plugins are self-documenting. Each plugin should document its configuration options.
+プラグインは、自己文書化されており、プラグインごとに、設定オプションについて文書化する必要があります。
 
-.. _cliconf_plugin_list:
+.. \_cliconf\_plugin\_list:
 
-Plugin list
+プラグイン一覧
 -----------
 
-You can use ``ansible-doc -t cliconf -l`` to see the list of available plugins.
-Use ``ansible-doc -t cliconf <plugin name>`` to see detailed documentation and examples.
+``ansible-doc -t cliconf -l`` を使用すると、利用可能なプラグインの一覧を表示できます。
+詳細にわたるドキュメントや例を参照するには、``ansible-doc -t cliconf <plugin name>`` を使用します。
 
 
 .. toctree:: :maxdepth: 1
@@ -49,9 +49,9 @@ Use ``ansible-doc -t cliconf <plugin name>`` to see detailed documentation and e
 
 .. seealso::
 
-   :ref:`Ansible for Network Automation<network_guide>`
-       An overview of using Ansible to automate networking devices.
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+   :ref:`ネットワーク自動化での Ansible<network_guide>`
+       Ansible を使用したネットワークデバイスの自動化の概要
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible-network IRC chat channel
+       \#ansible-network IRC chat channel

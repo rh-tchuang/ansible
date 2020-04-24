@@ -1,39 +1,39 @@
 *****************
-Beyond the basics
+中級編
 *****************
 
-This page introduces some concepts that help you manage your Ansible workflow with directory structure and source control. Like the Basic Concepts at the beginning of this guide, these intermediate concepts are common to all uses of Ansible.
+このページでは、Ansible ワークフローをディレクトリー構造とソース制御で管理するのに役立つ概念をいくつか紹介します。本書の初めで紹介している基本的な概念と同様、このような中間概念は Ansible のすべての用途に共通です。
 
 .. contents::
    :local:
 
 
-A typical Ansible filetree
+一般的な Ansible ファイルツリー
 ==========================
 
-Ansible expects to find certain files in certain places. As you expand your inventory and create and run more network playbooks, keep your files organized in your working Ansible project directory like this:
+Ansible では、特定の場所にある特定のファイルを見つけることを想定しています。インベントリーを拡張し、ネットワーク Playbook を作成して実行する場合には、ファイルを以下のように作業用の Ansible プロジェクトディレクトリーに整理した状態にします。
 
 .. code-block:: console
 
    .
    ├── backup
-   │   ├── vyos.example.net_config.2018-02-08@11:10:15
-   │   ├── vyos.example.net_config.2018-02-12@08:22:41
-   ├── first_playbook.yml
+   │   ├── vyos.example.net\_config.2018-02-08@11:10:15
+   │   ├── vyos.example.net\_config.2018-02-12@08:22:41
+   ├── first\_playbook.yml
    ├── inventory
-   ├── group_vars
+   ├── group\_vars
    │   ├── vyos.yml
    │   └── eos.yml
    ├── roles
-   │   ├── static_route
+   │   ├── static\_route
    │   └── system
-   ├── second_playbook.yml
-   └── third_playbook.yml
+   ├── second\_playbook.yml
+   └── third\_playbook.yml
 
-The ``backup`` directory and the files in it get created when you run modules like ``vyos_config`` with the ``backup: yes`` parameter.
+``backup`` ディレクトリーと、そのディレクトリーに含まれるファイルは、``backup: yes`` パラメーターを指定して ``vyos_config`` などのモジュールを実行すると作成されます。
 
 
-Tracking changes to inventory and playbooks: source control with git
+インベントリーおよび Playbook への変更の追跡: git でのソース制御
 ====================================================================
 
-As you expand your inventory, roles and playbooks, you should place your Ansible projects under source control. We recommend ``git`` for source control. ``git`` provides an audit trail, letting you track changes, roll back mistakes, view history and share the workload of managing, maintaining and expanding your Ansible ecosystem. There are plenty of tutorials and guides to using ``git`` available.
+インベントリー、ロール、および Playbook を拡張する際に、Ansible プロジェクトをソースコントロールの下に置く必要があります。ソース管理には ``git`` が推奨されます。``git`` は監査証跡を提供し、変更の追跡、誤りのロールバック、履歴の表示と、Ansible エコシステムの管理、維持および拡張のワークロードを共有できるようにします。``git`` を利用するためのチュートリアルおよびガイドは多数あります。

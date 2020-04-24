@@ -1,144 +1,144 @@
 
-.. _first_network_playbook:
+.. \_first\_network\_playbook:
 
 ***************************************************
-Run Your First Command and Playbook
+最初のコマンドおよび Playbook の実行
 ***************************************************
 
-Put the concepts you learned to work with this quick tutorial. Install Ansible, execute a network configuration command manually, execute the same command with Ansible, then create a playbook so you can execute the command any time on multiple network devices.
+このクイックチュートリアルで作業するために学習した概念を記載します。Ansible をインストールし、ネットワーク設定コマンドを手動で実行し、Ansible で同じコマンドを実行してから Playbook を作成するため、複数のネットワークデバイスでいつでもコマンドを実行できます。
 
-.. contents:: Topics
+.. contents:: トピック
 
-Prerequisites
+要件
 ==================================================
 
-Before you work through this tutorial you need:
+このチュートリアルを実行する前に、以下が必要になります。
 
-- Ansible 2.5 (or higher) installed
-- One or more network devices that are compatible with Ansible
-- Basic Linux command line knowledge
-- Basic knowledge of network switch & router configuration
+- Ansible 2.5 (以降) がインストールされている
+- Ansible と互換性のある 1 つ以上ネットワークデバイス
+- 基本的な Linux コマンドラインのナレッジ
+- ネットワークスイッチおよびルーター設定に関する基本知識
 
-Install Ansible
+Ansible のインストール
 ==================================================
 
-Install Ansible using your preferred method. See :ref:`installation_guide`. Then return to this tutorial.
+希望する方法を使用して、Ansible をインストールします。:ref:`installation_guide` を参照してください。その後、このチュートリアルに戻ります。
 
-Confirm the version of Ansible (must be >= 2.5):
+Ansible のバージョンを確認します (2.5 以下である必要があります)。
 
 .. code-block:: bash
 
    ansible --version
 
 
-Establish a Manual Connection to a Managed Node
+管理ノードへの手動接続の確立
 ==================================================
 
-To confirm your credentials, connect to a network device manually and retrieve its configuration. Replace the sample user and device name with your real credentials. For example, for a VyOS router:
+認証情報を確認するには、手動でネットワークデバイスに接続し、その設定を取得します。サンプルユーザーとデバイス名を実際の認証情報に置き換えます。たとえば、VyOS ルーターの場合は、以下のようになります。
 
 .. code-block:: bash
 
-   ssh my_vyos_user@vyos.example.net
+   ssh my\_vyos\_user@vyos.example.net
    show config
    exit
 
-This manual connection also establishes the authenticity of the network device, adding its RSA key fingerprint to your list of known hosts. (If you have connected to the device before, you have already established its authenticity.)
+この手動接続により、ネットワークデバイスの信頼性も確立され、既知のホストの一覧に RSA 鍵フィンガープリントが追加されます。(以前にデバイスを接続したことがある場合は、その信頼性がすでに確立されています。)
 
 
-Run Your First Network Ansible Command
+最初のネットワーク Ansible コマンドの実行
 ==================================================
 
-Instead of manually connecting and running a command on the network device, you can retrieve its configuration with a single, stripped-down Ansible command:
+ネットワークデバイスでコマンドを手動で接続して実行する代わりに、1 つの削除済み Ansible コマンドで設定を取得できます。
 
 .. code-block:: bash
 
-   ansible all -i vyos.example.net, -c network_cli -u my_vyos_user -k -m vyos_facts -e ansible_network_os=vyos
+   ansible all -i vyos.example.net, -c network\_cli -u my\_vyos\_user -k -m vyos\_facts -e ansible\_network\_os=vyos
 
-The flags in this command set seven values:
-  - the host group(s) to which the command should apply (in this case, all)
-  - the inventory (-i, the device or devices to target - without the trailing comma -i points to an inventory file)
-  - the connection method (-c, the method for connecting and executing ansible)
-  - the user (-u, the username for the SSH connection)
-  - the SSH connection method (-k, please prompt for the password)
-  - the module (-m, the ansible module to run)
-  - an extra variable ( -e, in this case, setting the network OS value)
+このコマンドのフラグは、7 つの値を設定します。
+  \- コマンドを適用するホストグループ (この場合は all)
+  \- インベントリー (-i, ターゲットに設定するデバイス (最後のコンマがない -i はインベントリーファイルを指定なし))
+  \- 接続方法 (-c、ansible の接続方法および実行方法)
+  \- ユーザー (-u、SSH 接続のユーザー名)
+  \- SSH 接続の方法 (-k、パスワードのプロンプト有り)
+  \- モジュール (-m、実行する ansible モジュール)
+  \- 追加変数 (-e、この場合は、ネットワーク OS 値の設定)
 
-NOTE: If you use ``ssh-agent`` with ssh keys, Ansible loads them automatically. You can omit ``-k`` flag.
+注記:ssh 鍵で ``ssh-agent`` を使用する場合、Ansible は自動的にこれを読み込みます。``-k`` フラグは省略できます。
 
 
-Create and Run Your First Network Ansible Playbook
+最初のネットワークの Ansible Playbook の作成および実行
 ==================================================
 
-If you want to run this command every day, you can save it in a playbook and run it with ansible-playbook instead of ansible. The playbook can store a lot of the parameters you provided with flags at the command line, leaving less to type at the command line. You need two files for this - a playbook and an inventory file.
+このコマンドを毎日実行する必要がある場合には、Playbook に保存し、ansible の代わりに ansible-playbook を使用して実行します。Playbook はコマンドラインにフラグを付けて指定した多くのパラメーターを保存でき、コマンドラインに入力を少なくすることができます。これには、2 つのファイル (Playbook とインベントリーファイル) が必要です。
 
-1. Download :download:`first_playbook.yml <sample_files/first_playbook.yml>`, which looks like this:
+1. :download:`first_playbook.yml <sample_files/first_playbook.yml>` をダウンロードします。これは以下のようになります。
 
-.. literalinclude:: sample_files/first_playbook.yml
+.. literalinclude:: sample\_files/first\_playbook.yml
    :language: YAML
 
-The playbook sets three of the seven values from the command line above: the group (``hosts: all``), the connection method (``connection: network_cli``) and the module (in each task). With those values set in the playbook, you can omit them on the command line. The playbook also adds a second task to show the config output. When a module runs in a playbook, the output is held in memory for use by future tasks instead of written to the console. The debug task here lets you see the results in your shell.
+Playbook は、上記のコマンドラインの 7 つの中から 3 つの値 (グループ (``hosts: all``)、接続方法 (``connection: network_cli``) 、およびモジュール (各タスク)) を選択します。これらの値が Playbook に設定されると、それらをコマンドラインで省略できます。Playbook は、config 出力を表示する別のタスクも追加します。Playbook でモジュールが実行されると、出力はコンソールに書き込まれるのではなく、今後のタスクで使用するためにメモリーに保持されます。ここでのデバッグタスクを使用すると、シェルで結果を確認できます。
 
-2. Run the playbook with the command:
-
-.. code-block:: bash
-
-   ansible-playbook -i vyos.example.net, -u ansible -k -e ansible_network_os=vyos first_playbook.yml
-
-The playbook contains one play with two tasks, and should generate output like this:
+2. 以下のコマンドを使用して Playbook を実行します。
 
 .. code-block:: bash
 
-   $ ansible-playbook -i vyos.example.net, -u ansible -k -e ansible_network_os=vyos first_playbook.yml
+   ansible-playbook -i vyos.example.net, -u ansible -k -e ansible\_network\_os=vyos first\_playbook.yml
 
-   PLAY [First Playbook]
+Playbook には、2 つのタスクを持つプレイが 1 つ含まれており、次のような出力が生成されます。
+
+.. code-block:: bash
+
+   $ ansible-playbook -i vyos.example.net, -u ansible -k -e ansible\_network\_os=vyos first\_playbook.yml
+
+   PLAY \[First Playbook]
    ***************************************************************************************************************************
 
-   TASK [Get config for VyOS devices]
+   TASK \[Get config for VyOS devices]
    ***************************************************************************************************************************
-   ok: [vyos.example.net]
+   ok: \[vyos.example.net]
 
-   TASK [Display the config]
+   TASK \[Display the config]
    ***************************************************************************************************************************
-   ok: [vyos.example.net] => {
-       "msg": "The hostname is vyos and the OS is VyOS"
+   ok: \[vyos.example.net] => {
+       "msg":"The hostname is vyos and the OS is VyOS"
    }
 
-3. Now that you can retrieve the device config, try updating it with Ansible. Download :download:`first_playbook_ext.yml <sample_files/first_playbook_ext.yml>`, which is an extended version of the first playbook:
+3. デバイス設定を取得できるようになったため、Ansible での更新を試行してください。最初の Playbook の拡張バージョンである :download:`first_playbook_ext.yml <sample_files/first_playbook_ext.yml>` をダウンロードします。
 
-.. literalinclude:: sample_files/first_playbook_ext.yml
+.. literalinclude:: sample\_files/first\_playbook\_ext.yml
    :language: YAML
 
-The extended first playbook has four tasks in a single play. Run it with the same command you used above. The output shows you the change Ansible made to the config:
+最初の Playbook の拡張では、1 つのプレイに 4 つのタスクがあります。上記と同じコマンドで実行します。この出力では、Ansible が設定に加えられた変更が表示されます。
 
 .. code-block:: bash
 
-   $ ansible-playbook -i vyos.example.net, -u ansible -k -e ansible_network_os=vyos first_playbook_ext.yml
+   $ ansible-playbook -i vyos.example.net, -u ansible -k -e ansible\_network\_os=vyos first\_playbook\_ext.yml
 
-   PLAY [First Playbook]
+   PLAY \[First Playbook]
    ************************************************************************************************************************************
 
-   TASK [Get config for VyOS devices]
+   TASK \[Get config for VyOS devices]
    **********************************************************************************************************************************
-   ok: [vyos.example.net]
+   ok: \[vyos.example.net]
 
-   TASK [Display the config]
+   TASK \[Display the config]
    *************************************************************************************************************************************
-   ok: [vyos.example.net] => {
-       "msg": "The hostname is vyos and the OS is VyOS"
+   ok: \[vyos.example.net] => {
+       "msg":"The hostname is vyos and the OS is VyOS"
    }
 
-   TASK [Update the hostname]
+   TASK \[Update the hostname]
    *************************************************************************************************************************************
-   changed: [vyos.example.net]
+   changed: \[vyos.example.net]
 
-   TASK [Get changed config for VyOS devices]
+   TASK \[Get changed config for VyOS devices]
    *************************************************************************************************************************************
-   ok: [vyos.example.net]
+   ok: \[vyos.example.net]
 
-   TASK [Display the changed config]
+   TASK \[Display the changed config]
    *************************************************************************************************************************************
-   ok: [vyos.example.net] => {
-       "msg": "The hostname is vyos-changed and the OS is VyOS"
+   ok: \[vyos.example.net] => {
+       "msg":"The hostname is vyos-changed and the OS is VyOS"
    }
 
    PLAY RECAP
@@ -147,49 +147,49 @@ The extended first playbook has four tasks in a single play. Run it with the sam
 
 
 
-.. _network_gather_facts:
+.. \_network\_gather\_facts:
 
-Gathering facts from network devices
+ネットワークデバイスからのファクトの収集
 ====================================
 
-The ``gather_facts`` keyword now supports gathering network device facts in standardized key/value pairs. You can feed these network facts into further tasks to manage the network device.
+``gather_facts`` キーワードが、標準化された鍵と値のペアでネットワークデバイスファクトの収集に対応するようになりました。これらのネットワークファクトをさらにタスクに送信して、ネットワークデバイスを管理できます。
 
-You can also use the new ``gather_network_resources`` parameter with the network ``*_facts`` modules (such as :ref:`eos_facts <eos_facts_module>`) to return just a subset of the device configuration, as shown below.
+また、新しい ``gather_network_resources`` パラメーターを、ネットワークの ``*_facts`` モジュール (:ref:`eos_facts <eos_facts_module>` など) とともに使用すると、以下のようにデバイス設定のサブセットのみを返すことができます。
 
 .. code-block:: yaml
 
   - hosts: arista
-    gather_facts: True
-    gather_subset: min
-    module_defaults:
-      eos_facts:
-        gather_network_resources: interfaces
+    gather\_facts:True
+    gather\_subset: min
+    module\_defaults:
+      eos\_facts:
+        gather\_network\_resources: interfaces
 
-The playbook returns the following interface facts:
+Playbook は以下のインターフェースのファクトを返します。
 
 .. code-block:: yaml
 
-  ansible_facts:
-     ansible_network_resources:
+  ansible\_facts:
+     ansible\_network\_resources:
         interfaces:
-        - enabled: true
-          name: Ethernet1
-          mtu: '1476'
-        - enabled: true
-          name: Loopback0
-        - enabled: true
-          name: Loopback1
-        - enabled: true
-          mtu: '1476'
-          name: Tunnel0
-        - enabled: true
-          name: Ethernet1
-        - enabled: true
-          name: Tunnel1
-        - enabled: true
-          name: Ethernet1
+        \- enabled: true
+          name:Ethernet1
+          mtu:'1476'
+        \- enabled: true
+          name:Loopback0
+        \- enabled: true
+          name:Loopback1
+        \- enabled: true
+          mtu:'1476'
+          name:Tunnel0
+        \- enabled: true
+          name:Ethernet1
+        \- enabled: true
+          name:Tunnel1
+        \- enabled: true
+          name:Ethernet1
 
 
-Note that this returns a subset of what is returned by just setting ``gather_subset: interfaces``.
+これは、``gather_subset: interfaces`` を設定するだけで返される内容のサブセットを返すことに注意してください。
 
-You can store these facts and use them directly in another task, such as with the :ref:`eos_interfaces <eos_interfaces_module>` resource module.
+これらのファクトを保存し、:ref:`eos_interfaces <eos_interfaces_module>` リソースモジュールなどの別のタスクで直接使用できます。

@@ -1,128 +1,128 @@
-.. _lookup_plugins:
+.. \_lookup\_plugins:
 
-Lookup Plugins
+Lookup プラグイン
 ==============
 
 .. contents::
    :local:
    :depth: 2
 
-Lookup plugins allow Ansible to access data from outside sources.
-This can include reading the filesystem in addition to contacting external datastores and services.
-Like all templating, these plugins are evaluated on the Ansible control machine, not on the target/remote.
+Lookup プラグインを使用すると、外部をソースとするデータに Ansible がアクセスできるようになります。
+たとえば、外部データソースおよびサービスの問い合わせだけでなく、ファイルシステムの読み取りも含まれます。
+このようなプラグインは、全テンプレート作成などのように、ターゲット/リモートマシンではなく、Ansible のコントロールマシンで評価されます。
 
-The data returned by a lookup plugin is made available using the standard templating system in Ansible,
-and are typically used to load variables or templates with information from those systems.
+Lookup プラグインにより返されるデータは、Ansible で標準のテンプレートシステムを使用して利用できるようになります。
+このデータは、通常、そのシステムからの情報で変数またはテンプレートを読み込むために使用されます。
 
-Lookups are an Ansible-specific extension to the Jinja2 templating language.
+Lookup は、Jinja2 テンプレート化言語に対する Ansible 固有の拡張です。
 
 .. note::
-   - Lookups are executed with a working directory relative to the role or play,
-     as opposed to local tasks, which are executed relative the executed script.
-   - Since Ansible version 1.9, you can pass wantlist=True to lookups to use in Jinja2 template "for" loops.
-   - Lookup plugins are an advanced feature; to best leverage them you should have a good working knowledge of how to use Ansible plays.
+   \- Lookup は、実行したスクリプトに基づいて実行されるローカルタスクとは異なり、
+     ロールまたはプレイに関連して作業ディレクトリーで実行されます。
+   \- Ansible バージョン 1.9 以降、wantlist=True を lookup に渡して、Jinja2 テンプレート「for」ループで使用できます。
+   \- Lookup プラグインは高度な機能です。Ansible Play の使用方法に関する適切な知識が必要です。
 
 .. warning::
-   - Some lookups pass arguments to a shell. When using variables from a remote/untrusted source, use the `|quote` filter to ensure safe usage.
+   \- lookup によってはシェルに引数を渡します。リモート/信頼されていないソースから変数を使用する場合には、`|quote` フィルターで、安全に使用できるようにします。
 
 
-.. _enabling_lookup:
+.. \_enabling\_lookup:
 
-Enabling lookup plugins
+Lookup プラグインの有効化
 -----------------------
 
-You can activate a custom lookup by either dropping it into a ``lookup_plugins`` directory adjacent to your play, inside a role, or by putting it in one of the lookup directory sources configured in :ref:`ansible.cfg <ansible_configuration_settings>`.
+カスタムの lookup を有効にするには、カスタムの lookup を、ロール内の Play の隣りにある ``lookup_plugins`` ディレクトリーに配置するか、:ref:`ansible.cfg <ansible_configuration_settings>` で設定した lookup ディレクトリーソースの 1 つに配置します。
 
 
-.. _using_lookup:
+.. \_using\_lookup:
 
-Using lookup plugins
+lookup プラグインの使用
 --------------------
 
-Lookup plugins can be used anywhere you can use templating in Ansible: in a play, in variables file, or in a Jinja2 template for the :ref:`template <template_module>` module.
+Lookup プラグインは、Ansible でテンプレートを使用できる場所で使用できます。これは Play、変数ファイル、または :ref:`テンプレート<template_module>` モジュールの Jinja2 テンプレートで使用できます。
 
 .. code-block:: YAML+Jinja
 
   vars:
-    file_contents: "{{lookup('file', 'path/to/file.txt')}}"
+    file\_contents: "{{lookup('file', 'path/to/file.txt')}}"
 
-Lookups are an integral part of loops. Wherever you see ``with_``, the part after the underscore is the name of a lookup.
-This is also the reason most lookups output lists and take lists as input; for example, ``with_items`` uses the :ref:`items <items_lookup>` lookup::
+Lookup は、ループで必要付加欠な部分となっています。``with_`` がある場合には、アンダースコアの後の部分はルックアップの名前になります。
+これが、ほとんどの lookup がリストを出力し、そのリストを入力として扱う理由です。``with_items`` が :ref:`items <items_lookup>` lookup を使用します::
 
   tasks:
-    - name: count to 3
+    \- name: count to 3
       debug: msg={{item}}
-      with_items: [1, 2, 3]
+      with\_items: \[1, 2, 3]
 
-You can combine lookups with :ref:`playbooks_filters`, :ref:`playbooks_tests` and even each other to do some complex data generation and manipulation. For example::
+Lookup と :ref:`playbooks_filters`、:ref:`playbooks_tests`、またはそれぞれを組み合わせて複雑なデータ生成やデータ操作が可能です。例::
 
   tasks:
-    - name: valid but useless and over complicated chained lookups and filters
-      debug: msg="find the answer here:\n{{ lookup('url', 'https://google.com/search/?q=' + item|urlencode)|join(' ') }}"
-      with_nested:
-        - "{{lookup('consul_kv', 'bcs/' + lookup('file', '/the/question') + ', host=localhost, port=2000')|shuffle}}"
-        - "{{lookup('sequence', 'end=42 start=2 step=2')|map('log', 4)|list)}}"
-        - ['a', 'c', 'd', 'c']
+    \- name: valid but useless and over complicated chained lookups and filters
+      debug: msg="find the answer here:\\n{{ lookup('url', 'https://google.com/search/?q=' + item|urlencode)|join(' ') }}"
+with\_nested:
+\- "{{lookup('consul\_kv', 'bcs/' + lookup('file', '/the/question') + ', host=localhost, port=2000')|shuffle}}"
+\- "{{lookup('sequence', 'end=42 start=2 step=2')|map('log', 4)|list)}}"
+      - \['a', 'c', 'd', 'c']
 
 .. versionadded:: 2.6
 
-You can now control how errors behave in all lookup plugins by setting ``errors`` to ``ignore``, ``warn``, or ``strict``. The default setting is ``strict``, which causes the task to fail. For example:
+Lookup プラグインのエラーの動作を制御するには、``errors`` を ``ignore``、``warn`` または ``strict`` に設定します。デフォルト設定は ``strict`` で、(エラーがある場合に) タスクが失敗します。以下に例を示します。
 
-To ignore errors::
+エラーを無視するには、以下のコマンドを実行します。
 
     - name: file doesnt exist, but i dont care .. file plugin itself warns anyways ...
       debug: msg="{{ lookup('file', '/idontexist', errors='ignore') }}"
 
 .. code-block:: ansible-output
 
-    [WARNING]: Unable to find '/idontexist' in expected paths (use -vvvvv to see paths)
+    [WARNING]:Unable to find '/idontexist' in expected paths (use -vvvvv to see paths)
 
     ok: [localhost] => {
         "msg": ""
     }
 
 
-To get a warning instead of a failure::
+失敗させるのではなく警告を出すには、以下を実行します。
 
     - name: file doesnt exist, let me know, but continue
       debug: msg="{{ lookup('file', '/idontexist', errors='warn') }}"
 
 .. code-block:: ansible-output
 
-    [WARNING]: Unable to find '/idontexist' in expected paths (use -vvvvv to see paths)
+    [WARNING]:Unable to find '/idontexist' in expected paths (use -vvvvv to see paths)
 
-    [WARNING]: An unhandled exception occurred while running the lookup plugin 'file'. Error was a <class 'ansible.errors.AnsibleError'>, original message: could not locate file in lookup: /idontexist
+    [WARNING]:An unhandled exception occurred while running the lookup plugin 'file'.Error was a <class 'ansible.errors.AnsibleError'>, original message: could not locate file in lookup: /idontexist
 
     ok: [localhost] => {
         "msg": ""
     }
 
 
-Fatal error (the default)::
+致命的なエラー (デフォルト)::
 
     - name: file doesnt exist, FAIL (this is the default)
       debug: msg="{{ lookup('file', '/idontexist', errors='strict') }}"
 
 .. code-block:: ansible-output
 
-    [WARNING]: Unable to find '/idontexist' in expected paths (use -vvvvv to see paths)
+    [WARNING]:Unable to find '/idontexist' in expected paths (use -vvvvv to see paths)
 
-    fatal: [localhost]: FAILED! => {"msg": "An unhandled exception occurred while running the lookup plugin 'file'. Error was a <class 'ansible.errors.AnsibleError'>, original message: could not locate file in lookup: /idontexist"}
+    fatal: [localhost]:FAILED! => {"msg":"An unhandled exception occurred while running the lookup plugin 'file'.Error was a <class 'ansible.errors.AnsibleError'>, original message: could not locate file in lookup: /idontexist"}
 
 
-.. _query:
+.. \_query:
 
-Invoking lookup plugins with ``query``
+``query`` を指定した Lookup プラグインの呼び出し
 --------------------------------------
 
 .. versionadded:: 2.5
 
-In Ansible 2.5, a new jinja2 function called ``query`` was added for invoking lookup plugins. The difference between ``lookup`` and ``query`` is largely that ``query`` will always return a list.
-The default behavior of ``lookup`` is to return a string of comma separated values. ``lookup`` can be explicitly configured to return a list using ``wantlist=True``.
+Ansible 2.5 で、lookup プラグインを呼び出す ``query`` と言う jinja2 関数が新たに追加されました。``lookup`` と ``query`` の相違点は主に、``query`` は常にリストを返す点です。
+``lookup`` の動作は、デフォルトではコンマ区切りの文字列値を返します。``lookup`` は、 ``wantlist=True`` を使用して、リストを返すように明示的に設定することができます。
 
-This was done primarily to provide an easier and more consistent interface for interacting with the new ``loop`` keyword, while maintaining backwards compatibility with other uses of ``lookup``.
+これが追加されたのは主に、他の ``lookup`` を使用できるように後方互換性を保ちつつ、より簡単で一貫性を保つことのできる、``loop`` キーワードとの対話インターフェースを新たに提供するためです。
 
-The following examples are equivalent:
+以下の例はどちらも同等の操作ができます。
 
 .. code-block:: jinja
 
@@ -130,21 +130,21 @@ The following examples are equivalent:
 
     query('dict', dict_variable)
 
-As demonstrated above the behavior of ``wantlist=True`` is implicit when using ``query``.
+上記の例のように、``query`` を使用する場合には ``wantlist=True`` の動作は暗黙的になります。
 
-Additionally, ``q`` was introduced as a shortform of ``query``:
+また、 ``query`` の略式となる ``q`` が導入されました。
 
 .. code-block:: jinja
 
     q('dict', dict_variable)
 
 
-.. _lookup_plugins_list:
+.. \_lookup\_plugins\_list:
 
-Plugin list
+プラグイン一覧
 -----------
 
-You can use ``ansible-doc -t lookup -l`` to see the list of available plugins. Use ``ansible-doc -t lookup <plugin name>`` to see specific documents and examples.
+``ansible-doc -t lookup -l`` を使用すると、利用可能なプラグインの一覧を表示できます。特定のドキュメントと例を参照する場合には、``ansible-doc -t lookup <plugin name>`` を使用してください。
 
 
 .. toctree:: :maxdepth: 1
@@ -155,18 +155,18 @@ You can use ``ansible-doc -t lookup -l`` to see the list of available plugins. U
 .. seealso::
 
    :ref:`about_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`inventory_plugins`
-       Ansible inventory plugins
+       Ansible inventory プラグインの使用
    :ref:`callback_plugins`
-       Ansible callback plugins
+       Ansible callback プラグイン
    :ref:`playbooks_filters`
-       Jinja2 filter plugins
+       Jinja2 filter プラグイン
    :ref:`playbooks_tests`
-       Jinja2 test plugins
+       Jinja2 test プラグイン
    :ref:`playbooks_lookups`
-       Jinja2 lookup plugins
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Jinja2 lookup プラグイン
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       \#ansible IRC chat channel

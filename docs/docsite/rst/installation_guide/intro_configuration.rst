@@ -1,59 +1,59 @@
-.. _intro_configuration:
+.. \_intro\_configuration:
 
 *******************
-Configuring Ansible
+Ansible の設定
 *******************
 
-.. contents:: Topics
+.. contents:: トピック
 
 
-This topic describes how to control Ansible settings.
+このトピックでは、Ansible の設定を制御する方法について説明します。
 
 
-.. _the_configuration_file:
+.. \_the\_configuration\_file:
 
-Configuration file
+設定ファイル
 ==================
 
-Certain settings in Ansible are adjustable via a configuration file (ansible.cfg).
-The stock configuration should be sufficient for most users, but there may be reasons you would want to change them.
-Paths where configuration file is searched are listed in :ref:`reference documentation<ansible_configuration_settings_locations>`.
+Ansible の一部の設定は、設定ファイル (ansible.cfg) で調整できます。
+大半の場合には stock 設定で十分ですが、変更したほうがが合理的な場合もあります。
+設定ファイルを検索するパスが :ref:`参照ドキュメント<ansible_configuration_settings_locations>` に一覧表示されます
 
-.. _getting_the_latest_configuration:
+.. \_getting\_the\_latest\_configuration:
 
-Getting the latest configuration
+最新設定の取得
 --------------------------------
 
-If installing Ansible from a package manager, the latest ``ansible.cfg`` file should be present in ``/etc/ansible``, possibly
-as a ``.rpmnew`` file (or other) as appropriate in the case of updates.
+パッケージマネージャーから Ansible をインストールした場合は、最新の ``ansible.cfg`` ファイルが ``/etc/ansible`` に存在しているはずです。
+更新の場合には、``.rpmnew`` ファイル (またはその他のファイル) が適切な場合もあります。
 
-If you installed Ansible from pip or from source, you may want to create this file in order to override
-default settings in Ansible.
+pip またはソースから Ansible をインストールした場合には、
+このファイルを作成して Ansible のデフォルト設定をオーバーライドすることもできます。
 
-An `example file is available on GitHub <https://github.com/ansible/ansible/blob/devel/examples/ansible.cfg>`_.
+`サンプルファイルは GitHub <https://github.com/ansible/ansible/blob/devel/examples/ansible.cfg>`_ で利用できます。
 
-For more details and a full listing of available configurations go to :ref:`configuration_settings<ansible_configuration_settings>`. Starting with Ansible version 2.4, you can use the :ref:`ansible-config` command line utility to list your available options and inspect the current values.
+詳細および利用可能な設定の詳細な一覧は、「:ref:`configuration_settings<ansible_configuration_settings>`」を参照してください。Ansible バージョン 2.4 以降では、:ref:`ansible-config` コマンドラインユーティリティーを使用して、利用可能なオプションを表示し、現在の値を確認できます。
 
-For in-depth details, see :ref:`ansible_configuration_settings`.
+詳細については「:ref:`ansible_configuration_settings`」を参照してください。
 
-.. _environmental_configuration:
+.. \_environmental\_configuration:
 
-Environmental configuration
+環境設定
 ===========================
 
-Ansible also allows configuration of settings using environment variables.
-If these environment variables are set, they will override any setting loaded from the configuration file.
+Ansible では、環境変数を使用した設定も可能です。
+これらの環境変数が設定されている場合、設定ファイルから読み込まれる設定よりもこちらのほうが優先されます。
 
-You can get a full listing of available environment variables from :ref:`ansible_configuration_settings`.
+「:ref:`ansible_configuration_settings` 」から利用可能な環境変数の詳細な一覧を取得できます。
 
 
-.. _command_line_configuration:
+.. \_command\_line\_configuration:
 
-Command line options
+コマンドラインオプション
 ====================
 
-Not all configuration options are present in the command line, just the ones deemed most useful or common.
-Settings in the command line will override those passed through the configuration file and the environment.
+コマンドラインにすべての設定オプションが存在するわけではありません。最も便利で一般的と思われるものだけが存在します。
+コマンドラインでの設定は、設定ファイルおよび環境を介して渡される設定よりも優先されます。
 
-The full list of options available is in :ref:`ansible-playbook` and :ref:`ansible`.
+利用可能なオプションの詳細な一覧は :ref:`ansible-playbook` および :ref:`ansible` で入手できます。
 

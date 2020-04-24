@@ -1,83 +1,83 @@
-.. _callback_plugins:
+.. \_callback\_plugins:
 
-Callback Plugins
+Callback プラグイン
 ================
 
 .. contents::
    :local:
    :depth: 2
 
-Callback plugins enable adding new behaviors to Ansible when responding to events.
-By default, callback plugins control most of the output you see when running the command line programs,
-but can also be used to add additional output, integrate with other tools and marshall the events to a storage backend.
+callback プラグインを使用すると、イベントの応答時に、Ansible に新たな動作を追加できます。
+デフォルトでは、コールバックプラグインは、コマンドラインプログラムの実行時に表示されるほとんどの出力を制御します。
+ただし、出力を追加して他のツールと統合し、イベントをストレージバックエンドにまとめるために使用することもできます。
 
-.. _callback_examples:
+.. \_callback\_examples:
 
-Example callback plugins
+Ansible callback プラグイン
 ------------------------
 
-The :ref:`log_plays <log_plays_callback>` callback is an example of how to record playbook events to a log file,
-and the :ref:`mail <mail_callback>` callback sends email on playbook failures.
+:ref:`log_plays <log_plays_callback>` コールバックは、Playbook イベントをログファイルに記録する方法の例になります。
+:ref:`メール<mail_callback>` コールバックにより、Playbook の失敗時にメールが送信されます。
 
-The :ref:`say <say_callback>` callback responds with computer synthesized speech in relation to playbook events.
+また、:ref:`say <say_callback>` コールバックは、Playbook のイベントに関連するコンピューターによる音声合成に応答します。
 
-.. _enabling_callbacks:
+.. \_enabling\_callbacks:
 
-Enabling callback plugins
+callback プラグインの有効化
 -------------------------
 
-You can activate a custom callback by either dropping it into a ``callback_plugins`` directory adjacent to your play,  inside a role, or by putting it in one of the callback directory sources configured in :ref:`ansible.cfg <ansible_configuration_settings>`.
+カスタムの callback を有効にするには、カスタムのプラグインを、ロール内の Play の隣りにある ``callback_plugins`` ディレクトリーに配置するか、:ref:`ansible.cfg <ansible_configuration_settings>` で設定した callback ディレクトリーソースの 1 つに配置します。
 
-Plugins are loaded in alphanumeric order. For example, a plugin implemented in a file named `1_first.py` would run before a plugin file named `2_second.py`.
+プラグインは、アルファベット順に読み込まれます。たとえば、`1_first.py` という名前で実装されているプラグインは、`2_second.py` とう名前のプラグインファイルより先に実行されます。
 
-Most callbacks shipped with Ansible are disabled by default and need to be whitelisted in your :ref:`ansible.cfg <ansible_configuration_settings>` file in order to function. For example:
+Ansible に同梱されるほとんどの callback プラグインはデフォルトで無効にされており、このプラグインを機能させるには、:ref:`ansible.cfg <ansible_configuration_settings>` ファイルでホワイトリスト化する必要があります。以下に例を示します。
 
 .. code-block:: ini
 
-  #callback_whitelist = timer, mail, profile_roles, collection_namespace.collection_name.custom_callback
+  \#callback\_whitelist = timer, mail, profile\_roles, collection\_namespace.collection\_name.custom\_callback
 
-Setting a callback plugin for ``ansible-playbook``
+``ansible-playbook`` の callback プラグインの設定
 --------------------------------------------------
 
-You can only have one plugin be the main manager of your console output. If you want to replace the default, you should define CALLBACK_TYPE = stdout in the subclass and then configure the stdout plugin in :ref:`ansible.cfg <ansible_configuration_settings>`. For example:
+コンソールの出力の主要マネージャーとして指定できるプラグインは 1 つだけです。デフォルトを置き換える場合は、サブクラスに CALLBACK\_TYPE = stdout を定義して、:ref:`ansible.cfg <ansible_configuration_settings>` に stdout プラグインを設定する必要があります。以下に例を示します。
 
 .. code-block:: ini
 
-  stdout_callback = dense
+  stdout\_callback = dense
 
-or for my custom callback:
+または、カスタムのコールバックの場合は以下を実行します。
 
 .. code-block:: ini
 
-  stdout_callback = mycallback
+  stdout\_callback = mycallback
 
-This only affects :ref:`ansible-playbook` by default.
+デフォルトでは、この設定は :ref:`ansible-playbook` にだけ影響があります。
 
-Setting a callback plugin for ad-hoc commands
+ad-hoc コマンドへの callback プラグインの設定
 ---------------------------------------------
 
-The :ref:`ansible` ad hoc command specifically uses a different callback plugin for stdout,
-so there is an extra setting in :ref:`ansible_configuration_settings` you need to add to use the stdout callback defined above:
+:ref:`ansible` の ad hoc コマンドは、特に標準出力 (stdout) に異なるコールバックプラグインを使用します。
+したがって、:ref:`ansible_configuration_settings` には、上記のように定義した標準出力コールバックを使用するように追加の設定が必要です。
 
 .. code-block:: ini
 
     [defaults]
     bin_ansible_callbacks=True
 
-You can also set this as an environment variable:
+これを環境変数として設定することもできます。
 
 .. code-block:: shell
 
     export ANSIBLE_LOAD_CALLBACK_PLUGINS=1
 
 
-.. _callback_plugin_list:
+.. \_callback\_plugin\_list:
 
-Plugin list
+プラグイン一覧
 -----------
 
-You can use ``ansible-doc -t callback -l`` to see the list of available plugins.
-Use ``ansible-doc -t callback <plugin name>`` to see specific documents and examples.
+``ansible-doc -t callback -l`` を使用すると、利用可能なプラグインの一覧を表示できます。
+特定のドキュメントと例を参照する場合には、``ansible-doc -t callback <plugin name>`` を使用してください。
 
 .. toctree:: :maxdepth: 1
     :glob:
@@ -88,20 +88,20 @@ Use ``ansible-doc -t callback <plugin name>`` to see specific documents and exam
 .. seealso::
 
    :ref:`action_plugins`
-       Ansible Action plugins
+       Ansible Action プラグイン
    :ref:`cache_plugins`
-       Ansible cache plugins
+       Ansible Cache プラグイン
    :ref:`connection_plugins`
-       Ansible connection plugins
+       Ansible connection プラグイン
    :ref:`inventory_plugins`
-       Ansible inventory plugins
+       Ansible inventory プラグインの使用
    :ref:`shell_plugins`
-       Ansible Shell plugins
+       Ansible Shell プラグイン
    :ref:`strategy_plugins`
-       Ansible Strategy plugins
+       Ansible Strategy プラグイン
    :ref:`vars_plugins`
-       Ansible Vars plugins
-   `User Mailing List <https://groups.google.com/forum/#!forum/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Ansible Vars プラグイン
+   `ユーザーのメーリングリスト <https://groups.google.com/forum/#!forum/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `webchat.freenode.net <https://webchat.freenode.net>`_
-       #ansible IRC chat channel
+       \#ansible IRC chat channel

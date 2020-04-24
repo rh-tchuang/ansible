@@ -1,128 +1,128 @@
-.. _netconf_enabled_platform_options:
+.. \_netconf\_enabled\_platform\_options:
 
 ***************************************
-Netconf enabled Platform Options
+Netconf が有効なプラットフォームオプション
 ***************************************
 
-This page offers details on how the netconf connection works in Ansible and how to use it.
+このページには、netconf 接続が Ansible でどのように機能するか、およびその使用方法に関する詳細が記載されています。
 
-.. contents:: Topics
+.. contents:: トピック
 
-Connections Available
+利用可能な接続
 ================================================================================
 .. table::
     :class: documentation-table
 
     ====================  ==========================================
-    ..                    NETCONF
+    ..                   NETCONF
 
-                          all modules except ``junos_netconf``,
-                          which enables NETCONF
+                          NETCONF を有効にする
+                          ``junos_netconf`` 以外のすべてのモジュール
     ====================  ==========================================
-    Protocol              XML over SSH
+    プロトコル              SSH 経由の XML
 
-    Credentials           uses SSH keys / SSH-agent if present
+    認証情報           SSH キー / SSH-agent (存在する場合) を使用します。
 
-                          accepts ``-u myuser -k`` if using password
+                          パスワードを使用する場合は ``-u myuser -k`` を許可します。
 
-    Indirect Access       via a bastion (jump host)
+    間接アクセス       bastion (ジャンプホスト) を経由
 
-    Connection Settings   ``ansible_connection: netconf``
+    接続設定   ``ansible_connection: netconf``
     ====================  ==========================================
 
 
-For legacy playbooks, Ansible still supports ``ansible_connection=local`` for the netconf_config module only. We recommend modernizing to use ``ansible_connection=netconf`` as soon as possible.
+レガシー Playbook の場合、Ansible は netconf\_config モジュールに対してのみ ``ansible_connection=local`` に対応します。できるだけ早期に ``ansible_connection=netconf`` を使用するモダナイゼーションが推奨されます。
 
-Using NETCONF in Ansible
+Ansible での NETCONF の使用
 ========================
 
-Enabling NETCONF
+NETCONF の有効化
 ----------------
 
-Before you can use NETCONF to connect to a switch, you must:
+NETCONF を使用してスイッチに接続する前に、以下を行う必要があります。
 
-- install the ``ncclient`` Python package on your control node(s) with ``pip install ncclient``
-- enable NETCONF on the Junos OS device(s)
+- ``pip install ncclient`` を使用して、コントロールノードに Python パッケージ ``ncclient`` をインストールします。
+- Junos OS デバイスの netconf の有効化
 
-To enable NETCONF on a new switch via Ansible, use the platform specific module via the CLI connection or set it manually.
-For example set up your platform-level variables just like in the CLI example above, then run a playbook task like this:
+Ansible 経由で新規スイッチで NETCONF を有効にするには、CLI 接続でプラットフォーム固有のモジュールを使用するか、手動で設定します。
+たとえば、上記の CLI の例と同様にプラットフォームレベルの変数を設定し、以下のような Playbook のタスクを実行します。
 
 .. code-block:: yaml
 
-   - name: Enable NETCONF
-     connection: network_cli
-     junos_netconf:
-     when: ansible_network_os == 'junos'
+   - name:Enable NETCONF
+     connection: network\_cli
+     junos\_netconf:
+     when: ansible\_network\_os == 'junos'
 
-Once NETCONF is enabled, change your variables to use the NETCONF connection.
+NETCONF を有効にしたら、変数を変更して NETCONF 接続を使用します。
 
-Example NETCONF inventory ``[junos:vars]``
+NETCONF インベントリーの例 ``[junos:vars]``
 ------------------------------------------
 
 .. code-block:: yaml
 
-   [junos:vars]
-   ansible_connection=netconf
-   ansible_network_os=junos
-   ansible_user=myuser
-   ansible_password=!vault |
+   \[junos:vars]
+   ansible\_connection=netconf
+   ansible\_network\_os=junos
+   ansible\_user=myuser
+   ansible\_password=!vault |
 
 
-Example NETCONF Task
+NETCONF タスクの例
 --------------------
 
 .. code-block:: yaml
 
-   - name: Backup current switch config
-     netconf_config:
+   - name:Backup current switch config
+     netconf\_config:
        backup: yes
-     register: backup_junos_location
+     register: backup\_junos\_location
 
-Example NETCONF Task with configurable variables
+設定可能な変数を含む NETCONF タスクの例
 ------------------------------------------------
 
 .. code-block:: yaml
 
    - name: configure interface while providing different private key file path
-     netconf_config:
+     netconf\_config:
        backup: yes
-     register: backup_junos_location
+     register: backup\_junos\_location
      vars:
-       ansible_private_key_file: /home/admin/.ssh/newprivatekeyfile
+       ansible\_private\_key\_file: /home/admin/.ssh/newprivatekeyfile
 
-Note: For netconf connection plugin configurable variables see :ref:`netconf <netconf_connection>`.
+注記: netconf 接続プラグインの設定可能な変数は、「:ref:`netconf <netconf_connection>`」を参照してください。
 
-Bastion/Jumphost Configuration
+Bastion/Jumphost の設定
 ------------------------------
-To use a jump host to connect to a NETCONF enabled device you must set the ``ANSIBLE_NETCONF_SSH_CONFIG`` environment variable.
+ジャンプホストを使用して NETCONF 対応のデバイスに接続するには、``ANSIBLE_NETCONF_SSH_CONFIG`` 環境変数を設定する必要があります。
 
-``ANSIBLE_NETCONF_SSH_CONFIG`` can be set to either:
-  - 1 or TRUE (to trigger the use of the default SSH config file ~/.ssh/config)
-  - The absolute path to a custom SSH config file.
+``ANSIBLE_NETCONF_SSH_CONFIG`` は、以下のいずれかに設定できます。
+  \- 1 または TRUE (デフォルトの SSH 設定ファイル ~/.ssh/config の使用を開始するため)。
+  \- カスタムの SSH 設定ファイルへの絶対パス。
 
-The SSH config file should look something like: 
+SSH 設定ファイルは以下のようになります。 
 
 .. code-block:: ini
 
-  Host *
+  Host \*
     proxycommand ssh -o StrictHostKeyChecking=no -W %h:%p jumphost-username@jumphost.fqdn.com
     StrictHostKeyChecking no
 
-Authentication for the jump host must use key based authentication.
+ジャンプホストの認証は、鍵ベースの認証を使用する必要があります。
 
-You can either specify the private key used in the SSH config file:
+SSH 設定ファイルで使用する秘密鍵のいずれかを指定できます。
 
 .. code-block:: ini
 
   IdentityFile "/absolute/path/to/private-key.pem"
 
-Or you can use an ssh-agent.
+または、ssh-agent を使用できます。
 
-ansible_network_os auto-detection
+ansible\_network\_os 自動検出
 ---------------------------------
 
-If ``ansible_network_os`` is not specified for a host, then Ansible will attempt to automatically detect what ``network_os`` plugin to use.
+ホストに対して ``ansible_network_os`` が指定されていない場合、Ansible は使用する ``network_os`` プラグインを自動的に検出しようとします。
 
-``ansible_network_os`` auto-detection can also be triggered by using ``auto`` as the ``ansible_network_os``. (Note: Previously ``default`` was used instead of ``auto``).
+``ansible_network_os`` 自動検出は、``auto`` を ``ansible_network_os`` として使用することで開始することもできます。(注記: 以前は、``auto`` の代わりに ``default`` が使用されていました。
 
-.. include:: shared_snippets/SSH_warning.txt
+.. include:: shared\_snippets/SSH\_warning.txt

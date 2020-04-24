@@ -1,62 +1,62 @@
-.. _strategy_plugins:
+.. \_strategy\_plugins:
 
-Strategy Plugins
+Strategy プラグイン
 ================
 
 .. contents::
    :local:
    :depth: 2
 
-Strategy plugins control the flow of play execution by handling task and host scheduling.
+Strategy プラグインは、タスクおよびホストスケジューリングを処理し、Play 実行のフローを制御します。
 
-.. _enable_strategy:
+.. \_enable\_strategy:
 
-Enabling strategy plugins
+Strategy プラグインの有効化
 -------------------------
 
-All strategy plugins shipped with Ansible are enabled by default. You can enable a custom strategy plugin by
-putting it in one of the lookup directory sources configured in :ref:`ansible.cfg <ansible_configuration_settings>`.
+Ansible に同梱される Strategy プラグインはすべて、デフォルトで有効となっています。カスタムストラテジープラグインは、
+:ref:`ansible.cfg <ansible_configuration_settings>` で設定した lookup ディレクトリーソースのいずれかにこれを配置することで有効にできます。
 
-.. _using_strategy:
+.. \_using\_strategy:
 
-Using strategy plugins
+Strategy プラグインの使用
 ----------------------
 
-Only one strategy plugin can be used in a play, but you can use different ones for each play in a playbook or ansible run.
-The default is the :ref:`linear <linear_strategy>` plugin. You can change this default in Ansible :ref:`configuration <ansible_configuration_settings>` using an environment variable:
+1 つの Play で使用できる Strategy プラグインは 1 つだけですが、Playbook の Play または Ansible の実行ごとに異なる Strategy プラグインを使用できます。
+デフォルトは、:ref:`linear <linear_strategy>` プラグインです。Ansible :ref:`設定<ansible_configuration_settings>` でこのデフォルトを変更するには、環境変数を使用します。
 
 .. code-block:: shell
 
     export ANSIBLE_STRATEGY=free
 
-or in the `ansible.cfg` file:
+または、`ansible.cfg` ファイルで以下を設定します。
 
 .. code-block:: ini
 
     [defaults]
     strategy=linear
 
-You can also specify the strategy plugin in the play via the :ref:`strategy keyword <playbook_keywords>` in a play::
+Play で :ref:`strategy keyword <playbook_keywords>` を使用して、Play の Strategy プラグインを指定できます。
 
   - hosts: all
     strategy: debug
     tasks:
       - copy: src=myhosts dest=/etc/hosts
-        notify: restart_tomcat
+        notify: restart\_tomcat
 
       - package: name=tomcat state=present
 
     handlers:
-      - name: restart_tomcat
+      \- name: restart\_tomcat
         service: name=tomcat state=restarted
 
-.. _strategy_plugin_list:
+.. \_strategy\_plugin\_list:
 
-Plugin list
+プラグイン一覧
 -----------
 
-You can use ``ansible-doc -t strategy -l`` to see the list of available plugins.
-Use ``ansible-doc -t strategy <plugin name>`` to see plugin-specific specific documentation and examples.
+``ansible-doc -t strategy -l`` を使用して、利用可能なプラグインの一覧を確認できます。
+プラグイン固有のドキュメントや例を参照するには、``ansible-doc -t strategy <plugin name>`` を使用します。
 
 
 .. toctree:: :maxdepth: 1
@@ -67,18 +67,18 @@ Use ``ansible-doc -t strategy <plugin name>`` to see plugin-specific specific do
 .. seealso::
 
    :ref:`about_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`inventory_plugins`
-       Ansible inventory plugins
+       Ansible inventory プラグインの使用
    :ref:`callback_plugins`
-       Ansible callback plugins
+       Ansible callback プラグイン
    :ref:`playbooks_filters`
-       Jinja2 filter plugins
+       Jinja2 filter プラグイン
    :ref:`playbooks_tests`
-       Jinja2 test plugins
+       Jinja2 test プラグイン
    :ref:`playbooks_lookups`
-       Jinja2 lookup plugins
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Jinja2 lookup プラグイン
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       \#ansible IRC chat channel

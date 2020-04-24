@@ -1,61 +1,61 @@
-.. _connection_plugins:
+.. \_connection\_plugins:
 
-Connection Plugins
+Connection プラグイン
 ==================
 
 .. contents::
    :local:
    :depth: 2
 
-Connection plugins allow Ansible to connect to the target hosts so it can execute tasks on them. Ansible ships with many connection plugins, but only one can be used per host at a time.
+Connection プラグインは、Ansibleがターゲットホストに接続して、そのホストでタスクを実行できるようにします。Ansible には多くの connection プラグインが含まれていますが、1 台のホストで一度に使用できるプラグインは 1 つのみです。
 
-By default, Ansible ships with several plugins. The most commonly used are the :ref:`paramiko SSH<paramiko_ssh_connection>`, native ssh (just called :ref:`ssh<ssh_connection>`), and :ref:`local<local_connection>` connection types.  All of these can be used in playbooks and with :command:`/usr/bin/ansible` to decide how you want to talk to remote machines.
+デフォルトでは、Ansible には複数のプラグインが含まれます。最もよく使用されるのは、:ref:`paramiko SSH<paramiko_ssh_connection>`、ネイティブ (:ref:`ssh<ssh_connection>` と呼ばれる) および :ref:`ローカル<local_connection>` 接続タイプです。 上記はすべて、Playbook や :command:`/usr/bin/ansible` で使用して、リモートマシンと対話する方法を決定できます。
 
-The basics of these connection types are covered in the :ref:`getting started<intro_getting_started>` section.
+このような接続タイプの基本情報は、:ref:`getting started<intro_getting_started>` のセクションで説明しています。
 
-.. _ssh_plugins:
+.. \_ssh\_plugins:
 
-``ssh`` plugins
+``ssh`` プラグイン
 ---------------
 
-Because ssh is the default protocol used in system administration and the protocol most used in Ansible, ssh options are included in the command line tools. See :ref:`ansible-playbook` for more details.
+ssh は、システム管理でデフォルトで使用されるプロトコルであり、Ansible で最も使用されるプロトコルでもあるため、コマンドラインツールに ssh オプションが含まれています。詳細は :ref:`ansible-playbook` を参照してください。
 
-.. _enabling_connection:
+.. \_enabling\_connection:
 
-Adding connection plugins
+Connection プラグインの追加
 -------------------------
 
-You can extend Ansible to support other transports (such as SNMP or message bus) by dropping a custom plugin
-into the ``connection_plugins`` directory.
+カスタムのプラグインを ``connection_plugins`` ディレクトリーに配置して、
+Ansible を拡張して他のトランスポート (SNMP またはメッセージバス) をサポートできます。
 
-.. _using_connection:
+.. \_using\_connection:
 
-Using connection plugins
+Connection プラグインの使用
 ------------------------
 
-You can set the connection plugin globally via :ref:`configuration<ansible_configuration_settings>`, at the command line (``-c``, ``--connection``), as a :ref:`keyword <playbook_keywords>` in your play, or by setting a :ref:`variable<behavioral_parameters>`, most often in your inventory.
-For example, for Windows machines you might want to set the :ref:`winrm <winrm_connection>` plugin as an inventory variable.
+接続プラグインは、Play で :ref:`設定<ansible_configuration_settings>`、コマンドライン (``-c``、``--connection``) を :ref:`キーワード<playbook_keywords>` として設定できます。または、インベントリーで最もよく使われる :ref:`変数<behavioral_parameters>` をグローバルに設定できます。
+たとえば、Windows マシンでは :ref:`winrm <winrm_connection>` プラグインをインベントリー変数として設定できます。
 
-Most connection plugins can operate with minimal configuration. By default they use the :ref:`inventory hostname<inventory_hostnames_lookup>` and defaults to find the target host.
+多くの Connection プラグインは最小限の構成で動作します。デフォルトでは、:ref:`inventory hostname<inventory_hostnames_lookup>` を使用し、ターゲットホストを検索するようにデフォルト設定されています。
 
-Plugins are self-documenting. Each plugin should document its configuration options. The following are connection variables common to most connection plugins:
+プラグインは、自己文書化されており、プラグインごとに、設定オプションについて文書化する必要があります。以下は、多くの connection プラグインに共通する接続変数です。
 
 :ref:`ansible_host<magic_variables_and_hostvars>`
-    The name of the host to connect to, if different from the :ref:`inventory <intro_inventory>` hostname.
+    接続するホストの名前 (:ref:`インベントリー<intro_inventory>` のホスト名と異なる場合)。
 :ref:`ansible_port<faq_setting_users_and_ports>`
-    The ssh port number, for :ref:`ssh <ssh_connection>` and :ref:`paramiko_ssh <paramiko_ssh_connection>` it defaults to 22.
+    :ref:`ssh <ssh_connection>` および :ref:`paramiko_ssh <paramiko_ssh_connection>` の ssh ポート番号は、デフォルトでは 22 に設定されます。
 :ref:`ansible_user<faq_setting_users_and_ports>`
-    The default user name to use for log in. Most plugins default to the 'current user running Ansible'.
+    ログインに使用するデフォルトのユーザー名。多くのプラグインは、「Ansible を実行する現在のユーザー」にデフォルトで設定されます。
 
-Each plugin might also have a specific version of a variable that overrides the general version. For example, ``ansible_ssh_host`` for the :ref:`ssh <ssh_connection>` plugin.
+プラグインごとに、一般的なバージョンをオーバーライドする特定の変数バージョンがある場合もあります。たとえば、:ref:`ssh <ssh_connection>` プラグインの場合は ``ansible_ssh_host`` です。
 
-.. _connection_plugin_list:
+.. \_connection\_plugin\_list:
 
-Plugin List
+プラグイン一覧
 -----------
 
-You can use ``ansible-doc -t connection -l`` to see the list of available plugins.
-Use ``ansible-doc -t connection <plugin name>`` to see detailed documentation and examples.
+``ansible-doc -t connection -l`` を使用すると、利用可能なプラグインの一覧を表示できます。
+詳細にわたるドキュメントや例を参照するには、``ansible-doc -t connection <plugin name>`` を使用します。
 
 
 .. toctree:: :maxdepth: 1
@@ -66,19 +66,19 @@ Use ``ansible-doc -t connection <plugin name>`` to see detailed documentation an
 
 .. seealso::
 
-   :ref:`Working with Playbooks<working_with_playbooks>`
-       An introduction to playbooks
+   :ref:`Playbook の使用<working_with_playbooks>`
+       Playbook の概要
    :ref:`callback_plugins`
-       Ansible callback plugins
+       Ansible callback プラグイン
    :ref:`Filters<playbooks_filters>`
-       Jinja2 filter plugins
+       Jinja2 filter プラグイン
    :ref:`Tests<playbooks_tests>`
-       Jinja2 test plugins
+       Jinja2 test プラグイン
    :ref:`Lookups<playbooks_lookups>`
-       Jinja2 lookup plugins
+       Jinja2 lookup プラグイン
    :ref:`vars_plugins`
-       Ansible vars plugins
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Ansible vars プラグイン
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       \#ansible IRC chat channel

@@ -1,235 +1,235 @@
-.. _network-best-practices:
+.. \_network-best-practices:
 
 ************************
-Ansible Network Examples
+Ansible ネットワークの例
 ************************
 
-This document describes some examples of using Ansible to manage your network infrastructure.
+本ガイドでは、Ansible を使用してネットワークインフラストラクチャーを管理する例を説明します。
 
 .. contents::
    :local:
 
-Prerequisites
+要件
 =============
 
-This example requires the following:
+この例では、以下が必要です。
 
-* **Ansible 2.5** (or higher) installed. See :ref:`intro_installation_guide` for more information.
-* One or more network devices that are compatible with Ansible.
-* Basic understanding of YAML :ref:`yaml_syntax`.
-* Basic understanding of Jinja2 templates. See :ref:`playbooks_templating` for more information.
-* Basic Linux command line use.
-* Basic knowledge of network switch & router configurations.
+* **Ansible 2.5** (以降) がインストールされている。詳細は、:ref:`intro_installation_guide` を参照してください。
+* Ansible と互換性のある 1 つ以上ネットワークデバイス。
+* YAML :ref:`yaml_syntax` の基本的な理解。
+* Jinja2 テンプレートの基本的な理解。詳細は、:ref:`playbooks_templating` を参照してください。
+* 基本的な Linux コマンドラインのナレッジ。
+* ネットワークスイッチおよびルーター設定に関する基本知識。
 
 
-Groups and variables in an inventory file
+インベントリーファイルのグループおよび変数
 =========================================
 
-An ``inventory`` file is a YAML or INI-like configuration file that defines the mapping of hosts into groups.
+``inventory`` は、ホストからグループへのマッピングを定義する YAML または INI のような設定ファイルです。
 
-In our example, the inventory file defines the groups ``eos``, ``ios``, ``vyos`` and a "group of groups" called ``switches``. Further details about subgroups and inventory files can be found in the :ref:`Ansible inventory Group documentation <subgroups>`.
+この例では、インベントリーファイルは、``eos`` グループ、``ios`` グループ、``vyos`` グループを定義し、``switches`` という名前の「グループのグループ」を定義します。サブグループとインベントリーファイルの詳細は、:ref:`Ansible インベントリーグループのドキュメント <subgroups>` を参照してください。
 
-Because Ansible is a flexible tool, there are a number of ways to specify connection information and credentials. We recommend using the ``[my_group:vars]`` capability in your inventory file. Here's what it would look like if you specified your SSH passwords (encrypted with Ansible Vault) among your variables:
+Ansible は柔軟なツールであるため、接続情報と認証情報を指定する方法が複数あります。インベントリーファイルで ``[my_group:vars]`` 機能を使用することが推奨されます。変数内に SSH パスワード (Ansible Vault で暗号化) を指定すると、以下のようになります。
 
 .. code-block:: ini
 
-   [all:vars]
-   # these defaults can be overridden for any group in the [group:vars] section
-   ansible_connection=network_cli
-   ansible_user=ansible
+   \[all:vars]
+   \# these defaults can be overridden for any group in the \[group:vars] section
+   ansible\_connection=network\_cli
+   ansible\_user=ansible
 
-   [switches:children]
+   \[switches:children]
    eos
    ios
    vyos
 
-   [eos]
-   veos01 ansible_host=veos-01.example.net
-   veos02 ansible_host=veos-02.example.net
-   veos03 ansible_host=veos-03.example.net
-   veos04 ansible_host=veos-04.example.net
+   \[eos]
+   veos01 ansible\_host=veos-01.example.net
+   veos02 ansible\_host=veos-02.example.net
+   veos03 ansible\_host=veos-03.example.net
+   veos04 ansible\_host=veos-04.example.net
 
-   [eos:vars]
-   ansible_become=yes
-   ansible_become_method=enable
-   ansible_network_os=eos
-   ansible_user=my_eos_user
-   ansible_password= !vault |
-                     $ANSIBLE_VAULT;1.1;AES256
+   \[eos:vars]
+   ansible\_become=yes
+   ansible\_become\_method=enable
+   ansible\_network\_os=eos
+   ansible\_user=my\_eos\_user
+   ansible\_password= !vault |
+                     $ANSIBLE\_VAULT;1.1;AES256
                      37373735393636643261383066383235363664386633386432343236663533343730353361653735
                      6131363539383931353931653533356337353539373165320a316465383138636532343463633236
                      37623064393838353962386262643230303438323065356133373930646331623731656163623333
                      3431353332343530650a373038366364316135383063356531633066343434623631303166626532
                      9562
 
-   [ios]
-   ios01 ansible_host=ios-01.example.net
-   ios02 ansible_host=ios-02.example.net
-   ios03 ansible_host=ios-03.example.net
+   \[ios]
+   ios01 ansible\_host=ios-01.example.net
+   ios02 ansible\_host=ios-02.example.net
+   ios03 ansible\_host=ios-03.example.net
 
-   [ios:vars]
-   ansible_become=yes
-   ansible_become_method=enable
-   ansible_network_os=ios
-   ansible_user=my_ios_user
-   ansible_password= !vault |
-                     $ANSIBLE_VAULT;1.1;AES256
+   \[ios:vars]
+   ansible\_become=yes
+   ansible\_become\_method=enable
+   ansible\_network\_os=ios
+   ansible\_user=my\_ios\_user
+   ansible\_password= !vault |
+                     $ANSIBLE\_VAULT;1.1;AES256
                      34623431313336343132373235313066376238386138316466636437653938623965383732373130
                      3466363834613161386538393463663861636437653866620a373136356366623765373530633735
                      34323262363835346637346261653137626539343534643962376139366330626135393365353739
                      3431373064656165320a333834613461613338626161633733343566666630366133623265303563
                      8472
 
-   [vyos]
-   vyos01 ansible_host=vyos-01.example.net
-   vyos02 ansible_host=vyos-02.example.net
-   vyos03 ansible_host=vyos-03.example.net
+   \[vyos]
+   vyos01 ansible\_host=vyos-01.example.net
+   vyos02 ansible\_host=vyos-02.example.net
+   vyos03 ansible\_host=vyos-03.example.net
 
-   [vyos:vars]
-   ansible_network_os=vyos
-   ansible_user=my_vyos_user
-   ansible_password= !vault |
-                     $ANSIBLE_VAULT;1.1;AES256
+   \[vyos:vars]
+   ansible\_network\_os=vyos
+   ansible\_user=my\_vyos\_user
+   ansible\_password= !vault |
+                     $ANSIBLE\_VAULT;1.1;AES256
                      39336231636137663964343966653162353431333566633762393034646462353062633264303765
                      6331643066663534383564343537343334633031656538370a333737656236393835383863306466
                      62633364653238323333633337313163616566383836643030336631333431623631396364663533
                      3665626431626532630a353564323566316162613432373738333064366130303637616239396438
                      9853
 
-If you use ssh-agent, you do not need the ``ansible_password`` lines. If you use ssh keys, but not ssh-agent, and you have multiple keys, specify the key to use for each connection in the ``[group:vars]`` section with ``ansible_ssh_private_key_file=/path/to/correct/key``. For more information on ``ansible_ssh_`` options see :ref:`behavioral_parameters`.
+ssh-agent を使用する場合、``ansible_password`` 行は必要ありません。ssh-agent でなく ssh キーを使用し、鍵が複数ある場合は、``ansible_ssh_private_key_file=/path/to/correct/key`` の ``[group:vars]`` セクションで、各接続に使用するキーを指定します。``ansible_ssh_`` オプションの詳細は、「:ref:`behavioral_parameters`」を参照してください。
 
-.. FIXME FUTURE Gundalow - Link to network auth & proxy page (to be written)
+..FIXME FUTURE Gundalow - (書き込まれる) ネットワーク認証およびプロキシーページへのリンク
 
-.. warning:: Never store passwords in plain text.
+.. warning:: プレーンテキストにパスワードを保存しないでください。
 
-Ansible vault for password encryption
+パスワード暗号化用の Ansible vault
 -------------------------------------
 
-The "Vault" feature of Ansible allows you to keep sensitive data such as passwords or keys in encrypted files, rather than as plain text in your playbooks or roles. These vault files can then be distributed or placed in source control. See :ref:`playbooks_vault` for more information.
+Ansible の「Vault」機能を使用すると、パスワードやキーなどの機密データを Playbook やロールでプレーンテキストとしてではなく、暗号化されたファイルに保存できます。この vault ファイルは、ソース制御に配布または配置することができます。詳細は :ref:`playbooks_vault` を参照してください。
 
-Common inventory variables
+共通のインベントリー変数
 --------------------------
 
-The following variables are common for all platforms in the inventory, though they can be overwritten for a particular inventory group or host.
+以下の変数はインベントリー内のすべてのプラットフォームに共通ですが、特定のインベントリーグループまたはホストについて上書きできます。
 
-:ansible_connection:
+:ansible\_connection:
 
-  Ansible uses the ansible-connection setting to determine how to connect to a remote device. When working with Ansible Networking, set this to ``network_cli`` so Ansible treats the remote node as a network device with a limited execution environment. Without this setting, Ansible would attempt to use ssh to connect to the remote and execute the Python script on the network device, which would fail because Python generally isn't available on network devices.
-:ansible_network_os:
-  Informs Ansible which Network platform this hosts corresponds to. This is required when using ``network_cli`` or ``netconf``.
-:ansible_user: The user to connect to the remote device (switch) as. Without this the user that is running ``ansible-playbook`` would be used.
-  Specifies which user on the network device the connection
-:ansible_password:
-  The corresponding password for ``ansible_user`` to log in as. If not specified SSH key will be used.
-:ansible_become:
-  If enable mode (privilege mode) should be used, see the next section.
-:ansible_become_method:
-  Which type of `become` should be used, for ``network_cli`` the only valid choice is ``enable``.
+  Ansible は ansible-connection 設定を使用して、リモートデバイスへの接続方法を決定します。Ansible Networking を使用する場合は、Ansible がリモートノードを制限された実行環境のネットワークデバイスとして扱うように ``network_cli`` に設定します。この設定がないと、Ansible は ssh を使用してリモートに接続し、ネットワークデバイスで Python スクリプトを実行します。これは、Python がネットワークデバイスで利用できないため失敗します。
+:ansible\_network\_os:
+  このホストが対応するネットワークプラットフォームを Ansible に通知します。これは、``network_cli`` または ``netconf`` を使用する場合に必要です。
+:ansible\_user:リモートデバイス (スイッチ) に接続する際に使用するユーザーです。これを使用しないと、``ansible-playbook`` を実行しているユーザーが使用されます。
+  接続先となるネットワークデバイスのユーザーを指定します。
+:ansible\_password:
+  ``ansible_user`` がログインに使用するパスワード。指定しない場合は、SSH キーが使用されます。
+:ansible\_become:
+  Enable モード (特権モード) を使用する場合は、次のセクションを参照してください。
+:ansible\_become\_method:
+  ``network_cli`` で、どのタイプの `become` を使用すべきか。唯一の有効なオプションは ``enable`` です。
 
-Privilege escalation
+権限昇格
 --------------------
 
-Certain network platforms, such as Arista EOS and Cisco IOS, have the concept of different privilege modes. Certain network modules, such as those that modify system state including users, will only work in high privilege states. Ansible supports ``become`` when using ``connection: network_cli``. This allows privileges to be raised for the specific tasks that need them. Adding ``become: yes`` and ``become_method: enable`` informs Ansible to go into privilege mode before executing the task, as shown here:
+Arista EOS や Cisco IOS などの特定のネットワークプラットフォームには、異なる権限モードという概念があります。特定のネットワークモジュール (ユーザーを含むシステム状態を修正するモジュールなど) は、高い特権状態でのみ機能します。Ansible は、``connection: network_cli`` を使用する場合に ``become`` に対応します。これにより、必要な特定のタスクに対して権限を作成できます。``become: yes`` および ``become_method: enable`` を、以下に示すように、Ansible に、タスクを実行する前に権限モードに切り替わるように通知します。
 
 .. code-block:: ini
 
-   [eos:vars]
-   ansible_connection=network_cli
-   ansible_network_os=eos
-   ansible_become=yes
-   ansible_become_method=enable
+   \[eos:vars]
+   ansible\_connection=network\_cli
+   ansible\_network\_os=eos
+   ansible\_become=yes
+   ansible\_become\_method=enable
 
-For more information, see the :ref:`using become with network modules<become_network>` guide.
+詳細は、「:ref:`ネットワークモジュールで become の使用<become_network>`」を参照してください。
 
 
-Jump hosts
+ジャンプホスト
 ----------
 
-If the Ansible Controller doesn't have a direct route to the remote device and you need to use a Jump Host, please see the :ref:`Ansible Network Proxy Command <network_delegate_to_vs_ProxyCommand>` guide for details on how to achieve this.
+Ansible Controller にリモートデバイスへの直接のルートがなく、ジャンプホストを使用する必要がある場合は、その方法を「:ref:`Ansible ネットワークプロキシーコマンド<network_delegate_to_vs_ProxyCommand>`」を参照してください。
 
-Example 1: collecting facts and creating backup files with a playbook
+例 1: Playbook でファクトを収集し、バックアップファイルの作成
 =====================================================================
 
-Ansible facts modules gather system information 'facts' that are available to the rest of your playbook.
+Ansible ファクトモジュールは、他の Playbook で利用可能なシステム情報「ファクト」を収集します。
 
-Ansible Networking ships with a number of network-specific facts modules. In this example, we use the ``_facts`` modules :ref:`eos_facts <eos_facts_module>`, :ref:`ios_facts <ios_facts_module>` and :ref:`vyos_facts <vyos_facts_module>` to connect to the remote networking device. As the credentials are not explicitly passed via module arguments, Ansible uses the username and password from the inventory file.
+Ansible Networking には、多くのネットワーク固有のファクトモジュールが同梱されています。この例では、``_facts`` モジュールの :ref:`eos_facts <eos_facts_module>`、:ref:`ios_facts <ios_facts_module>`、および :ref:`vyos_facts <vyos_facts_module>` を使用してリモートネットワークデバイスに接続します。認証情報はモジュール引数から明示的に渡されるわけではないため、Ansible はインベントリーファイルからユーザー名およびパスワードを使用します。
 
-Ansible's "Network Fact modules" gather information from the system and store the results in facts prefixed with ``ansible_net_``. The data collected by these modules is documented in the `Return Values` section of the module docs, in this case :ref:`eos_facts <eos_facts_module>` and :ref:`vyos_facts <vyos_facts_module>`. We can use the facts, such as ``ansible_net_version`` late on in the "Display some facts" task.
+Ansible の「ネットワークファクトモジュール」はシステムから情報を収集し、結果を ``ansible_net_`` という接頭辞が付けられたファクトに保存します。これらのモジュールで収集されるデータは、モジュールドキュメントの `Return Values` セクション (この場合は :ref:`eos_facts <eos_facts_module>` と :ref:`vyos_facts <vyos_facts_module>`) に記載されています。「Display some facts」タスクで ``ansible_net_version`` などのファクトを使用できます。
 
-To ensure we call the correct mode (``*_facts``) the task is conditionally run based on the group defined in the inventory file, for more information on the use of conditionals in Ansible Playbooks see :ref:`the_when_statement`.
+正しいモード (*``_facts``) を呼び出すようにするには、インベントリーファイルに定義されたグループに基づいてタスクが条件付きで実行されます。Ansible Playbook での条件付き使用の詳細は、「:ref:`the_when_statement`」を参照してください。
 
-In this example, we will create an inventory file containing some network switches, then run a playbook to connect to the network devices and return some information about them.
+この例では、一部のネットワークスイッチを含むインベントリーファイルを作成してから、Playbook を実行してネットワークデバイスに接続し、その情報を返します。
 
-Step 1: Creating the inventory
+手順 1:インベントリーの作成
 ------------------------------
 
-First, create a file called ``inventory``, containing:
+まず、``inventory`` という名前のファイルを作成します。これには以下が含まれます。
 
 .. code-block:: ini
 
-   [switches:children]
+   \[switches:children]
    eos
    ios
    vyos
 
-   [eos]
+   \[eos]
    eos01.example.net
 
-   [ios]
+   \[ios]
    ios01.example.net
 
-   [vyos]
+   \[vyos]
    vyos01.example.net
 
 
-Step 2: Creating the playbook
+手順 2:Playbook の作成
 -----------------------------
 
-Next, create a playbook file called ``facts-demo.yml`` containing the following:
+次に、以下を含む ``facts-demo.yml`` という名前の Playbook ファイルを作成します。
 
 .. code-block:: yaml
 
-   - name: "Demonstrate connecting to switches"
+   - name:"Demonstrate connecting to switches"
      hosts: switches
-     gather_facts: no
+     gather\_facts: no
 
      tasks:
-       ###
-       # Collect data
-       #
-       - name: Gather facts (eos)
-         eos_facts:
-         when: ansible_network_os == 'eos'
+       \###
+# Collect data
+\#
+- name: Gather facts (eos)
+eos\_facts:
+when: ansible\_network\_os == 'eos'
 
-       - name: Gather facts (ops)
-         ios_facts:
-         when: ansible_network_os == 'ios'
+       - name:Gather facts (ops)
+         ios\_facts:
+         when: ansible\_network\_os == 'ios'
 
-       - name: Gather facts (vyos)
-         vyos_facts:
-         when: ansible_network_os == 'vyos'
+       - name:Gather facts (vyos)
+         vyos\_facts:
+         when: ansible\_network\_os == 'vyos'
 
-       ###
-       # Demonstrate variables
-       #
-       - name: Display some facts
+       \###
+# Demonstrate variables
+\#
+- name: Display some facts
+debug:
+msg: "The hostname is {{ ansible\_net\_hostname }} and the OS is {{ ansible\_net\_version }}"
+
+       - name:Facts from a specific host
          debug:
-           msg: "The hostname is {{ ansible_net_hostname }} and the OS is {{ ansible_net_version }}"
+           var: hostvars\['vyos01.example.net']
 
-       - name: Facts from a specific host
-         debug:
-           var: hostvars['vyos01.example.net']
-
-       - name: Write facts to disk using a template
+       - name:Write facts to disk using a template
          copy:
            content: |
-             #jinja2: lstrip_blocks: True
-             EOS device info:
-               {% for host in groups['eos'] %}
-               Hostname: {{ hostvars[host].ansible_net_hostname }}
-               Version: {{ hostvars[host].ansible_net_version }}
-               Model: {{ hostvars[host].ansible_net_model }}
-               Serial: {{ hostvars[host].ansible_net_serialnum }}
+             \#jinja2: lstrip\_blocks: True
+EOS device info:
+{% for host in groups\['eos'] %}
+             Hostname: {{ hostvars\[host].ansible\_net\_hostname }}
+               Version: {{ hostvars\[host].ansible\_net\_version }}
+               Model: {{ hostvars\[host].ansible\_net\_model }}
+               Serial: {{ hostvars\[host].ansible\_net\_serialnum }}
                {% endfor %}
 
              IOS device info:
@@ -248,52 +248,52 @@ Next, create a playbook file called ``facts-demo.yml`` containing the following:
                Serial: {{ hostvars[host].ansible_net_serialnum }}
                {% endfor %}
            dest: /tmp/switch-facts
-         run_once: yes
+         run\_once: yes
 
-       ###
-       # Get running configuration
-       #
+       \###
+# Get running configuration
+#
 
-       - name: Backup switch (eos)
-         eos_config:
+       - name:Backup switch (eos)
+         eos\_config:
            backup: yes
-         register: backup_eos_location
-         when: ansible_network_os == 'eos'
+         register: backup\_eos\_location
+         when: ansible\_network\_os == 'eos'
 
        - name: backup switch (vyos)
-         vyos_config:
+         vyos\_config:
            backup: yes
-         register: backup_vyos_location
-         when: ansible_network_os == 'vyos'
+         register: backup\_vyos\_location
+         when: ansible\_network\_os == 'vyos'
 
-       - name: Create backup dir
+       - name:Create backup dir
          file:
-           path: "/tmp/backups/{{ inventory_hostname }}"
+           path: "/tmp/backups/{{ inventory\_hostname }}"
            state: directory
            recurse: yes
 
-       - name: Copy backup files into /tmp/backups/ (eos)
+       - name:Copy backup files into /tmp/backups/ (eos)
          copy:
-           src: "{{ backup_eos_location.backup_path }}"
-           dest: "/tmp/backups/{{ inventory_hostname }}/{{ inventory_hostname }}.bck"
-         when: ansible_network_os == 'eos'
+           src: "{{ backup\_eos\_location.backup\_path }}"
+           dest: "/tmp/backups/{{ inventory\_hostname }}/{{ inventory\_hostname }}.bck"
+         when: ansible\_network\_os == 'eos'
 
-       - name: Copy backup files into /tmp/backups/ (vyos)
+       - name:Copy backup files into /tmp/backups/ (vyos)
          copy:
-           src: "{{ backup_vyos_location.backup_path }}"
-           dest: "/tmp/backups/{{ inventory_hostname }}/{{ inventory_hostname }}.bck"
-         when: ansible_network_os == 'vyos'
+           src: "{{ backup\_vyos\_location.backup\_path }}"
+           dest: "/tmp/backups/{{ inventory\_hostname }}/{{ inventory\_hostname }}.bck"
+         when: ansible\_network\_os == 'vyos'
 
-Step 3: Running the playbook
+手順 3:Playbook の実行
 ----------------------------
 
-To run the playbook, run the following from a console prompt:
+Playbook を実行するには、コンソールプロンプトから以下を実行します。
 
 .. code-block:: console
 
    ansible-playbook -i inventory facts-demo.yml
 
-This should return output similar to the following:
+このコマンドを実行すると、以下のような出力が返されます。
 
 .. code-block:: console
 
@@ -302,185 +302,185 @@ This should return output similar to the following:
    ios01.example.net          : ok=7    changed=2    unreachable=0    failed=0
    vyos01.example.net         : ok=6    changed=2    unreachable=0    failed=0
 
-Step 4: Examining the playbook results
+手順 4:Playbook の結果の検証
 --------------------------------------
 
-Next, look at the contents of the file we created containing the switch facts:
+次に、スイッチファクトを含む作成したファイルの内容を確認します。
 
 .. code-block:: console
 
    cat /tmp/switch-facts
 
-You can also look at the backup files:
+バックアップファイルを確認することもできます。
 
 .. code-block:: console
 
    find /tmp/backups
 
 
-If `ansible-playbook` fails, please follow the debug steps in :ref:`network_debug_troubleshooting`.
+`ansible-playbook` が失敗する場合は、:ref:`network_debug_troubleshooting` のデバッグ手順に従ってください。
 
 
-.. _network-agnostic-examples:
+.. \_network-agnostic-examples:
 
-Example 2: simplifying playbooks with network agnostic modules
+例 2: ネットワークに依存しないモジュールを使用した Playbook の単純化
 ==============================================================
 
-(This example originally appeared in the `Deep Dive on cli_command for Network Automation <https://www.ansible.com/blog/deep-dive-on-cli-command-for-network-automation>`_ blog post by Sean Cavanaugh -`@IPvSean <https://github.com/IPvSean>`_).
+(この例は、元々 Sean Cavanaugh -`@IPvSean <https://github.com/IPvSean>`_ が投稿したブログ「`Deep Dive on cli_command for Network Automation <https://www.ansible.com/blog/deep-dive-on-cli-command-for-network-automation>`\_」で紹介されました。)
 
-If you have two or more network platforms in your environment, you can use the network agnostic modules to simplify your playbooks. You can use network agnostic modules such as ``cli_command`` or ``cli_config`` in place of the platform-specific modules such as ``eos_config``, ``ios_config``, and ``junos_config``. This reduces the number of tasks and conditionals you need in your playbooks.
+お使いの環境に複数のネットワークプラットフォームがある場合には、ネットワークに依存しないモジュールを使用して Playbook を単純化できます。``eos_config``、``ios_config``、``junos_config`` などのプラットフォーム固有モジュールの代わりに、``cli_command`` または ``cli_config`` などネットワークに依存しないモジュールを使用できます。これにより、Playbook で必要なタスクおよび条件の数が減ります。
 
 .. note::
-  Network agnostic modules require the :ref:`network_cli <network_cli_connection>` connection plugin.
+  ネットワークに依存しないモジュールには、:ref:`network_cli <network_cli_connection>` 接続プラグインが必要です。
 
 
-Sample playbook with platform-specific modules
+プラットフォーム固有のモジュールを含む Playbook のサンプル
 ----------------------------------------------
 
-This example assumes three platforms, Arista EOS, Cisco NXOS, and Juniper JunOS.  Without the network agnostic modules, a sample playbook might contain the following three tasks with platform-specific commands:
+この例では、Arista EOS、Cisco NXOS、Juniper JunOS の 3 つのプラットフォームを想定しています。 ネットワークに依存しないモジュールを使用しないと、サンプル Playbook にはプラットフォーム固有のコマンドと共に、以下の 3 つのタスクが含まれる場合があります。
 
 .. code-block:: yaml
 
   ---
-  - name: Run Arista command
-    eos_command:
+  - name:Run Arista command
+    eos\_command:
       commands: show ip int br
-    when: ansible_network_os == 'eos'
+    when: ansible\_network\_os == 'eos'
 
-  - name: Run Cisco NXOS command
-    nxos_command:
+  - name:Run Cisco NXOS command
+    nxos\_command:
       commands: show ip int br
-    when: ansible_network_os == 'nxos'
+    when: ansible\_network\_os == 'nxos'
 
-  - name: Run Vyos command
-    vyos_command:
+  - name:Run Vyos command
+    vyos\_command:
       commands: show interface
-    when: ansible_network_os == 'vyos'
+    when: ansible\_network\_os == 'vyos'
 
-Simplified playbook with ``cli_command`` network agnostic module
+ネットワークに依存しないモジュール ``cli_command`` を使用した簡単な Playbook
 ----------------------------------------------------------------
 
-You can replace these platform-specific modules with the network agnostic ``cli_command`` module as follows:
+これらのプラットフォーム固有のモジュールは、以下のようにネットワークに依存しない ``cli_command`` モジュールに置き換えることができます。
 
 .. code-block:: yaml
 
   ---
   - hosts: network
-    gather_facts: false
-    connection: network_cli
+    gather\_facts: false
+    connection: network\_cli
 
     tasks:
-      - name: Run cli_command on Arista and display results
+      \- name:Run cli\_command on Arista and display results
         block:
-        - name: Run cli_command on Arista
-          cli_command:
+        \- name:Run cli\_command on Arista
+          cli\_command:
             command: show ip int br
           register: result
 
-        - name: Display result to terminal window
+        - name:Display result to terminal window
           debug:
             var: result.stdout_lines
         when: ansible_network_os == 'eos'
 
-      - name: Run cli_command on Cisco IOS and display results
+      - name:Run cli\_command on Cisco IOS and display results
         block:
-        - name: Run cli_command on Cisco IOS
-          cli_command:
+        - name:Run cli\_command on Cisco IOS
+          cli\_command:
             command: show ip int br
           register: result
 
-        - name: Display result to terminal window
+        - name:Display result to terminal window
           debug:
-            var: result.stdout_lines
-        when: ansible_network_os == 'ios'
+            var: result.stdout\_lines
+        when: ansible\_network\_os == 'ios'
 
-      - name: Run cli_command on Vyos and display results
+      - name:Run cli\_command on Vyos and display results
         block:
-        - name: Run cli_command on Vyos
-          cli_command:
+        - name:Run cli\_command on Vyos
+          cli\_command:
             command: show interfaces
           register: result
 
-        - name: Display result to terminal window
+        - name:Display result to terminal window
           debug:
-            var: result.stdout_lines
-        when: ansible_network_os == 'vyos'
+            var: result.stdout\_lines
+        when: ansible\_network\_os == 'vyos'
 
 
-If you use groups and group_vars by platform type, this playbook can be further simplified to :
+プラットフォームタイプ別に group\_vars を使用する場合は、この Playbook をさらに簡単にできます。
 
 .. code-block:: yaml
 
   ---
-  - name: Run command and print to terminal window
+  - name:Run command and print to terminal window
     hosts: routers
-    gather_facts: false
+    gather\_facts: false
 
     tasks:
-      - name: Run show command
-        cli_command:
-          command: "{{show_interfaces}}"
-        register: command_output
+      \- name:Run show command
+        cli\_command:
+          command: "{{show\_interfaces}}"
+        register: command\_output
 
 
-You can see a full example of this using group_vars and also a configuration backup example at `Network agnostic examples <https://github.com/network-automation/agnostic_example>`_.
+group\_vars を使用すると、この詳細の例を表示できます。また、設定のバックアップの例は、`ネットワークに依存しない例 <https://github.com/network-automation/agnostic_example>`_ で確認できます。
 
-Using multiple prompts with the  ``cli_command``
+``cli_command`` での複数のプロンプトの使用
 ------------------------------------------------
 
-The ``cli_command`` also supports multiple prompts.
+``cli_command`` は、複数のプロンプトにも対応します。
 
 .. code-block:: yaml
 
   ---
-  - name: Change password to default
-    cli_command:
+  - name:Change password to default
+    cli\_command:
       command: "{{ item }}"
       prompt:
-        - "New password"
-        - "Retype new password"
+        \- "New password"
+        \- "Retype new password"
       answer:
-        - "mypassword123"
-        - "mypassword123"
-      check_all: True
+        \- "mypassword123"
+        \- "mypassword123"
+      check\_all:True
     loop:
       - "configure"
       - "rollback"
       - "set system root-authentication plain-text-password"
       - "commit"
 
-See the :ref:`cli_command <cli_command_module>` for full documentation on this command.
+このコマンドに関する詳細は、:ref:`cli_command <cli_command_module>` を参照してください。
 
 
-Implementation Notes
+実装に関する注意点
 ====================
 
 
-Demo variables
+デモ変数
 --------------
 
-Although these tasks are not needed to write data to disk, they are used in this example to demonstrate some methods of accessing facts about the given devices or a named host.
+これらのタスクは、ディスクにデータを書き込む必要はありませんが、この例では、特定のデバイスまたは名前付きホストのファクトにアクセスする方法を実証するために使用されます。
 
-Ansible ``hostvars`` allows you to access variables from a named host. Without this we would return the details for the current host, rather than the named host.
+Ansible ``hostvars`` を使用すると、名前付きホストから変数にアクセスできます。これを行わないと、名前付きホストではなく、現在のホストの詳細が返されます。
 
-For more information, see :ref:`magic_variables_and_hostvars`.
+詳細は「:ref:`magic_variables_and_hostvars`」を参照してください。
 
-Get running configuration
+実行中の設定の取得
 -------------------------
 
-The :ref:`eos_config <eos_config_module>` and :ref:`vyos_config <vyos_config_module>` modules have a ``backup:`` option that when set will cause the module to create a full backup of the current ``running-config`` from the remote device before any changes are made. The backup file is written to the ``backup`` folder in the playbook root directory. If the directory does not exist, it is created.
+:ref:`eos_config <eos_config_module>` モジュールおよび :ref:`vyos_config <vyos_config_module>` モジュールには ``backup:`` オプションがあり、これを設定するとモジュールは変更前にリモートデバイスから現在の ``running-config`` の完全バックアップを作成します。バックアップファイルは、Playbook root ディレクトリーの ``backup`` ディレクトリーに書き込まれます。ディレクトリーが存在しない場合は作成されます。
 
-To demonstrate how we can move the backup file to a different location, we register the result and move the file to the path stored in ``backup_path``.
+バックアップファイルを別の場所に移動する方法を実証するために、結果を登録し、ファイルを ``backup_path`` に保存されているパスに移動します。
 
-Note that when using variables from tasks in this way we use double quotes (``"``) and double curly-brackets (``{{...}}`` to tell Ansible that this is a variable.
+この方法でタスクの変数を使用する場合は、Ansible にこれが変数であることを伝えるために、二重引用符 (``"``) と二重中括弧 (``{{...}}``) を使用します。
 
-Troubleshooting
+トラブルシューティング
 ===============
 
-If you receive an connection error please double check the inventory and playbook for typos or missing lines. If the issue still occurs follow the debug steps in :ref:`network_debug_troubleshooting`.
+接続エラーが出た場合は、インベントリーと Playbook で誤字または不足している行を再度確認してください。それでも問題が発生した場合は、:ref:`network_debug_troubleshooting` のデバッグ手順に従ってください。
 
 .. seealso::
 
   * :ref:`network_guide`
   * :ref:`intro_inventory`
-  * :ref:`Vault best practices <best_practices_for_variables_and_vaults>`
+  * :ref:`Vault ベストプラクティス <best_practices_for_variables_and_vaults>`

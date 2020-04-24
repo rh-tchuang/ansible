@@ -1,42 +1,42 @@
-.. _vars_plugins:
+.. \_vars\_plugins:
 
-Vars Plugins
+vars プラグイン
 ============
 
 .. contents::
    :local:
    :depth: 2
 
-Vars plugins inject additional variable data into Ansible runs that did not come from an inventory source, playbook, or command line. Playbook constructs like 'host_vars' and 'group_vars' work using vars plugins.
+Vars プラグインは、インベントリーソース、Playbook、またはコマンドラインに組み込まれていない Ansible 実行に、追加で変数データを挿入します。Playbook は、Vars プラグインを使用して 'host\_vars' と 'group\_vars' の作業のように構築します。
 
-Vars plugins were partially implemented in Ansible 2.0 and rewritten to be fully implemented starting with Ansible 2.4.
+vars プラグインは Ansible 2.0 に部分的に実装され、Ansible 2.4 以降は、完全実装になるように書き直されました。
 
-The :ref:`host_group_vars <host_group_vars_vars>` plugin shipped with Ansible enables reading variables from :ref:`host_variables` and :ref:`group_variables`.
+Ansible に同梱される :ref:`host_group_vars <host_group_vars_vars>` プラグインは、:ref:`host_variables` および :ref:`group_variables` から変数を読み込むことができます。
 
 
-.. _enable_vars:
+.. \_enable\_vars:
 
-Enabling vars plugins
+vars プラグインの有効化
 ---------------------
 
-You can activate a custom vars plugin by either dropping it into a ``vars_plugins`` directory adjacent to your play,  inside a role, or by putting it in one of the directory sources configured in :ref:`ansible.cfg <ansible_configuration_settings>`.
+カスタムの Vars プラグインを有効にするには、カスタムのプラグインを、ロール内の Play の隣りにある ``vars_plugins`` ディレクトリーに配置するか、:ref:`ansible.cfg <ansible_configuration_settings>` で設定したディレクトリーソースの 1 つに配置します。
 
 
-.. _using_vars:
+.. \_using\_vars:
 
-Using vars plugins
+vars プラグインの使用
 ------------------
 
-Vars plugins are used automatically after they are enabled.
+Vars プラグインは、有効になると自動的に使用されます。
 
 
-.. _vars_plugin_list:
+.. \_vars\_plugin\_list:
 
-Plugin Lists
+プラグイン一覧
 ------------
 
-You can use ``ansible-doc -t vars -l`` to see the list of available plugins.
-Use ``ansible-doc -t vars <plugin name>`` to see specific plugin-specific documentation and examples.
+``ansible-doc -t vars -l`` を使用して、利用可能なプラグインの一覧を表示できます。
+特定のプラグインのドキュメントや例を参照するには、``ansible-doc -t vars <plugin name>`` を使用します。
 
 
 .. toctree:: :maxdepth: 1
@@ -47,20 +47,20 @@ Use ``ansible-doc -t vars <plugin name>`` to see specific plugin-specific docume
 .. seealso::
 
    :ref:`action_plugins`
-       Ansible Action plugins
+       Ansible Action プラグイン
    :ref:`cache_plugins`
-       Ansible Cache plugins
+       Ansible Cache プラグイン
    :ref:`callback_plugins`
-       Ansible callback plugins
+       Ansible callback プラグイン
    :ref:`connection_plugins`
-       Ansible connection plugins
+       Ansible connection プラグイン
    :ref:`inventory_plugins`
-       Ansible inventory plugins
+       Ansible inventory プラグインの使用
    :ref:`shell_plugins`
-       Ansible Shell plugins
+       Ansible Shell プラグイン
    :ref:`strategy_plugins`
-       Ansible Strategy plugins
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Ansible Strategy プラグイン
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       \#ansible IRC chat channel

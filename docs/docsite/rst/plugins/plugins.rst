@@ -1,14 +1,14 @@
-.. _plugins_lookup:
+.. \_plugins\_lookup:
 
 ********************
-Working With Plugins
+プラグインの使用
 ********************
 
-Plugins are pieces of code that augment Ansible's core functionality. Ansible uses a plugin architecture to enable a rich, flexible and expandable feature set.
+プラグインは、Ansible のコア機能を拡張するコードの一部です。Ansible は、プラグインアーキテクチャーを使用して、柔軟で拡張可能な機能セットを数多く活用できるようになります。
 
-Ansible ships with a number of handy plugins, and you can easily write your own.
+Ansible には、便利なプラグインが多数同梱されていますし、簡単に独自のプラグインを記述することもできます。
 
-This section covers the various types of plugins that are included with Ansible:
+本セクションでは、Ansible に含まれるさまざまなプラグインについて説明します。
 
 .. toctree::
    :maxdepth: 1
@@ -26,19 +26,19 @@ This section covers the various types of plugins that are included with Ansible:
    shell
    strategy
    vars
-   ../user_guide/playbooks_filters
-   ../user_guide/playbooks_tests
-   ../user_guide/plugin_filtering_config
+   ../user\_guide/playbooks\_filters
+   ../user\_guide/playbooks\_tests
+   ../user\_guide/plugin\_filtering\_config
 
 .. seealso::
 
    :ref:`about_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`ansible_configuration_settings`
-       Ansible configuration documentation and settings
+       Ansible 設定ドキュメントおよび設定
    :ref:`command_line_tools`
-       Ansible tools, description and options
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Ansible ツール、説明、およびオプション
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       \#ansible IRC chat channel

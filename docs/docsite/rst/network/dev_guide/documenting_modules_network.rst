@@ -1,52 +1,52 @@
 
-.. _documenting_modules_network:
+.. \_documenting\_modules\_network:
 
 *********************************
-Documenting new network platforms
+新しいネットワークプラットフォームのドキュメント化
 *********************************
 
 .. contents::
   :local:
 
-When you create network modules for a new platform, or modify the connections provided by an existing network platform(such as ``network_cli`` and ``httpapi``), you also need to update  the :ref:`settings_by_platform` table and add or modify the Platform Options file for your platform.
+新しいプラットフォーム用のネットワークモジュールを作成する場合や、既存のネットワークプラットフォーム (``network_cli``、``httpapi`` など) が提供する接続を変更する場合には、:ref:`settings_by_platform` テーブルを更新して、プラットフォームの Platform Options ファイルを追加または変更することも必要です。
 
-You should already have documented each module as described in :ref:`developing_modules_documenting`.
+各モジュールは、「:ref:`developing_modules_documenting`」で説明されているように、各モジュールがすでに文書化されている必要があります。
 
-Modifying the platform options table
+プラットフォームオプションテーブルの変更
 ====================================
 
-The :ref:`settings_by_platform` table is a convenient summary of the connections options provided by each network platform that has modules in Ansible. Add a row for your platform to this table, in alphabetical order.  For example:
+:ref:`settings_by_platform` テーブルは、Ansible にモジュールがある各ネットワークプラットフォームが提供する接続オプションの概要です。この表に、プラットフォームの行をアルファベット順に追加します。 例:
 
 .. code-block:: text
 
     +-------------------+-------------------------+-------------+---------+---------+----------+
-    | My OS             | ``myos``                | ✓           | ✓       |         | ✓        |
+| My OS             | ``myos``                | ✓           | ✓       |         | ✓        |
 
-Ensure that the table stays formatted correctly. That is:
+テーブルの形式が正しく維持されていることを確認します。つまり、以下のようになります。
 
-* Each row is inserted in alphabetical order.
-* The cell division ``|`` markers line up with the ``+`` markers.
-* The check marks appear only for the connection types provided by the network modules.
+* 各行はアルファベット順に挿入されます。
+* セル分割マーカー ``|`` は、``+`` マーカの位置に並んでいます。
+* このチェックマークは、ネットワークモジュールが提供する接続タイプについてのみ表示されます。
 
 
 
-Adding a platform-specific options section
+プラットフォーム固有のオプションセクションの追加
 ==========================================
 
-The platform- specific sections are individual ``.rst`` files that provide more detailed information for the users of your network platform modules.   Name your new file ``platform_<name>.rst`` (for example, ``platform_myos.rst``).  The platform name should match the module prefix. See `platform_eos.rst <https://github.com/ansible/ansible/blob/devel/docs/docsite/rst/network/user_guide/platform_eos.rst>`_ and :ref:`eos_platform_options` for an example of the details you should provide in your platform-specific options section.
+プラットフォーム固有のセクションは、ネットワークプラットフォームモジュールのユーザーの詳細情報を提供する個々の ``.rst`` ファイルです。  新しいファイルの ``platform_<name>.rst`` (たとえば ``platform_myos.rst``) に名前を付けます。 プラットフォーム名は、モジュールの接頭辞と一致する必要があります。プラットフォーム固有のオプションセクションで指定する必要のある詳細の例は、`platform_eos.rst <https://github.com/ansible/ansible/blob/devel/docs/docsite/rst/network/user_guide/platform_eos.rst>`_ および :ref:`eos_platform_options` を参照してください。
 
-Your platform-specific section should include the following:
+プラットフォーム固有のセクションには、以下のセクションが含まれている必要があります。
 
-* **Connections available table** - a deeper dive into each connection type, including details on credentials, indirect access, connections settings, and enable mode.
-* **How to use each connection type** - with working examples of each connection type.
+* **接続可能なテーブル** \- 認証情報、間接アクセス、接続設定、および有効化モードの詳細など、各接続タイプのより深い側面があります。
+* **各接続タイプの使用方法** \- 各接続タイプの作業例あり
 
-If your network platform supports SSH connections, also include the following at the bottom of your ``.rst`` file:
+ネットワークプラットフォームが SSH 接続に対応している場合は、``.rst`` ファイルの下部に以下も追加します。
 
 .. code-block:: text
 
     .. include:: shared_snippets/SSH_warning.txt
 
-Adding your new file to the table of contents
+新規ファイルのコンテンツの表への追加
 =============================================
 
-As a final step, add your new file in alphabetical order in the ``platform_index.rst`` file. You should then build the documentation to verify your additions. See :ref:`community_documentation_contributions` for more details.
+最後のステップとして、``platform_index.rst`` ファイルに新規ファイルをアルファベット順に追加します。次に、追加内容を確認するためにドキュメントを構築する必要があります。詳細は、:ref:`community_documentation_contributions` を参照してください。

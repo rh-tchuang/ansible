@@ -1,14 +1,14 @@
-.. _exos_platform_options:
+.. \_exos\_platform\_options:
 
 ***************************************
-EXOS Platform Options
+EXOS プラットフォームのオプション
 ***************************************
 
-Extreme EXOS Ansible modules support multiple connections. This page offers details on how each connection works in Ansible and how to use it.
+Extreme EXOS Ansible モジュールは、複数の接続に対応しています。このページには、各接続が Ansible でどのように機能するか、およびその使用方法に関する詳細が記載されています。
 
-.. contents:: Topics
+.. contents:: トピック
 
-Connections Available
+利用可能な接続
 ================================================================================
 
 
@@ -16,87 +16,87 @@ Connections Available
     :class: documentation-table
 
     ====================  ==========================================  =========================
-    ..                    CLI                                         EXOS-API
+    ..                   CLI                                         EXOS-API
     ====================  ==========================================  =========================
-    Protocol              SSH                                         HTTP(S)
+    プロトコル              SSH                                         HTTP(S)
 
-    Credentials           uses SSH keys / SSH-agent if present        uses HTTPS certificates if present
+    認証情報           (存在する場合は) SSH キー / SSH-agent を使用します。        (存在する場合は) HTTPS 証明書を使用します。
 
-                          accepts ``-u myuser -k`` if using password
+                          パスワードを使用する場合は ``-u myuser -k`` を許可します。
 
-    Indirect Access       via a bastion (jump host)                   via a web proxy
+    間接アクセス       bastion (ジャンプホスト) を経由                   Web プロキシーを経由
 
-    Connection Settings   ``ansible_connection: network_cli``         ``ansible_connection: httpapi``
+    接続設定   ``ansible_connection: network_cli``         ``ansible_connection: httpapi``
 
-    |enable_mode|         not supported by EXOS                       not supported by EXOS
+    |enable_mode|         EXOS では対応していません。                       EXOS では対応していません。
 
-    Returned Data Format  ``stdout[0].``                              ``stdout[0].messages[0].``
+    返されるデータ形式  ``stdout[0].``                              ``stdout[0].messages[0].``
     ====================  ==========================================  =========================
 
-.. |enable_mode| replace:: Enable Mode |br| (Privilege Escalation)
+.. |enable\_mode| replace::Enable モード |br| (権限昇格)
 
-EXOS does not support ``ansible_connection: local``. You must use ``ansible_connection: network_cli`` or ``ansible_connection: httpapi``
+EXOS は ``ansible_connection: local`` に対応していません。``ansible_connection: network_cli`` または ``ansible_connection: httpapi`` を使用する必要があります。
 
-Using CLI in Ansible
+Ansible での CLI の使用
 ====================
 
-Example CLI ``group_vars/exos.yml``
+CLI の例: ``group_vars/exos.yml``
 -----------------------------------
 
 .. code-block:: yaml
 
-   ansible_connection: network_cli
-   ansible_network_os: exos
-   ansible_user: myuser
-   ansible_password: !vault...
-   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible\_connection: network\_cli
+   ansible\_network\_os: exos
+   ansible\_user: myuser
+   ansible\_password: !vault...
+   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
-- If you are using SSH keys (including an ssh-agent) you can remove the ``ansible_password`` configuration.
-- If you are accessing your host directly (not through a bastion/jump host) you can remove the ``ansible_ssh_common_args`` configuration.
-- If you are accessing your host through a bastion/jump host, you cannot include your SSH password in the ``ProxyCommand`` directive. To prevent secrets from leaking out (for example in ``ps`` output), SSH does not support providing passwords via environment variables.
+- SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
+- (bastion/ジャンプホスト を経由せず) ホストに直接アクセスしている場合は、``ansible_ssh_common_args`` 設定を削除できます。
+- bastion/ジャンプホスト 経由でホストにアクセスしている場合は、SSH パスワードを ``ProxyCommand`` ディレクティブに含めることができません。(``ps`` 出力などで) シークレットの漏えいを防ぐために、SSH は環境変数によるパスワードの提供に対応していません。
 
-Example CLI Task
+CLI タスクの例
 ----------------
 
 .. code-block:: yaml
 
-   - name: Retrieve EXOS OS version
-     exos_command:
+   - name:Retrieve EXOS OS version
+     exos\_command:
        commands: show version
-     when: ansible_network_os == 'exos'
+     when: ansible\_network\_os == 'exos'
 
 
 
-Using EXOS-API in Ansible
+Ansible での EXOS-API の使用
 =========================
 
-Example EXOS-API ``group_vars/exos.yml``
+EXOS-API の例: ``group_vars/exos.yml``
 ----------------------------------------
 
 .. code-block:: yaml
 
-   ansible_connection: httpapi
-   ansible_network_os: exos
-   ansible_user: myuser
-   ansible_password: !vault...
-   proxy_env:
-     http_proxy: http://proxy.example.com:8080
+   ansible\_connection: httpapi
+   ansible\_network\_os: exos
+   ansible\_user: myuser
+   ansible\_password: !vault...
+   proxy\_env:
+     http\_proxy: http://proxy.example.com:8080
 
-- If you are accessing your host directly (not through a web proxy) you can remove the ``proxy_env`` configuration.
-- If you are accessing your host through a web proxy using ``https``, change ``http_proxy`` to ``https_proxy``.
+- (Web プロキシーを経由せず) ホストに直接アクセスしている場合は、``proxy_env`` 設定を削除できます。
+- ``https`` を使用して Web プロキシー経由でホストにアクセスする場合は、``http_proxy`` を ``https_proxy`` に変更します。
 
 
-Example EXOS-API Task
+EXOS-API タスクの例
 ---------------------
 
 .. code-block:: yaml
 
-   - name: Retrieve EXOS OS version
-     exos_command:
+   - name:Retrieve EXOS OS version
+     exos\_command:
        commands: show version
-     when: ansible_network_os == 'exos'
+     when: ansible\_network\_os == 'exos'
 
-In this example the ``proxy_env`` variable defined in ``group_vars`` gets passed to the ``environment`` option of the module used in the task.
+この例では、``group_vars`` で定義された ``proxy_env`` 変数は、タスクのモジュールで使用される ``environment`` オプションに渡されます。
 
-.. include:: shared_snippets/SSH_warning.txt
+.. include:: shared\_snippets/SSH\_warning.txt

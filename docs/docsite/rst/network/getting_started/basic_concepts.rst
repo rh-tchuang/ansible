@@ -1,10 +1,10 @@
 **************
-Basic Concepts
+基本的な概念
 **************
 
-These concepts are common to all uses of Ansible, including network automation. You need to understand them to use Ansible for network automation. This basic introduction provides the background you need to follow the examples in this guide.
+この概念は、ネットワークの自動化を含む Ansible のすべての用途に共通しています。ネットワークの自動化に Ansible を活用するには、この概念を理解しておく必要があります。この基本的な概要では、ユーザーガイドを読むのに必要な背景を説明します。
 
 .. contents::
    :local:
 
-.. include:: ../../shared_snippets/basic_concepts.txt
+.. include:: ../../shared\_snippets/basic\_concepts.txt

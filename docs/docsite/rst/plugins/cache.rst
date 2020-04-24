@@ -1,117 +1,117 @@
-.. _cache_plugins:
+.. \_cache\_plugins:
 
-Cache Plugins
+Cache プラグイン
 =============
 
 .. contents::
    :local:
    :depth: 2
 
-Cache plugin implement a backend caching mechanism that allows Ansible to store gathered facts or inventory source data
-without the performance hit of retrieving them from source.
+chache プラグインによりバックエンドキャッシングメカニズムが実装され、Ansible は収集したファクトまたはインベントリーソースデータを保存できます。
+ソースからの取得でパフォーマンスが低下することはありません。
 
-The default cache plugin is the :ref:`memory <memory_cache>` plugin, which only caches the data for the current execution of Ansible. Other plugins with persistent storage are available to allow caching the data across runs.
+デフォルトの cache プラグインは :ref:`メモリー<memory_cache>` プラグインで、Ansible が現在実行するデータのみをキャッシュします。永続ストレージのあるプラグインは他にもあり、実行時にデータをキャッシュできるようにします。
 
-You can use a separate cache plugin for inventory and facts. If an inventory-specific cache plugin is not provided and inventory caching is enabled, the fact cache plugin is used for inventory.
+インベントリーおよびファクトに個別のキャッシュプラグインを使用できます。インベントリー固有のキャッシュプラグインが提供されておらず、インベントリーキャッシュが有効になっている場合は、ファクトキャッシュプラグインがインベントリーに使用されます。
 
-.. _enabling_cache:
+.. \_enabling\_cache:
 
-Enabling Fact Cache Plugins
+ファクトの cache プラグインの有効化
 ---------------------------
 
-Only one fact cache plugin can be active at a time.
+一度に有効にできるファクトの cache プラグインは 1 つだけです。
 
-You can enable a cache plugin in the Ansible configuration, either via environment variable:
+Ansible 設定でキャッシュプラグインを有効にするには、環境変数を使用するか、
 
 .. code-block:: shell
 
     export ANSIBLE_CACHE_PLUGIN=jsonfile
 
-or in the ``ansible.cfg`` file:
+または、``ansible.cfg`` ファイルで以下を設定します。
 
 .. code-block:: ini
 
     [defaults]
     fact_caching=redis
 
-If the cache plugin is in a collection use the fully qualified name:
+Cache プラグインをコレクションで使用する場合には、完全修飾名を使用してください。
 
 .. code-block:: ini
 
     [defaults]
     fact_caching = namespace.collection_name.cache_plugin_name
 
-You will also need to configure other settings specific to each plugin. Consult the individual plugin documentation
-or the Ansible :ref:`configuration <ansible_configuration_settings>` for more details.
+また、各プラグインに固有の他のオプションを設定する必要があります。詳細は、各プラグインのドキュメント、
+または Ansible :ref:`の設定 <ansible_configuration_settings>` を参照してください。
 
-A custom cache plugin is enabled by dropping it into a ``cache_plugins`` directory adjacent to your play, inside a role, or by putting it in one of the directory sources configured in :ref:`ansible.cfg <ansible_configuration_settings>`.
+カスタムの cache プラグインを有効にするには、ロール内の Play の隣りにある ``cache_plugins`` ディレクトリーに保存するか、:ref:`ansible.cfg <ansible_configuration_settings>` で設定したディレクトリーソースの 1 つに保存します。
 
 
-Enabling Inventory Cache Plugins
+インベントリーの cache プラグインの有効化
 --------------------------------
 
-Inventory may be cached using a file-based cache plugin (like jsonfile). Check the specific inventory plugin to see if it supports caching. Cache plugins inside a collection are not supported for caching inventory.
-If an inventory-specific cache plugin is not specified Ansible will fall back to caching inventory with the fact cache plugin options.
+インベントリーは、ファイルベースの cache プラグイン (jsonfile など) を使用してキャッシュできます。特定のインベントリープラグインをチェックして、キャッシュに対応しているかどうかを確認します。コレクション内の cache プラグインは cache インベントリーではサポートされません。
+インベントリー固有の cache プラグインが指定されていない場合、Ansible はファクト cache プラグインオプションがある cache インベントリーにフォールバックします。
 
-The inventory cache is disabled by default. You may enable it via environment variable:
+インベントリーキャッシュは、デフォルトで無効になっています。環境変数でこれを有効にできます。
 
 .. code-block:: shell
 
     export ANSIBLE_INVENTORY_CACHE=True
 
-or in the ``ansible.cfg`` file:
+または、``ansible.cfg`` ファイルで以下を設定します。
 
 .. code-block:: ini
 
     [inventory]
     cache=True
 
-or if the inventory plugin accepts a YAML configuration source, in the configuration file:
+または、inventory プラグインが YAML 設定ソースに対応している場合には、設定ファイルで以下を指定します。
 
 .. code-block:: yaml
 
     # dev.aws_ec2.yaml
-    plugin: aws_ec2
-    cache: True
+plugin: aws_ec2
+cache: True
 
-Similarly with fact cache plugins, only one inventory cache plugin can be active at a time and may be set via environment variable:
+ファクトキャッシュプラグインと同様に、一度に 1 つのインベントリーの cache プラグインのみをアクティブにでき、環境変数で設定できます。
 
 .. code-block:: shell
 
     export ANSIBLE_INVENTORY_CACHE_PLUGIN=jsonfile
 
-or in the ansible.cfg file:
+または、ansible.cfg ファイルで以下を設定します。
 
 .. code-block:: ini
 
     [inventory]
     cache_plugin=jsonfile
 
-or if the inventory plugin accepts a YAML configuration source, in the configuration file:
+または、inventory プラグインが YAML 設定ソースに対応している場合には、設定ファイルで以下を指定します。
 
 .. code-block:: yaml
 
     # dev.aws_ec2.yaml
-    plugin: aws_ec2
-    cache_plugin: jsonfile
+plugin: aws_ec2
+cache_plugin: jsonfile
 
-Consult the individual inventory plugin documentation or the Ansible :ref:`configuration <ansible_configuration_settings>` for more details.
+詳細は、各 inventory プラグインのドキュメント、または Ansible :ref:`設定<ansible_configuration_settings>` を参照してください。
 
-.. _using_cache:
+.. \_using\_cache:
 
-Using Cache Plugins
+Cache プラグインの使用
 -------------------
 
-Cache plugins are used automatically once they are enabled.
+Cache プラグインは、有効になると自動的に使用されます。
 
 
-.. _cache_plugin_list:
+.. \_cache\_plugin\_list:
 
-Plugin List
+プラグイン一覧
 -----------
 
-You can use ``ansible-doc -t cache -l`` to see the list of available plugins.
-Use ``ansible-doc -t cache <plugin name>`` to see specific documentation and examples.
+``ansible-doc -t cache -l`` を使用して、利用可能なプラグインの一覧を表示できます。
+特定のドキュメントと例を参照する場合は、``ansible-doc -t cache <plugin name>`` を使用してください。
 
 .. toctree:: :maxdepth: 1
     :glob:
@@ -121,20 +121,20 @@ Use ``ansible-doc -t cache <plugin name>`` to see specific documentation and exa
 .. seealso::
 
    :ref:`action_plugins`
-       Ansible Action plugins
+       Ansible Action プラグイン
    :ref:`callback_plugins`
-       Ansible callback plugins
+       Ansible callback プラグイン
    :ref:`connection_plugins`
-       Ansible connection plugins
+       Ansible connection プラグイン
    :ref:`inventory_plugins`
-       Ansible inventory plugins
+       Ansible inventory プラグインの使用
    :ref:`shell_plugins`
-       Ansible Shell plugins
+       Ansible Shell プラグイン
    :ref:`strategy_plugins`
-       Ansible Strategy plugins
+       Ansible Strategy プラグイン
    :ref:`vars_plugins`
-       Ansible Vars plugins
-   `User Mailing List <https://groups.google.com/forum/#!forum/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Ansible Vars プラグイン
+   `ユーザーのメーリングリスト <https://groups.google.com/forum/#!forum/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `webchat.freenode.net <https://webchat.freenode.net>`_
-       #ansible IRC chat channel
+       \#ansible IRC chat channel

@@ -1,11 +1,11 @@
 :orphan:
 
-.. _implicit_localhost:
+.. \_implicit\_localhost:
 
-Implicit 'localhost'
+暗黙的な 'localhost'
 ====================
 
-When you try to reference a ``localhost`` and you don't have it defined in inventory, Ansible will create an implicit one for you.::
+``localhost`` を参照しようとしたにもかかわらず、インベントリーにその localhost が定義されていない場合には、Ansible により暗黙的 localhost が作成されます。::
 
     - hosts: all
       tasks:
@@ -13,23 +13,23 @@ When you try to reference a ``localhost`` and you don't have it defined in inven
           stat: path=/var/log/hosts/{{inventory_hostname}}.log
           delegate_to: localhost
 
-In a case like this (or ``local_action``) when Ansible needs to contact a 'localhost' but you did not supply one, we create one for you. This host is defined with specific connection variables equivalent to this in an inventory::
+上記のような場合 (または ``local_action``) で、Ansible が 'localhost' に問い合わせをする必要があるにもかかわらず、localhost を作成していない場合には、Ansible で localhost が作成されます。このホストは、インベントリーにあるものと同等の特定の接続変数で定義します::
 
    ...
 
    hosts:
      localhost:
       vars:
-        ansible_connection: local
-        ansible_python_interpreter: "{{ansible_playbook_python}}"
+        ansible\_connection: local
+        ansible\_python\_interpreter: "{{ansible\_playbook\_python}}"
 
-This ensures that the proper connection and Python are used to execute your tasks locally.
-You can override the built-in implicit version by creating a ``localhost`` host entry in your inventory. At that point, all implicit behaviors are ignored; the ``localhost`` in inventory is treated just like any other host. Group and host vars will apply, including connection vars, which includes the ``ansible_python_interpreter`` setting. This will also affect ``delegate_to: localhost`` and ``local_action``, the latter being an alias to the former.
+この設定により、正しい接続および Python が使用してローカルでのタスクが実行されるようになります。
+インベントリーに ``localhost`` のホストのエントリーを作成して、組み込まれた暗黙的なホストバージョンを上書きできます。この時点で、すべての暗黙的な動作は無視され、インベントリー内の ``localhost`` は他のホストと同じように処理されます。``ansible_python_interpreter`` などの接続変数を含む、グループおよびホスト変数が適用されます。この設定は、``delegate_to: localhost`` や ``local_action`` にも適用されます。local\_action は、delegate\_to: localhost のエイリアスです。
 
 .. note::
-  - This host is not targetable via any group, however it will use vars from ``host_vars`` and from the 'all' group.
-  - Implicit localhost does not appear in the ``hostvars`` magic variable unless demanded, such as by ``"{{ hostvars['localhost'] }}"``.
-  - The ``inventory_file`` and ``inventory_dir`` magic variables are not available for the implicit localhost as they are dependent on **each inventory host**.
-  - This implicit host also gets triggered by using ``127.0.0.1`` or ``::1`` as they are the IPv4 and IPv6 representations of 'localhost'.
-  - Even though there are many ways to create it, there will only ever be ONE implicit localhost, using the name first used to create it.
-  - Having ``connection: local`` does NOT trigger an implicit localhost, you are just changing the connection for the ``inventory_hostname``.
+  \- このホストはいずれのグループでもターゲットにすることはできませんが、``host_vars`` と 'all' グループからの vars (変数) を使用します。
+  - ``"{{ hostvars['localhost'] }}"`` などの要求がない限り、暗黙的な localhost は ``hostvars`` マジック変数には表示されません。
+  \- マジック変数 ``inventory_file`` および ``inventory_dir`` は、**各インベントリーホスト** に依存するため、暗黙的な localhost では利用できません。
+  \- この暗黙的ホストは、「localhost」の IPv4 および IPv6 の表現であるため、``127.0.0.1`` または ``::1`` を使用してもトリガーとなります。
+  \- 作成する方法は多数ありますが、暗黙的な localhost は 1 つしかありません。これには、最初に作成したときの名前が使用されます。
+  - ``connection: local`` があっても暗黙的な localhost のトリガーにならない場合は、``inventory_hostname`` の接続を変更しているだけです。

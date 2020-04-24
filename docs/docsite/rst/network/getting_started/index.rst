@@ -1,33 +1,33 @@
-.. _network_getting_started:
+.. \_network\_getting\_started:
 
 ***************************************************
-Getting Started with Ansible for Network Automation
+ネットワークを自動するための Ansible 入門ガイド
 ***************************************************
 
-Ansible modules support a wide range of vendors, device types, and actions, so you can manage your entire network with a single automation tool. With Ansible, you can:
+Ansible モジュールは幅広いベンダー、デバイスタイプ、アクションに対応するため、1 つの自動化ツールでネットワーク全体を管理できます。Ansible を使用すると、以下が可能になります。
 
-- Automate repetitive tasks to speed routine network changes and free up your time for more strategic work
-- Leverage the same simple, powerful, and agentless automation tool for network tasks that operations and development use
-- Separate the data model (in a playbook or role) from the execution layer (via Ansible modules) to manage heterogeneous network devices
-- Benefit from community and vendor-generated sample playbooks and roles to help accelerate network automation projects
-- Communicate securely with network hardware over SSH or HTTPS
+- 反復タスクを自動化して、ルーチンネットワークの変更を迅速化し、その時間を戦略的な作業に割り当てます。
+- 操作と開発で使用するネットワークタスクに、同じ簡単で強力なエージェントレスの自動化ツールを使用します。
+- 異機種環境にあるネットワークデバイスを管理するため、(Ansible モジュールにより) 実行レイヤーからデータモデル (Playbook またはロール) を分離します。
+- ネットワーク自動化プロジェクトを加速化するコミュニティーおよびベンダーが生成したサンプルの Playbook およびロールの利点
+- SSH または HTTPS を介してネットワークハードウェアとセキュアに通信
 
-**Who should use this guide?**
+**本書の対象者**
 
-This guide is intended for network engineers using Ansible for the first time. If you understand networks but have never used Ansible, work through the guide from start to finish.
+本ガイドは、Ansible を初めて使用するネットワークエンジニアを対象にしています。ネットワークを理解していても、Ansible を使用したことがない場合は、本ガイドを一通り体験してください。
 
-This guide is also useful for experienced Ansible users automating network tasks for the first time. You can use Ansible commands, playbooks and modules to configure hubs, switches, routers, bridges and other network devices. But network modules are different from Linux/Unix and Windows modules, and you must understand some network-specific concepts to succeed. If you understand Ansible but have never automated a network task, start with the second section.
+本ガイドは、経験豊富な Ansible ユーザーがネットワークタスクを初めて自動化する際にも有用です。Ansible コマンド、Playbook、およびモジュールを使用して、ハブ、スイッチ、ルーター、ブリッジなどのネットワークデバイスを設定できます。ただし、ネットワークモジュールは Linux/Unix モジュールや Windows モジュールとは異なるため、成功するにはネットワーク固有の概念を理解する必要があります。Ansible を理解していても、ネットワークタスクを自動化していない場合は、次のセクションから初めてください。
 
-This guide introduces basic Ansible concepts and guides you through your first Ansible commands, playbooks and inventory entries.
+本ガイドでは、基本的な Ansible の概念を紹介し、Ansible コマンド、Playbook、およびインベントリーエントリーを説明します。
 
 .. toctree::
    :maxdepth: 2
-   :caption: Getting Started Guide
+   :caption: 入門ガイド
 
-   basic_concepts
-   network_differences
-   first_playbook
-   first_inventory
-   network_roles
-   intermediate_concepts
-   network_resources
+   basic\_concepts
+   network\_differences
+   first\_playbook
+   first\_inventory
+   network\_roles
+   intermediate\_concepts
+   network\_resources

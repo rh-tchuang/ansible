@@ -1,164 +1,164 @@
-.. _nxos_platform_options:
+.. \_nxos\_platform\_options:
 
 ***************************************
-NXOS Platform Options
+NXOS プラットフォームのオプション
 ***************************************
 
-Cisco NXOS supports multiple connections. This page offers details on how each connection works in Ansible and how to use it.
+Cisco NXOS は、複数の接続に対応します。このページには、各接続が Ansible でどのように機能するか、およびその使用方法に関する詳細が記載されています。
 
-.. contents:: Topics
+.. contents:: トピック
 
-Connections Available
+利用可能な接続
 ================================================================================
 
 .. table::
     :class: documentation-table
 
     ====================  ==========================================  =========================
-    ..                    CLI                                         NX-API
+    ..                   CLI                                         NX-API
     ====================  ==========================================  =========================
-    Protocol              SSH                                         HTTP(S)
+    プロトコル              SSH                                         HTTP(S)
 
-    Credentials           uses SSH keys / SSH-agent if present        uses HTTPS certificates if
-                                                                      present
-                          accepts ``-u myuser -k`` if using password
+    認証情報           (存在する場合は) SSH キー / SSH-agent を使用します。        
+                                                                      (存在する場合は) HTTPS 認証情報を使用します。
+                          パスワードを使用する場合は ``-u myuser -k`` を許可します。
 
-    Indirect Access       via a bastion (jump host)                   via a web proxy
+    間接アクセス       bastion (ジャンプホスト) を経由                   Web プロキシーを経由
 
-    Connection Settings   ``ansible_connection: network_cli``         ``ansible_connection: httpapi``
+    接続設定   ``ansible_connection: network_cli``         ``ansible_connection: httpapi``
 
-                                                                      OR
+                                                                      または
 
-                                                                      ``ansible_connection: local``
-                                                                      with ``transport: nxapi``
-                                                                      in the ``provider`` dictionary
+                                                                      ``provider`` ディクショナリーで、
+                                                                      ``ansible_connection: local`` を
+                                                                      ``auth_pass:`` とともに使用します。
 
-    |enable_mode|         supported: use ``ansible_become: yes``      not supported by NX-API
-                          with ``ansible_become_method: enable``
-                          and ``ansible_become_password:``
+    |enable_mode|         サポート対象: ``ansible_become: yes`` を      NX-API では対応していません。
+                          ``ansible_become_method: enable`` および
+                          ``ansible_become_password:`` とともに使用します。
 
-    Returned Data Format  ``stdout[0].``                              ``stdout[0].messages[0].``
+    返されるデータ形式  ``stdout[0].``                              ``stdout[0].messages[0].``
     ====================  ==========================================  =========================
 
-.. |enable_mode| replace:: Enable Mode |br| (Privilege Escalation) |br| supported as of 2.5.3
+.. |enable\_mode| replace::Enable モード |br| (権限昇格) |br| 2.5.3 以降で対応
 
 
-For legacy playbooks, NXOS still supports ``ansible_connection: local``. We recommend modernizing to use ``ansible_connection: network_cli`` or ``ansible_connection: httpapi`` as soon as possible.
+レガシー Playbook の場合でも、NXOS は ``ansible_connection: local`` に対応します。できるだけ早期に ``ansible_connection: network_cli`` または ``ansible_connection: httpapi`` を使用するモダナイゼーションが推奨されます。
 
-Using CLI in Ansible
+Ansible での CLI の使用
 ====================
 
-Example CLI ``group_vars/nxos.yml``
+CLI の例: ``group_vars/nxos.yml``
 -----------------------------------
 
 .. code-block:: yaml
 
-   ansible_connection: network_cli
-   ansible_network_os: nxos
-   ansible_user: myuser
-   ansible_password: !vault...
-   ansible_become: yes
-   ansible_become_method: enable
-   ansible_become_password: !vault...
-   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible\_connection: network\_cli
+   ansible\_network\_os: nxos
+   ansible\_user: myuser
+   ansible\_password: !vault...
+   ansible\_become: yes
+   ansible\_become\_method: enable
+   ansible\_become\_password: !vault...
+   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
-- If you are using SSH keys (including an ssh-agent) you can remove the ``ansible_password`` configuration.
-- If you are accessing your host directly (not through a bastion/jump host) you can remove the ``ansible_ssh_common_args`` configuration.
-- If you are accessing your host through a bastion/jump host, you cannot include your SSH password in the ``ProxyCommand`` directive. To prevent secrets from leaking out (for example in ``ps`` output), SSH does not support providing passwords via environment variables.
+- SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
+- (bastion/ジャンプホスト を経由せず) ホストに直接アクセスしている場合は、``ansible_ssh_common_args`` 設定を削除できます。
+- bastion/ジャンプホスト 経由でホストにアクセスしている場合は、SSH パスワードを ``ProxyCommand`` ディレクティブに含めることができません。(``ps`` 出力などで) シークレットの漏えいを防ぐために、SSH は環境変数によるパスワードの提供に対応していません。
 
-Example CLI Task
+CLI タスクの例
 ----------------
 
 .. code-block:: yaml
 
-   - name: Backup current switch config (nxos)
-     nxos_config:
+   - name:Backup current switch config (nxos)
+     nxos\_config:
        backup: yes
-     register: backup_nxos_location
-     when: ansible_network_os == 'nxos'
+     register: backup\_nxos\_location
+     when: ansible\_network\_os == 'nxos'
 
 
 
-Using NX-API in Ansible
+Ansible での NX-API の使用
 =======================
 
-Enabling NX-API
+NX-API の有効化
 ---------------
 
-Before you can use NX-API to connect to a switch, you must enable NX-API. To enable NX-API on a new switch via Ansible, use the ``nxos_nxapi`` module via the CLI connection. Set up group_vars/nxos.yml just like in the CLI example above, then run a playbook task like this:
+NX-API を使用してスイッチに接続するには、NX-API を有効にする必要があります。Ansible 経由で新規スイッチで NX-API を有効にするには、CLI 接続で ``nxos_nxapi`` モジュールを使用します。上記の CLI の例のように group\_vars/nxos.yml を設定し、以下のような Playbook タスクを実行します。
 
 .. code-block:: yaml
 
-   - name: Enable NX-API
-      nxos_nxapi:
-          enable_http: yes
-          enable_https: yes
-      when: ansible_network_os == 'nxos'
+   - name:NX-API の有効化
+      nxos\_nxapi:
+          enable\_http: yes
+          enable\_https: yes
+      when: ansible\_network\_os == 'nxos'
 
-To find out more about the options for enabling HTTP/HTTPS and local http see the :ref:`nxos_nxapi <nxos_nxapi_module>` module documentation.
+HTTP/HTTPS およびローカル http を有効にするオプションの詳細は、:ref:`nxos_nxapi <nxos_nxapi_module>` モジュールのドキュメントを参照してください。
 
-Once NX-API is enabled, change your ``group_vars/nxos.yml`` to use the NX-API connection.
+NX-API が有効になったら、NX-API 接続を使用するように ``group_vars/nxos.yml`` を変更します。
 
-Example NX-API ``group_vars/nxos.yml``
+NX-API ``group_vars/nxos.yml`` の例
 --------------------------------------
 
 .. code-block:: yaml
 
-   ansible_connection: httpapi
-   ansible_network_os: nxos
-   ansible_user: myuser
-   ansible_password: !vault...
-   proxy_env:
-     http_proxy: http://proxy.example.com:8080
+   ansible\_connection: httpapi
+   ansible\_network\_os: nxos
+   ansible\_user: myuser
+   ansible\_password: !vault...
+   proxy\_env:
+     http\_proxy: http://proxy.example.com:8080
 
-- If you are accessing your host directly (not through a web proxy) you can remove the ``proxy_env`` configuration.
-- If you are accessing your host through a web proxy using ``https``, change ``http_proxy`` to ``https_proxy``.
+- (Web プロキシーを経由せず) ホストに直接アクセスしている場合は、``proxy_env`` 設定を削除できます。
+- ``https`` を使用して Web プロキシー経由でホストにアクセスする場合は、``http_proxy`` を ``https_proxy`` に変更します。
 
 
-Example NX-API Task
+NX-API タスクの例
 -------------------
 
 .. code-block:: yaml
 
-   - name: Backup current switch config (nxos)
-     nxos_config:
+   - name:Backup current switch config (nxos)
+     nxos\_config:
        backup: yes
-     register: backup_nxos_location
-     environment: "{{ proxy_env }}"
-     when: ansible_network_os == 'nxos'
+     register: backup\_nxos\_location
+     environment: "{{ proxy\_env }}"
+     when: ansible\_network\_os == 'nxos'
 
-In this example the ``proxy_env`` variable defined in ``group_vars`` gets passed to the ``environment`` option of the module used in the task.
+この例では、``group_vars`` で定義された ``proxy_env`` 変数は、タスクのモジュールで使用される ``environment`` オプションに渡されます。
 
-.. include:: shared_snippets/SSH_warning.txt
+.. include:: shared\_snippets/SSH\_warning.txt
 
-Cisco Nexus Platform Support Matrix
+Cisco Nexus Platform のサポートマトリックス
 ===================================
 
-The following platforms and software versions have been certified by Cisco to work with this version of Ansible.
+以下のプラットフォームおよびソフトウェアのバージョンは、Cisco が本バージョンの Ansible で機能することが認定されています。
 
-.. table:: Platform / Software Minimum Requirements
+.. table:: プラットフォーム/ソフトウェア最小要件
      :align: center
 
      ===================  =====================
-     Supported Platforms  Minimum NX-OS Version
+     サポートされるプラットフォームの最小 NX OS バージョン
      ===================  =====================
-     Cisco Nexus N3k      7.0(3)I2(5) and later
-     Cisco Nexus N9k      7.0(3)I2(5) and later
-     Cisco Nexus N5k      7.3(0)N1(1) and later
-     Cisco Nexus N6k      7.3(0)N1(1) and later
-     Cisco Nexus N7k      7.3(0)D1(1) and later
+     Cisco Nexus N3k      7.0(3)I2(5) 以降
+     Cisco Nexus N9k      7.0(3)I2(5) 以降
+     Cisco Nexus N5k      7.3(0)N1(1) 以降
+     Cisco Nexus N6k      7.3(0)N1(1) 以降
+     Cisco Nexus N7k      7.3(0)D1(1) 以降
      ===================  =====================
 
-.. table:: Platform Models
+.. table:: プラットフォームモデル
      :align: center
 
      ========  ==============================================
-     Platform  Description
+     プラットフォーム  説明
      ========  ==============================================
-     N3k       Support includes N30xx, N31xx and N35xx models
-     N5k       Support includes all N5xxx models
-     N6k       Support includes all N6xxx models
-     N7k       Support includes all N7xxx models
-     N9k       Support includes all N9xxx models
+     N3k       サポートには、N30xx モデル、N31xx モデル、および N35xx モデルが含まれます。
+     N5k       サポートには、N5xxx の全モデルが含まれます。
+     N6k       サポートには、N6xxx の全モデルが含まれます。
+     N7k       サポートには、N7xxx の全モデルが含まれます。
+     N9k       サポートには、N9xxx の全モデルが含まれます。
      ========  ==============================================

@@ -1,37 +1,37 @@
-.. _shell_plugins:
+.. \_shell\_plugins:
 
-Shell Plugins
+Shell プラグイン
 =============
 
 .. contents::
    :local:
    :depth: 2
 
-Shell plugins work to ensure that the basic commands Ansible runs are properly formatted to work with
-the target machine and allow the user to configure certain behaviors related to how Ansible executes tasks.
+Shell プラグインが機能し、Ansible が実行する基本的なコマンドが適切にフォーマットされ、かつターゲットマシンと連携することを確認します。
+これにより、ユーザーが Ansible によるタスクの実行方法に関連する特定の動作を設定できるようになります。
 
-.. _enabling_shell:
+.. \_enabling\_shell:
 
-Enabling shell plugins
+Shell プラグインの有効化
 ----------------------
 
-You can add a custom shell plugin by dropping it into a ``shell_plugins`` directory adjacent to your play, inside a role,
-or by putting it in one of the shell plugin directory sources configured in :ref:`ansible.cfg <ansible_configuration_settings>`.
+カスタムの Shell プラグインを追加にするには、カスタムのプラグインを、ロール内の Play の隣りにある ``vars_plugins`` ディレクトリーに配置するか、
+:ref:`ansible.cfg <ansible_configuration_settings>` で設定した shell プラグインディレクトリーソースの 1 つに配置します。
 
-.. warning:: You should not alter which plugin is used unless you have a setup in which the default ``/bin/sh``
- is not a POSIX compatible shell or is not available for execution.
+.. warning:: デフォルトの ``/bin/sh`` が POSIX に準拠していないシェルで、実行に利用できない場合は、
+ 使用するプラグインを変更するべきではありません。
 
-.. _using_shell:
+.. \_using\_shell:
 
-Using shell plugins
+Shell プラグインの使用
 -------------------
 
-In addition to the default configuration settings in :ref:`ansible_configuration_settings`, you can use
-the connection variable :ref:`ansible_shell_type <ansible_shell_type>` to select the plugin to use.
-In this case, you will also want to update the :ref:`ansible_shell_executable <ansible_shell_executable>` to match.
+:ref:`ansible_configuration_settings` のデフォルト設定に加えて、
+使用するプラグインを選択するための接続変数 :ref:`ansible_shell_type <ansible_shell_type>` を選択できます。
+このような場合には、:ref:`ansible_shell_executable <ansible_shell_executable>` を一致するように更新することもできます。
 
-You can further control the settings for each plugin via other configuration options
-detailed in the plugin themselves (linked below).
+プラグイン自体で詳しく説明されている (以下に記載) その他の設定オプションを使用して、
+各プラグインの設定をさらに制御できます。
 
 .. toctree:: :maxdepth: 1
     :glob:
@@ -41,18 +41,18 @@ detailed in the plugin themselves (linked below).
 .. seealso::
 
    :ref:`about_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`inventory_plugins`
-       Ansible inventory plugins
+       Ansible inventory プラグインの使用
    :ref:`callback_plugins`
-       Ansible callback plugins
+       Ansible callback プラグイン
    :ref:`playbooks_filters`
-       Jinja2 filter plugins
+       Jinja2 filter プラグイン
    :ref:`playbooks_tests`
-       Jinja2 test plugins
+       Jinja2 test プラグイン
    :ref:`playbooks_lookups`
-       Jinja2 lookup plugins
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Jinja2 lookup プラグイン
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       \#ansible IRC chat channel

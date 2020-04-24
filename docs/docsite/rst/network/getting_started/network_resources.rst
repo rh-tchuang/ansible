@@ -1,47 +1,47 @@
 
-.. _network_resources:
+.. \_network\_resources:
 
 ************************
-Resources and next steps
+リソースと次のステップ
 ************************
 
 .. contents::
    :local:
 
-Documents
+ドキュメント
 =========
 
-Read more about Ansible for Network Automation:
+ネットワーク自動化での Ansible の使用について、詳細をご覧ください。
 
-- Network Automation on the `Ansible website <https://www.ansible.com/overview/networking>`_
-- Ansible Network `Blog posts <https://www.ansible.com/blog/topic/networks>`_
+- `Ansible の Web サイト<https://www.ansible.com/overview/networking>`_ におけるネットワークの自動化
+- Ansible Network の `ブログ投稿<https://www.ansible.com/blog/topic/networks>`_
 
-Events (on video and in person)
+イベント (ビデオおよび個人)
 ===============================
 
-All sessions at Ansible events are recorded and include many Network-related topics (use Filter by Category to view only Network topics). You can also join us for future events in your area. See:
+Ansible イベントに関するセッションはすべて記録され、ネットワーク関連のトピックが多数含まれます (カテゴリー別のフィルターを使用して、ネットワークトピックのみを表示します)。また、ご興味のある分野に関する今後のイベントにご参加いただくこともできます。以下を参照してください。
 
-- `Recorded AnsibleFests <https://www.ansible.com/resources/videos/ansiblefest>`_
-- `Recorded AnsibleAutomates <https://www.ansible.com/resources/webinars-training>`_
-- `Upcoming Ansible Events <https://www.ansible.com/community/events>`_ page.
+- `AnsibleFests (録画) <https://www.ansible.com/resources/videos/ansiblefest>`_
+- `AnsibleAutomates (録画) <https://www.ansible.com/resources/webinars-training>`_
+- `Ansible 関連の今後のイベント <https://www.ansible.com/community/events>`_ ページ
 
-GitHub repos
+GitHub リポジトリー
 ============
 
-Ansible hosts module code, examples, demonstrations, and other content on GitHub. Anyone with a GitHub account is able to create Pull Requests (PRs) or issues on these repos:
+GitHub 上の Ansible ホストのモジュールコード、サンプル、デモ、その他のコンテンツ。GitHub アカウントを持つすべてのユーザーが、以下のリポジトリーでプル要求 (PR) または問題を作成できます。
 
-- `Network-Automation <https://github.com/network-automation>`_ is an open community for all things network automation. Have an idea, some playbooks, or roles to share? Email ansible-network@redhat.com and we will add you as a contributor to the repository.
+- `ネットワーク自動化 <https://github.com/network-automation>`_ は、あらゆるネットワーク自動化のオープンコミュニティーです。共有する概念、一部の Playbook、またはロールをお持ちですか。ansible-network@redhat.com にメールして、そのリポジトリーの貢献者として追加します。
 
-- `Ansible <https://github.com/ansible/ansible>`_ is the main codebase, including code for network modules
+- `Ansible <https://github.com/ansible/ansible>`_ は、ネットワークモジュールのコードを含むメインのコードベースです。
 
-- `ansible-network <https://github.com/ansible-network>`_ is the main codebase for the Ansible network team roles
+- `ansible-network <https://github.com/ansible-network>`_ は、Ansible ネットワークチームロールの主なコードベースです。
 
 
-IRC and Slack
+IRC および Slack
 =============
 
-Join us on:
+以下に参加してください。
 
-* Freenode IRC - ``#ansible-network`` Freenode channel
+* Freenode IRC - ``#ansible-network`` Freenode チャンネル
 
 * Slack - `<https://ansiblenetwork.slack.com>`_

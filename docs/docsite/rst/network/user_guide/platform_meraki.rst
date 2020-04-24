@@ -1,39 +1,39 @@
-.. _meraki_platform_options:
+.. \_meraki\_platform\_options:
 
 ***************************************
-Meraki Platform Options
+Meraki プラットフォームのオプション
 ***************************************
 
-Meraki only support supports the ``local`` connection type at this time.
+Meraki サポートは、現時点では ``local`` 接続タイプのみをサポートします。
 
-.. contents:: Topics
+.. contents:: トピック
 
-Connections Available
+利用可能な接続
 ================================================================================
 
 .. table::
     :class: documentation-table
 
     ====================  ==========================================
-    ..                    Dashboard API
+    ..                   ダッシュボード API
     ====================  ==========================================
-    Protocol              HTTP(S)
+    プロトコル              HTTP(S)
 
-    Credentials           uses API key from Dashboard
+    認証情報           ダッシュボードから API キーを使用します。
 
-    Connection Settings   ``ansible_connection: localhost``
+    接続設定   ``ansible_connection: localhost``
 
-    Returned Data Format  ``data.``
+    返されるデータ形式  ``data``
     ====================  ==========================================
 
 
-Example Meraki Task
+Meraki タスクの例
 -------------------
 
 .. code-block:: yaml
 
-  meraki_organization:
-    auth_key: abc12345
-    org_name: YourOrg
+  meraki\_organization:
+    auth\_key: abc12345
+    org\_name:YourOrg
     state: present
-  delegate_to: localhost
+  delegate\_to: localhost

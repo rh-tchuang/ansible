@@ -1,24 +1,24 @@
-.. _network_advanced:
+.. \_network\_advanced:
 
 ***************************************************
-Advanced Topics with Ansible for Network Automation
+Ansible を使用してネットワークを自動する高度なトピック
 ***************************************************
 
-Once you have mastered the basics of network automation with Ansible, as presented in :ref:`network_getting_started`, use this guide understand platform-specific details, optimization, and troubleshooting tips for Ansible for network automation.
+:ref:`network_getting_started` で示されているように、Ansible を使用したネットワーク自動化の基本をマスターしたら、本ガイドを使用して、ネットワーク自動化に関する Ansible のプラットフォーム固有の詳細、最適化、およびトラブルシューティングのヒントを理解します。
 
-**Who should use this guide?**
+**本書の対象者**
 
-This guide is intended for network engineers using Ansible for automation. It covers advanced topics. If you understand networks and Ansible, this guide is for you. You may read through the entire guide if you choose, or use the links below to find the specific information you need.
+本ガイドは、自動化に Ansible を使用するネットワークエンジニアを対象にしています。ここでは、高度なトピックを取り上げます。本書は、ネットワークおよび Ansible を理解しているユーザーを対象にしています。ガイド全体を読むか、以下のリンクから必要な情報が記載されるページに進んでください。
 
-If you're new to Ansible, or new to using Ansible for network automation, start with the :ref:`network_getting_started`.
+Ansible を初めて使用する場合や、ネットワーク管理に Ansible を初めて使用する場合には、先に「:ref:`network_getting_started`」をお読みください。
 
 .. toctree::
    :maxdepth: 2
-   :caption: Advanced Topics
+   :caption: 高度なトピック
 
-   network_resource_modules
+   network\_resource\_modules
    faq
-   network_best_practices_2.5
-   network_debug_troubleshooting
-   network_working_with_command_output
-   platform_index
+   network\_best\_practices\_2.5
+   network\_debug\_troubleshooting
+   network\_working\_with\_command\_output
+   platform\_index

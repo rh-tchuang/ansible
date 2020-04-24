@@ -1,186 +1,186 @@
 
-.. _developing_resource_modules:
+.. \_developing\_resource\_modules:
 
 ***********************************
-Developing network resource modules
+ネットワークリソースモジュールの開発
 ***********************************
 
 .. contents::
   :local:
 
-The resource module builder is an Ansible Playbook that helps developers scaffold and maintain an Ansible network resource module.
+リソースモジュールビルダーは、開発者のスキャフォールディングおよび Ansible ネットワークリソースモジュールの維持に役立つ Ansible Playbook です。
 
-The resource module builder has the following capabilities:
+リソースモジュールビルダーには以下の機能があります。
 
-- Uses a defined model to scaffold a resource module directory layout and initial class files.
-- Scaffolds either an Ansible role or a collection.
-- Subsequent uses of the resource module builder will only replace the module arspec and file containing the module docstring.
-- Allows you to store complex examples along side the model in the same directory.
-- Maintains the model as the source of truth for the module and use resource module builder to update the source files as needed.
-- Generates working sample modules for both ``<network_os>_<resource>`` and ``<network_os>_facts``.
+- 定義されたモデルを使用して、リソースモジュールディレクトリーのレイアウトと初期クラスファイルをスキャフォールディングします。
+- Ansible ロールまたはコレクションのいずれかをスキャフォールディングします。
+- その後にリソースモジュールビルダーを使用すると、モジュール arspec と、モジュール docstring を含むファイルのみが置き換えられます。
+- モデルとともに複雑な例を同じディレクトリーに保存できます。
+- モジュール用の信頼できるソースとしてモデルを維持し、必要に応じてリソースモジュールビルダーを使用してソースファイルを更新します。
+- ``<network_os>_<resource>`` および ``<network_os>_facts`` の両方について作業サンプルモジュールを生成します。
 
-Accessing the resource module builder
+リソースモジュールビルダーへのアクセス
 =====================================
 
-To access the resource module builder:
+リソースモジュールビルダーにアクセスするには、以下を実行します。
 
-1. clone the github repository:
+1. github リポジトリーのクローンを作成します。
 
   .. code-block:: bash
 
-    git clone https://github.com/ansible-network/resource_module_builder.git
+    git clone https://github.com/ansible-network/resource\_module\_builder.git
 
-2. Install the requirements:
+2. 要件をインストールします。
 
   .. code-block:: bash
 
     pip install -r requirements.txt
 
-Creating a model
+モデルの作成
 ================
 
-You must create a model for your new resource. The resource module builder uses this model to create:
+新規リソースのモデルを作成する必要があります。リソースモジュールビルダーはこのモデルを使用して以下を作成します。
 
-* The scaffold for a new module
-* The argspec for the new module
-* The docstring for the new module
+* 新しいモジュールのスキャフォールディング
+* 新しいモジュールの argspec
+* 新しいモジュールの docstring
 
-The model is then the single source of truth for both the argspec and docstring, keeping them in sync. Use the resource module builder to generate this scaffolding. For any subsequent updates to the module, update the model first and use the resource module builder to update the module argspec and docstring.
+その後、モデルは argspec と docstring の両方に対する 1 つのソースであり、それらを同期します。リソースモジュールビルダーを使用して、このスキャフォールディングを生成します。モジュールに対する後続の更新の場合は、最初にモデルを更新し、リソースモジュールビルダーを使用してモジュールの argspec および docstring を更新します。
 
-For example, the resource model builder includes the ``myos_interfaces.yml`` sample in the :file:`models` directory, as seen below:
+たとえば、リソースモデルビルダーには、以下のように :file:`models` ディレクトリーに ``myos_interfaces.yml`` サンプルが含まれます。
 
 .. code-block:: yaml
 
   ---
-  GENERATOR_VERSION: '1.0'
-  ANSIBLE_METADATA: |
+  GENERATOR\_VERSION:'1.0'
+  ANSIBLE\_METADATA: |
       {
-          'metadata_version': '1.1',
-          'status': ['preview'],
-          'supported_by': '<support_group>'
+          'metadata\_version':'1.1',
+          'status': \['preview'],
+          'supported\_by': '<support\_group>'
       }
-  NETWORK_OS: myos
+  NETWORK\_OS: myos
   RESOURCE: interfaces
-  COPYRIGHT: Copyright 2019 Red Hat
+  COPYRIGHT:Copyright 2019 Red Hat
   LICENSE: gpl-3.0.txt
 
   DOCUMENTATION: |
-    module: myos_interfaces
-    version_added: 2.9
-    short_description: 'Manages <xxxx> attributes of <network_os> <resource>'
-    description: 'Manages <xxxx> attributes of <network_os> <resource>.'
-    author: Ansible Network Engineer
+    module: myos\_interfaces
+    version\_added:2.9
+    short\_description:'Manages <xxxx> attributes of <network\_os> <resource>'
+    description:'Manages <xxxx> attributes of <network\_os> <resource>.'
+    author:Ansible Network Engineer
    notes:
-      - 'Tested against <network_os> <version>'
+      \- 'Tested against <network\_os> <version>'
     options:
       config:
-        description: The provided configuration
+        description:The provided configuration
         type: list
         elements: dict
         suboptions:
           name:
             type: str
-            description: The name of the <resource>
-          some_string:
+            description:The name of the <resource>
+          some\_string:
             type: str
             description:
-            - The some_string_01
+            \- The some\_string\_01
             choices:
-            - choice_a
-            - choice_b
-            - choice_c
-            default: choice_a
-          some_bool:
+            \- choice\_a
+            \- choice\_b
+            \- choice\_c
+            default: choice\_a
+          some\_bool:
             description:
-            - The some_bool.
+            \- The some\_bool.
             type: bool
-          some_int:
+          some\_int:
             description:
-            - The some_int.
+            \- The some\_int.
             type: int
-            version_added: '1.1'
-          some_dict:
+            version\_added:'1.1'
+          some\_dict:
             type: dict
             description:
-            - The some_dict.
+            \- The some\_dict.
             suboptions:
-              property_01:
+              property\_01:
                 description:
-                - The property_01
+                \- The property\_01
                 type: str
       state:
         description:
-        - The state of the configuration after module completion.
+        \- The state of the configuration after module completion.
         type: str
         choices:
-        - merged
-        - replaced
-        - overridden
-        - deleted
+        \- merged
+        \- replaced
+        \- overridden
+        \- deleted
         default: merged
   EXAMPLES:
-    - deleted_example_01.txt
-    - merged_example_01.txt
-    - overridden_example_01.txt
-    - replaced_example_01.txt
+    \- deleted\_example\_01.txt
+    \- merged\_example\_01.txt
+    \- overridden\_example\_01.txt
+    \- replaced\_example\_01.txt
 
-Notice that you should include examples for each of the states that the resource supports. The resource module builder also includes these in the sample model.
+リソースが対応するそれぞれの状態の例を含める必要があります。リソースモジュールビルダーも、サンプルモデルにこれを追加します。
 
-See `Ansible network resource models  <https://github.com/ansible-network/resource_module_models>`_ for more examples.
+その他の例は、「`Ansible ネットワークリソースモデル <https://github.com/ansible-network/resource_module_models>`\_」を参照してください。
 
-Using the resource module builder
+リソースモジュールビルダーの使用
 =================================
 
-To use the resource module builder to create a collection scaffold from your resource model:
+リソースモジュールビルダーを使用して、リソースモデルからコレクションのスキャフォールディングを作成するには、以下を実行します。
 
 .. code-block:: bash
 
-  ansible-playbook -e rm_dest=<destination for modules and module utils> \
+  ansible-playbook -e rm\_dest=<destination for modules and module utils>\
                    -e structure=collection \
-                   -e collection_org=<collection_org> \
-                   -e collection_name=<collection_name> \
-                   -e model=<model> \
+                   -e collection\_org=<collection\_org> \
+                   -e collection\_name=<collection\_name> \
+                   -e model=<model>\
                    site.yml
 
-Where the parameters are as follows:
+パラメーターは以下のようになります。
 
-- ``rm_dest``: The directory where the resource module builder places the files and directories for the resource module and facts modules.
-- ``structure``: The directory layout type (role or collection)
+- ``rm_dest``: リソースモジュールビルダーがリソースモジュールおよびファクトモジュールのファイルとディレクトリーを置くディレクトリー。
+- ``structure``: ディレクトリーレイアウトの種類 (ロールまたはコレクション)
 
-  - ``role``: Generate a role directory layout.
-  - ``collection``: Generate a collection directory layout.
+  - ``role``: ロールディレクトリーレイアウトを生成します。
+  - ``collection``: コレクションディレクトリーのレイアウトを生成します。
 
-- ``collection_org``: The organization of the collection, required when `structure=collection`.
-- ``collection_name``: The name of the collection, required when `structure=collection`.
-- ``model``: The path to the model file.
+- ``collection_org``: `structure=collection` の場合に必要となるコレクションの組織です。
+- ``collection_name``: `structure=collection` の場合に必要となるコレクションの名前。
+- ``model``: モデルファイルへのパス。
 
-To use the resource module builder to create a role scaffold:
+リソースモジュールビルダーを使用してロールのスキャフォールディングを作成するには、以下を実行します。
 
 .. code-block:: bash
 
-  ansible-playbook -e rm_dest=<destination for modules and module utils> \
+  ansible-playbook -e rm\_dest=<destination for modules and module utils>\
                    -e structure=role \
-                   -e model=<model> \
+                   -e model=<model>\
                    site.yml
 
-Examples
+例
 ========
 
-Collection directory layout
+コレクションディレクトリーのレイアウト
 ---------------------------
 
-This example shows the directory layout for the following:
+以下の例では、以下のディレクトリーレイアウトを示しています。
 
 - ``network_os``: myos
 - ``resource``: interfaces
 
 .. code-block:: bash
 
-  ansible-playbook -e rm_dest=~/github/rm_example \
+  ansible-playbook -e rm\_dest=~/github/rm\_example \
                    -e structure=collection \
-                   -e collection_org=cidrblock \
-                   -e collection_name=my_collection \
-                   -e model=models/myos/interfaces/myos_interfaces.yml \
+                   -e collection\_org=cidrblock \
+                   -e collection\_name=my\_collection \
+                   -e model=models/myos/interfaces/myos\_interfaces.yml \
                    site.yml
 
 .. code-block:: text
@@ -194,9 +194,9 @@ This example shows the directory layout for the following:
   |   ├── inventory
   |   ├── modules
   |   |   ├── __init__.py
-  |   |   ├── myos_facts.py
-  |   |   └──  myos_interfaces.py
-  |   └──  module_utils
+  |   |   ├── myos\_facts.py
+  |   |   └──  myos\_interfaces.py
+  |   └──  module\_utils
   |       ├── __init__.py
   |       └──  network
   |           ├── __init__.py
@@ -228,19 +228,19 @@ This example shows the directory layout for the following:
   └──  roles
 
 
-Role directory layout
+ロールディレクトリーのレイアウト
 ---------------------
 
-This example displays the role directory layout for the following:
+この例では、以下のロールのディレクトリーレイアウトを表示しています。
 
 - ``network_os``: myos
 - ``resource``: interfaces
 
 .. code-block:: bash
 
-  ansible-playbook -e rm_dest=~/github/rm_example/roles/my_role \
+  ansible-playbook -e rm\_dest=~/github/rm\_example/roles/my\_role \
                    -e structure=role \
-                   -e model=models/myos/interfaces/myos_interfaces.yml \
+                   -e model=models/myos/interfaces/myos\_interfaces.yml \
                    site.yml
 
 
@@ -284,16 +284,16 @@ This example displays the role directory layout for the following:
         └── README.md
 
 
-Using the collection
+コレクションの使用
 --------------------
 
-This example shows how to use the generated collection in a playbook:
+以下の例は、生成されたコレクションを Playbook で使用する方法を示しています。
 
  .. code-block:: yaml
 
      ----
      - hosts: myos101
-       gather_facts: False
+       gather_facts:False
        tasks:
        - cidrblock.my_collection.myos_interfaces:
          register: result
@@ -304,20 +304,20 @@ This example shows how to use the generated collection in a playbook:
            var: ansible_network_resources
 
 
-Using the role
+ロールの使用
 --------------
 
-This example shows how to use the generated role in a playbook:
+以下の例は、生成されたロールを Playbook で使用する方法を示しています。
 
 .. code-block:: yaml
 
     - hosts: myos101
-      gather_facts: False
+      gather_facts:False
       roles:
       - my_role
 
     - hosts: myos101
-      gather_facts: False
+      gather_facts:False
       tasks:
       - myos_interfaces:
         register: result
@@ -328,50 +328,50 @@ This example shows how to use the generated role in a playbook:
           var: ansible_network_resources
 
 
-Resource module structure and workflow
+リソースモジュール構造およびワークフロー
 ======================================
 
-The resource module structure includes the following components:
+リソースモジュール構造には、以下のコンポーネントが含まれます。
 
-Module
+モジュール
     * ``library/<ansible_network_os>_<resource>.py``.
-    * Imports the ``module_utils`` resource package and calls ``execute_module`` API
+    * ``module_utils`` リソースパッケージをインポートし、``execute_module`` API を呼び出します。
 
     .. code-block:: python
 
       def main():
           result = <resource_package>(module).execute_module()
 
-Module argspec
+argspec モジュール
     * ``module_utils/<ansible_network_os>/argspec/<resource>/``.
-    * Argspec for the resource.
+    \* リソース用の argspec
 
-Facts
+ファクト
     * ``module_utils/<ansible_network_os>/facts/<resource>/``.
-    * Populate facts for the resource.
-    * Entry in ``module_utils/<ansible_network_os>/facts/facts.py`` for ``get_facts`` API to keep ``<ansible_network_os>_facts`` module and facts gathered for the resource module in sync for every subset.
-    *  Entry of Resource subset in FACTS_RESOURCE_SUBSETS list in ``module_utils/<ansible_network_os>/facts/facts.py`` to make facts collection work.
+    \* リソースのファクトを入力します。
+    ``get_facts`` API が全サブセットを同期するリソースモジュールに対して ``<ansible_network_os>_facts`` モジュールおよびファクトを維持するための ``module_utils/<ansible_network_os>/facts/facts.py`` のエントリー
+    \* Facts コレクションを機能させるには、``module_utils/<ansible_network_os>/facts/facts.py`` の FACTS\_RESOURCE\_SUBSETS 一覧にあるリソースサブセットのエントリー
 
-Module package in module_utils
+module\_utils のモジュールパッケージ
     * ``module_utils/<ansible_network_os>/<config>/<resource>/``.
-    * Implement ``execute_module`` API that loads the configuration to device and generates the result with ``changed``, ``commands``, ``before`` and ``after`` keys.
-    * Call ``get_facts`` API that returns the ``<resource>`` configuration facts or return the difference if the device has onbox diff support.
-    * Compare facts gathered and given key-values if diff is not supported.
-    * Generate final configuration.
+    \* 設定をデバイスに読み込み、鍵の ``changed``、``commands``、``before``、および ``after`` を使用して、デバイスへの設定を読み込み、結果を生成する ``execute_module`` API を実装します。
+    * ``<resource>`` 設定のファクトを返す ``get_facts`` API を呼び出すか、デバイスに onbox diff サポートがある場合はその相違点を返します。
+    \* diff がサポートされていない場合は、収集されるファクトと、指定される鍵/値を比較します。
+    \* 最後の設定を生成します。
 
-Utils
+ユーティリティー
     * ``module_utils/<ansible_network_os>/utils``.
-    * Utilities for the ``<ansible_network_os>`` platform.
+    * ``<ansible_network_os>`` プラットフォームのユーティリティー
 
-Developer notes
+開発者ノート
 ===============
 
-The tests rely on a role generated by the resource module builder. After changes to the resource module builder, the role should be regenerated and the tests modified and run as needed. To generate the role after changes:
+このテストは、リソースモジュールビルダーが生成したロールに依存します。リソースモジュールビルダーに変更を加えた後には、ロールを再生成し、必要に応じてテストを変更して実行します。変更後にロールを生成するには、以下を実行します。
 
 .. code-block:: bash
 
-  rm -rf rmb_tests/roles/my_role
-  ansible-playbook -e rm_dest=./rmb_tests/roles/my_role \
+  rm -rf rmb\_tests/roles/my\_role
+  ansible-playbook -e rm\_dest=./rmb\_tests/roles/my\_role \
                    -e structure=role \
-                   -e model=models/myos/interfaces/myos_interfaces.yml \
+                   -e model=models/myos/interfaces/myos\_interfaces.yml \
                    site.yml

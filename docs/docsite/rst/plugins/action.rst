@@ -1,56 +1,56 @@
-.. _action_plugins:
+.. \_action\_plugins:
 
-Action Plugins
+Action プラグイン
 ==============
 
 .. contents::
    :local:
    :depth: 2
 
-Action plugins act in conjunction with :ref:`modules <working_with_modules>` to execute the actions required by playbook tasks.
-They usually execute automatically in the background doing prerequisite work before modules execute.
+Action プラグインは、:ref:`modules <working_with_modules>` と連携して、Playbook のタスクに必要なアクションを実行します。
+通常、Action プラグインは、モジュールの実行前にバックグラウンドで自動的に実行されて、前提条件となっている作業を行います。
 
-The 'normal' action plugin is used for modules that do not already have an action plugin.
+action プラグインが指定されていないモジュールには、「一般的な」action プラグインが使用されます。
 
-.. _enabling_action:
+.. \_enabling\_action:
 
-Enabling action plugins
+action プラグインの有効化
 -----------------------
 
-You can enable a custom action plugin by either dropping it into the ``action_plugins`` directory adjacent to your play, inside a role, or by putting it in one of the action plugin directory sources configured in :ref:`ansible.cfg <ansible_configuration_settings>`.
+カスタムの action プラグインを有効にするには、カスタムのプラグインを、ロール内の Play の隣りにある ``action_plugins`` ディレクトリーに配置するか、:ref:`ansible.cfg <ansible_configuration_settings>` に設定した action プラグインのディレクトリーソースの 1 つに配置します。
 
-.. _using_action:
+.. \_using\_action:
 
-Using action plugins
+action プラグインの使用
 --------------------
 
-Action plugin are executed by default when an associated module is used; no action is required.
+Action プラグインは、関連のモジュールを使用する場合には、デフォルトで実行され、特に作業は必要ありません。
 
-Plugin list
+プラグイン一覧
 -----------
 
-You cannot list action plugins directly, they show up as their counterpart modules:
+action プラグインを直接一覧表示できませんが、対応のモジュールとして表示されます。
 
-Use ``ansible-doc -l`` to see the list of available modules.
-Use ``ansible-doc <name>`` to see specific documentation and examples, this should note if the module has a corresponding action plugin.
+``ansible-doc -l`` を使用して、利用可能なプラグインの一覧を表示できます。
+特定のドキュメント例を参照するには、``ansible-doc <name>`` を使用してください。モジュールに対応の action プラグインがある場合は、この点に注意してください。
 
 .. seealso::
 
    :ref:`cache_plugins`
-       Ansible Cache plugins
+       Ansible Cache プラグイン
    :ref:`callback_plugins`
-       Ansible callback plugins
+       Ansible callback プラグイン
    :ref:`connection_plugins`
-       Ansible connection plugins
+       Ansible connection プラグイン
    :ref:`inventory_plugins`
-       Ansible inventory plugins
+       Ansible inventory プラグインの使用
    :ref:`shell_plugins`
-       Ansible Shell plugins
+       Ansible Shell プラグイン
    :ref:`strategy_plugins`
-       Ansible Strategy plugins
+       Ansible Strategy プラグイン
    :ref:`vars_plugins`
-       Ansible Vars plugins
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Ansible Vars プラグイン
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       \#ansible IRC chat channel

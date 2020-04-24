@@ -1,6 +1,6 @@
-.. _become_plugins:
+.. \_become\_plugins:
 
-Become Plugins
+become プラグイン
 ==============
 
 .. contents::
@@ -9,43 +9,43 @@ Become Plugins
 
 .. versionadded:: 2.8
 
-Become plugins work to ensure that Ansible can use certain privilege escalation systems when running the basic
-commands to work with the target machine as well as the modules required to execute the tasks specified in
-the play.
+bocome プラグインは、基本的なコマンドの実行時に、
+Ansible が特定の特権昇格システムを使用して、
+Play で指定されたタスクを実行するのに必要なモジュールやターゲットマシンと連携できるようにします。
 
-These utilities (``sudo``, ``su``, ``doas``, etc) generally let you 'become' another user to execute a command
-with the permissions of that user.
+通常、``sudo``、``su``、``doas`` などのユーティリティーを使用すると、別のユーザーになり (become)、
+そのユーザーのパーミッションでコマンドを実行できるようになります。
 
 
-.. _enabling_become:
+.. \_enabling\_become:
 
-Enabling Become Plugins
+Become プラグインの有効化
 -----------------------
 
-The become plugins shipped with Ansible are already enabled. Custom plugins can be added by placing
-them into a ``become_plugins`` directory adjacent to your play, inside a role, or by placing them in one of
-the become plugin directory sources configured in :ref:`ansible.cfg <ansible_configuration_settings>`.
+Ansible に同梱の become プラグインはすでに有効化されています。カスタムのプラグインを追加するには、
+ロール内の Play の隣りにある ``become_plugins`` ディレクトリーに配置するか
+:ref:`ansible.cfg <ansible_configuration_settings>` で設定した become プラグインのディレクトリーソースの 1 つに配置します。
 
 
-.. _using_become:
+.. \_using\_become:
 
-Using Become Plugins
+Become プラグインの使用
 --------------------
 
-In addition to the default configuration settings in :ref:`ansible_configuration_settings` or the
-``--become-method`` command line option, you can use the ``become_method`` keyword in a play or, if you need
-to be 'host specific', the connection variable ``ansible_become_method`` to select the plugin to use.
+:ref:`ansible_configuration_settings` や 
+``--become-method`` コマンドラインオプションでのデフォルト設定に加え、Play で ``become_method`` キーワードを使用できます。
+「ホスト固有」にする必要がある場合には、接続変数の ``ansible_become_method`` で、使用するプラグインを選択します。
 
-You can further control the settings for each plugin via other configuration options detailed in the plugin
-themselves (linked below).
+プラグイン自体 (以下にリンク) に詳述されているその他の設定オプションを使用して、
+各プラグインの設定をさらに制御できます。
 
-.. _become_plugin_list:
+.. \_become\_plugin\_list:
 
-Plugin List
+プラグイン一覧
 -----------
 
-You can use ``ansible-doc -t become -l`` to see the list of available plugins.
-Use ``ansible-doc -t become <plugin name>`` to see specific documentation and examples.
+``ansible-doc -t become -l`` を使用して、利用可能なプラグインの一覧を表示できます。
+特定のドキュメントと例を参照する場合は、``ansible-doc -t become <plugin name>`` を使用してください。
 
 .. toctree:: :maxdepth: 1
     :glob:
@@ -55,18 +55,18 @@ Use ``ansible-doc -t become <plugin name>`` to see specific documentation and ex
 .. seealso::
 
    :ref:`about_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`inventory_plugins`
-       Ansible inventory plugins
+       Ansible inventory プラグインの使用
    :ref:`callback_plugins`
-       Ansible callback plugins
+       Ansible callback プラグイン
    :ref:`playbooks_filters`
-       Jinja2 filter plugins
+       Jinja2 filter プラグイン
    :ref:`playbooks_tests`
-       Jinja2 test plugins
+       Jinja2 test プラグイン
    :ref:`playbooks_lookups`
-       Jinja2 lookup plugins
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Jinja2 lookup プラグイン
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       \#ansible IRC chat channel

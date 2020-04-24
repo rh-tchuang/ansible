@@ -1,68 +1,68 @@
-.. _eic_eccli_platform_options:
+.. \_eic\_eccli\_platform\_options:
 
 ***************************************
-ERIC_ECCLI Platform Options
+ERIC\_ECCLI プラットフォームのオプション
 ***************************************
 
-Extreme ERIC_ECCLI Ansible modules only supports CLI connections today. This page offers details on how to use ``network_cli`` on ERIC_ECCLI in Ansible.
+現在、Extreme ERIC\_ECCLI の Ansible モジュールは、CLI 接続にのみ対応します。このページには、Ansible で ERIC\_ECCLI の ``network_cli`` を使用する詳細な方法が記載されています。
 
-.. contents:: Topics
+.. contents:: トピック
 
-Connections Available
+利用可能な接続
 ================================================================================
 
 .. table::
     :class: documentation-table
 
     ====================  ==========================================
-    ..                    CLI
+    ..                   CLI
     ====================  ==========================================
-    Protocol              SSH
+    プロトコル              SSH
 
-    Credentials           uses SSH keys / SSH-agent if present
+    認証情報           SSH キー / SSH-agent (存在する場合) を使用します。
 
-                          accepts ``-u myuser -k`` if using password
+                          パスワードを使用する場合は ``-u myuser -k`` を許可します。
 
-    Indirect Access       via a bastion (jump host)
+    間接アクセス       bastion (ジャンプホスト) を経由
 
-    Connection Settings   ``ansible_connection: network_cli``
+    接続設定   ``ansible_connection: network_cli``
 
-    |enable_mode|         not supported by ERIC_ECCLI
+    |enable_mode|         ERIC_ECCLI では対応していません。
 
-    Returned Data Format  ``stdout[0].``
+    返されるデータ形式 ``stdout[0]``
     ====================  ==========================================
 
-.. |enable_mode| replace:: Enable Mode |br| (Privilege Escalation)
+.. |enable\_mode| replace::Enable モード |br| (権限昇格)
 
-ERIC_ECCLI does not support ``ansible_connection: local``. You must use ``ansible_connection: network_cli``.
+Eric\_ECCLI は、``ansible_connection: local`` に対応していません。``ansible_connection: network_cli`` を使用する必要があります。
 
-Using CLI in Ansible
+Ansible での CLI の使用
 ====================
 
-Example CLI ``group_vars/eric_eccli.yml``
+CLI の例: ``group_vars/eric_eccli.yml``
 -----------------------------------------
 
 .. code-block:: yaml
 
-   ansible_connection: network_cli
-   ansible_network_os: eric_eccli
-   ansible_user: myuser
-   ansible_password: !vault...
-   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible\_connection: network\_cli
+   ansible\_network\_os: eric\_eccli
+   ansible\_user: myuser
+   ansible\_password: !vault...
+   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
-- If you are using SSH keys (including an ssh-agent) you can remove the ``ansible_password`` configuration.
-- If you are accessing your host directly (not through a bastion/jump host) you can remove the ``ansible_ssh_common_args`` configuration.
-- If you are accessing your host through a bastion/jump host, you cannot include your SSH password in the ``ProxyCommand`` directive. To prevent secrets from leaking out (for example in ``ps`` output), SSH does not support providing passwords via environment variables.
+- SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
+- (bastion/ジャンプホスト を経由せず) ホストに直接アクセスしている場合は、``ansible_ssh_common_args`` 設定を削除できます。
+- bastion/ジャンプホスト 経由でホストにアクセスしている場合は、SSH パスワードを ``ProxyCommand`` ディレクティブに含めることができません。(``ps`` 出力などで) シークレットの漏えいを防ぐために、SSH は環境変数によるパスワードの提供に対応していません。
 
-Example CLI Task
+CLI タスクの例
 ----------------
 
 .. code-block:: yaml
 
-   - name: run show version on remote devices (eric_eccli)
-     eric_eccli_command:
+   - name: run show version on remote devices (eric\_eccli)
+     eric\_eccli\_command:
         commands: show version
-     when: ansible_network_os == 'eric_eccli'
+     when: ansible\_network\_os == 'eric\_eccli'
 
-.. include:: shared_snippets/SSH_warning.txt
+.. include:: shared\_snippets/SSH\_warning.txt

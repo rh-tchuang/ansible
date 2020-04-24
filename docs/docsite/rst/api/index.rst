@@ -1,41 +1,41 @@
 :orphan:
 
 *************************
-Ansible API Documentation
+Ansible API のドキュメント
 *************************
 
-The Ansible API is under construction. These stub references for attributes, classes, functions, methods, and modules will be documented in future.
-The :ref:`module utilities <ansible.module_utils>` included in ``ansible.module_utils.basic`` and ``AnsibleModule`` are documented under Reference & Appendices.
+Ansible API はただいま準備中です。属性、クラス、関数、メソッド、およびモジュールのスタブ参照の説明は、今後追加されます。
+``ansible.module_utils.basic`` および ``AnsibleModule`` に含まれる :ref:`モジュールユーティリティー<ansible.module_utils>` は、参照 & 付録のセクションで説明されています。
 
 .. contents::
    :local:
 
-Attributes
+属性
 ==========
 
-.. py:attribute:: AnsibleModule.params
+.. py:attribute::AnsibleModule.params
 
-The parameters accepted by the module.
+モジュールで受け入れられるパラメーターです。
 
-.. py:attribute:: ansible.module_utils.basic.ANSIBLE_VERSION
+.. py:attribute:: ansible.module\_utils.basic.ANSIBLE\_VERSION
 
-.. py:attribute:: ansible.module_utils.basic.SELINUX_SPECIAL_FS
+.. py:attribute:: ansible.module\_utils.basic.SELINUX\_SPECIAL\_FS
 
-Deprecated in favor of ansibleModule._selinux_special_fs.
+ansibleModule.\_selinux\_special\_fs が導入されたため、非推奨となりました。
 
-.. py:attribute:: AnsibleModule.ansible_version
+.. py:attribute::AnsibleModule.ansible\_version
 
-.. py:attribute:: AnsibleModule._debug
+.. py:attribute::AnsibleModule.\_debug
 
-.. py:attribute:: AnsibleModule._diff
+.. py:attribute::AnsibleModule.\_diff
 
-.. py:attribute:: AnsibleModule.no_log
+.. py:attribute::AnsibleModule.no\_log
 
-.. py:attribute:: AnsibleModule._selinux_special_fs
+.. py:attribute::AnsibleModule.\_selinux\_special\_fs
 
-(formerly ansible.module_utils.basic.SELINUX_SPECIAL_FS)
+(以前の ansible.module\_utils.basic.SELINUX\_SPECIAL\_FS)
 
-.. py:attribute:: AnsibleModule._syslog_facility
+.. py:attribute::AnsibleModule.\_syslog\_facility
 
 .. py:attribute:: self.playbook
 
@@ -46,60 +46,60 @@ Deprecated in favor of ansibleModule._selinux_special_fs.
 .. py:attribute:: sys.path
 
 
-Classes
+クラス
 =======
 
 .. py:class:: ``ansible.module_utils.basic.AnsibleModule``
    :noindex:
 
-The basic utilities for AnsibleModule.
+AnsibleModule の基本的なユーティリティーです。
 
-.. py:class:: AnsibleModule
+.. py:class::AnsibleModule
 
-The main class for an Ansible module.
+Ansible モジュールのメインクラスです。
 
 
-Functions
+関数
 =========
 
-.. py:function:: ansible.module_utils.basic._load_params()
+.. py:function:: ansible.module\_utils.basic.\_load\_params()
 
-Load parameters.
+パラメーターをロードします。
 
 
-Methods
+メソッド
 =======
 
-.. py:method:: AnsibleModule.log()
+.. py:method::AnsibleModule.log()
 
-Logs the output of Ansible.
+Ansible の出力をログに記録します。
 
-.. py:method:: AnsibleModule.debug()
+.. py:method::AnsibleModule.debug()
 
-Debugs Ansible.
+Ansible をデバッグします。
 
-.. py:method:: Ansible.get_bin_path()
+.. py:method::Ansible.get\_bin\_path()
 
-Retrieves the path for executables.
+実行可能ファイルのパスを取得します。
 
-.. py:method:: AnsibleModule.run_command()
+.. py:method::AnsibleModule.run\_command()
 
-Runs a command within an Ansible module.
+Ansible モジュール内でコマンドを実行します。
 
-.. py:method:: module.fail_json()
+.. py:method:: module.fail\_json()
 
-Exits and returns a failure.
+終了して、失敗を返します。
 
-.. py:method:: module.exit_json()
+.. py:method:: module.exit\_json()
 
-Exits and returns output.
+終了して、出力を返します。
 
 
-Modules
+モジュール
 =======
 
-.. py:module:: ansible.module_utils
+.. py:module:: ansible.module\_utils
 
-.. py:module:: ansible.module_utils.basic
+.. py:module:: ansible.module\_utils.basic
 
-.. py:module:: ansible.module_utils.url
+.. py:module:: ansible.module\_utils.url

@@ -1,200 +1,200 @@
 ***********************************************
-Build Your Inventory
+インベントリーの構築
 ***********************************************
 
-Running a playbook without an inventory requires several command-line flags. Also, running a playbook against a single device is not a huge efficiency gain over making the same change manually. The next step to harnessing the full power of Ansible is to use an inventory file to organize your managed nodes into groups with information like the ``ansible_network_os`` and the SSH user. A fully-featured inventory file can serve as the source of truth for your network. Using an inventory file, a single playbook can maintain hundreds of network devices with a single command. This page shows you how to build an inventory file, step by step.
+インベントリーを使用せずに Playbook を実行するには、いくつかのコマンドラインフラグが必要です。また、1 つのデバイスに対して Playbook を実行しても、同じ変更を手動で行うよりも効率性が大幅に向上するわけではありません。Ansible の機能をすべて活用する次のステップとして、インベントリーファイルを使用して管理ノードを ``ansible_network_os`` や SSH ユーザーなどの情報とともにグループにまとめることができます。完全に機能するインベントリーファイルは、ネットワークの信頼できる情報源として使用できます。インベントリーファイルを使用すると、コマンドが 1 つ含まれる 1 つの Playbook で、数百ものネットワークデバイスを維持できます。このページには、段階的にインベントリーファイルを構築する方法が記載されています。
 
-.. contents:: Topics
+.. contents:: トピック
 
-Basic Inventory
+基本的なインベントリー
 ==================================================
 
-First, group your inventory logically. Best practice is to group servers and network devices by their What (application, stack or microservice), Where (datacenter or region), and When (development stage):
+まず、インベントリーを論理的にグループにまとめます。ベストプラクティスは、サーバーおよびネットワークデバイスを、What (アプリケーション、スタック、またはマイクロサービス)、Where (データセンタまたは地域)、および When (開発段階) でグループ化することです。
 
-- **What**: db, web, leaf, spine
-- **Where**: east, west, floor_19, building_A
-- **When**: dev, test, staging, prod
+- **What**: db、web、leaf、spine
+- **Where**: east、west、floor\_19、building\_A
+- **When**: dev、test、staging、prod
 
-Avoid spaces, hyphens, and preceding numbers (use ``floor_19``, not ``19th_floor``) in your group names. Group names are case sensitive.
+グループ名にスペースまたはハイフンは使用しないでください。またグループ名は数値で始めないでください (``19th_floor``ではなく ``nova_19`` を使用)。グループ名では、大文字と小文字が区別されます。
 
-This tiny example data center illustrates a basic group structure. You can group groups using the syntax ``[metagroupname:children]`` and listing groups as members of the metagroup. Here, the group ``network`` includes all leafs and all spines; the group ``datacenter`` includes all network devices plus all webservers.
+この小さなデータセンターの例では、基本的なグループ構造を示しています。グループは、構文 ``[metagroupname:children]`` を使用してグループをまとめることができ、メタグループのメンバーとしてグループを一覧表示できます。ここで、``network`` グループにはすべてのリーフとすべてのスパインが含まれます。グループ ``datacenter`` には、すべてのネットワークデバイスとすべての Web サーバーが含まれます。
 
 .. code-block:: ini
 
-   [leafs]
+   \[leafs]
    leaf01
    leaf02
 
-   [spines]
+   \[spines]
    spine01
    spine02
 
-   [network:children]
+   \[network:children]
    leafs
    spines
 
-   [webservers]
+   \[webservers]
    webserver01
    webserver02
 
-   [datacenter:children]
+   \[datacenter:children]
    network
    webservers
 
 
-Add Variables to Inventory
+インベントリーへの変数の追加
 ================================================================================
 
-Next, you can set values for many of the variables you needed in your first Ansible command in the inventory, so you can skip them in the ansible-playbook command. In this example, the inventory includes each network device's IP, OS, and SSH user. If your network devices are only accessible by IP, you must add the IP to the inventory file. If you access your network devices using hostnames, the IP is not necessary.
+次に、インベントリーの最初の Ansible コマンドに必要な多くの変数に値を設定するため、ansible-playbook コマンドでこれを省略できます。この例では、インベントリーに各ネットワークデバイスの IP、OS、および SSH ユーザーが含まれています。ネットワークデバイスが IP からのみアクセス可能である場合は、IP をインベントリーファイルに追加する必要があります。ホスト名を使用してネットワークデバイスにアクセスする場合は、IP は必要ありません。
 
 .. code-block:: ini
 
-   [leafs]
-   leaf01 ansible_host=10.16.10.11 ansible_network_os=vyos ansible_user=my_vyos_user
-   leaf02 ansible_host=10.16.10.12 ansible_network_os=vyos ansible_user=my_vyos_user
+   \[leafs]
+   leaf01 ansible\_host=10.16.10.11 ansible\_network\_os=vyos ansible\_user=my\_vyos\_user
+   leaf02 ansible\_host=10.16.10.12 ansible\_network\_os=vyos ansible\_user=my\_vyos\_user
 
-   [spines]
-   spine01 ansible_host=10.16.10.13 ansible_network_os=vyos ansible_user=my_vyos_user
-   spine02 ansible_host=10.16.10.14 ansible_network_os=vyos ansible_user=my_vyos_user
+   \[spines]
+   spine01 ansible\_host=10.16.10.13 ansible\_network\_os=vyos ansible\_user=my\_vyos\_user
+   spine02 ansible\_host=10.16.10.14 ansible\_network\_os=vyos ansible\_user=my\_vyos\_user
 
-   [network:children]
+   \[network:children]
    leafs
    spines
 
-   [servers]
-   server01 ansible_host=10.16.10.15 ansible_user=my_server_user
-   server02 ansible_host=10.16.10.16 ansible_user=my_server_user
+   \[servers]
+   server01 ansible\_host=10.16.10.15 ansible\_user=my\_server\_user
+   server02 ansible\_host=10.16.10.16 ansible\_user=my\_server\_user
 
-   [datacenter:children]
+   \[datacenter:children]
    leafs
    spines
    servers
 
-Group Variables within Inventory
+インベントリー内のグループ変数
 ================================================================================
 
-When devices in a group share the same variable values, such as OS or SSH user, you can reduce duplication and simplify maintenance by consolidating these into group variables:
+グループ内のデバイスが、OS や SSH ユーザーなど、同じ変数値を共有している場合は、この値をグループ変数に統合することで、重複を減らし、メンテナンスを簡素化できます。
 
 .. code-block:: ini
 
-   [leafs]
-   leaf01 ansible_host=10.16.10.11
-   leaf02 ansible_host=10.16.10.12
+   \[leafs]
+   leaf01 ansible\_host=10.16.10.11
+   leaf02 ansible\_host=10.16.10.12
 
-   [leafs:vars]
-   ansible_network_os=vyos
-   ansible_user=my_vyos_user
+   \[leafs:vars]
+   ansible\_network\_os=vyos
+   ansible\_user=my\_vyos\_user
 
-   [spines]
-   spine01 ansible_host=10.16.10.13
-   spine02 ansible_host=10.16.10.14
+   \[spines]
+   spine01 ansible\_host=10.16.10.13
+   spine02 ansible\_host=10.16.10.14
 
-   [spines:vars]
-   ansible_network_os=vyos
-   ansible_user=my_vyos_user
+   \[spines:vars]
+   ansible\_network\_os=vyos
+   ansible\_user=my\_vyos\_user
 
-   [network:children]
+   \[network:children]
    leafs
    spines
 
-   [servers]
-   server01 ansible_host=10.16.10.15
-   server02 ansible_host=10.16.10.16
+   \[servers]
+   server01 ansible\_host=10.16.10.15
+   server02 ansible\_host=10.16.10.16
 
-   [datacenter:children]
+   \[datacenter:children]
    leafs
    spines
    servers
 
-Variable Syntax
+変数の構文
 ================================================================================
 
-The syntax for variable values is different in inventory, in playbooks and in ``group_vars`` files, which are covered below. Even though playbook and ``group_vars`` files are both written in YAML, you use variables differently in each.
+変数値の構文はインベントリー、Playbook、および ``group_vars`` ファイル (以下を参照) で異なります。Playbook と ``group_vars`` ファイルはいずれも YAML で記述されますが、変数の使用方法はそれぞれ異なります。
 
-- In an ini-style inventory file you **must** use the syntax ``key=value`` for variable values: ``ansible_network_os=vyos``.
-- In any file with the ``.yml`` or ``.yaml`` extension, including playbooks and ``group_vars`` files, you **must** use YAML syntax: ``key: value``
+- ini 形式のインベントリーファイルでは、変数の値 ``ansible_network_os=vyos`` に構文 ``key=value`` を使用する **必要** があります。
+- Playbook および ``group_vars`` ファイルを含む ``.yml`` 拡張子または ``.yaml`` 拡張子を持つファイルでは、YAML 構文 ``key: value`` を使用する **必要** があります。
 
-  - In ``group_vars`` files, use the full ``key`` name: ``ansible_network_os: vyos``.
-  - In playbooks, use the short-form ``key`` name, which drops the ``ansible`` prefix: ``network_os: vyos``
+  - ``group_vars`` ファイルで、完全な ``鍵`` 名 ``ansible_network_os: vyos`` を使用します。
+  - Playbook で、短縮 ``鍵`` の名前を使用します。これにより、接頭辞 ``ansible`` が削除され ``network_os: vyos`` になります。
 
 
-Group Inventory by Platform
+プラットフォームによりインベントリーのグループ化
 ================================================================================
 
-As your inventory grows, you may want to group devices by platform. This allows you to specify platform-specific variables easily for all devices on that platform:
+インベントリーが拡大するにつれ、プラットフォーム別にデバイスをグループにまとめることができます。これにより、プラットフォームにあるすべてのデバイスにプラットフォーム固有の変数を簡単に指定できます。
 
 .. code-block:: ini
 
-   [vyos_leafs]
-   leaf01 ansible_host=10.16.10.11
-   leaf02 ansible_host=10.16.10.12
+   \[vyos\_leafs]
+   leaf01 ansible\_host=10.16.10.11
+   leaf02 ansible\_host=10.16.10.12
 
-   [vyos_spines]
-   spine01 ansible_host=10.16.10.13
-   spine02 ansible_host=10.16.10.14
+   \[vyos\_spines]
+   spine01 ansible\_host=10.16.10.13
+   spine02 ansible\_host=10.16.10.14
 
-   [vyos:children]
-   vyos_leafs
-   vyos_spines
+   \[vyos:children]
+   vyos\_leafs
+   vyos\_spines
 
-   [vyos:vars]
-   ansible_connection=network_cli
-   ansible_network_os=vyos
-   ansible_user=my_vyos_user
+   \[vyos:vars]
+   ansible\_connection=network\_cli
+   ansible\_network\_os=vyos
+   ansible\_user=my\_vyos\_user
 
-   [network:children]
+   \[network:children]
    vyos
 
-   [servers]
-   server01 ansible_host=10.16.10.15
-   server02 ansible_host=10.16.10.16
+   \[servers]
+   server01 ansible\_host=10.16.10.15
+   server02 ansible\_host=10.16.10.16
 
-   [datacenter:children]
+   \[datacenter:children]
    vyos
    servers
 
-With this setup, you can run first_playbook.yml with only two flags:
+この設定では、2 つのフラグのみを使用して first\_playbook.yml を実行できます。
 
 .. code-block:: console
 
-   ansible-playbook -i inventory -k first_playbook.yml
+   ansible-playbook -i inventory -k first\_playbook.yml
 
-With the ``-k`` flag, you provide the SSH password(s) at the prompt. Alternatively, you can store SSH and other secrets and passwords securely in your group_vars files with ``ansible-vault``.
+``-k`` フラグを使用して、プロンプトで SSH パスワードを入力します。または、``ansible-vault`` を使用して、SSH や他のシークレット、およびパスワードを group\_vars ファイルに保存して保護できます。
 
 
-Protecting Sensitive Variables with ``ansible-vault``
+``ansible-vault`` による機密データの保護
 ================================================================================
 
-The ``ansible-vault`` command provides encryption for files and/or individual variables like passwords. This tutorial will show you how to encrypt a single SSH password. You can use the commands below to encrypt other sensitive information, such as database passwords, privilege-escalation passwords and more.
+``ansible-vault`` コマンドは、パスワードなどのファイルや個々の変数の暗号化を提供します。このチュートリアルでは、1 つの SSH パスワードを暗号化する方法を説明します。以下のコマンドを使用して、その他の機密情報 (データベースパスワード、権限昇格パスワードなど) を暗号化できます。
 
-First you must create a password for ansible-vault itself. It is used as the encryption key, and with this you can encrypt dozens of different passwords across your Ansible project. You can access all those secrets (encrypted values) with a single password (the ansible-vault password) when you run your playbooks. Here's a simple example.
+最初に、ansible-vault 自体にパスワードを作成する必要があります。これは暗号化キーとして使用されるため、Ansible プロジェクト全体で多数の異なるパスワードを暗号化できます。Playbook の実行時に、1 つのパスワード (ansible-vault パスワード) を使用してすべてのシークレット (暗号した値) にアクセスできます。以下は簡単な例です。
 
-Create a file and write your password for ansible-vault to it:
+ファイルを作成して、ansible-vault のパスワードを書き込みます。
 
 .. code-block:: console
 
    echo "my-ansible-vault-pw" > ~/my-ansible-vault-pw-file
 
-Create the encrypted ssh password for your VyOS network devices, pulling your ansible-vault password from the file you just created:
+VyOS ネットワークデバイス用に暗号化された ssh パスワードを作成し、作成したファイルから ansible-vault パスワードをプルします。
 
 .. code-block:: console
 
-   ansible-vault encrypt_string --vault-id my_user@~/my-ansible-vault-pw-file 'VyOS_SSH_password' --name 'ansible_password'
+   ansible-vault encrypt\_string --vault-id my\_user@~/my-ansible-vault-pw-file 'VyOS\_SSH\_password' --name 'ansible\_password'
 
-If you prefer to type your ansible-vault password rather than store it in a file, you can request a prompt:
+ファイルに保存せずに ansible-vault パスワードを入力する必要がある場合は、プロンプトを要求できます。
 
 .. code-block:: console
 
-   ansible-vault encrypt_string --vault-id my_user@prompt 'VyOS_SSH_password' --name 'ansible_password'
+   ansible-vault encrypt\_string --vault-id my\_user@prompt 'VyOS\_SSH\_password' --name 'ansible\_password'
 
-and type in the vault password for ``my_user``.
+および、``my_user`` に vault パスワードに入力します。
 
-The :option:`--vault-id <ansible-playbook --vault-id>` flag allows different vault passwords for different users or different levels of access. The output includes the user name ``my_user`` from your ``ansible-vault`` command and uses the YAML syntax ``key: value``:
+:option:`--vault-id <ansible-playbook --vault-id>` フラグは、ユーザーごとに異なる vault パスワード、または異なるレベルのアクセスを許可します。この出力には、``ansible-vault`` コマンドのユーザー名 ``my_user`` が含まれ、YAML 構文 ``key: value`` 値を使用します。
 
 .. code-block:: yaml
 
-   ansible_password: !vault |
-          $ANSIBLE_VAULT;1.2;AES256;my_user
+   ansible\_password: !vault |
+          $ANSIBLE\_VAULT;1.2;AES256;my\_user
           66386134653765386232383236303063623663343437643766386435663632343266393064373933
           3661666132363339303639353538316662616638356631650a316338316663666439383138353032
           63393934343937373637306162366265383461316334383132626462656463363630613832313562
@@ -202,60 +202,60 @@ The :option:`--vault-id <ansible-playbook --vault-id>` flag allows different vau
           65656439626166666363323435613131643066353762333232326232323565376635
    Encryption successful
 
-This is an example using an extract from a  YAML inventory, as the INI format does not support inline vaults:
+INI 形式はインラインの vault に対応していないため、以下は YAML インベントリーから抽出を使用する例です。
 
 .. code-block:: yaml
 
   ...
 
-  vyos: # this is a group in yaml inventory, but you can also do under a host
-    vars:
-      ansible_connection: network_cli
-      ansible_network_os: vyos
-      ansible_user: my_vyos_user
-      ansible_password:  !vault |
-           $ANSIBLE_VAULT;1.2;AES256;my_user
-           66386134653765386232383236303063623663343437643766386435663632343266393064373933
-           3661666132363339303639353538316662616638356631650a316338316663666439383138353032
-           63393934343937373637306162366265383461316334383132626462656463363630613832313562
-           3837646266663835640a313164343535316666653031353763613037656362613535633538386539
-           65656439626166666363323435613131643066353762333232326232323565376635
+  vyos: \# this is a group in yaml inventory, but you can also do under a host
+vars:
+ansible\_connection: network\_cli
+ansible\_network\_os: vyos
+ansible\_user: my\_vyos\_user
+ansible\_password:  !vault |
+$ANSIBLE\_VAULT;1.2;AES256;my\_user
+66386134653765386232383236303063623663343437643766386435663632343266393064373933
+3661666132363339303639353538316662616638356631650a316338316663666439383138353032
+63393934343937373637306162366265383461316334383132626462656463363630613832313562
+3837646266663835640a313164343535316666653031353763613037656362613535633538386539
+65656439626166666363323435613131643066353762333232326232323565376635
 
    ...
 
-To use an inline vaulted variables with an INI inventory you need to store it in a 'vars' file in YAML format,
-it can reside in host_vars/ or group_vars/ to be automatically picked up or referenced from a play via ``vars_files`` or ``include_vars``.
+INI インベントリーでインラインの vault 化した変数を使用するには、これを YAML 形式の「vars」ファイルに保存する必要があります。
+これは host\_vars/ または group\_vars/ にあり、自動的に ``vars_files`` または ``include_vars`` 経由でプレイから取得または参照されます。
 
-To run a playbook with this setup, drop the ``-k`` flag and add a flag for your ``vault-id``:
-
-.. code-block:: console
-
-   ansible-playbook -i inventory --vault-id my_user@~/my-ansible-vault-pw-file first_playbook.yml
-
-Or with a prompt instead of the vault password file:
+この設定で Playbook を実行するには、``-k`` フラグを削除し、``vault-id`` のフラグを追加します。
 
 .. code-block:: console
 
-   ansible-playbook -i inventory --vault-id my_user@prompt first_playbook.yml
+   ansible-playbook -i inventory --vault-id my\_user@~/my-ansible-vault-pw-file first\_playbook.yml
 
-To see the original value, you can use the debug module. Please note if your YAML file defines the `ansible_connection` variable (as we used in our example), it will take effect when you execute the command below. To prevent this, please make a copy of the file without the ansible_connection variable.
+または、vault パスワードファイルの代わりにプロンプトを使用します。
 
 .. code-block:: console
 
-   cat vyos.yml | grep -v ansible_connection >> vyos_no_connection.yml
+   ansible-playbook -i inventory --vault-id my\_user@prompt first\_playbook.yml
 
-   ansible localhost -m debug -a var="ansible_password" -e "@vyos_no_connection.yml" --ask-vault-pass
+元の値を表示するには、デバッグモジュールを使用します。(この例で使用しているように) YAML ファイルが `ansible_connection` 変数を定義する場合は、次のコマンドを実行すると有効になることに注意してください。これを防ぐには、ansible\_connection 変数なしでファイルのコピーを作成してください。
+
+.. code-block:: console
+
+   cat vyos.yml | grep -v ansible\_connection >> vyos\_no\_connection.yml
+
+   ansible localhost -m debug -a var="ansible\_password" -e "@vyos\_no\_connection.yml" --ask-vault-pass
    Vault password:
 
    localhost | SUCCESS => {
-       "ansible_password": "VyOS_SSH_password"
+       "ansible\_password":"VyOS\_SSH\_password"
    }
 
 
 .. warning::
 
-   Vault content can only be decrypted with the password that was used to encrypt it. If you want to stop using one password and move to a new one, you can update and re-encrypt existing vault content with ``ansible-vault rekey myfile``, then provide the old password and the new password. Copies of vault content still encrypted with the old password can still be decrypted with old password.
+   Vault のコンテンツは、暗号化に使用されたパスワードでのみ復号できます。パスワードを使用して停止し、新規パスワードに移動する必要がある場合は、``ansible-vault rekey myfile`` で既存の vault コンテンツを更新し、再暗号化してから、古いパスワードと新規パスワードを指定します。vault の内容のコピーは古いパスワードで暗号化したまま、引き続き古いパスワードで複号できます。
 
-For more details on building inventory files, see :ref:`the introduction to inventory<intro_inventory>`; for more details on ansible-vault, see :ref:`the full Ansible Vault documentation<vault>`.
+インベントリーファイルの構築に関する詳細は、:ref:`インベントリーの概要<intro_inventory>` を参照してください。ansible-vault の詳細は、:ref:`Ansible Vault の全ドキュメント<vault>` を参照してください。
 
-Now that you understand the basics of commands, playbooks, and inventory, it's time to explore some more complex Ansible Network examples.
+コマンド、Playbook、およびインベントリーの基本を理解したら、より複雑な Ansible Network の例をいくつか説明します。

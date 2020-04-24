@@ -1,89 +1,89 @@
 ************************************************************
-How Network Automation is Different
+ネットワーク自動化の相違点
 ************************************************************
 
-Network automation leverages the basic Ansible concepts, but there are important differences in how the network modules work. This introduction prepares you to understand the exercises in this guide.
+ネットワーク自動化は、基本的な Ansible の概念を利用しますが、ネットワークモジュールの動作には重要な相違点があります。このイントロダクションを読むと、本ガイドの演習を学ぶ準備ができます。
 
-.. contents:: Topics
+.. contents:: トピック
 
-Execution on the Control Node
+コントロールノードでの実行
 ================================================================================
 
-Unlike most Ansible modules, network modules do not run on the managed nodes. From a user's point of view, network modules work like any other modules. They work with ad-hoc commands, playbooks, and roles. Behind the scenes, however, network modules use a different methodology than the other (Linux/Unix and Windows) modules use. Ansible is written and executed in Python. Because the majority of network devices can not run Python, the Ansible network modules are executed on the Ansible control node, where ``ansible`` or ``ansible-playbook`` runs. 
+ほとんどの Ansible モジュールとは異なり、ネットワークモジュールは管理ノードで実行されません。ユーザーの観点から見ると、ネットワークモジュールは他のモジュールと同じように機能します。アドホックコマンド、Playbook、およびロールと連携します。ただし、背後では、ネットワークモジュールは他の (Linux/Unix および Windows) モジュールが使用する方法とは異なる方法を使用します。Ansible が Python で記述され、実行されます。ほとんどのネットワークデバイスは Python を実行できないため、Ansible ネットワークモジュールは ``ansible`` または ``ansible-playbook`` を実行する Ansible コントロールノードで実行されます。 
 
-Network modules also use the control node as a destination for backup files, for those modules that offer a ``backup`` option. With Linux/Unix modules, where a configuration file already exists on the managed node(s), the backup file gets written by default in the same directory as the new, changed file. Network modules do not update configuration files on the managed nodes, because network configuration is not written in files. Network modules write backup files on the control node, usually in the `backup` directory under the playbook root directory.
+また、ネットワークモジュールは、バックアップファイルの宛先として、``backup`` オプションを提供するモジュールにコントロールノードを使用します。Linux/Unix モジュールでは、設定ファイルがすでに管理ノードに存在すると、バックアップファイルは、デフォルトで新しい、変更されたファイルと同じディレクトリーに書き込まれます。ネットワークモジュールはファイルに書き込まれないため、管理ノードの設定ファイルは更新されません。ネットワークモジュールは、通常 Playbook の root ディレクトリーにある `backup` ディレクトリーに、コントロールノードにバックアップファイルを書き込みます。
 
-Multiple Communication Protocols
+複数の通信プロトコル
 ================================================================================
 
-Because network modules execute on the control node instead of on the managed nodes, they can support multiple communication protocols. The communication protocol (XML over SSH, CLI over SSH, API over HTTPS) selected for each network module depends on the platform and the purpose of the module. Some network modules support only one protocol; some offer a choice. The most common protocol is CLI over SSH. You set the communication protocol with the ``ansible_connection`` variable:
+ネットワークモジュールは管理ノードではなくコントロールノードで実行されるため、複数の通信プロトコルに対応できます。各ネットワークモジュールに選択される通信プロトコル (SSH 上の XML、SSH 上の CLI、HTTPS 上の API) は、プラットフォームとモジュールの目的によって異なります。ネットワークモジュールによっては、1 つのプロトコルにしか対応しないものもあります。最も一般的なプロトコルは、SSH 上の CLI です。``ansible_connection`` 変数で通信プロトコルを設定します。
 
 .. csv-table::
-   :header: "Value of ansible_connection", "Protocol", "Requires", "Persistent?"
-   :widths: 30, 10, 10, 10
+   :header: "Value of ansible\_connection", "Protocol", "Requires", "Persistent?"
+   :widths:30, 10, 10, 10
 
-   "network_cli", "CLI over SSH", "network_os setting", "yes"
-   "netconf", "XML over SSH", "network_os setting", "yes"
-   "httpapi", "API over HTTP/HTTPS", "network_os setting", "yes"
+   "network\_cli", "CLI over SSH", "network\_os setting", "yes"
+   "netconf", "XML over SSH", "network\_os setting", "yes"
+   "httpapi", "API over HTTP/HTTPS", "network\_os setting", "yes"
    "local", "depends on provider", "provider setting", "no"
 
-Beginning with Ansible 2.6, we recommend using one of the persistent connection types listed above instead of ``local``. With persistent connections, you can define the hosts and credentials only once, rather than in every task. For more details on using each connection type on various platforms, see the :ref:`platform-specific <platform_options>` pages.
+Ansible 2.6 以降では、``local`` ではなく、上記の永続的な接続タイプのいずれかを使用することが推奨されます。永続的な接続では、ホストおよび認証情報は、全タスクではなく一度のみ定義できます。各種プラットフォームで各接続タイプを使用する詳細は、:ref:`platform-specific <platform_options>` ページを参照してください。
 
 
-Modules Organized by Network Platform
+ネットワークプラットフォーム別に整理されたモジュール
 ================================================================================
 
-A network platform is a set of network devices with a common operating system that can be managed by a collection of modules.  The modules for each network platform share a prefix, for example: 
+ネットワークプラットフォームは、モジュールのコレクションで管理できる共通のオペレーティングシステムを備えたネットワークデバイスセットです。 各ネットワークプラットフォームのモジュールは接頭辞を共有します。以下に例を示します。 
 
 - Arista: ``eos_``
 - Cisco: ``ios_``, ``iosxr_``, ``nxos_``
 - Juniper: ``junos_``
 - VyOS ``vyos_``
 
-All modules within a network platform share certain requirements. Some network platforms have specific differences - see the :ref:`platform-specific <platform_options>` documentation for details.
+ネットワークプラットフォーム内のすべてのモジュールは、特定の要件を共有します。一部のネットワークプラットフォームには特別な違いがあります。詳細は、:ref:`platform-specific <platform_options>` のドキュメントを参照してください。
 
 
-Privilege Escalation: ``enable`` mode, ``become``, and ``authorize``
+権限昇格: ``enable`` モード、``become``、および ``authorize``
 ================================================================================
 
-Several network platforms support privilege escalation, where certain tasks must be done by a privileged user. On network devices this is called ``enable`` mode (the equivalent of ``sudo`` in \*nix administration). Ansible network modules offer privilege escalation for those network devices that support it. For details of which platforms support ``enable`` mode, with examples of how to use it, see the :ref:`platform-specific <platform_options>` documentation.
+複数のネットワークプラットフォームは、特権ユーザーによる特定タスクの実行が必要な、権限昇格に対応します。ネットワークデバイスでは、これは ``enable`` モード (\*nix 管理での ``sudo`` に相当) と呼ばれます。Ansible ネットワークモジュールは、これに対応するネットワークデバイスに権限昇格を提供します。``enable`` モードに対応するプラットフォームの詳細と、その使用方法は、:ref:`platform-specific <platform_options>` のドキュメントを参照してください。
 
-Using ``become`` for privilege escalation
+``become`` を使用した権限昇格
 -----------------------------------------
 
-As of Ansible 2.6, you can use the top-level Ansible parameter ``become: yes`` with ``become_method: enable`` to run a task, play, or playbook with escalated privileges on any network platform that supports privilege escalation. You must use either ``connection: network_cli`` or ``connection: httpapi`` with ``become: yes`` with ``become_method: enable``. If you are using ``network_cli`` to connect Ansible to your network devices, a ``group_vars`` file would look like:
+Ansible 2.6 より、トップレベルの Ansible パラメーター ``become: yes`` と ``become_method: enable`` を使用して、権限昇格に対応するネットワークプラットフォームで権限昇格を使用して、タスク、プレイ、Playbook を実行します。``become_method: enable`` とともに ``become: yes`` を使用して、``connection: network_cli`` または ``connection: httpapi`` を使用する必要があります。``network_cli`` を使用して Ansible をネットワークデバイスに接続する場合、``group_vars`` ファイルは以下のようになります。
 
 .. code-block:: yaml
 
-   ansible_connection: network_cli
-   ansible_network_os: ios
-   ansible_become: yes
-   ansible_become_method: enable
+   ansible\_connection: network\_cli
+   ansible\_network\_os: ios
+   ansible\_become: yes
+   ansible\_become\_method: enable
 
-Legacy playbooks: ``authorize`` for privilege escalation
+レガシー Playbook : 権限昇格の ``承認``
 -----------------------------------------------------------------
 
-If you are running Ansible 2.5 or older, some network platforms support privilege escalation but not ``network_cli`` or ``httpapi`` connections. This includes all platforms in versions 2.4 and older, and HTTPS connections using ``eapi`` in version 2.5. With a ``local`` connection, you must use a ``provider`` dictionary and include ``authorize: yes`` and ``auth_pass: my_enable_password``. For that use case, a ``group_vars`` file looks like:
+Ansible 2.5 以前を実行している場合は、一部のネットワークプラットフォームは権限昇格に対応しますが、``network_cli`` 接続または ``httpapi`` 接続には対応していません。これには、バージョン 2.4 以前のすべてのプラットフォームと、バージョン 2.5 で ``eapi`` を使用した HTTPS 接続が含まれます。``ローカル`` 接続では、``provider`` ディクショナリーを使用し、``authorize: yes`` および ``auth_pass: my_enable_password`` を含める必要があります。このユースケースでは、``group_vars`` ファイルは以下のようになります。
 
 .. code-block:: yaml
 
-   ansible_connection: local
-   ansible_network_os: eos
-   # provider settings
-   eapi:
-     authorize: yes
-     auth_pass: " {{ secret_auth_pass }}"
-     port: 80
-     transport: eapi
-     use_ssl: no
+   ansible\_connection: local
+   ansible\_network\_os: eos
+   \# provider settings
+eapi:
+authorize: yes
+auth\_pass: " {{ secret\_auth\_pass }}"
+port: 80
+transport: eapi
+use\_ssl: no
 
-And you use the ``eapi`` variable in your task(s):
+また、タスクで ``eapi`` 変数を使用します。
 
 .. code-block:: yaml
 
    tasks:
-   - name: provider demo with eos
-     eos_banner:
+   \- name: provider demo with eos
+     eos\_banner:
        banner: motd
        text: |
          this is test
@@ -92,6 +92,6 @@ And you use the ``eapi`` variable in your task(s):
        state: present
        provider: "{{ eapi }}"
 
-Note that while Ansible 2.6 supports the use of ``connection: local`` with ``provider`` dictionaries, this usage will be deprecated in the future and eventually removed.
+Ansible 2.6 は、``provider`` ディレクトリーを使用した ``connection: local`` の使用に対応しますが、この使用は将来非推奨となり、最終的に削除されます。
 
-For more information, see :ref:`Become and Networks<become_network>`
+詳細は、「:ref:`Become およびネットワーク<become_network>`」を参照してください。

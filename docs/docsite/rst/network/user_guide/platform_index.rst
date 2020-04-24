@@ -1,53 +1,53 @@
-.. _platform_options:
+.. \_platform\_options:
 
 ****************
-Platform Options
+プラットフォームのオプション
 ****************
 
-Some Ansible Network platforms support multiple connection types, privilege escalation (``enable`` mode), or other options. The pages in this section offer standardized guides to understanding available options on each network platform. We welcome contributions from community-maintained platforms to this section.
+一部の Ansible Network プラットフォームは、複数の接続タイプ、権限昇格 (``enable`` モード)、またはその他のオプションに対応します。本セクションのページでは、各ネットワークプラットフォームで利用可能なオプションを理解する標準ガイドが紹介されています。コミュニティーが管理するプラットフォームから、このセクションへの貢献を歓迎いたします。
 
 .. toctree::
    :maxdepth: 2
-   :caption: Platform Options
+   :caption: プラットフォームのオプション
 
-   platform_cnos
-   platform_dellos6
-   platform_dellos9
-   platform_dellos10
-   platform_enos
-   platform_eos
-   platform_eric_eccli
-   platform_exos
-   platform_icx
-   platform_ios
-   platform_iosxr
-   platform_ironware
-   platform_junos
-   platform_meraki
-   platform_netvisor
-   platform_nos
-   platform_nxos
-   platform_routeros
-   platform_slxos
-   platform_voss
-   platform_vyos
-   platform_netconf_enabled
+   platform\_cnos
+   platform\_dellos6
+   platform\_dellos9
+   platform\_dellos10
+   platform\_enos
+   platform\_eos
+   platform\_eric\_eccli
+   platform\_exos
+   platform\_icx
+   platform\_ios
+   platform\_iosxr
+   platform\_ironware
+   platform\_junos
+   platform\_meraki
+   platform\_netvisor
+   platform\_nos
+   platform\_nxos
+   platform\_routeros
+   platform\_slxos
+   platform\_voss
+   platform\_vyos
+   platform\_netconf\_enabled
 
-.. _settings_by_platform:
+.. \_settings\_by\_platform:
 
-Settings by Platform
+プラットフォーム別の設定
 ================================
 
 .. raw:: html
 
     <style>
-    /* Style for this single table.  Add delimiters between header columns */
+    /* この 1 つの表に関するスタイル。 ヘッダー列の間に区切り文字を追加します。 */
     table#network-platform-table thead tr th.head {
-      border-left-width: 1px;
-      border-left-color: rgb(225, 228, 229);
-      border-left-style: solid;
-    }
-    </style>
+  border-left-width: 1px;
+  border-left-color: rgb(225, 228, 229);
+  border-left-style: solid;
+}
+</style>
 
 .. table::
     :name: network-platform-table
@@ -82,9 +82,9 @@ Settings by Platform
     Pluribus Netvisor                ``netvisor``             ✓
     Ruckus ICX `[†]`_                ``icx``                  ✓
     VyOS `[†]`_                      ``vyos``                 ✓                              ✓
-    OS that supports Netconf `[†]`_  ``<network-os>``                      ✓                 ✓
+    Netconf に対応する OS `[†]`_  ``<network-os>``                      ✓                 ✓
     ===============================  =======================  ===========  =======  =======  ===========
 
-.. _`[†]`:
+.. \_`[†]`:
 
-**[†]** Maintained by Ansible Network Team
+**\[†]** Ansible Network Team が管理しています。

@@ -1,32 +1,32 @@
-.. _network_developer_guide:
+.. \_network\_developer\_guide:
 
 **************************************
-Developer Guide for Network Automation
+ネットワーク自動化のための開発者ガイド
 **************************************
 
-Welcome to the Developer Guide for Ansible Network Automation!
+Ansible ネットワーク自動化のための開発者ガイドへようこそ
 
-**Who should use this guide?**
+**本書の対象者**
 
-If you want to extend Ansible for Network Automation by creating a module or plugin, this guide is for you. This guide is specific to networking. You should already be familiar with how to create, test, and document modules and plugins, as well as the prerequisites for getting your module or plugin accepted into the main Ansible repository.  See the  :ref:`developer_guide` for details. Before you proceed, please read:
+モジュールまたはプラグインを作成して、ネットワークの自動化向けに Ansible を拡張する場合は、本書をご利用ください。本ガイドはネットワークに特化しています。モジュールおよびプラグインの作成、テスト、文書化の方法や、メインの Ansible リポジトリーで受け入れられるモジュールまたはプラグインの前提条件を理解しておく必要があります。 詳細は、:ref:`developer_guide` を参照してください。作業を続行する前に、以下の点を確認してください。
 
-* How  to :ref:`add a custom plugin or module locally <developing_locally>`.
-* How to figure out if :ref:`developing a module is the right approach <module_dev_should_you>` for my use case.
-* How to :ref:`set up my Python development environment <environment_setup>`.
-* How to :ref:`get started writing a module <developing_modules_general>`.
+* :ref:`カスタムプラグインまたはモジュールをローカルで追加<developing_locally>` する方法
+* :ref:`モジュールの開発が自身のユースケースに適切なアプローチである<module_dev_should_you>` かどうかを確認する方法
+* :ref:`Python 開発環境を設定<environment_setup>` する方法
+* :ref:`モジュールの記述を開始 <developing_modules_general>` する方法
 
 
-Find the network developer task that best describes what you want to do:
+必要なことを最も適切に説明しているネットワーク開発者タスクを選択してください。
 
-   * I want to :ref:`develop a network resource module <developing_resource_modules>`.
-   * I want to :ref:`develop a network connection plugin <developing_plugins_network>`.
-   * I want to :ref:`document my set of modules for a network platform <documenting_modules_network>`.
+   * :ref:`ネットワークリソースモジュールを開発 <developing_resource_modules>` する
+   * :ref:`ネットワーク接続プラグインを開発 <developing_plugins_network>` する
+   * :ref:`ネットワークプラットフォーム用のモジュールセットを文書化 <documenting_modules_network>` する
 
-If you prefer to read the entire guide, here's a list of the pages in order.
+本書をすべて読む場合は、以下の順番でページを表示してください。
 
 .. toctree::
   :maxdepth: 1
 
-  developing_resource_modules_network
-  developing_plugins_network
-  documenting_modules_network
+  developing\_resource\_modules\_network
+  developing\_plugins\_network
+  documenting\_modules\_network

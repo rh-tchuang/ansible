@@ -1,73 +1,73 @@
-.. _netvisor_platform_options:
+.. \_netvisor\_platform\_options:
 
 **********************************
-Pluribus NETVISOR Platform Options
+Pluribus NETVISOR プラットフォームのオプション
 **********************************
 
-Pluribus NETVISOR Ansible modules only support CLI connections today. ``httpapi`` modules may be added in future.
-This page offers details on how to use ``network_cli`` on NETVISOR in Ansible.
+Pluribus NETVISOR Ansible モジュールは現時点では CLI 接続のみに対応します。``httpapi`` モジュールは今後追加される可能性があります。
+このページには、Ansible で NETVISOR の ``network_cli`` を使用する詳細な方法が記載されています。
 
-.. contents:: Topics
+.. contents:: トピック
 
-Connections Available
+利用可能な接続
 ================================================================================
 
 .. table::
     :class: documentation-table
 
     ====================  ==========================================
-    ..                    CLI
+    ..                   CLI
     ====================  ==========================================
-    Protocol              SSH
+    プロトコル              SSH
 
-    Credentials           uses SSH keys / SSH-agent if present
+    認証情報           SSH キー / SSH-agent (存在する場合) を使用します。
 
-                          accepts ``-u myuser -k`` if using password
+                          パスワードを使用する場合は ``-u myuser -k`` を許可します。
 
-    Indirect Access       via a bastion (jump host)
+    間接アクセス       bastion (ジャンプホスト) を経由
 
-    Connection Settings   ``ansible_connection: network_cli``
+    接続設定   ``ansible_connection: network_cli``
 
-    |enable_mode|         not supported by NETVISOR
+    |enable_mode|         NETVISOR では対応していません。
 
-    Returned Data Format  ``stdout[0].``
+    返されるデータ形式 ``stdout[0]``
     ====================  ==========================================
 
-.. |enable_mode| replace:: Enable Mode |br| (Privilege Escalation)
+.. |enable\_mode| replace::Enable モード |br| (権限昇格)
 
-Pluribus NETVISOR does not support ``ansible_connection: local``. You must use ``ansible_connection: network_cli``.
+Pluribus NETVISOR は ``ansible_connection: local`` に対応していません。``ansible_connection: network_cli`` を使用する必要があります。
 
-Using CLI in Ansible
+Ansible での CLI の使用
 ====================
 
-Example CLI ``group_vars/netvisor.yml``
+CLI の例: ``group_vars/netvisor.yml``
 ---------------------------------------
 
 .. code-block:: yaml
 
-   ansible_connection: network_cli
-   ansible_network_os: netvisor
-   ansible_user: myuser
-   ansible_password: !vault...
-   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible\_connection: network\_cli
+   ansible\_network\_os: netvisor
+   ansible\_user: myuser
+   ansible\_password: !vault...
+   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
-- If you are using SSH keys (including an ssh-agent) you can remove the ``ansible_password`` configuration.
-- If you are accessing your host directly (not through a bastion/jump host) you can remove the ``ansible_ssh_common_args`` configuration.
-- If you are accessing your host through a bastion/jump host, you cannot include your SSH password in the ``ProxyCommand`` directive. To prevent secrets from leaking out (for example in ``ps`` output), SSH does not support providing passwords via environment variables.
+- SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
+- (bastion/ジャンプホスト を経由せず) ホストに直接アクセスしている場合は、``ansible_ssh_common_args`` 設定を削除できます。
+- bastion/ジャンプホスト 経由でホストにアクセスしている場合は、SSH パスワードを ``ProxyCommand`` ディレクティブに含めることができません。(``ps`` 出力などで) シークレットの漏えいを防ぐために、SSH は環境変数によるパスワードの提供に対応していません。
 
-Example CLI Task
+CLI タスクの例
 ----------------
 
 .. code-block:: yaml
 
-   - name: Create access list
-     pn_access_list:
-       pn_name: "foo"
-       pn_scope: "local"
+   - name:Create access list
+     pn\_access\_list:
+       pn\_name: "foo"
+       pn\_scope: "local"
        state: "present"
-     register: acc_list
-     when: ansible_network_os == 'netvisor'
+     register: acc\_list
+     when: ansible\_network\_os == 'netvisor'
 
 
-.. include:: shared_snippets/SSH_warning.txt
+.. include:: shared\_snippets/SSH\_warning.txt
