@@ -14,20 +14,20 @@
 ユーザーが適切な方法でプラグインに名前を付けることが重要です。
 
 これらのプラグインのパブリックメソッドは、
-接続のプロキシーオブジェクトをその他の接続方法として、モジュールまたは module\_utils から接続で呼び出すことが可能です。以下は、このような呼び出しを module\_utils ファイルで実行する非常に簡単な使用例です。
+接続のプロキシーオブジェクトをその他の接続方法として、モジュールまたは module_utils から接続で呼び出すことが可能です。以下は、このような呼び出しを module_utils ファイルで実行する非常に簡単な使用例です。
 その他のモジュールと共有できるようにします。
 
 .. code-block:: python
 
-  from ansible.module\_utils.connection import Connection
+  from ansible.module_utils.connection import Connection
 
-  def get\_config(module):
-      \# module is your AnsibleModule instance.
-connection = Connection(module.\_socket\_path)
+  def get_config(module):
+      # module is your AnsibleModule instance.
+      connection = Connection(module._socket_path)
 
       # You can now call any method (that doesn't start with '_') of the connection
-  # plugin or its platform-specific plugin
-  return connection.get_config()
+      # plugin or its platform-specific plugin
+      return connection.get_config()
 
 .. contents::
    :local:
@@ -48,20 +48,20 @@ httpapi プラグインの開発
 
 .. code-block:: python
 
-   from ansible.module\_utils.six.moves.urllib.error import HTTPError
+   from ansible.module_utils.six.moves.urllib.error import HTTPError
 
-   def send\_request(self, data, path, method='POST'):
-       \# Fixed headers for requests
-headers = {'Content-Type': 'application/json'}
-try:
-response, response\_content = self.connection.send(path, data, method=method, headers=headers)
-except HTTPError as exc:
-return exc.code, exc.read()
+   def send_request(self, data, path, method='POST'):
+       # Fixed headers for requests
+       headers = {'Content-Type': 'application/json'}
+       try:
+           response, response_content = self.connection.send(path, data, method=method, headers=headers)
+       except HTTPError as exc:
+           return exc.code, exc.read()
 
        # handle_response (defined separately) will take the format returned by the device
-   # and transform it into something more suitable for use by modules.
-   # This may be JSON text to Python dictionaries, for example.
-   return handle_response(response_content)
+       # and transform it into something more suitable for use by modules.
+       # This may be JSON text to Python dictionaries, for example.
+       return handle_response(response_content)
 
 認証
 --------------
@@ -70,7 +70,7 @@ return exc.code, exc.read()
 
 .. code-block:: python
 
-   def update\_auth(self, response, response\_text):
+   def update_auth(self, response, response_text):
        cookie = response.info().get('Set-Cookie')
        if cookie:
            return {'Cookie': cookie}
@@ -82,7 +82,7 @@ return exc.code, exc.read()
 .. code-block:: python
 
    def login(self, username, password):
-       login\_path = '/my/login/path'
+       login_path = '/my/login/path'
        data = {'user': username, 'password': password}
 
        response = self.send_request(data, path=login_path)
@@ -100,8 +100,8 @@ return exc.code, exc.read()
 .. code-block:: python
 
    def logout(self):
-       logout\_path = '/my/logout/path'
-       self.send\_request(None, path=logout\_path)
+       logout_path = '/my/logout/path'
+       self.send_request(None, path=logout_path)
 
        # Clean up tokens
    self.connection._auth = None
@@ -139,7 +139,7 @@ NETCONF プラグインの開発
 
 .. _developing_plugins_network_cli:
 
-network\_cli プラグインの開発
+network_cli プラグインの開発
 ==============================
 
 接続タイプ :ref:`network_cli <network_cli_connection>` は、コマンドを送信して応答を受け取るための疑似端末を作成するフードの下で、``paramiko_ssh`` を使用します。
@@ -157,15 +157,15 @@ network\_cli プラグインの開発
 
   .. code-block:: bash
 
-    cliconf\_plugins/
-    terminal\_plugins/
+    cliconf_plugins/
+    terminal_plugins/
 
 * ロール
 
   .. code-block:: bash
 
-     myrole/cliconf\_plugins/
-     myrole/terminal\_plugins/
+     myrole/cliconf_plugins/
+     myrole/terminal_plugins/
 
 * コレクション
 
@@ -176,7 +176,7 @@ network\_cli プラグインの開発
 
 また、:ref:`DEFAULT_CLICONF_PLUGIN_PATH` を設定して ``cliconf`` プラグインパスを設定することもできます。
 
-予想される場所に``cliconf`` プラグインおよび ``terminal`` プラグインを追加した後、ユーザーは以下を行うことができます。
+予想される場所に ``cliconf`` プラグインおよび ``terminal`` プラグインを追加した後、ユーザーは以下を行うことができます。
 
 * :ref:`cli_command <cli_command_module>` を使用して、ネットワークデバイスで任意のコマンドを実行します。
 * :ref:`cli_config <cli_config_module>` を使用して、プラットフォーム固有のモジュールを使用しないリモートホストに設定変更を実装します。

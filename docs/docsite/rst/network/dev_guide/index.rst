@@ -27,6 +27,6 @@ Ansible ネットワーク自動化のための開発者ガイドへようこそ
 .. toctree::
   :maxdepth: 1
 
-  developing\_resource\_modules\_network
-  developing\_plugins\_network
-  documenting\_modules\_network
+  developing_resource_modules_network
+  developing_plugins_network
+  documenting_modules_network

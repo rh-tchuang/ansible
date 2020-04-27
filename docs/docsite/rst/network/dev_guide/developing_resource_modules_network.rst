@@ -28,7 +28,7 @@
 
   .. code-block:: bash
 
-    git clone https://github.com/ansible-network/resource\_module\_builder.git
+    git clone https://github.com/ansible-network/resource_module_builder.git
 
 2. 要件をインストールします。
 
@@ -52,26 +52,26 @@
 .. code-block:: yaml
 
   ---
-  GENERATOR\_VERSION:'1.0'
-  ANSIBLE\_METADATA: |
+  GENERATOR_VERSION:'1.0'
+  ANSIBLE_METADATA: |
       {
-          'metadata\_version':'1.1',
-          'status': \['preview'],
-          'supported\_by': '<support\_group>'
+          'metadata_version':'1.1',
+          'status': ['preview'],
+          'supported_by': '<support_group>'
       }
-  NETWORK\_OS: myos
+  NETWORK_OS: myos
   RESOURCE: interfaces
   COPYRIGHT:Copyright 2019 Red Hat
   LICENSE: gpl-3.0.txt
 
   DOCUMENTATION: |
-    module: myos\_interfaces
-    version\_added:2.9
-    short\_description:'Manages <xxxx> attributes of <network\_os> <resource>'
-    description:'Manages <xxxx> attributes of <network\_os> <resource>.'
+    module: myos_interfaces
+    version_added:2.9
+    short_description:'Manages <xxxx> attributes of <network_os> <resource>'
+    description:'Manages <xxxx> attributes of <network_os> <resource>.'
     author:Ansible Network Engineer
    notes:
-      \- 'Tested against <network\_os> <version>'
+      - 'Tested against <network_os> <version>'
     options:
       config:
         description:The provided configuration
@@ -81,52 +81,52 @@
           name:
             type: str
             description:The name of the <resource>
-          some\_string:
+          some_string:
             type: str
             description:
-            \- The some\_string\_01
+            - The some_string_01
             choices:
-            \- choice\_a
-            \- choice\_b
-            \- choice\_c
-            default: choice\_a
-          some\_bool:
+            - choice_a
+            - choice_b
+            - choice_c
+            default: choice_a
+          some_bool:
             description:
-            \- The some\_bool.
+            - The some_bool.
             type: bool
-          some\_int:
+          some_int:
             description:
-            \- The some\_int.
+            - The some_int.
             type: int
-            version\_added:'1.1'
-          some\_dict:
+            version_added:'1.1'
+          some_dict:
             type: dict
             description:
-            \- The some\_dict.
+            - The some_dict.
             suboptions:
-              property\_01:
+              property_01:
                 description:
-                \- The property\_01
+                - The property_01
                 type: str
       state:
         description:
-        \- The state of the configuration after module completion.
+        - The state of the configuration after module completion.
         type: str
         choices:
-        \- merged
-        \- replaced
-        \- overridden
-        \- deleted
+        - merged
+        - replaced
+        - overridden
+        - deleted
         default: merged
   EXAMPLES:
-    \- deleted\_example\_01.txt
-    \- merged\_example\_01.txt
-    \- overridden\_example\_01.txt
-    \- replaced\_example\_01.txt
+    - deleted_example_01.txt
+    - merged_example_01.txt
+    - overridden_example_01.txt
+    - replaced_example_01.txt
 
 リソースが対応するそれぞれの状態の例を含める必要があります。リソースモジュールビルダーも、サンプルモデルにこれを追加します。
 
-その他の例は、「`Ansible ネットワークリソースモデル <https://github.com/ansible-network/resource_module_models>`\_」を参照してください。
+その他の例は、「`Ansible ネットワークリソースモデル <https://github.com/ansible-network/resource_module_models>`_」を参照してください。
 
 リソースモジュールビルダーの使用
 =================================
@@ -135,10 +135,10 @@
 
 .. code-block:: bash
 
-  ansible-playbook -e rm\_dest=<destination for modules and module utils>\
+  ansible-playbook -e rm_dest=<destination for modules and module utils>\
                    -e structure=collection \
-                   -e collection\_org=<collection\_org> \
-                   -e collection\_name=<collection\_name> \
+                   -e collection_org=<collection_org> \
+                   -e collection_name=<collection_name> \
                    -e model=<model>\
                    site.yml
 
@@ -158,7 +158,7 @@
 
 .. code-block:: bash
 
-  ansible-playbook -e rm\_dest=<destination for modules and module utils>\
+  ansible-playbook -e rm_dest=<destination for modules and module utils>\
                    -e structure=role \
                    -e model=<model>\
                    site.yml
@@ -176,11 +176,11 @@
 
 .. code-block:: bash
 
-  ansible-playbook -e rm\_dest=~/github/rm\_example \
+  ansible-playbook -e rm_dest=~/github/rm_example \
                    -e structure=collection \
-                   -e collection\_org=cidrblock \
-                   -e collection\_name=my\_collection \
-                   -e model=models/myos/interfaces/myos\_interfaces.yml \
+                   -e collection_org=cidrblock \
+                   -e collection_name=my_collection \
+                   -e model=models/myos/interfaces/myos_interfaces.yml \
                    site.yml
 
 .. code-block:: text
@@ -194,9 +194,9 @@
   |   ├── inventory
   |   ├── modules
   |   |   ├── __init__.py
-  |   |   ├── myos\_facts.py
-  |   |   └──  myos\_interfaces.py
-  |   └──  module\_utils
+  |   |   ├── myos_facts.py
+  |   |   └──  myos_interfaces.py
+  |   └──  module_utils
   |       ├── __init__.py
   |       └──  network
   |           ├── __init__.py
@@ -238,9 +238,9 @@
 
 .. code-block:: bash
 
-  ansible-playbook -e rm\_dest=~/github/rm\_example/roles/my\_role \
+  ansible-playbook -e rm_dest=~/github/rm_example/roles/my_role \
                    -e structure=role \
-                   -e model=models/myos/interfaces/myos\_interfaces.yml \
+                   -e model=models/myos/interfaces/myos_interfaces.yml \
                    site.yml
 
 
@@ -344,20 +344,20 @@
 
 argspec モジュール
     * ``module_utils/<ansible_network_os>/argspec/<resource>/``.
-    \* リソース用の argspec
+    * リソース用の argspec
 
 ファクト
     * ``module_utils/<ansible_network_os>/facts/<resource>/``.
-    \* リソースのファクトを入力します。
+    * リソースのファクトを入力します。
     ``get_facts`` API が全サブセットを同期するリソースモジュールに対して ``<ansible_network_os>_facts`` モジュールおよびファクトを維持するための ``module_utils/<ansible_network_os>/facts/facts.py`` のエントリー
-    \* Facts コレクションを機能させるには、``module_utils/<ansible_network_os>/facts/facts.py`` の FACTS\_RESOURCE\_SUBSETS 一覧にあるリソースサブセットのエントリー
+    * Facts コレクションを機能させるには、``module_utils/<ansible_network_os>/facts/facts.py`` の FACTS_RESOURCE_SUBSETS 一覧にあるリソースサブセットのエントリー
 
-module\_utils のモジュールパッケージ
+module_utils のモジュールパッケージ
     * ``module_utils/<ansible_network_os>/<config>/<resource>/``.
-    \* 設定をデバイスに読み込み、鍵の ``changed``、``commands``、``before``、および ``after`` を使用して、デバイスへの設定を読み込み、結果を生成する ``execute_module`` API を実装します。
+    * 設定をデバイスに読み込み、鍵の ``changed``、``commands``、``before``、および ``after`` を使用して、デバイスへの設定を読み込み、結果を生成する ``execute_module`` API を実装します。
     * ``<resource>`` 設定のファクトを返す ``get_facts`` API を呼び出すか、デバイスに onbox diff サポートがある場合はその相違点を返します。
-    \* diff がサポートされていない場合は、収集されるファクトと、指定される鍵/値を比較します。
-    \* 最後の設定を生成します。
+    * diff がサポートされていない場合は、収集されるファクトと、指定される鍵/値を比較します。
+    * 最後の設定を生成します。
 
 ユーティリティー
     * ``module_utils/<ansible_network_os>/utils``.
@@ -370,8 +370,8 @@ module\_utils のモジュールパッケージ
 
 .. code-block:: bash
 
-  rm -rf rmb\_tests/roles/my\_role
-  ansible-playbook -e rm\_dest=./rmb\_tests/roles/my\_role \
+  rm -rf rmb_tests/roles/my_role
+  ansible-playbook -e rm_dest=./rmb_tests/roles/my_role \
                    -e structure=role \
-                   -e model=models/myos/interfaces/myos\_interfaces.yml \
+                   -e model=models/myos/interfaces/myos_interfaces.yml \
                    site.yml
