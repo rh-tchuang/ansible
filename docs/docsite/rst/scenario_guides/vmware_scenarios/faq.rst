@@ -1,10 +1,10 @@
-.. \_vmware\_faq:
+.. _vmware_faq:
 
 ******************
 Ansible VMware FAQ
 ******************
 
-vmware\_guest
+vmware_guest
 ============
 
 スタンドアロンの ESXi サーバーに仮想マシンをデプロイすることはできますか。

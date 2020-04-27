@@ -1,4 +1,4 @@
-.. \_vmware\_guest\_remove\_virtual\_machine:
+.. _vmware_guest_remove_virtual_machine:
 
 *****************************************
 既存の VMware 仮想マシンの削除

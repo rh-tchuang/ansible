@@ -1,4 +1,4 @@
-.. \_vmware\_concepts:
+.. _vmware_concepts:
 
 ***************************
 Ansible for VMware の概念

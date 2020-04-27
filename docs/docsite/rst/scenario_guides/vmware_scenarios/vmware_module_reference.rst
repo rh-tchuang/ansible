@@ -1,6 +1,6 @@
 :orphan:
 
-.. \_vmware\_ansible\_module\_index:
+.. _vmware_ansible_module_index:
 
 ***************************
 Ansible VMware モジュールガイド

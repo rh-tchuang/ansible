@@ -1,4 +1,4 @@
-.. \_vmware\_external\_doc\_links:
+.. _vmware_external_doc_links:
 
 *****************************
 他の便利な VMware リソース

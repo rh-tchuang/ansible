@@ -1,4 +1,4 @@
-.. \_vmware\_troubleshooting:
+.. _vmware_troubleshooting:
 
 **********************************
 Ansible for VMware のトラブルシューティング
@@ -18,15 +18,15 @@ Ansible for VMware のデバッグ
 .. code-block:: bash
 
     $ export GOVC_USERNAME=ESXI_OR_VCENTER_USERNAME
-$ export GOVC_PASSWORD=ESXI_OR_VCENTER_PASSWORD
-$ export GOVC_URL=https://ESXI_OR_VCENTER_HOSTNAME:443
-$ govc find /
+    $ export GOVC_PASSWORD=ESXI_OR_VCENTER_PASSWORD
+    $ export GOVC_URL=https://ESXI_OR_VCENTER_HOSTNAME:443
+    $ govc find /
 
 Ansible for VMware に関する既知の問題
 ====================================
 
 
-Ubuntu 18.04 で vmware\_guest を使用したネットワーク設定
+Ubuntu 18.04 で vmware_guest を使用したネットワーク設定
 --------------------------------------------------
 
 ``open-vm-tools`` に ``netplan`` のサポートがないため、Ubuntu 18.04 で ``vmware_guest`` を使用してネットワークを設定すると破損することが知られています。
@@ -48,55 +48,55 @@ Ubuntu 18.04 で vmware\_guest を使用したネットワーク設定
 .. code-block:: yaml
 
    - name: make sure cache directory exists
-     file: path="{{ inventory\_dir }}/cache" state=directory
-     delegate\_to: localhost
+     file: path="{{ inventory_dir }}/cache" state=directory
+     delegate_to: localhost
 
    - name: generate network templates
-     template: src=network.j2 dest="{{ inventory\_dir }}/cache/{{ inventory\_hostname }}.network"
-     delegate\_to: localhost
+     template: src=network.j2 dest="{{ inventory_dir }}/cache/{{ inventory_hostname }}.network"
+     delegate_to: localhost
 
    - name: copy generated files to vm
-     vmware\_guest\_file\_operation:
-       hostname: "{{ vmware\_general.hostname }}"
-username: "{{ vmware\_username }}"
-password: "{{ vmware\_password }}"
-datacenter: "{{ vmware\_general.datacenter }}"
-validate\_certs: "{{ vmware\_general.validate\_certs }}"
-vm\_id: "{{ inventory\_hostname }}"
-vm\_username: root
-vm\_password: "{{ template\_password }}"
+     vmware_guest_file_operation:
+       hostname: "{{ vmware_general.hostname }}"
+       username: "{{ vmware_username }}"
+       password: "{{ vmware_password }}"
+       datacenter: "{{ vmware_general.datacenter }}"
+       validate_certs: "{{ vmware_general.validate_certs }}"
+       vm_id: "{{ inventory_hostname }}"
+       vm_username: root
+       vm_password: "{{ template_password }}"
        copy:
-       src: "{{ inventory\_dir }}/cache/{{ inventory\_hostname }}.network"
-       dest: "/etc/systemd/network/ens160.network"
-       overwrite:False
-       delegate\_to: localhost
+           src: "{{ inventory_dir }}/cache/{{ inventory_hostname }}.network"
+           dest: "/etc/systemd/network/ens160.network"
+           overwrite: False
+     delegate_to: localhost
 
    - name: restart systemd-networkd
-     vmware\_vm\_shell:
-       hostname: "{{ vmware\_general.hostname }}"
-username: "{{ vmware\_username }}"
-password: "{{ vmware\_password }}"
-datacenter: "{{ vmware\_general.datacenter }}"
-folder: /vm
-vm\_id: "{{ inventory\_hostname}}"
-vm\_username: root
-vm\_password: "{{ template\_password }}"
-       vm\_shell: /bin/systemctl
-       vm\_shell\_args: " restart systemd-networkd"
-       delegate\_to: localhost
+     vmware_vm_shell:
+       hostname: "{{ vmware_general.hostname }}"
+       username: "{{ vmware_username }}"
+       password: "{{ vmware_password }}"
+       datacenter: "{{ vmware_general.datacenter }}"
+       folder: /vm
+       vm_id: "{{ inventory_hostname}}"
+       vm_username: root
+       vm_password: "{{ template_password }}"
+       vm_shell: /bin/systemctl
+       vm_shell_args: " restart systemd-networkd"
+     delegate_to: localhost
 
    - name: restart systemd-resolved
-     vmware\_vm\_shell:
-       hostname: "{{ vmware\_general.hostname }}"
-username: "{{ vmware\_username }}"
-password: "{{ vmware\_password }}"
-datacenter: "{{ vmware\_general.datacenter }}"
-folder: /vm
-vm\_id: "{{ inventory\_hostname}}"
-vm\_username: root
-vm\_password: "{{ template\_password }}"
-       vm\_shell: /bin/systemctl
-       vm\_shell\_args: " restart systemd-resolved"
-       delegate\_to: localhost
+     vmware_vm_shell:
+       hostname: "{{ vmware_general.hostname }}"
+       username: "{{ vmware_username }}"
+       password: "{{ vmware_password }}"
+       datacenter: "{{ vmware_general.datacenter }}"
+       folder: /vm
+       vm_id: "{{ inventory_hostname}}"
+       vm_username: root
+       vm_password: "{{ template_password }}"
+       vm_shell: /bin/systemctl
+       vm_shell_args: " restart systemd-resolved"
+     delegate_to: localhost
 
 3) ``open-vm-tools`` で ``netplan`` サポートを待ちます。

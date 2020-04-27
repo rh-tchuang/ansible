@@ -1,4 +1,4 @@
-.. \_vmware\_guest\_find\_folder:
+.. _vmware_guest_find_folder:
 
 ******************************************************
 既存の VMware 仮想マシンのディレクトリーパスの検索

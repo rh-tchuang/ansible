@@ -1,4 +1,4 @@
-.. \_vmware\_http\_api\_usage:
+.. _vmware_http_api_usage:
 
 ***********************************
 Ansible を使用した VMware HTTP API の使用

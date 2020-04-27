@@ -1,6 +1,6 @@
 :orphan:
 
-.. \_implicit\_localhost:
+.. _implicit_localhost:
 
 暗黙的な 'localhost'
 ====================
@@ -20,16 +20,16 @@
    hosts:
      localhost:
       vars:
-        ansible\_connection: local
-        ansible\_python\_interpreter: "{{ansible\_playbook\_python}}"
+        ansible_connection: local
+        ansible_python_interpreter: "{{ansible_playbook_python}}"
 
 この設定により、正しい接続および Python が使用してローカルでのタスクが実行されるようになります。
-インベントリーに ``localhost`` のホストのエントリーを作成して、組み込まれた暗黙的なホストバージョンを上書きできます。この時点で、すべての暗黙的な動作は無視され、インベントリー内の ``localhost`` は他のホストと同じように処理されます。``ansible_python_interpreter`` などの接続変数を含む、グループおよびホスト変数が適用されます。この設定は、``delegate_to: localhost`` や ``local_action`` にも適用されます。local\_action は、delegate\_to: localhost のエイリアスです。
+インベントリーに ``localhost`` のホストのエントリーを作成して、組み込まれた暗黙的なホストバージョンを上書きできます。この時点で、すべての暗黙的な動作は無視され、インベントリー内の ``localhost`` は他のホストと同じように処理されます。``ansible_python_interpreter`` などの接続変数を含む、グループおよびホスト変数が適用されます。この設定は、``delegate_to: localhost`` や ``local_action`` にも適用されます。local_action は、delegate_to: localhost のエイリアスです。
 
 .. note::
-  \- このホストはいずれのグループでもターゲットにすることはできませんが、``host_vars`` と 'all' グループからの vars (変数) を使用します。
+  - このホストはいずれのグループでもターゲットにすることはできませんが、``host_vars`` と 'all' グループからの vars (変数) を使用します。
   - ``"{{ hostvars['localhost'] }}"`` などの要求がない限り、暗黙的な localhost は ``hostvars`` マジック変数には表示されません。
-  \- マジック変数 ``inventory_file`` および ``inventory_dir`` は、**各インベントリーホスト** に依存するため、暗黙的な localhost では利用できません。
-  \- この暗黙的ホストは、「localhost」の IPv4 および IPv6 の表現であるため、``127.0.0.1`` または ``::1`` を使用してもトリガーとなります。
-  \- 作成する方法は多数ありますが、暗黙的な localhost は 1 つしかありません。これには、最初に作成したときの名前が使用されます。
+  - マジック変数 ``inventory_file`` および ``inventory_dir`` は、**各インベントリーホスト** に依存するため、暗黙的な localhost では利用できません。
+  - この暗黙的ホストは、「localhost」の IPv4 および IPv6 の表現であるため、``127.0.0.1`` または ``::1`` を使用してもトリガーとなります。
+  - 作成する方法は多数ありますが、暗黙的な localhost は 1 つしかありません。これには、最初に作成したときの名前が使用されます。
   - ``connection: local`` があっても暗黙的な localhost のトリガーにならない場合は、``inventory_hostname`` の接続を変更しているだけです。

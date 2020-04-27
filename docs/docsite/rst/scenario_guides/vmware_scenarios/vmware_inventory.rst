@@ -1,4 +1,4 @@
-.. \_vmware\_ansible\_inventory:
+.. _vmware_ansible_inventory:
 
 *************************************
 VMware 動的インベントリープラグインの使用
@@ -30,8 +30,8 @@ VMware 動的インベントリープラグインを使用するには、
 
 .. code-block:: ini
 
-  \[inventory]
-  enable\_plugins = vmware\_vm\_inventory
+  [inventory]
+  enable_plugins = vmware_vm_inventory
 
 次に、作業ディレクトリーに ``.vmware.yml`` または ``.vmware.yaml`` で終わるファイルを作成します。
 
@@ -63,9 +63,9 @@ vault が設定された設定ファイルの使用
 .. code-block:: bash
 
     $ ansible-vault encrypt <filename>.vmware.yml
-  New Vault password:
-  Confirm New Vault password:
-  Encryption successful
+    New Vault password:
+    Confirm New Vault password:
+    Encryption successful
 
 また、以下を使用して、vault が設定されたこのインベントリー設定ファイルを使用できます。
 

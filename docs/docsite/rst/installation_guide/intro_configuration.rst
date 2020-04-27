@@ -1,4 +1,4 @@
-.. \_intro\_configuration:
+.. _intro_configuration:
 
 *******************
 Ansible の設定
@@ -10,7 +10,7 @@ Ansible の設定
 このトピックでは、Ansible の設定を制御する方法について説明します。
 
 
-.. \_the\_configuration\_file:
+.. _the_configuration_file:
 
 設定ファイル
 ==================
@@ -19,7 +19,7 @@ Ansible の一部の設定は、設定ファイル (ansible.cfg) で調整でき
 大半の場合には stock 設定で十分ですが、変更したほうがが合理的な場合もあります。
 設定ファイルを検索するパスが :ref:`参照ドキュメント<ansible_configuration_settings_locations>` に一覧表示されます
 
-.. \_getting\_the\_latest\_configuration:
+.. _getting_the_latest_configuration:
 
 最新設定の取得
 --------------------------------
@@ -36,7 +36,7 @@ pip またはソースから Ansible をインストールした場合には、
 
 詳細については「:ref:`ansible_configuration_settings`」を参照してください。
 
-.. \_environmental\_configuration:
+.. _environmental_configuration:
 
 環境設定
 ===========================
@@ -47,7 +47,7 @@ Ansible では、環境変数を使用した設定も可能です。
 「:ref:`ansible_configuration_settings` 」から利用可能な環境変数の詳細な一覧を取得できます。
 
 
-.. \_command\_line\_configuration:
+.. _command_line_configuration:
 
 コマンドラインオプション
 ====================

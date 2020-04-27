@@ -1,4 +1,4 @@
-.. \_cache\_plugins:
+.. _cache_plugins:
 
 Cache プラグイン
 =============
@@ -14,7 +14,7 @@ chache プラグインによりバックエンドキャッシングメカニズ�
 
 インベントリーおよびファクトに個別のキャッシュプラグインを使用できます。インベントリー固有のキャッシュプラグインが提供されておらず、インベントリーキャッシュが有効になっている場合は、ファクトキャッシュプラグインがインベントリーに使用されます。
 
-.. \_enabling\_cache:
+.. _enabling_cache:
 
 ファクトの cache プラグインの有効化
 ---------------------------
@@ -71,8 +71,8 @@ Cache プラグインをコレクションで使用する場合には、完全�
 .. code-block:: yaml
 
     # dev.aws_ec2.yaml
-plugin: aws_ec2
-cache: True
+    plugin: aws_ec2
+    cache: True
 
 ファクトキャッシュプラグインと同様に、一度に 1 つのインベントリーの cache プラグインのみをアクティブにでき、環境変数で設定できます。
 
@@ -92,12 +92,12 @@ cache: True
 .. code-block:: yaml
 
     # dev.aws_ec2.yaml
-plugin: aws_ec2
-cache_plugin: jsonfile
+    plugin: aws_ec2
+    cache_plugin: jsonfile
 
 詳細は、各 inventory プラグインのドキュメント、または Ansible :ref:`設定<ansible_configuration_settings>` を参照してください。
 
-.. \_using\_cache:
+.. _using_cache:
 
 Cache プラグインの使用
 -------------------
@@ -105,7 +105,7 @@ Cache プラグインの使用
 Cache プラグインは、有効になると自動的に使用されます。
 
 
-.. \_cache\_plugin\_list:
+.. _cache_plugin_list:
 
 プラグイン一覧
 -----------
@@ -137,4 +137,4 @@ Cache プラグインは、有効になると自動的に使用されます。
    `ユーザーのメーリングリスト <https://groups.google.com/forum/#!forum/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `webchat.freenode.net <https://webchat.freenode.net>`_
-       \#ansible IRC chat channel
+       #ansible IRC chat channel

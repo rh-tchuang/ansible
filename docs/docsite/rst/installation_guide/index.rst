@@ -8,6 +8,6 @@
 .. toctree::
    :maxdepth: 2
 
-   intro\_installation
-   intro\_configuration
+   intro_installation
+   intro_configuration
 

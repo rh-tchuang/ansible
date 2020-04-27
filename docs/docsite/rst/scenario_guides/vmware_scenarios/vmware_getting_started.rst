@@ -1,6 +1,6 @@
 :orphan:
 
-.. \_vmware\_ansible\_getting\_started:
+.. _vmware_ansible_getting_started:
 
 ***************************************
 Ansible for VMware の概要

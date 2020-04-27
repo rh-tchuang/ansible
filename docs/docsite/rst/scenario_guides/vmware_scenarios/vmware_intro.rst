@@ -1,4 +1,4 @@
-.. \_vmware\_ansible\_intro:
+.. _vmware_ansible_intro:
 
 **********************************
 VMware 向け Ansible の概要
@@ -34,7 +34,7 @@ VSphere Automation Python SDK は、pip を使用してインストールでき�
 注記:
    VSphere Automation Python SDK をインストールすると、``pyvmomi`` もインストールされます。``pyvmomi`` の個別インストールは必要ありません。
    
-vmware\_guest モジュール
+vmware_guest モジュール
 ===================
 
 :ref:`vmware_guest<vmware_guest_module>` モジュールは、特定の ESXi サーバーまたは vCenter サーバーで仮想マシンに関連するさまざまな操作を管理します。

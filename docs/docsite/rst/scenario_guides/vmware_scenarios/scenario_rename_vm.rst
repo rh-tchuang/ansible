@@ -1,4 +1,4 @@
-.. \_vmware\_guest\_rename\_virtual\_machine:
+.. _vmware_guest_rename_virtual_machine:
 
 **********************************
 既存の仮想マシンの名前変更

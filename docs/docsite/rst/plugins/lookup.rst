@@ -1,4 +1,4 @@
-.. \_lookup\_plugins:
+.. _lookup_plugins:
 
 Lookup プラグイン
 ==============
@@ -17,16 +17,16 @@ Lookup プラグインにより返されるデータは、Ansible で標準の�
 Lookup は、Jinja2 テンプレート化言語に対する Ansible 固有の拡張です。
 
 .. note::
-   \- Lookup は、実行したスクリプトに基づいて実行されるローカルタスクとは異なり、
+   - Lookup は、実行したスクリプトに基づいて実行されるローカルタスクとは異なり、
      ロールまたはプレイに関連して作業ディレクトリーで実行されます。
-   \- Ansible バージョン 1.9 以降、wantlist=True を lookup に渡して、Jinja2 テンプレート「for」ループで使用できます。
-   \- Lookup プラグインは高度な機能です。Ansible Play の使用方法に関する適切な知識が必要です。
+   - Ansible バージョン 1.9 以降、wantlist=True を lookup に渡して、Jinja2 テンプレート「for」ループで使用できます。
+   - Lookup プラグインは高度な機能です。Ansible Play の使用方法に関する適切な知識が必要です。
 
 .. warning::
-   \- lookup によってはシェルに引数を渡します。リモート/信頼されていないソースから変数を使用する場合には、`|quote` フィルターで、安全に使用できるようにします。
+   - lookup によってはシェルに引数を渡します。リモート/信頼されていないソースから変数を使用する場合には、`|quote` フィルターで、安全に使用できるようにします。
 
 
-.. \_enabling\_lookup:
+.. _enabling_lookup:
 
 Lookup プラグインの有効化
 -----------------------
@@ -34,7 +34,7 @@ Lookup プラグインの有効化
 カスタムの lookup を有効にするには、カスタムの lookup を、ロール内の Play の隣りにある ``lookup_plugins`` ディレクトリーに配置するか、:ref:`ansible.cfg <ansible_configuration_settings>` で設定した lookup ディレクトリーソースの 1 つに配置します。
 
 
-.. \_using\_lookup:
+.. _using_lookup:
 
 lookup プラグインの使用
 --------------------
@@ -44,25 +44,25 @@ Lookup プラグインは、Ansible でテンプレートを使用できる場�
 .. code-block:: YAML+Jinja
 
   vars:
-    file\_contents: "{{lookup('file', 'path/to/file.txt')}}"
+    file_contents: "{{lookup('file', 'path/to/file.txt')}}"
 
 Lookup は、ループで必要付加欠な部分となっています。``with_`` がある場合には、アンダースコアの後の部分はルックアップの名前になります。
 これが、ほとんどの lookup がリストを出力し、そのリストを入力として扱う理由です。``with_items`` が :ref:`items <items_lookup>` lookup を使用します::
 
   tasks:
-    \- name: count to 3
+    - name: count to 3
       debug: msg={{item}}
-      with\_items: \[1, 2, 3]
+      with_items: [1, 2, 3]
 
 Lookup と :ref:`playbooks_filters`、:ref:`playbooks_tests`、またはそれぞれを組み合わせて複雑なデータ生成やデータ操作が可能です。例::
 
   tasks:
-    \- name: valid but useless and over complicated chained lookups and filters
-      debug: msg="find the answer here:\\n{{ lookup('url', 'https://google.com/search/?q=' + item|urlencode)|join(' ') }}"
-with\_nested:
-\- "{{lookup('consul\_kv', 'bcs/' + lookup('file', '/the/question') + ', host=localhost, port=2000')|shuffle}}"
-\- "{{lookup('sequence', 'end=42 start=2 step=2')|map('log', 4)|list)}}"
-      - \['a', 'c', 'd', 'c']
+    - name: valid but useless and over complicated chained lookups and filters
+      debug: msg="find the answer here:\n{{ lookup('url', 'https://google.com/search/?q=' + item|urlencode)|join(' ') }}"
+      with_nested:
+        - "{{lookup('consul_kv', 'bcs/' + lookup('file', '/the/question') + ', host=localhost, port=2000')|shuffle}}"
+        - "{{lookup('sequence', 'end=42 start=2 step=2')|map('log', 4)|list)}}"
+        - ['a', 'c', 'd', 'c']
 
 .. versionadded:: 2.6
 
@@ -75,7 +75,7 @@ Lookup プラグインのエラーの動作を制御するには、``errors`` �
 
 .. code-block:: ansible-output
 
-    [WARNING]:Unable to find '/idontexist' in expected paths (use -vvvvv to see paths)
+    [WARNING]: Unable to find '/idontexist' in expected paths (use -vvvvv to see paths)
 
     ok: [localhost] => {
         "msg": ""
@@ -110,7 +110,7 @@ Lookup プラグインのエラーの動作を制御するには、``errors`` �
     fatal: [localhost]:FAILED! => {"msg":"An unhandled exception occurred while running the lookup plugin 'file'.Error was a <class 'ansible.errors.AnsibleError'>, original message: could not locate file in lookup: /idontexist"}
 
 
-.. \_query:
+.. _query:
 
 ``query`` を指定した Lookup プラグインの呼び出し
 --------------------------------------
@@ -139,7 +139,7 @@ Ansible 2.5 で、lookup プラグインを呼び出す ``query`` と言う jinj
     q('dict', dict_variable)
 
 
-.. \_lookup\_plugins\_list:
+.. _lookup_plugins_list:
 
 プラグイン一覧
 -----------
@@ -169,4 +169,4 @@ Ansible 2.5 で、lookup プラグインを呼び出す ``query`` と言う jinj
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       \#ansible IRC chat channel
+       #ansible IRC chat channel

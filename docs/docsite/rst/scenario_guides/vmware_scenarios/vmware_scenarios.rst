@@ -1,4 +1,4 @@
-.. \_vmware\_scenarios:
+.. _vmware_scenarios:
 
 ****************************
 VMware シナリオにおける Ansible
@@ -9,8 +9,8 @@ VMware シナリオにおける Ansible
 .. toctree::
    :maxdepth: 1
 
-   scenario\_clone\_template
-   scenario\_rename\_vm
-   scenario\_remove\_vm
-   scenario\_find\_vm\_folder
-   scenario\_vmware\_http
+   scenario_clone_template
+   scenario_rename_vm
+   scenario_remove_vm
+   scenario_find_vm_folder
+   scenario_vmware_http
