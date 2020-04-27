@@ -1,5 +1,5 @@
-.. \_installation\_guide:
-.. \_intro\_installation\_guide:
+.. _installation_guide:
+.. _intro_installation_guide:
 
 Ansible のインストール
 ===================
@@ -17,7 +17,7 @@ Ansible はデータベースを追加せず、起動または稼働し続ける
 
 Ansible をコントロールノードにインストールし、SSH (デフォルト) を使用して管理ノード (自動化するエンドデバイス) と通信します。
 
-.. \_control\_node\_requirements:
+.. _control_node_requirements:
 
 コントロールノードの要件
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -37,7 +37,7 @@ Windows では、コントロールノードのサポートはありません。
 
     一部のモジュールおよびプラグインには追加の要件がありますので注意してください。モジュールでは、「ターゲット」マシン (管理ノード) でこの追加要件を満たす必要があります。これについてはモジュール固有のドキュメントに記載されています。
 
-.. \_managed\_node\_requirements:
+.. _managed_node_requirements:
 
 管理ノードの要件
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -75,7 +75,7 @@ Windows では、コントロールノードのサポートはありません。
 
         $ ansible myhost --become -m raw -a "yum install -y python2"
 
-.. \_what\_version:
+.. _what_version:
 
 インストールする Ansible バージョンの選択
 ---------------------------------------
@@ -96,8 +96,8 @@ Ansible のリリースは、年に 2 ~ 3 回作成されます。リリース�
 メジャーバグについては、必要なときにメンテナンスリリースが行われますが、このようなことはあまり頻繁には起こりません。
 
 
-.. \_installing\_the\_control\_node:
-.. \_from\_yum:
+.. _installing_the_control_node:
+.. _from_yum:
 
 RHEL、CentOS、または Fedora への Ansible のインストール
 ----------------------------------------------
@@ -137,25 +137,25 @@ RPM を独自に構築することも可能です。チェックアウトまた�
 .. code-block:: bash
 
     $ git clone https://github.com/ansible/ansible.git
-$ cd ./ansible
-$ make rpm
-$ sudo rpm -Uvh ./rpm-build/ansible-*.noarch.rpm
+    $ cd ./ansible
+    $ make rpm
+    $ sudo rpm -Uvh ./rpm-build/ansible-*.noarch.rpm
 
-.. \_from\_apt:
+.. _from_apt:
 
 Ubuntu への Ansible のインストール
 ----------------------------
 
-Ubuntu ビルドは `<https://launchpad.net/~ansible/+archive/ubuntu/ansible> の PPA`_ で利用できます。
+Ubuntu ビルドは `<https://launchpad.net/~ansible/+archive/ubuntu/ansible>`_ の PPA で利用できます。
 
 自分のマシンに PPA を設定して Ansible をインストールするには、次のコマンドを実行します。
 
 .. code-block:: bash
 
     $ sudo apt update
-$ sudo apt install software-properties-common
-$ sudo apt-add-repository --yes --update ppa:ansible/ansible
-$ sudo apt install ansible
+    $ sudo apt install software-properties-common
+    $ sudo apt-add-repository --yes --update ppa:ansible/ansible
+    $ sudo apt install ansible
 
 .. note:: 以前の Ubuntu ディストリビューションでは、「software-properties-common」は「python-software-properties」と呼ばれます。過去のバージョンでは ``apt`` ではなく ``apt-get`` を使用するほうがよい場合があります。また、``-u`` あるいは ``--update`` フラグが指定されているのは新しいディストリビューション (例: 18.04、18.10 など) のみなので注意してください。随時、スクリプトは調整してください。
 
@@ -183,8 +183,8 @@ Debian を使用されている場合は Ubuntu PPA と同じソースを使用�
 .. code-block:: bash
 
     $ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
-$ sudo apt update
-$ sudo apt install ansible
+    $ sudo apt update
+    $ sudo apt install ansible
 
 .. note:: この方法は、Debian Jessie および Stretch の Trusty ソースで検証されていますが、以前のバージョンではサポートされない可能性があります。過去のバージョンでは ``apt`` ではなく ``apt-get`` を使用するほうがよい場合があります。
 
@@ -232,7 +232,7 @@ Ansible は Python 2 および 3 の両バージョンで動作しますが、Fr
 
     $ sudo pkg install ansible
 
-.. \_on\_macos:
+.. _on_macos:
 
 MacOS への Ansible のインストール
 ---------------------------
@@ -241,19 +241,19 @@ Mac に Ansible をインストールするには ``pip`` を使用する方法�
 
 手順は :ref:`from_pip` を参照してください。MacOS バージョン 10.12 以前を実行している場合に、Python Package Index に安全に接続するには最新の ``pip`` にアップグレードする必要があります。
 
-.. \_from\_pkgutil:
+.. _from_pkgutil:
 
 Solaris への Ansible のインストール
 -----------------------------
 
-Ansible は、`OpenCSW の SysV パッケージ<https://www.opencsw.org/packages/ansible/>`_ として Solaris で利用できます。
+Ansible は、`OpenCSW の SysV パッケージ <https://www.opencsw.org/packages/ansible/>`_ として Solaris で利用できます。
 
 .. code-block:: bash
 
     # pkgadd -d http://get.opencsw.org/now
-# /opt/csw/bin/pkgutil -i ansible
+    # /opt/csw/bin/pkgutil -i ansible
 
-.. \_from\_pacman:
+.. _from_pacman:
 
 Arch Linux への Ansible のインストール
 ---------------------------------
@@ -266,7 +266,7 @@ AUR には、`ansible-git <https://aur.archlinux.org/packages/ansible-git>`_ と
 
 ArchWiki の `Ansible <https://wiki.archlinux.org/index.php/Ansible>`_ ページも参照してください。
 
-.. \_from\_sbopkg:
+.. _from_sbopkg:
 
 Slackware Linux への Ansible のインストール
 -------------------------------------
@@ -282,7 +282,7 @@ Ansible およびすべての依存関係を含むキューを作成します::
 
     # sbopkg -k -i ansible
 
-.. \_from swupd:
+.. _from swupd:
 
 Clear Linux への Ansible のインストール
 ---------------------------------
@@ -295,7 +295,7 @@ Ansible およびその依存関係は、sysadmin ホスト管理バンドルの
 
    $ sudo swupd update
 
-.. \_from\_pip:
+.. _from_pip:
 
 ``pip`` を使用した Ansible のインストール
 --------------------------------
@@ -303,9 +303,9 @@ Ansible およびその依存関係は、sysadmin ホスト管理バンドルの
 Ansible は、Python パッケージマネージャー ``pip`` を使用してインストールできます。 Python のシステムに ``pip`` がまだない場合には、以下のコマンドを実行してインストールします::
 
     $ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-$ python get-pip.py --user
+    $ python get-pip.py --user
 
-次に Ansible \[1]_ をインストールします::
+次に Ansible [1]_ をインストールします::
 
     $ pip install --user ansible
 
@@ -317,34 +317,33 @@ MacOS Mavericks (10.9) にインストールしている場合は、コンパイ
 
     $ CFLAGS=-Qunused-arguments CPPFLAGS=-Qunused-arguments pip install --user ansible
 
-``paramiko`` を必要とする ``paramiko`` 接続プラグインまたはモジュールを使用するには、必要なモジュール \[2]_ をインストールします::
+``paramiko`` を必要とする ``paramiko`` 接続プラグインまたはモジュールを使用するには、必要なモジュール [2]_ をインストールします::
 
     $ pip install --user paramiko
 
 Ansible は、新規または既存の ``virtualenv`` 内にもインストールできます::
 
     $ python -m virtualenv ansible  # Create a virtualenv if one does not already exist
-$ source ansible/bin/activate   # Activate the virtual environment
-$ pip install ansible
+    $ source ansible/bin/activate   # Activate the virtual environment
+    $ pip install ansible
 
 Ansible をグローバルにインストールする場合は、以下のコマンドを実行します::
 
     $ sudo python get-pip.py
-$ sudo pip install ansible
+    $ sudo pip install ansible
 
 .. note::
 
-    「sudo」を付けて「pip」を実行すると、システムにグローバルな変更が加えられます。「pip」はシステムパッケージマネージャーとは連携しないため、これが原因でシステムに変更が加えられ、不整合状態または不機能状態のままになる可能性があります。特に、これは MacOS の場合に当てはまります。システムのグローバルファイルの修正による影響を十分に理解していない場合には、「-user」を使用してインストールするようお推めします。
+    ``sudo`` を付けて ``pip`` を実行すると、システムにグローバルな変更が加えられます。``pip`` はシステムパッケージマネージャーとは連携しないため、これが原因でシステムに変更が加えられ、不整合状態または不機能状態のままになる可能性があります。特に、これは MacOS の場合に当てはまります。システムのグローバルファイルの修正による影響を十分に理解していない場合には、``--user`` を使用してインストールするようお推めします。
 
 .. note::
 
-    以前のバージョンの「pip」でのデフォルトは http://pypi.python.org/simple ですが、これはもう機能しません。
-    Ansible をインストールする前に、最新バージョンの「pip」を使用していることを確認してください。
-    古いバージョンの「pip」がインストールされている場合は、以下の「pip のアップグレードの説明 <https://pip.pypa.io/en/stable/installing/#upgrading-pip>_」 
- に従ってアップグレードできます。
+    以前のバージョンの ``pip`` でのデフォルトは http://pypi.python.org/simple ですが、これはもう機能しません。
+    Ansible をインストールする前に、最新バージョンの ``pip`` を使用していることを確認してください。
+    古いバージョンの「pip」がインストールされている場合は、以下の `pip のアップグレードの説明 <https://pip.pypa.io/en/stable/installing/#upgrading-pip>`_ に従ってアップグレードできます。
 
 
-.. \_from\_source:
+.. _from_source:
 
 ソース (devel) からの Ansible の実行
 -----------------------------------
@@ -367,7 +366,7 @@ Ansible は、ソースから簡単に実行できます。これを使用する
 .. code-block:: bash
 
     $ git clone https://github.com/ansible/ansible.git
-$ cd ./ansible
+    $ cd ./ansible
 
 ``git`` で Ansible リポジトリーのクローンを作成したら、Ansible 環境を設定します。
 
@@ -388,9 +387,9 @@ Fish の使用::
 お使いのバージョンの Python に ``pip`` がインストールされていない場合は、インストールします::
 
     $ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-$ python get-pip.py --user
+    $ python get-pip.py --user
 
-Ansible は、インストールする必要がある以下の Python モジュールも使用します \[1]\_:
+Ansible は、インストールする必要がある以下の Python モジュールも使用します [1]_:
 
 .. code-block:: bash
 
@@ -405,7 +404,7 @@ Ansible チェックアウトを更新するには、pull-with-rebase を使用�
 .. code-block:: bash
 
     $ git pull --rebase #same as above
-$ git submodule update --init --recursive
+    $ git submodule update --init --recursive
 
 env-setup スクリプトを実行すると、実行がチェックアウトから行われ、
 デフォルトのインベントリーファイルが ``/etc/ansible/hosts`` になります。必要に応じて、``/etc/ansible/hosts`` 以外のインベントリーファイルを指定できます (:ref:`インベントリー` を参照)。
@@ -414,7 +413,7 @@ env-setup スクリプトを実行すると、実行がチェックアウトか�
 .. code-block:: bash
 
     $ echo "127.0.0.1" > ~/ansible_hosts
-$ export ANSIBLE_INVENTORY=~/ansible_hosts
+    $ export ANSIBLE_INVENTORY=~/ansible_hosts
 
 インベントリーファイルの詳細は、「:ref:`インベントリー`」を参照してください。
 
@@ -426,17 +425,17 @@ $ export ANSIBLE_INVENTORY=~/ansible_hosts
 
 「sudo make install」も使用できます。
 
-.. \_tagged\_releases:
+.. _tagged_releases:
 
 タグ付けされたリリースの tarball の場所
 -----------------------------------
 
 git チェックアウトせずに、Ansible をパッケージ化したり、ローカルパッケージをご自身で構築する場合があります。 リリースの tarball は、`Ansible downloads <https://releases.ansible.com/ansible>`_ ページで入手できます。
 
-リリースは、`git repository` <https://github.com/ansible/ansible/releases>_ でリリースバージョンのタグが付けされています。
+リリースは、`git repository <https://github.com/ansible/ansible/releases>`_ でリリースバージョンのタグが付けされています。
 
 
-.. \_shell\_completion:
+.. _shell_completion:
 
 Ansible コマンドシェルの完了
 --------------------------------
@@ -446,7 +445,7 @@ Ansible 2.9 では、Ansible コマンドラインユーティリティーのシ
 
 ``python-argcomplete`` は、Red Hat Enterprise ベースのディストリビューションでは EPEL からインストールでき、その他の多くのディストリビューションでは標準 OS リポジトリーで入手できます。
 
-インストールと設定の詳細は、「`argcomplete のドキュメント <https://argcomplete.readthedocs.io/en/latest/>`\_」を参照してください。
+インストールと設定の詳細は、「 `argcomplete のドキュメント <https://argcomplete.readthedocs.io/en/latest/>`_ 」を参照してください。
 
 RHEL、CentOS、または Fedora への ``argcomplete`` のインストール
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -462,7 +461,7 @@ RHEL および CentOS の場合:
 .. code-block:: bash
 
     $ sudo yum install epel-release
-$ sudo yum install python-argcomplete
+    $ sudo yum install python-argcomplete
 
 
 ``apt`` を使用した ``argcomplete`` のインストール
@@ -504,23 +503,23 @@ bash 4.2 がない場合は、各スクリプトを個別に登録する必要�
 .. code-block:: bash
 
     $ eval $(register-python-argcomplete ansible)
-$ eval $(register-python-argcomplete ansible-config)
-$ eval $(register-python-argcomplete ansible-console)
-$ eval $(register-python-argcomplete ansible-doc)
-$ eval $(register-python-argcomplete ansible-galaxy)
-$ eval $(register-python-argcomplete ansible-inventory)
-$ eval $(register-python-argcomplete ansible-playbook)
-$ eval $(register-python-argcomplete ansible-pull)
-$ eval $(register-python-argcomplete ansible-vault)
+    $ eval $(register-python-argcomplete ansible-config)
+    $ eval $(register-python-argcomplete ansible-console)
+    $ eval $(register-python-argcomplete ansible-doc)
+    $ eval $(register-python-argcomplete ansible-galaxy)
+    $ eval $(register-python-argcomplete ansible-inventory)
+    $ eval $(register-python-argcomplete ansible-playbook)
+    $ eval $(register-python-argcomplete ansible-pull)
+    $ eval $(register-python-argcomplete ansible-vault)
 
 上記のコマンドは、``~/.profile``、``~/.bash_profile`` などのシェルプロファイルファイルに置くことが推奨されます。
 
-zsh または tcsh での``argcomplete``
+zsh または tcsh での ``argcomplete``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 `argcomplete ドキュメント <https://argcomplete.readthedocs.io/en/latest/>`_ を参照してください。
 
-.. \_getting\_ansible:
+.. _getting_ansible:
 
 GitHub 上の Ansible
 -----------------
@@ -541,7 +540,7 @@ GitHub アカウントがある。このプロジェクトは、
    `メーリングリスト <https://groups.google.com/group/ansible-project>`_
        ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       \#ansible IRC chat channel
+       #ansible IRC chat channel
 
-..\[1] MacOS への「pycrypto」パッケージのインストールに問題がある場合は、``CC=clang sudo -E pip install pycrypto`` を試す必要がある場合があります。
-.. 2.8 よりも前の Ansible の ``requirements.txt`` には、\[2] ``paramiko`` が含まれていました。
+.. [1] MacOS への「pycrypto」パッケージのインストールに問題がある場合は、``CC=clang sudo -E pip install pycrypto`` を試す必要がある場合があります。
+.. [2] 2.8 よりも前の Ansible の ``requirements.txt`` には、``paramiko`` が含まれていました。
