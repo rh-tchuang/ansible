@@ -1,5 +1,5 @@
 
-.. \_porting\_2.9\_guide:
+.. _porting_2.9_guide:
 
 *************************
 Ansible 2.9 ポーティングガイド
@@ -22,7 +22,7 @@ Playbook
 インベントリー
 ---------
 
- * インベントリーソースが ``hash_behaviour`` からの影響を受けるようになりました。Playbook を ``merge``に設定している場合には、インベントリーから取得するデータが変更される可能性があるため、それに合わせて Playbook を更新する必要があります。デフォルト設定 (``overwrite``) を使用する場合は、変更はありません。以前は、インベントリーは、この設定を無視していました。
+ * インベントリーソースが ``hash_behaviour`` からの影響を受けるようになりました。Playbook を ``merge`` に設定している場合には、インベントリーから取得するデータが変更される可能性があるため、それに合わせて Playbook を更新する必要があります。デフォルト設定 (``overwrite``) を使用する場合は、変更はありません。以前は、インベントリーは、この設定を無視していました。
 
 ループ
 -----
@@ -53,14 +53,14 @@ Ansible 2.9 は、「安全でない」データをより確実に処理して�
 .. code-block:: powershell
 
     #AnsibleRequires -CSharpUtil AnsibleCollections.namespace_name.collection_name.util_filename
-#AnsibleRequires -PowerShell AnsibleCollections.namespace_name.collection_name.util_filename
+    #AnsibleRequires -PowerShell AnsibleCollections.namespace_name.collection_name.util_filename
 
 Ansible 2.9 では、上記は次のように変更されました。
 
 .. code-block:: powershell
 
     #AnsibleRequires -CSharpUtil ansible_collections.namespace_name.collection_name.plugins.module_utils.util_filename
-#AnsibleRequires -PowerShell ansible_collections.namespace_name.collection_name.plugins.module_utils.util_filename
+    #AnsibleRequires -PowerShell ansible_collections.namespace_name.collection_name.plugins.module_utils.util_filename
 
 コレクションでインポートの名前を変更すると、新しい名前形式で、C# ユーティリティーの名前空間を更新する必要があります。これは、より詳細で、さまざまな種類のプラグインの中で、プラグイン名の競合を回避し、Python モジュールの仕組みでインポートが PowerShell でどのように機能するかを標準化するために作られました。
 
@@ -79,29 +79,29 @@ Ansible 2.9 では、上記は次のように変更されました。
 モジュールの記述
 ---------------
 
-* 今回のリリースでは、モジュールおよび module\_utils ファイルは、相対インポートを使用して他の module\_utils ファイルを含めることができるようになりました。
+* 今回のリリースでは、モジュールおよび module_utils ファイルは、相対インポートを使用して他の module_utils ファイルを含めることができるようになりました。
   これは、特にコレクションで、長いインポート行を短縮するのに役立ちます。
 
   コレクションで相対インポートを使用する例:
 
   .. code-block:: python
 
-    # ファイル: ansible\_collections/my\_namespace/my\_collection/plugins/modules/my\_module.py
-    # 絶対インポートを使用してコレクションから module\_utils をインポートする従来の手法:
-    from ansible\_collections.my\_namespace.my\_collection.plugins.module\_utils import my\_util
+    # ファイル: ansible_collections/my_namespace/my_collection/plugins/modules/my_module.py
+    # 絶対インポートを使用してコレクションから module_utils をインポートする従来の手法:
+    from ansible_collections.my_namespace.my_collection.plugins.module_utils import my_util
     # 相対インポートを使用する新しい手法:
-    from ..module\_utils import my\_util
+    from ..module_utils import my_util
 
-  Ansible に同梱されているモジュールと module\_utils では、相対インポートも使用できますが、
+  Ansible に同梱されているモジュールと module_utils では、相対インポートも使用できますが、
   短縮される量は少なくなります。
 
   .. code-block:: python
 
     # ファイル: ansible/modules/system/ping.py
-    # 絶対インポートを使用してコアから module\_utils をインポートする従来の手法:
-    from ansible.module\_utils.basic import AnsibleModule
+    # 絶対インポートを使用してコアから module_utils をインポートする従来の手法:
+    from ansible.module_utils.basic import AnsibleModule
     # 相対インポートを使用する新しい手法:
-    from ...module\_utils.basic import AnsibleModule
+    from ...module_utils.basic import AnsibleModule
 
   単一ドット (``.``) はそれぞれツリーの 1 レベルを表します (ファイルシステムの相対リンクの``../`` に相当)。
 
@@ -114,15 +114,15 @@ Ansible 2.9 では、上記は次のように変更されました。
 次のモジュールはもう存在していません。
 
 * Apstra の ``aos_ *`` モジュール。 新しいモジュールは、`https://github.com/apstra <https://github.com/apstra>`_ を参照してください。
-* ec2\_ami\_find では、代わりに :ref:`ec2_ami_facts <ec2_ami_facts_module>` が使用されます。
+* ec2_ami_find では、代わりに :ref:`ec2_ami_facts <ec2_ami_facts_module>` が使用されます。
 * kubernetes では、代わりに :ref:`k8s_raw <k8s_raw_module>` が使用されます。
-* nxos\_ip\_interface では、代わりに :ref:`nxos_l3_interface <nxos_l3_interface_module>` が使用されます。
-* nxos\_portchannel では、代わりに :ref:`nxos_linkagg <nxos_linkagg_module>` が使用されます。
-* nxos\_switchport では、代わりに :ref:`nxos_l2_interface <nxos_l2_interface_module>` が使用されます。
+* nxos_ip_interface では、代わりに :ref:`nxos_l3_interface <nxos_l3_interface_module>` が使用されます。
+* nxos_portchannel では、代わりに :ref:`nxos_linkagg <nxos_linkagg_module>` が使用されます。
+* nxos_switchport では、代わりに :ref:`nxos_l2_interface <nxos_l2_interface_module>` が使用されます。
 * oc では、代わりに :ref:`openshift_raw <openshift_raw_module>` が使用されます。
-* panos\_nat\_policy では、代わりに :ref:`panos_nat_rule <panos_nat_rule_module>` が使用されます。
-* panos\_security\_policy では、代わりに :ref:`panos_security_rule <panos_security_rule_module>` が使用されます。
-* vsphere\_guest では、代わりに :ref:`vmware_guest <vmware_guest_module>` が使用されます。
+* panos_nat_policy では、代わりに :ref:`panos_nat_rule <panos_nat_rule_module>` が使用されます。
+* panos_security_policy では、代わりに :ref:`panos_security_rule <panos_security_rule_module>` が使用されます。
+* vsphere_guest では、代わりに :ref:`vmware_guest <vmware_guest_module>` が使用されます。
 
 
 非推奨のお知らせ
@@ -130,199 +130,199 @@ Ansible 2.9 では、上記は次のように変更されました。
 
 次のモジュールは、Ansible 2.13 で削除されます。Playbook を随時、更新してください。
 
-* cs\_instance\_facts では、代わりに :ref:`cs_instance_info <cs_instance_info_module>` が使用されます。
+* cs_instance_facts では、代わりに :ref:`cs_instance_info <cs_instance_info_module>` が使用されます。
 
-* cs\_zone\_facts では、代わりに :ref:`cs_zone_info <cs_zone_info_module>` が使用されます。
+* cs_zone_facts では、代わりに :ref:`cs_zone_info <cs_zone_info_module>` が使用されます。
 
-* digital\_ocean\_sshkey\_facts では、代わりに :ref:`digital_ocean_sshkey_info <digital_ocean_sshkey_info_module>` が使用されます。
+* digital_ocean_sshkey_facts では、代わりに :ref:`digital_ocean_sshkey_info <digital_ocean_sshkey_info_module>` が使用されます。
 
-* eos\_interface では、代わりに :ref:`eos_interfaces <eos_interfaces_module>` が使用されます。
+* eos_interface では、代わりに :ref:`eos_interfaces <eos_interfaces_module>` が使用されます。
 
-* eos\_l2\_interface では、代わりに :ref:`eos_l2_interfaces <eos_l2_interfaces_module>` が使用されます。
+* eos_l2_interface では、代わりに :ref:`eos_l2_interfaces <eos_l2_interfaces_module>` が使用されます。
 
-* eos\_l3\_interface では、代わりに :ref:`eos_l3_interfaces <eos_l3_interfaces_module>` が使用されます。
+* eos_l3_interface では、代わりに :ref:`eos_l3_interfaces <eos_l3_interfaces_module>` が使用されます。
 
-* eos\_linkagg では、代わりに :ref:`eos_lag_interfaces <eos_lag_interfaces_module>` が使用されます。
+* eos_linkagg では、代わりに :ref:`eos_lag_interfaces <eos_lag_interfaces_module>` が使用されます。
 
-* eos\_lldp\_interface では、代わりに :ref:`eos_lldp_interfaces <eos_lldp_interfaces_module>` が使用されます。
+* eos_lldp_interface では、代わりに :ref:`eos_lldp_interfaces <eos_lldp_interfaces_module>` が使用されます。
 
-* eos\_vlan では、代わりに :ref:`eos_vlans <eos_vlans_module>` が使用されます。
+* eos_vlan では、代わりに :ref:`eos_vlans <eos_vlans_module>` が使用されます。
 
-* ios\_interface では、代わりに :ref:`ios_interfaces <ios_interfaces_module>` が使用されます。
+* ios_interface では、代わりに :ref:`ios_interfaces <ios_interfaces_module>` が使用されます。
 
-* ios\_l2\_interface では、代わりに :ref:`ios_l2_interfaces <ios_l2_interfaces_module>` が使用されます。
+* ios_l2_interface では、代わりに :ref:`ios_l2_interfaces <ios_l2_interfaces_module>` が使用されます。
 
-* ios\_l3\_interface では、代わりに :ref:`ios_l3_interfaces <ios_l3_interfaces_module>` が使用されます。
+* ios_l3_interface では、代わりに :ref:`ios_l3_interfaces <ios_l3_interfaces_module>` が使用されます。
 
-* ios\_vlan では、代わりに :ref:`ios_vlans <ios_vlans_module>` が使用されます。
+* ios_vlan では、代わりに :ref:`ios_vlans <ios_vlans_module>` が使用されます。
 
-* iosxr\_interface では、代わりに :ref:`iosxr_interfaces <iosxr_interfaces_module>` が使用されます。
+* iosxr_interface では、代わりに :ref:`iosxr_interfaces <iosxr_interfaces_module>` が使用されます。
 
-* junos\_interface では、代わりに :ref:`junos_interfaces <junos_interfaces_module>` が使用されます。
+* junos_interface では、代わりに :ref:`junos_interfaces <junos_interfaces_module>` が使用されます。
 
-* junos\_l2\_interface では、代わりに :ref:`junos_l2_interfaces <junos_l2_interfaces_module>` が使用されます。
+* junos_l2_interface では、代わりに :ref:`junos_l2_interfaces <junos_l2_interfaces_module>` が使用されます。
 
-* junos\_l3\_interface では、代わりに :ref:`junos_l3_interfaces <junos_l3_interfaces_module>` が使用されます。
+* junos_l3_interface では、代わりに :ref:`junos_l3_interfaces <junos_l3_interfaces_module>` が使用されます。
 
-* junos\_linkagg では、代わりに :ref:`junos_lag_interfaces <junos_lag_interfaces_module>` が使用されます。
+* junos_linkagg では、代わりに :ref:`junos_lag_interfaces <junos_lag_interfaces_module>` が使用されます。
 
-* junos\_lldp では、代わりに :ref:`junos_lldp_global <junos_lldp_global_module>` が使用されます。
+* junos_lldp では、代わりに :ref:`junos_lldp_global <junos_lldp_global_module>` が使用されます。
 
-* junos\_lldp\_interface では、代わりに :ref:`junos_lldp_interfaces <junos_lldp_interfaces_module>` が使用されます。
+* junos_lldp_interface では、代わりに :ref:`junos_lldp_interfaces <junos_lldp_interfaces_module>` が使用されます。
 
-* junos\_vlan では、代わりに :ref:`junos_vlans <junos_vlans_module>` が使用されます。
+* junos_vlan では、代わりに :ref:`junos_vlans <junos_vlans_module>` が使用されます。
 
-* lambda\_facts では、代わりに :ref:`lambda_info <lambda_info_module>` が使用されます。
+* lambda_facts では、代わりに :ref:`lambda_info <lambda_info_module>` が使用されます。
 
-* na\_ontap\_gather\_facts では、代わりに :ref:`na_ontap_info <na_ontap_info_module>` が使用されます。
+* na_ontap_gather_facts では、代わりに :ref:`na_ontap_info <na_ontap_info_module>` が使用されます。
 
-* net\_banner では、代わりにプラットフォーム固有の \[netos]\_banner モジュールが使用されます。
+* net_banner では、代わりにプラットフォーム固有の [netos]_banner モジュールが使用されます。
 
-* net\_interface では、代わりにプラットフォーム固有の新しい \[netos]\_interfaces モジュールが使用されます。
+* net_interface では、代わりにプラットフォーム固有の新しい [netos]_interfaces モジュールが使用されます。
 
-* net\_l2\_interface は、代わりにプラットフォーム固有の新しい \[netos]\_l2\_interfacesモジュールが使用されます。
+* net_l2_interface は、代わりにプラットフォーム固有の新しい [netos]_l2_interfacesモジュールが使用されます。
 
-* net\_l3\_interface では、代わりにプラットフォーム固有の新しい \[netos]\_l3\_interfaces モジュールが使用されます。
+* net_l3_interface では、代わりにプラットフォーム固有の新しい [netos]_l3_interfaces モジュールが使用されます。
 
-* net\_linkagg では、代わりにプラットフォーム固有の新しい \[netos]\_lag モジュールが使用されます。
+* net_linkagg では、代わりにプラットフォーム固有の新しい [netos]_lag モジュールが使用されます。
 
-* net\_lldp では、代わりにプラットフォーム固有の新しい \[netos]\_lldp\_global モジュールが使用されます。
+* net_lldp では、代わりにプラットフォーム固有の新しい [netos]_lldp_global モジュールが使用されます。
 
-* net\_lldp\_interface では、代わりにプラットフォーム固有の新しい \[netos]\_lldp\_interfaces モジュールが使用されます。
+* net_lldp_interface では、代わりにプラットフォーム固有の新しい [netos]_lldp_interfaces モジュールが使用されます。
 
-* net\_logging では、代わりにプラットフォーム固有の \[netos]\_logging モジュールが使用されます。
+* net_logging では、代わりにプラットフォーム固有の [netos]_logging モジュールが使用されます。
 
-* net\_static\_route では、代わりにプラットフォーム固有の \[netos]\_static\_route モジュールが使用されます。
+* net_static_route では、代わりにプラットフォーム固有の [netos]_static_route モジュールが使用されます。
 
-* net\_system では、代わりにプラットフォーム固有の \[netos]\_system モジュールが使用されます。
+* net_system では、代わりにプラットフォーム固有の [netos]_system モジュールが使用されます。
 
-* net\_user では、代わりにプラットフォーム固有の \[netos]\_user モジュールが使用されます。
+* net_user では、代わりにプラットフォーム固有の [netos]_user モジュールが使用されます。
 
-* net\_vlan では、代わりにプラットフォーム固有の新しい \[netos]\_vlans モジュールが使用されます。
+* net_vlan では、代わりにプラットフォーム固有の新しい [netos]_vlans モジュールが使用されます。
 
-* net\_vrf では、代わりにプラットフォーム固有の \[netos]\_vrf モジュールが使用されます。
+* net_vrf では、代わりにプラットフォーム固有の [netos]_vrf モジュールが使用されます。
 
-* nginx\_status\_facts では、代わりに :ref:`nginx_status_info <nginx_status_info_module>` が使用されます。
+* nginx_status_facts では、代わりに :ref:`nginx_status_info <nginx_status_info_module>` が使用されます。
 
-* nxos\_interface では、代わりに :ref:`nxos_interfaces <nxos_interfaces_module>` が使用されます。
+* nxos_interface では、代わりに :ref:`nxos_interfaces <nxos_interfaces_module>` が使用されます。
 
-* nxos\_l2\_interface では、代わりに :ref:`nxos_l2_interfaces <nxos_l2_interfaces_module>` が使用されます。
+* nxos_l2_interface では、代わりに :ref:`nxos_l2_interfaces <nxos_l2_interfaces_module>` が使用されます。
 
-* nxos\_l3\_interface では、代わりに :ref:`nxos_l3_interfaces <nxos_l3_interfaces_module>` が使用されます。
+* nxos_l3_interface では、代わりに :ref:`nxos_l3_interfaces <nxos_l3_interfaces_module>` が使用されます。
 
-* nxos\_linkagg では、代わりに :ref:`nxos_lag_interfaces <nxos_lag_interfaces_module>` が使用されます。
+* nxos_linkagg では、代わりに :ref:`nxos_lag_interfaces <nxos_lag_interfaces_module>` が使用されます。
 
-* nxos\_vlan では、代わりに :ref:`nxos_vlans <nxos_vlans_module>` が使用されます。
+* nxos_vlan では、代わりに :ref:`nxos_vlans <nxos_vlans_module>` が使用されます。
 
-* online\_server\_facts では、代わりに :ref:`online_server_info <online_server_info_module>` が使用されます。
+* online_server_facts では、代わりに :ref:`online_server_info <online_server_info_module>` が使用されます。
 
-* online\_user\_facts では、代わりに :ref:`online_user_info <online_user_info_module>` が使用されます。
+* online_user_facts では、代わりに :ref:`online_user_info <online_user_info_module>` が使用されます。
 
-* purefa\_facts では、代わりに :ref:`purefa_info <purefa_info_module>` が使用されます。
+* purefa_facts では、代わりに :ref:`purefa_info <purefa_info_module>` が使用されます。
 
-* purefb\_facts では、代わりに :ref:`purefb_info <purefb_info_module>` が使用されます。
+* purefb_facts では、代わりに :ref:`purefb_info <purefb_info_module>` が使用されます。
 
-* scaleway\_image\_facts では、代わりに :ref:`scaleway_image_info <scaleway_image_info_module>` が使用されます。
+* scaleway_image_facts では、代わりに :ref:`scaleway_image_info <scaleway_image_info_module>` が使用されます。
 
-* scaleway\_ip\_facts では、代わりに :ref:`scaleway_ip_info <scaleway_ip_info_module>` が使用されます。
+* scaleway_ip_facts では、代わりに :ref:`scaleway_ip_info <scaleway_ip_info_module>` が使用されます。
 
-* scaleway\_organization\_facts では、代わりに :ref:`scaleway_organization_info <scaleway_organization_info_module>` が使用されます。
+* scaleway_organization_facts では、代わりに :ref:`scaleway_organization_info <scaleway_organization_info_module>` が使用されます。
 
-* scaleway\_security\_group\_facts では、代わりに :ref:`scaleway_security_group_info <scaleway_security_group_info_module>` が使用されます。
+* scaleway_security_group_facts では、代わりに :ref:`scaleway_security_group_info <scaleway_security_group_info_module>` が使用されます。
 
-* scaleway\_server\_facts では、代わりに :ref:`scaleway_server_info <scaleway_server_info_module>` が使用されます。
+* scaleway_server_facts では、代わりに :ref:`scaleway_server_info <scaleway_server_info_module>` が使用されます。
 
-* scaleway\_snapshot\_facts では、代わりに :ref:`scaleway_snapshot_info <scaleway_snapshot_info_module>` が使用されます。
+* scaleway_snapshot_facts では、代わりに :ref:`scaleway_snapshot_info <scaleway_snapshot_info_module>` が使用されます。
 
-* scaleway\_volume\_facts では、代わりに :ref:`scaleway_volume_info <scaleway_volume_info_module>` が使用されます。
+* scaleway_volume_facts では、代わりに :ref:`scaleway_volume_info <scaleway_volume_info_module>` が使用されます。
 
-* vcenter\_extension\_facts では、代わりに :ref:`vcenter_extension_info <vcenter_extension_info_module>` が使用されます。
+* vcenter_extension_facts では、代わりに :ref:`vcenter_extension_info <vcenter_extension_info_module>` が使用されます。
 
-* vmware\_about\_facts では、代わりに :ref:`vmware_about_info <vmware_about_info_module>` が使用されます。
+* vmware_about_facts では、代わりに :ref:`vmware_about_info <vmware_about_info_module>` が使用されます。
 
-* vmware\_category\_facts では、代わりに :ref:`vmware_category_info <vmware_category_info_module>` が使用されます。
+* vmware_category_facts では、代わりに :ref:`vmware_category_info <vmware_category_info_module>` が使用されます。
 
-* vmware\_drs\_group\_facts では、代わりに :ref:`vmware_drs_group_info <vmware_drs_group_info_module>` が使用されます。
+* vmware_drs_group_facts では、代わりに :ref:`vmware_drs_group_info <vmware_drs_group_info_module>` が使用されます。
 
-* vmware\_drs\_rule\_facts では、代わりに :ref:`vmware_drs_rule_info <vmware_drs_rule_info_module>` が使用されます。
+* vmware_drs_rule_facts では、代わりに :ref:`vmware_drs_rule_info <vmware_drs_rule_info_module>` が使用されます。
 
-* vmware\_dvs\_portgroup\_facts では、代わりに :ref:`vmware_dvs_portgroup_info <vmware_dvs_portgroup_info_module>` が使用されます。
+* vmware_dvs_portgroup_facts では、代わりに :ref:`vmware_dvs_portgroup_info <vmware_dvs_portgroup_info_module>` が使用されます。
 
-* vmware\_guest\_boot\_facts では、代わりに :ref:`vmware_guest_boot_info <vmware_guest_boot_info_module>` が使用されます。
+* vmware_guest_boot_facts では、代わりに :ref:`vmware_guest_boot_info <vmware_guest_boot_info_module>` が使用されます。
 
-* vmware\_guest\_customization\_facts では、代わりに :ref:`vmware_guest_customization_info <vmware_guest_customization_info_module>` が使用されます。
+* vmware_guest_customization_facts では、代わりに :ref:`vmware_guest_customization_info <vmware_guest_customization_info_module>` が使用されます。
 
-* vmware\_guest\_disk\_facts では、代わりに :ref:`vmware_guest_disk_info <vmware_guest_disk_info_module>` が使用されます。
+* vmware_guest_disk_facts では、代わりに :ref:`vmware_guest_disk_info <vmware_guest_disk_info_module>` が使用されます。
 
-* vmware\_host\_capability\_facts では、代わりに :ref:`vmware_host_capability_info <vmware_host_capability_info_module>` が使用されます。
+* vmware_host_capability_facts では、代わりに :ref:`vmware_host_capability_info <vmware_host_capability_info_module>` が使用されます。
 
-* vmware\_host\_config\_facts では、代わりに :ref:`vmware_host_config_info <vmware_host_config_info_module>` が使用されます。
+* vmware_host_config_facts では、代わりに :ref:`vmware_host_config_info <vmware_host_config_info_module>` が使用されます。
 
-* vmware\_host\_dns\_facts では、代わりに :ref:`vmware_host_dns_info <vmware_host_dns_info_module>` が使用されます。
+* vmware_host_dns_facts では、代わりに :ref:`vmware_host_dns_info <vmware_host_dns_info_module>` が使用されます。
 
-* vmware\_host\_feature\_facts では、代わりに :ref:`vmware_host_feature_info <vmware_host_feature_info_module>` が使用されます。
+* vmware_host_feature_facts では、代わりに :ref:`vmware_host_feature_info <vmware_host_feature_info_module>` が使用されます。
 
-* vmware\_host\_firewall\_facts では、代わりに :ref:`vmware_host_firewall_info <vmware_host_firewall_info_module>` が使用されます。
+* vmware_host_firewall_facts では、代わりに :ref:`vmware_host_firewall_info <vmware_host_firewall_info_module>` が使用されます。
 
-* vmware\_host\_ntp\_facts では、代わりに :ref:`vmware_host_ntp_info <vmware_host_ntp_info_module>` が使用されます。
+* vmware_host_ntp_facts では、代わりに :ref:`vmware_host_ntp_info <vmware_host_ntp_info_module>` が使用されます。
 
-* vmware\_host\_package\_facts では、:ref:`vmware_host_package_info <vmware_host_package_info_module>` が使用されます。
+* vmware_host_package_facts では、:ref:`vmware_host_package_info <vmware_host_package_info_module>` が使用されます。
 
-* vmware\_host\_service\_facts では、代わりに :ref:`vmware_host_service_info <vmware_host_service_info_module>` が使用されます。
+* vmware_host_service_facts では、代わりに :ref:`vmware_host_service_info <vmware_host_service_info_module>` が使用されます。
 
-* vmware\_host\_ssl\_facts では、代わりに :ref:`vmware_host_ssl_info <vmware_host_ssl_info_module>` が使用されます。
+* vmware_host_ssl_facts では、代わりに :ref:`vmware_host_ssl_info <vmware_host_ssl_info_module>` が使用されます。
 
-* vmware\_host\_vmhba\_facts では、代わりに :ref:`vmware_host_vmhba_info <vmware_host_vmhba_info_module>` が使用されます。
+* vmware_host_vmhba_facts では、代わりに :ref:`vmware_host_vmhba_info <vmware_host_vmhba_info_module>` が使用されます。
 
-* vmware\_host\_vmnic\_facts では、代わりに :ref:`vmware_host_vmnic_info <vmware_host_vmnic_info_module>` が使用されます。
+* vmware_host_vmnic_facts では、代わりに :ref:`vmware_host_vmnic_info <vmware_host_vmnic_info_module>` が使用されます。
 
-* vmware\_local\_role\_facts では、代わりに :ref:`vmware_local_role_info <vmware_local_role_info_module>` が使用されます。
+* vmware_local_role_facts では、代わりに :ref:`vmware_local_role_info <vmware_local_role_info_module>` が使用されます。
 
-* vmware\_local\_user\_facts では、代わりに :ref:`vmware_local_user_info <vmware_local_user_info_module>` が使用されます。
+* vmware_local_user_facts では、代わりに :ref:`vmware_local_user_info <vmware_local_user_info_module>` が使用されます。
 
-* vmware\_portgroup\_facts では、代わりに :ref:`vmware_portgroup_info <vmware_portgroup_info_module>` が使用されます。
+* vmware_portgroup_facts では、代わりに :ref:`vmware_portgroup_info <vmware_portgroup_info_module>` が使用されます。
 
-* vmware\_resource\_pool\_facts では、代わりに :ref:`vmware_resource_pool_info <vmware_resource_pool_info_module>` が使用されます。
+* vmware_resource_pool_facts では、代わりに :ref:`vmware_resource_pool_info <vmware_resource_pool_info_module>` が使用されます。
 
-* vmware\_target\_canonical\_facts では、代わりに :ref:`vmware_target_canonical_info <vmware_target_canonical_info_module>` が使用されます。
+* vmware_target_canonical_facts では、代わりに :ref:`vmware_target_canonical_info <vmware_target_canonical_info_module>` が使用されます。
 
-* vmware\_vmkernel\_facts では、代わりに :ref:`vmware_vmkernel_info <vmware_vmkernel_info_module>` が使用されます。
+* vmware_vmkernel_facts では、代わりに :ref:`vmware_vmkernel_info <vmware_vmkernel_info_module>` が使用されます。
 
-* vmware\_vswitch\_facts では、代わりに :ref:`vmware_vswitch_info <vmware_vswitch_info_module>` が使用されます。
+* vmware_vswitch_facts では、代わりに :ref:`vmware_vswitch_info <vmware_vswitch_info_module>` が使用されます。
 
-* vultr\_account\_facts では、代わりに :ref:`vultr_account_info <vultr_account_info_module>` が使用されます。
+* vultr_account_facts では、代わりに :ref:`vultr_account_info <vultr_account_info_module>` が使用されます。
 
-* vultr\_block\_storage\_facts では、代わりに :ref:`vultr_block_storage_info <vultr_block_storage_info_module>` が使用されます。
+* vultr_block_storage_facts では、代わりに :ref:`vultr_block_storage_info <vultr_block_storage_info_module>` が使用されます。
 
-* vultr\_dns\_domain\_facts では、代わりに :ref:`vultr_dns_domain_info <vultr_dns_domain_info_module>` が使用されます。
+* vultr_dns_domain_facts では、代わりに :ref:`vultr_dns_domain_info <vultr_dns_domain_info_module>` が使用されます。
 
-* vultr\_firewall\_group\_facts では、代わりに :ref:`vultr_firewall_group_info <vultr_firewall_group_info_module>` が使用されます。
+* vultr_firewall_group_facts では、代わりに :ref:`vultr_firewall_group_info <vultr_firewall_group_info_module>` が使用されます。
 
-* vultr\_network\_facts では、代わりに :ref:`vultr_network_info <vultr_network_info_module>` が使用されます。
+* vultr_network_facts では、代わりに :ref:`vultr_network_info <vultr_network_info_module>` が使用されます。
 
-* vultr\_os\_facts では、代わりに :ref:`vultr_os_info <vultr_os_info_module>` が使用されます。
+* vultr_os_facts では、代わりに :ref:`vultr_os_info <vultr_os_info_module>` が使用されます。
 
-* vultr\_plan\_facts では、代わりに :ref:`vultr_plan_info <vultr_plan_info_module>` が使用されます。
+* vultr_plan_facts では、代わりに :ref:`vultr_plan_info <vultr_plan_info_module>` が使用されます。
 
-* vultr\_region\_facts では、代わりに :ref:`vultr_region_info <vultr_region_info_module>` が使用されます。
+* vultr_region_facts では、代わりに :ref:`vultr_region_info <vultr_region_info_module>` が使用されます。
 
-* vultr\_server\_facts では、代わりに :ref:`vultr_server_info <vultr_server_info_module>` が使用されます。
+* vultr_server_facts では、代わりに :ref:`vultr_server_info <vultr_server_info_module>` が使用されます。
 
-* vultr\_ssh\_key\_facts では、代わりに :ref:`vultr_ssh_key_info <vultr_ssh_key_info_module>` が使用されます。
+* vultr_ssh_key_facts では、代わりに :ref:`vultr_ssh_key_info <vultr_ssh_key_info_module>` が使用されます。
 
-* vultr\_startup\_script\_facts では、代わりに :ref:`vultr_startup_script_info <vultr_startup_script_info_module>` が使用されます。
+* vultr_startup_script_facts では、代わりに :ref:`vultr_startup_script_info <vultr_startup_script_info_module>` が使用されます。
 
-* vultr\_user\_facts では、代わりに :ref:`vultr_user_info <vultr_user_info_module>` が使用されます。
+* vultr_user_facts では、代わりに :ref:`vultr_user_info <vultr_user_info_module>` が使用されます。
 
-* vyos\_interface では、代わりに :ref:`vyos_interfaces <vyos_interfaces_module>` が使用されます。
+* vyos_interface では、代わりに :ref:`vyos_interfaces <vyos_interfaces_module>` が使用されます。
 
-* vyos\_l3\_interface では、代わりに :ref:`vyos_l3_interfaces <vyos_l3_interfaces_module>` が使用されます。
+* vyos_l3_interface では、代わりに :ref:`vyos_l3_interfaces <vyos_l3_interfaces_module>` が使用されます。
 
-* vyos\_linkagg では、代わりに :ref:`vyos_lag_interfaces <vyos_lag_interfaces_module>` が使用されます。
+* vyos_linkagg では、代わりに :ref:`vyos_lag_interfaces <vyos_lag_interfaces_module>` が使用されます。
 
-* vyos\_lldp では、代わりに :ref:`vyos_lldp_global <vyos_lldp_global_module>` が使用されます。
+* vyos_lldp では、代わりに :ref:`vyos_lldp_global <vyos_lldp_global_module>` が使用されます。
 
-* vyos\_lldp\_interface では、代わりに :ref:`vyos_lldp_interfaces <vyos_lldp_interfaces_module>` が使用されます。
+* vyos_lldp_interface では、代わりに :ref:`vyos_lldp_interfaces <vyos_lldp_interfaces_module>` が使用されます。
 
 
 次の機能は、Ansible 2.12 で削除されます。Playbook を随時、更新してください。
@@ -720,7 +720,7 @@ Ansible 2.13 で削除されます。Playbook を随時、更新してくださ�
 ネットワークリソースモジュール
 ------------------------
 
-Ansible 2.9 で、ネットワークリソースモジュールの最初のバッチが導入されました。ネットワークデバイスの構成のセクションは、そのネットワークデバイスが提供するリソースと考えることができます。ネットワークリソースモジュールは、単一のリソースを構成するように意図的にスコープされています。このモジュールをビルディングブロックとして組み合わせることで、複雑なネットワークサービスを構成できます。従来のモジュールは Ansible 2.9 で非推奨となり、Ansible 2.13 で削除される予定です。上記の非推奨になったモジュールのリストに目を通して、Playbook で新しいネットワークリソースモジュールに置き換えてください。詳細は、「`Ansible Network Features in 2.9 <https://www.ansible.com/blog/network-features-coming-soon-in-ansible-engine-2.9>`\_」を参照してください。
+Ansible 2.9 で、ネットワークリソースモジュールの最初のバッチが導入されました。ネットワークデバイスの構成のセクションは、そのネットワークデバイスが提供するリソースと考えることができます。ネットワークリソースモジュールは、単一のリソースを構成するように意図的にスコープされています。このモジュールをビルディングブロックとして組み合わせることで、複雑なネットワークサービスを構成できます。従来のモジュールは Ansible 2.9 で非推奨となり、Ansible 2.13 で削除される予定です。上記の非推奨になったモジュールのリストに目を通して、Playbook で新しいネットワークリソースモジュールに置き換えてください。詳細は、「`Ansible Network Features in 2.9 <https://www.ansible.com/blog/network-features-coming-soon-in-ansible-engine-2.9>`_」を参照してください。
 
 ネットワークデバイスの ``gather_facts`` サポートの改善
 -----------------------------------------------------
