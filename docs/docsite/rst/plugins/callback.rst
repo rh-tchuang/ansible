@@ -1,4 +1,4 @@
-.. \_callback\_plugins:
+.. _callback_plugins:
 
 Callback プラグイン
 ================
@@ -11,7 +11,7 @@ callback プラグインを使用すると、イベントの応答時に、Ansib
 デフォルトでは、コールバックプラグインは、コマンドラインプログラムの実行時に表示されるほとんどの出力を制御します。
 ただし、出力を追加して他のツールと統合し、イベントをストレージバックエンドにまとめるために使用することもできます。
 
-.. \_callback\_examples:
+.. _callback_examples:
 
 Ansible callback プラグイン
 ------------------------
@@ -21,7 +21,7 @@ Ansible callback プラグイン
 
 また、:ref:`say <say_callback>` コールバックは、Playbook のイベントに関連するコンピューターによる音声合成に応答します。
 
-.. \_enabling\_callbacks:
+.. _enabling_callbacks:
 
 callback プラグインの有効化
 -------------------------
@@ -34,22 +34,22 @@ Ansible に同梱されるほとんどの callback プラグインはデフォ�
 
 .. code-block:: ini
 
-  \#callback\_whitelist = timer, mail, profile\_roles, collection\_namespace.collection\_name.custom\_callback
+  #callback_whitelist = timer, mail, profile_roles, collection_namespace.collection_name.custom_callback
 
 ``ansible-playbook`` の callback プラグインの設定
 --------------------------------------------------
 
-コンソールの出力の主要マネージャーとして指定できるプラグインは 1 つだけです。デフォルトを置き換える場合は、サブクラスに CALLBACK\_TYPE = stdout を定義して、:ref:`ansible.cfg <ansible_configuration_settings>` に stdout プラグインを設定する必要があります。以下に例を示します。
+コンソールの出力の主要マネージャーとして指定できるプラグインは 1 つだけです。デフォルトを置き換える場合は、サブクラスに CALLBACK_TYPE = stdout を定義して、:ref:`ansible.cfg <ansible_configuration_settings>` に stdout プラグインを設定する必要があります。以下に例を示します。
 
 .. code-block:: ini
 
-  stdout\_callback = dense
+  stdout_callback = dense
 
 または、カスタムのコールバックの場合は以下を実行します。
 
 .. code-block:: ini
 
-  stdout\_callback = mycallback
+  stdout_callback = mycallback
 
 デフォルトでは、この設定は :ref:`ansible-playbook` にだけ影響があります。
 
@@ -71,7 +71,7 @@ ad-hoc コマンドへの callback プラグインの設定
     export ANSIBLE_LOAD_CALLBACK_PLUGINS=1
 
 
-.. \_callback\_plugin\_list:
+.. _callback_plugin_list:
 
 プラグイン一覧
 -----------
@@ -104,4 +104,4 @@ ad-hoc コマンドへの callback プラグインの設定
    `ユーザーのメーリングリスト <https://groups.google.com/forum/#!forum/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `webchat.freenode.net <https://webchat.freenode.net>`_
-       \#ansible IRC chat channel
+       #ansible IRC chat channel

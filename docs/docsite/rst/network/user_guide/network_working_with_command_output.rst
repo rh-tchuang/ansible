@@ -1,4 +1,4 @@
-.. \_networking\_working\_with\_command\_output:
+.. _networking_working_with_command_output:
 
 **********************************************************
 ネットワークモジュールのコマンド出力およびプロンプトの使用
@@ -12,13 +12,13 @@
 
 Ansible では、条件を使用して Playbook のフローを制御できます。Ansible ネットワークコマンドモジュールは、以下の固有の条件ステートメントを使用します。
 
-* ``eq`` \- 等しい
-* ``neq`` \- 等しくない
-* ``gt`` \- より大きい
-* ``ge`` \- より大きいか等しい
-* ``lt`` \- より小さい
-* ``le`` \- より小さいか等しい
-* ``contains`` \- オブジェクトに指定された項目が含まれる
+* ``eq`` - 等しい
+* ``neq`` - 等しくない
+* ``gt`` - より大きい
+* ``ge`` - より大きいか等しい
+* ``lt`` - より小さい
+* ``le`` - より小さいか等しい
+* ``contains`` - オブジェクトに指定された項目が含まれる
 
 
 条件ステートメントは、
@@ -82,19 +82,19 @@ Ansible Playbook に制御を返す前に結果を評価できます。
 
   ---
   - name: multiple prompt, multiple answer (mandatory check for all prompts)
-    cli\_command:
+    cli_command:
       command: "copy sftp sftp://user@host//user/test.img"
-      check\_all:True
+      check_all:True
       prompt:
-        \- "Confirm download operation"
-        \- "Password"
-        \- "Do you want to change that to the standby image"
+        - "Confirm download operation"
+        - "Password"
+        - "Do you want to change that to the standby image"
       answer:
-        \- 'y'
+        - 'y'
         - <password>
-        \- 'y'
+        - 'y'
 
-プロンプトと回答を同じ順序で一覧表示する必要があります (つまり、prompt\[0] は、answer\[0] により応答されます)。
+プロンプトと回答を同じ順序で一覧表示する必要があります (つまり、prompt[0] は、answer[0] により応答されます)。
 
 上記の例では、``check_all:True`` にすると、タスクは各プロンプトに対して一致する回答を提供します。この設定がないと、複数のプロンプトがあるタスクは、すべてのプロンプトに最初の回答を提供します。
 
@@ -104,19 +104,19 @@ Ansible Playbook に制御を返す前に結果を評価できます。
 
   ---
    - name: reboot ios device
-     cli\_command:
+     cli_command:
        command: reload
        prompt:
-         \- Save\\?
-         \- confirm
+         - Save\?
+         - confirm
        answer:
-         \- y
-         \- y
+         - y
+         - y
 
 .. seealso::
 
   `Ansible によるネットワークデバイスの再起動 <https://www.ansible.com/blog/rebooting-network-devices-with-ansible>`_
       ネットワークデバイスに ``wait_for``、``wait_for_connection``、および ``prompt`` を使用した例。
 
-  `cli_command の詳細<https://www.ansible.com/blog/deep-dive-on-cli-command-for-network-automation>`_
+  `cli_command の詳細 <https://www.ansible.com/blog/deep-dive-on-cli-command-for-network-automation>`_
       ``cli_command`` の使用方法に関する詳細な概要

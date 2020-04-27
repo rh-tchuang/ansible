@@ -1,158 +1,158 @@
 .. _special_variables:
 
-Special Variables
+特別な変数
 =================
 
-Magic
+マジック
 -----
-These variables cannot be set directly by the user; Ansible will always override them to reflect internal state.
+マジック変数は、ユーザーが直接設定できません。Ansible がシステム内の状態を反映してこの変数を常にオーバーライドします。
 
 ansible_check_mode
-    Boolean that indicates if we are in check mode or not
+    チェックモードかどうかを指定するブール値
 
 ansible_dependent_role_names
-    The names of the roles currently imported into the current play as dependencies of other plays
+    他のプレイの依存関係として現在のプレイにインポートされているロールの名前
 
 ansible_diff_mode
-    Boolean that indicates if we are in diff mode or not
+    diff モードかどうかを指定するブール値
 
 ansible_forks
-    Integer reflecting the number of maximum forks available to this run
+    今回の実行で利用可能な最大フォーク数 (整数)
 
 ansible_inventory_sources
-    List of sources used as inventory
+    インベントリーとして使用されるソースの一覧
 
 ansible_limit
-    Contents of the ``--limit`` CLI option for the current execution of Ansible
+    Ansible の現在の実行に対して、CLI オプション ``--limit`` として指定する内容
 
 ansible_loop
-    A dictionary/map containing extended loop information when enabled via ``loop_control.extended``
+    ``loop_control.extended`` で有効にした場合に loop の拡張情報を含むディクショナリー/マップ
 
 ansible_loop_var
-    The name of the value provided to ``loop_control.loop_var``. Added in ``2.8``
+    ``loop_control.loop_var`` に渡す値の名前。``2.8`` で追加
 
 ansible_index_var
-    The name of the value provided to ``loop_control.index_var``. Added in ``2.9``
+    ``loop_control.index_var`` に渡す値の名前。``2.9`` で追加
 
 ansible_parent_role_names
-    When the current role is being executed by means of an :ref:`include_role <include_role_module>` or :ref:`import_role <import_role_module>` action, this variable contains a list of all parent roles, with the most recent role (i.e. the role that included/imported this role) being the first item in the list.
-    When multiple inclusions occur, this list lists the *last* role (i.e. the role that included this role) as the *first* item in the list. It is also possible that a specific role exists more than once in this list.
+    現在のロールが :ref:`include_role <include_role_module>` アクションまたは :ref:`import_role <import_role_module>` アクションで実行されていると、この変数には親のロールの全一覧と、その一覧の最初の項目である最新のロール (このロールを追加/インポートしたロール) が含まれます。
+    複数の包含がある場合には、この一覧は *最後* のロール (このロールに含まれるロール) を、一覧の *最初* の項目として一覧に追加します。固有のロールを一覧に複数回存在させることも可能です。
 
-    For example: When role **A** includes role **B**, inside role B, ``ansible_parent_role_names`` will equal to ``['A']``. If role **B** then includes role **C**, the list becomes ``['B', 'A']``.
+    例:When role **A** includes role **B**, inside role B, ``ansible_parent_role_names`` will equal to ``['A']``.If role **B** then includes role **C**, the list becomes ``['B', 'A']``.
 
 ansible_parent_role_paths
-    When the current role is being executed by means of an :ref:`include_role <include_role_module>` or :ref:`import_role <import_role_module>` action, this variable contains a list of all parent roles, with the most recent role (i.e. the role that included/imported this role) being the first item in the list.
-    Please refer to ``ansible_parent_role_names`` for the order of items in this list.
+    現在のロールが :ref:`include_role <include_role_module>` アクションまたは :ref:`import_role <import_role_module>` アクションで実行されていると、この変数には親のロールの全一覧と、その一覧の最初の項目である最新のロール (このロールを追加/インポートしたロール) が含まれます。
+    この一覧の順番は、``ansible_parent_role_names`` を参照してください。
 
 ansible_play_batch
-    List of active hosts in the current play run limited by the serial, aka 'batch'. Failed/Unreachable hosts are not considered 'active'.
+    シリアルで制限される現在のプレイ実行に含まれるアクティブなホスト一覧 (「バッチ」と呼ばれます)。失敗したホストや到達不可能なホストは、「アクティブ」とはみなされません。
 
 ansible_play_hosts
-    The same as ansible_play_batch
+    Ansible_play_batch と同じ
 
 ansible_play_hosts_all
-    List of all the hosts that were targeted by the play
+    プレイが対象としたホストの一覧
 
 ansible_play_role_names
-    The names of the roles currently imported into the current play. This list does **not** contain the role names that are
-    implicitly included via dependencies.
+    現在のプレイに現在インポートされているロールの名前。この一覧には、依存関係を介して暗黙的に組み込まれるロール名は**含まれません**
+    。
 
 ansible_playbook_python
-    The path to the python interpreter being used by Ansible on the controller
+    Ansible が使用する Python インタープリターへのコントローラー上のパス
 
 ansible_role_names
-    The names of the roles currently imported into the current play, or roles referenced as dependencies of the roles
-    imported into the current play.
+    現在のプレイにインポートされているロール名、
+    または現在のプレイにインポートされているロールの依存関係として参照されているロール名
 
 ansible_run_tags
-    Contents of the ``--tags`` CLI option, which specifies which tags will be included for the current run.
+    CLI オプション ``--tags`` の内容。現在の実行に含まれるタグを指定します。
 
 ansible_search_path
-    Current search path for action plugins and lookups, i.e where we search for relative paths when you do ``template: src=myfile``
+    アクションプラグインとルックアップの現在の検索パス。``template: src=myfile`` を指定したときに検索する相対パス
 
 ansible_skip_tags
-    Contents of the ``--skip_tags`` CLI option, which specifies which tags will be skipped for the current run.
+    CLI オプション ``--skip_tags`` の内容。このオプションでは、現在の実行で省略するタグを指定します。
 
 ansible_verbosity
-    Current verbosity setting for Ansible
+    Ansible の現在の詳細レベル設定
 
 ansible_version
-   Dictionary/map that contains information about the current running version of ansible, it has the following keys: full, major, minor, revision and string.
+   現在実行の Ansible のバージョンに関する情報を含むディクショナリー/マップ。full、major、minor、revision、string などのキーが含まれます。
 
 group_names
-    List of groups the current host is part of
+    現在のホストが所属するグループの一覧
 
 groups
-    A dictionary/map with all the groups in inventory and each group has the list of hosts that belong to it
+    インベントリー内の全グループを含むディクショナリー/マップ。各グループには、所属するホストの一覧が含まれます。
 
 hostvars
-    A dictionary/map with all the hosts in inventory and variables assigned to them
+    インベントリー内の全ホスト、そのホストに割当てられた変数を含むディクショナリー/マップ。
 
 inventory_hostname
-    The inventory name for the 'current' host being iterated over in the play
+    プレイで繰り返される「現在」のホストのイベントリー名
 
 inventory_hostname_short
-    The short version of `inventory_hostname`
+    `inventory_hostname` の短縮版
 
 inventory_dir
-    The directory of the inventory source in which the `inventory_hostname` was first defined
+    `inventory_hostname` を最初に定義したインベントリーソースのディレクトリー
 
 inventory_file
-    The file name of the inventory source in which the `inventory_hostname` was first defined
+    `inventory_hostname` を最初に定義したインベントリーソースのファイル名
 
 omit
-    Special variable that allows you to 'omit' an option in a task, i.e ``- user: name=bob home={{ bobs_home|default(omit) }}``
+    タスクのオプションを省略できるようにする特別変数 (つまり ``- user: name=bob home={{ bobs_home|default(omit) }}``)
 
 play_hosts
-    Deprecated, the same as ansible_play_batch
+    非推奨。ansible_play_batch と同じ
 
 ansible_play_name
-    The name of the currently executed play. Added in ``2.8``.
+    現在実行されているプレイの名前。``2.8`` で追加。
 
 playbook_dir
-    The path to the directory of the playbook that was passed to the ``ansible-playbook`` command line.
+    ``ansible-playbook`` コマンドラインに渡した Playbook のディレクトリーへのパス
 
 role_name
-    The name of the role currently being executed.
+    現在実行中のロール名
 
 role_names
-    Deprecated, the same as ansible_play_role_names
+    非推奨。ansible_play_role_names と同じ
 
 role_path
-    The path to the dir of the currently running role
+    現在実行中のロールのディレクトリーへのパス
 
-Facts
+ファクト
 -----
-These are variables that contain information pertinent to the current host (`inventory_hostname`). They are only available if gathered first.
+ファクト (Fact) は、現在のホストに関連する情報 (`inventory_hostname`) を含む変数です。この変数は、最初に収集した場合にのみ利用できます。
 
 ansible_facts
-    Contains any facts gathered or cached for the `inventory_hostname`
-    Facts are normally gathered by the :ref:`setup <setup_module>` module automatically in a play, but any module can return facts.
+    `inventory_hostname` が収集またはキャッシュする「ファクト」が含まれます。
+    ファクトは通常、:ref:`setup <setup_module>` モジュールによって再生されますが、すべてのモジュールはファクトを返すことができます。
 
 ansible_local
-    Contains any 'local facts' gathered or cached for the `inventory_hostname`.
-    The keys available depend on the custom facts created.
-    See the :ref:`setup <setup_module>` module for more details.
+    `inventory_hostname` が収集またはキャッシュする「ローカルファクト」が含まれます。
+    利用可能なキーは、作成したカスタムファクトによって異なります。
+    詳細は、:ref:`setup <setup_module>` モジュールを参照してください。
 
 .. _connection_variables:
 
-Connection variables
+接続変数
 ---------------------
-Connection variables are normally used to set the specifics on how to execute actions on a target. Most of them correspond to connection plugins, but not all are specific to them; other plugins like shell, terminal and become are normally involved.
-Only the common ones are described as each connection/become/shell/etc plugin can define its own overrides and specific variables.
-See :ref:`general_precedence_rules` for how connection variables interact with :ref:`configuration settings<ansible_configuration_settings>`, :ref:`command-line options<command_line_tools>`, and :ref:`playbook keywords<playbook_keywords>`.
+接続変数は通常、ターゲットでのアクション実行方法を具体的に設定する時に使用します。接続変数の大半が connection プラグインに対応しますが、connection プラグイン固有のものではなく、通常は shell、terminal、become などの他のプラグインも使用します。
+各 connection/become/shell/etc プラグインは、自身のオーバーライドや固有の変数を定義するため、一般的なもののみを説明します。
+接続変数が :ref:`構成設定<ansible_configuration_settings>`、:ref:`コマンドラインオプション<command_line_tools>`、および :ref:`Playbook キーワード<playbook_keywords>` と相互作用する方法は、:ref:`general_precedence_rules` を参照してください。
 
 ansible_become_user
-    The user Ansible 'becomes' after using privilege escalation. This must be available to the 'login user'.
+    特権昇格後に Ansible が昇格するユーザーこのユーザーは、「ログインユーザー」が利用できる必要があります。
 
 ansible_connection
-    The connection plugin actually used for the task on the target host.
+    ターゲットホストでタスクに実際に使用する connection プラグイン
 
 ansible_host
-    The ip/name of the target host to use instead of `inventory_hostname`.
+    `inventory_hostname` の代わりに使用するターゲットホストの ip/名前
 
 ansible_python_interpreter
-    The path to the Python executable Ansible should use on the target host.
+    Ansible がターゲットホストで使用すべき Python 実行ファイルへのパス
 
 ansible_user
-    The user Ansible 'logs in' as.
+    Ansible がログインするユーザー

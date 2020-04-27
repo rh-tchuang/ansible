@@ -1,4 +1,4 @@
-.. \_httpapi\_plugins:
+.. _httpapi_plugins:
 
 Httpapi プラグイン
 ===============
@@ -13,14 +13,14 @@ Httpapi プラグインは、Ansible に対して、リモートデバイスの 
 プラグインごとに、特定の API の方言を表します。プラットフォーム固有のもの (Arista eAPI、Cisco NXAPI) があります。
 さまざまなプラットフォーム (RESTCONF) で利用できるものもあります。
 
-.. \_enabling\_httpapi:
+.. _enabling_httpapi:
 
 httpapi プラグインの追加
 -------------------------
 
 ``httpapi_plugins`` ディレクトリーにカスタムのプラグインをドロップして、Ansible が他の API をサポートするように拡張できます。詳細は、:ref:`developing_plugins_httpapi` を参照してください。
 
-.. \_using\_httpapi:
+.. _using_httpapi:
 
 httpapi プラグインの使用
 ------------------------
@@ -32,7 +32,7 @@ httpapi プラグインの使用
 プラグインは、自己文書化されており、プラグインごとに、設定オプションについて文書化する必要があります。
 
 
-.. \_httpapi\_plugin\_list:
+.. _httpapi_plugin_list:
 
 プラグイン一覧
 -----------
@@ -56,4 +56,4 @@ httpapi プラグインの使用
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       \#ansible-network IRC chat channel
+       #ansible-network IRC chat channel

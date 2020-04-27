@@ -1,4 +1,4 @@
-.. \_network\_getting\_started:
+.. _network_getting_started:
 
 ***************************************************
 ネットワークを自動するための Ansible 入門ガイド
@@ -24,10 +24,10 @@ Ansible モジュールは幅広いベンダー、デバイスタイプ、アク
    :maxdepth: 2
    :caption: 入門ガイド
 
-   basic\_concepts
-   network\_differences
-   first\_playbook
-   first\_inventory
-   network\_roles
-   intermediate\_concepts
-   network\_resources
+   basic_concepts
+   network_differences
+   first_playbook
+   first_inventory
+   network_roles
+   intermediate_concepts
+   network_resources

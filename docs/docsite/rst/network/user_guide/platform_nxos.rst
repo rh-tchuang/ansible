@@ -1,4 +1,4 @@
-.. \_nxos\_platform\_options:
+.. _nxos_platform_options:
 
 ***************************************
 NXOS プラットフォームのオプション
@@ -40,7 +40,7 @@ Cisco NXOS は、複数の接続に対応します。このページには、各
     返されるデータ形式  ``stdout[0].``                              ``stdout[0].messages[0].``
     ====================  ==========================================  =========================
 
-.. |enable\_mode| replace::Enable モード |br| (権限昇格) |br| 2.5.3 以降で対応
+.. |enable_mode| replace::Enable モード |br| (権限昇格) |br| 2.5.3 以降で対応
 
 
 レガシー Playbook の場合でも、NXOS は ``ansible_connection: local`` に対応します。できるだけ早期に ``ansible_connection: network_cli`` または ``ansible_connection: httpapi`` を使用するモダナイゼーションが推奨されます。
@@ -53,14 +53,14 @@ CLI の例: ``group_vars/nxos.yml``
 
 .. code-block:: yaml
 
-   ansible\_connection: network\_cli
-   ansible\_network\_os: nxos
-   ansible\_user: myuser
-   ansible\_password: !vault...
-   ansible\_become: yes
-   ansible\_become\_method: enable
-   ansible\_become\_password: !vault...
-   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible_connection: network_cli
+   ansible_network_os: nxos
+   ansible_user: myuser
+   ansible_password: !vault...
+   ansible_become: yes
+   ansible_become_method: enable
+   ansible_become_password: !vault...
+   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
 - SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
@@ -73,10 +73,10 @@ CLI タスクの例
 .. code-block:: yaml
 
    - name:Backup current switch config (nxos)
-     nxos\_config:
+     nxos_config:
        backup: yes
-     register: backup\_nxos\_location
-     when: ansible\_network\_os == 'nxos'
+     register: backup_nxos_location
+     when: ansible_network_os == 'nxos'
 
 
 
@@ -86,15 +86,15 @@ Ansible での NX-API の使用
 NX-API の有効化
 ---------------
 
-NX-API を使用してスイッチに接続するには、NX-API を有効にする必要があります。Ansible 経由で新規スイッチで NX-API を有効にするには、CLI 接続で ``nxos_nxapi`` モジュールを使用します。上記の CLI の例のように group\_vars/nxos.yml を設定し、以下のような Playbook タスクを実行します。
+NX-API を使用してスイッチに接続するには、NX-API を有効にする必要があります。Ansible 経由で新規スイッチで NX-API を有効にするには、CLI 接続で ``nxos_nxapi`` モジュールを使用します。上記の CLI の例のように group_vars/nxos.yml を設定し、以下のような Playbook タスクを実行します。
 
 .. code-block:: yaml
 
    - name:NX-API の有効化
-      nxos\_nxapi:
-          enable\_http: yes
-          enable\_https: yes
-      when: ansible\_network\_os == 'nxos'
+      nxos_nxapi:
+          enable_http: yes
+          enable_https: yes
+      when: ansible_network_os == 'nxos'
 
 HTTP/HTTPS およびローカル http を有効にするオプションの詳細は、:ref:`nxos_nxapi <nxos_nxapi_module>` モジュールのドキュメントを参照してください。
 
@@ -105,12 +105,12 @@ NX-API ``group_vars/nxos.yml`` の例
 
 .. code-block:: yaml
 
-   ansible\_connection: httpapi
-   ansible\_network\_os: nxos
-   ansible\_user: myuser
-   ansible\_password: !vault...
-   proxy\_env:
-     http\_proxy: http://proxy.example.com:8080
+   ansible_connection: httpapi
+   ansible_network_os: nxos
+   ansible_user: myuser
+   ansible_password: !vault...
+   proxy_env:
+     http_proxy: http://proxy.example.com:8080
 
 - (Web プロキシーを経由せず) ホストに直接アクセスしている場合は、``proxy_env`` 設定を削除できます。
 - ``https`` を使用して Web プロキシー経由でホストにアクセスする場合は、``http_proxy`` を ``https_proxy`` に変更します。
@@ -122,15 +122,15 @@ NX-API タスクの例
 .. code-block:: yaml
 
    - name:Backup current switch config (nxos)
-     nxos\_config:
+     nxos_config:
        backup: yes
-     register: backup\_nxos\_location
-     environment: "{{ proxy\_env }}"
-     when: ansible\_network\_os == 'nxos'
+     register: backup_nxos_location
+     environment: "{{ proxy_env }}"
+     when: ansible_network_os == 'nxos'
 
 この例では、``group_vars`` で定義された ``proxy_env`` 変数は、タスクのモジュールで使用される ``environment`` オプションに渡されます。
 
-.. include:: shared\_snippets/SSH\_warning.txt
+.. include:: shared_snippets/SSH_warning.txt
 
 Cisco Nexus Platform のサポートマトリックス
 ===================================

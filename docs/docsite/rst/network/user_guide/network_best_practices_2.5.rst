@@ -1,4 +1,4 @@
-.. \_network-best-practices:
+.. _network-best-practices:
 
 ************************
 Ansible ネットワークの例
@@ -33,63 +33,63 @@ Ansible は柔軟なツールであるため、接続情報と認証情報を指
 
 .. code-block:: ini
 
-   \[all:vars]
-   \# these defaults can be overridden for any group in the \[group:vars] section
-   ansible\_connection=network\_cli
-   ansible\_user=ansible
+   [all:vars]
+   # these defaults can be overridden for any group in the [group:vars] section
+   ansible_connection=network_cli
+   ansible_user=ansible
 
-   \[switches:children]
+   [switches:children]
    eos
    ios
    vyos
 
-   \[eos]
-   veos01 ansible\_host=veos-01.example.net
-   veos02 ansible\_host=veos-02.example.net
-   veos03 ansible\_host=veos-03.example.net
-   veos04 ansible\_host=veos-04.example.net
+   [eos]
+   veos01 ansible_host=veos-01.example.net
+   veos02 ansible_host=veos-02.example.net
+   veos03 ansible_host=veos-03.example.net
+   veos04 ansible_host=veos-04.example.net
 
-   \[eos:vars]
-   ansible\_become=yes
-   ansible\_become\_method=enable
-   ansible\_network\_os=eos
-   ansible\_user=my\_eos\_user
-   ansible\_password= !vault |
-                     $ANSIBLE\_VAULT;1.1;AES256
+   [eos:vars]
+   ansible_become=yes
+   ansible_become_method=enable
+   ansible_network_os=eos
+   ansible_user=my_eos_user
+   ansible_password= !vault |
+                     $ANSIBLE_VAULT;1.1;AES256
                      37373735393636643261383066383235363664386633386432343236663533343730353361653735
                      6131363539383931353931653533356337353539373165320a316465383138636532343463633236
                      37623064393838353962386262643230303438323065356133373930646331623731656163623333
                      3431353332343530650a373038366364316135383063356531633066343434623631303166626532
                      9562
 
-   \[ios]
-   ios01 ansible\_host=ios-01.example.net
-   ios02 ansible\_host=ios-02.example.net
-   ios03 ansible\_host=ios-03.example.net
+   [ios]
+   ios01 ansible_host=ios-01.example.net
+   ios02 ansible_host=ios-02.example.net
+   ios03 ansible_host=ios-03.example.net
 
-   \[ios:vars]
-   ansible\_become=yes
-   ansible\_become\_method=enable
-   ansible\_network\_os=ios
-   ansible\_user=my\_ios\_user
-   ansible\_password= !vault |
-                     $ANSIBLE\_VAULT;1.1;AES256
+   [ios:vars]
+   ansible_become=yes
+   ansible_become_method=enable
+   ansible_network_os=ios
+   ansible_user=my_ios_user
+   ansible_password= !vault |
+                     $ANSIBLE_VAULT;1.1;AES256
                      34623431313336343132373235313066376238386138316466636437653938623965383732373130
                      3466363834613161386538393463663861636437653866620a373136356366623765373530633735
                      34323262363835346637346261653137626539343534643962376139366330626135393365353739
                      3431373064656165320a333834613461613338626161633733343566666630366133623265303563
                      8472
 
-   \[vyos]
-   vyos01 ansible\_host=vyos-01.example.net
-   vyos02 ansible\_host=vyos-02.example.net
-   vyos03 ansible\_host=vyos-03.example.net
+   [vyos]
+   vyos01 ansible_host=vyos-01.example.net
+   vyos02 ansible_host=vyos-02.example.net
+   vyos03 ansible_host=vyos-03.example.net
 
-   \[vyos:vars]
-   ansible\_network\_os=vyos
-   ansible\_user=my\_vyos\_user
-   ansible\_password= !vault |
-                     $ANSIBLE\_VAULT;1.1;AES256
+   [vyos:vars]
+   ansible_network_os=vyos
+   ansible_user=my_vyos_user
+   ansible_password= !vault |
+                     $ANSIBLE_VAULT;1.1;AES256
                      39336231636137663964343966653162353431333566633762393034646462353062633264303765
                      6331643066663534383564343537343334633031656538370a333737656236393835383863306466
                      62633364653238323333633337313163616566383836643030336631333431623631396364663533
@@ -98,7 +98,7 @@ Ansible は柔軟なツールであるため、接続情報と認証情報を指
 
 ssh-agent を使用する場合、``ansible_password`` 行は必要ありません。ssh-agent でなく ssh キーを使用し、鍵が複数ある場合は、``ansible_ssh_private_key_file=/path/to/correct/key`` の ``[group:vars]`` セクションで、各接続に使用するキーを指定します。``ansible_ssh_`` オプションの詳細は、「:ref:`behavioral_parameters`」を参照してください。
 
-..FIXME FUTURE Gundalow - (書き込まれる) ネットワーク認証およびプロキシーページへのリンク
+.. FIXME FUTURE Gundalow - (書き込まれる) ネットワーク認証およびプロキシーページへのリンク
 
 .. warning:: プレーンテキストにパスワードを保存しないでください。
 
@@ -112,18 +112,18 @@ Ansible の「Vault」機能を使用すると、パスワードやキーなど�
 
 以下の変数はインベントリー内のすべてのプラットフォームに共通ですが、特定のインベントリーグループまたはホストについて上書きできます。
 
-:ansible\_connection:
+:ansible_connection:
 
   Ansible は ansible-connection 設定を使用して、リモートデバイスへの接続方法を決定します。Ansible Networking を使用する場合は、Ansible がリモートノードを制限された実行環境のネットワークデバイスとして扱うように ``network_cli`` に設定します。この設定がないと、Ansible は ssh を使用してリモートに接続し、ネットワークデバイスで Python スクリプトを実行します。これは、Python がネットワークデバイスで利用できないため失敗します。
-:ansible\_network\_os:
+:ansible_network_os:
   このホストが対応するネットワークプラットフォームを Ansible に通知します。これは、``network_cli`` または ``netconf`` を使用する場合に必要です。
-:ansible\_user:リモートデバイス (スイッチ) に接続する際に使用するユーザーです。これを使用しないと、``ansible-playbook`` を実行しているユーザーが使用されます。
+:ansible_user:リモートデバイス (スイッチ) に接続する際に使用するユーザーです。これを使用しないと、``ansible-playbook`` を実行しているユーザーが使用されます。
   接続先となるネットワークデバイスのユーザーを指定します。
-:ansible\_password:
+:ansible_password:
   ``ansible_user`` がログインに使用するパスワード。指定しない場合は、SSH キーが使用されます。
-:ansible\_become:
+:ansible_become:
   Enable モード (特権モード) を使用する場合は、次のセクションを参照してください。
-:ansible\_become\_method:
+:ansible_become_method:
   ``network_cli`` で、どのタイプの `become` を使用すべきか。唯一の有効なオプションは ``enable`` です。
 
 権限昇格
@@ -133,11 +133,11 @@ Arista EOS や Cisco IOS などの特定のネットワークプラットフォ�
 
 .. code-block:: ini
 
-   \[eos:vars]
-   ansible\_connection=network\_cli
-   ansible\_network\_os=eos
-   ansible\_become=yes
-   ansible\_become\_method=enable
+   [eos:vars]
+   ansible_connection=network_cli
+   ansible_network_os=eos
+   ansible_become=yes
+   ansible_become_method=enable
 
 詳細は、「:ref:`ネットワークモジュールで become の使用<become_network>`」を参照してください。
 
@@ -167,18 +167,18 @@ Ansible の「ネットワークファクトモジュール」はシステムか
 
 .. code-block:: ini
 
-   \[switches:children]
+   [switches:children]
    eos
    ios
    vyos
 
-   \[eos]
+   [eos]
    eos01.example.net
 
-   \[ios]
+   [ios]
    ios01.example.net
 
-   \[vyos]
+   [vyos]
    vyos01.example.net
 
 
@@ -189,47 +189,47 @@ Ansible の「ネットワークファクトモジュール」はシステムか
 
 .. code-block:: yaml
 
-   - name:"Demonstrate connecting to switches"
+   - name: "Demonstrate connecting to switches"
      hosts: switches
-     gather\_facts: no
+     gather_facts: no
 
      tasks:
-       \###
-# Collect data
-\#
-- name: Gather facts (eos)
-eos\_facts:
-when: ansible\_network\_os == 'eos'
+       ###
+       # Collect data
+       #
+       - name: Gather facts (eos)
+         eos_facts:
+         when: ansible_network_os == 'eos'
 
-       - name:Gather facts (ops)
-         ios\_facts:
-         when: ansible\_network\_os == 'ios'
+       - name: Gather facts (ops)
+         ios_facts:
+         when: ansible_network_os == 'ios'
 
-       - name:Gather facts (vyos)
-         vyos\_facts:
-         when: ansible\_network\_os == 'vyos'
+       - name: Gather facts (vyos)
+         vyos_facts:
+         when: ansible_network_os == 'vyos'
 
-       \###
-# Demonstrate variables
-\#
-- name: Display some facts
-debug:
-msg: "The hostname is {{ ansible\_net\_hostname }} and the OS is {{ ansible\_net\_version }}"
-
-       - name:Facts from a specific host
+       ###
+       # Demonstrate variables
+       #
+       - name: Display some facts
          debug:
-           var: hostvars\['vyos01.example.net']
+           msg: "The hostname is {{ ansible_net_hostname }} and the OS is {{ ansible_net_version }}"
 
-       - name:Write facts to disk using a template
+       - name: Facts from a specific host
+         debug:
+           var: hostvars['vyos01.example.net']
+
+       - name: Write facts to disk using a template
          copy:
            content: |
-             \#jinja2: lstrip\_blocks: True
-EOS device info:
-{% for host in groups\['eos'] %}
-             Hostname: {{ hostvars\[host].ansible\_net\_hostname }}
-               Version: {{ hostvars\[host].ansible\_net\_version }}
-               Model: {{ hostvars\[host].ansible\_net\_model }}
-               Serial: {{ hostvars\[host].ansible\_net\_serialnum }}
+             #jinja2: lstrip_blocks: True
+             EOS device info:
+               {% for host in groups['eos'] %}
+               Hostname: {{ hostvars[host].ansible_net_hostname }}
+               Version: {{ hostvars[host].ansible_net_version }}
+               Model: {{ hostvars[host].ansible_net_model }}
+               Serial: {{ hostvars[host].ansible_net_serialnum }}
                {% endfor %}
 
              IOS device info:
@@ -248,41 +248,41 @@ EOS device info:
                Serial: {{ hostvars[host].ansible_net_serialnum }}
                {% endfor %}
            dest: /tmp/switch-facts
-         run\_once: yes
+         run_once: yes
 
-       \###
-# Get running configuration
-#
+       ###
+       # Get running configuration
+       #
 
-       - name:Backup switch (eos)
-         eos\_config:
+       - name: Backup switch (eos)
+         eos_config:
            backup: yes
-         register: backup\_eos\_location
-         when: ansible\_network\_os == 'eos'
+         register: backup_eos_location
+         when: ansible_network_os == 'eos'
 
        - name: backup switch (vyos)
-         vyos\_config:
+         vyos_config:
            backup: yes
-         register: backup\_vyos\_location
-         when: ansible\_network\_os == 'vyos'
+         register: backup_vyos_location
+         when: ansible_network_os == 'vyos'
 
-       - name:Create backup dir
+       - name: Create backup dir
          file:
-           path: "/tmp/backups/{{ inventory\_hostname }}"
+           path: "/tmp/backups/{{ inventory_hostname }}"
            state: directory
            recurse: yes
 
-       - name:Copy backup files into /tmp/backups/ (eos)
+       - name: Copy backup files into /tmp/backups/ (eos)
          copy:
-           src: "{{ backup\_eos\_location.backup\_path }}"
-           dest: "/tmp/backups/{{ inventory\_hostname }}/{{ inventory\_hostname }}.bck"
-         when: ansible\_network\_os == 'eos'
+           src: "{{ backup_eos_location.backup_path }}"
+           dest: "/tmp/backups/{{ inventory_hostname }}/{{ inventory_hostname }}.bck"
+         when: ansible_network_os == 'eos'
 
-       - name:Copy backup files into /tmp/backups/ (vyos)
+       - name: Copy backup files into /tmp/backups/ (vyos)
          copy:
-           src: "{{ backup\_vyos\_location.backup\_path }}"
-           dest: "/tmp/backups/{{ inventory\_hostname }}/{{ inventory\_hostname }}.bck"
-         when: ansible\_network\_os == 'vyos'
+           src: "{{ backup_vyos_location.backup_path }}"
+           dest: "/tmp/backups/{{ inventory_hostname }}/{{ inventory_hostname }}.bck"
+         when: ansible_network_os == 'vyos'
 
 手順 3:Playbook の実行
 ----------------------------
@@ -321,12 +321,12 @@ Playbook を実行するには、コンソールプロンプトから以下を�
 `ansible-playbook` が失敗する場合は、:ref:`network_debug_troubleshooting` のデバッグ手順に従ってください。
 
 
-.. \_network-agnostic-examples:
+.. _network-agnostic-examples:
 
 例 2: ネットワークに依存しないモジュールを使用した Playbook の単純化
 ==============================================================
 
-(この例は、元々 Sean Cavanaugh -`@IPvSean <https://github.com/IPvSean>`_ が投稿したブログ「`Deep Dive on cli_command for Network Automation <https://www.ansible.com/blog/deep-dive-on-cli-command-for-network-automation>`\_」で紹介されました。)
+(この例は、元々 Sean Cavanaugh - `@IPvSean <https://github.com/IPvSean>`_ が投稿したブログ「 `Deep Dive on cli_command for Network Automation <https://www.ansible.com/blog/deep-dive-on-cli-command-for-network-automation>`_」で紹介されました。)
 
 お使いの環境に複数のネットワークプラットフォームがある場合には、ネットワークに依存しないモジュールを使用して Playbook を単純化できます。``eos_config``、``ios_config``、``junos_config`` などのプラットフォーム固有モジュールの代わりに、``cli_command`` または ``cli_config`` などネットワークに依存しないモジュールを使用できます。これにより、Playbook で必要なタスクおよび条件の数が減ります。
 
@@ -343,19 +343,19 @@ Playbook を実行するには、コンソールプロンプトから以下を�
 
   ---
   - name:Run Arista command
-    eos\_command:
+    eos_command:
       commands: show ip int br
-    when: ansible\_network\_os == 'eos'
+    when: ansible_network_os == 'eos'
 
   - name:Run Cisco NXOS command
-    nxos\_command:
+    nxos_command:
       commands: show ip int br
-    when: ansible\_network\_os == 'nxos'
+    when: ansible_network_os == 'nxos'
 
   - name:Run Vyos command
-    vyos\_command:
+    vyos_command:
       commands: show interface
-    when: ansible\_network\_os == 'vyos'
+    when: ansible_network_os == 'vyos'
 
 ネットワークに依存しないモジュール ``cli_command`` を使用した簡単な Playbook
 ----------------------------------------------------------------
@@ -366,14 +366,14 @@ Playbook を実行するには、コンソールプロンプトから以下を�
 
   ---
   - hosts: network
-    gather\_facts: false
-    connection: network\_cli
+    gather_facts: false
+    connection: network_cli
 
     tasks:
-      \- name:Run cli\_command on Arista and display results
+      - name:Run cli_command on Arista and display results
         block:
-        \- name:Run cli\_command on Arista
-          cli\_command:
+        - name:Run cli_command on Arista
+          cli_command:
             command: show ip int br
           register: result
 
@@ -382,48 +382,48 @@ Playbook を実行するには、コンソールプロンプトから以下を�
             var: result.stdout_lines
         when: ansible_network_os == 'eos'
 
-      - name:Run cli\_command on Cisco IOS and display results
+      - name:Run cli_command on Cisco IOS and display results
         block:
-        - name:Run cli\_command on Cisco IOS
-          cli\_command:
+        - name:Run cli_command on Cisco IOS
+          cli_command:
             command: show ip int br
           register: result
 
         - name:Display result to terminal window
           debug:
-            var: result.stdout\_lines
-        when: ansible\_network\_os == 'ios'
+            var: result.stdout_lines
+        when: ansible_network_os == 'ios'
 
-      - name:Run cli\_command on Vyos and display results
+      - name:Run cli_command on Vyos and display results
         block:
-        - name:Run cli\_command on Vyos
-          cli\_command:
+        - name:Run cli_command on Vyos
+          cli_command:
             command: show interfaces
           register: result
 
         - name:Display result to terminal window
           debug:
-            var: result.stdout\_lines
-        when: ansible\_network\_os == 'vyos'
+            var: result.stdout_lines
+        when: ansible_network_os == 'vyos'
 
 
-プラットフォームタイプ別に group\_vars を使用する場合は、この Playbook をさらに簡単にできます。
+プラットフォームタイプ別に group_vars を使用する場合は、この Playbook をさらに簡単にできます。
 
 .. code-block:: yaml
 
   ---
   - name:Run command and print to terminal window
     hosts: routers
-    gather\_facts: false
+    gather_facts: false
 
     tasks:
-      \- name:Run show command
-        cli\_command:
-          command: "{{show\_interfaces}}"
-        register: command\_output
+      - name:Run show command
+        cli_command:
+          command: "{{show_interfaces}}"
+        register: command_output
 
 
-group\_vars を使用すると、この詳細の例を表示できます。また、設定のバックアップの例は、`ネットワークに依存しない例 <https://github.com/network-automation/agnostic_example>`_ で確認できます。
+group_vars を使用すると、この詳細の例を表示できます。また、設定のバックアップの例は、`ネットワークに依存しない例 <https://github.com/network-automation/agnostic_example>`_ で確認できます。
 
 ``cli_command`` での複数のプロンプトの使用
 ------------------------------------------------
@@ -434,15 +434,15 @@ group\_vars を使用すると、この詳細の例を表示できます。ま�
 
   ---
   - name:Change password to default
-    cli\_command:
+    cli_command:
       command: "{{ item }}"
       prompt:
-        \- "New password"
-        \- "Retype new password"
+        - "New password"
+        - "Retype new password"
       answer:
-        \- "mypassword123"
-        \- "mypassword123"
-      check\_all:True
+        - "mypassword123"
+        - "mypassword123"
+      check_all:True
     loop:
       - "configure"
       - "rollback"

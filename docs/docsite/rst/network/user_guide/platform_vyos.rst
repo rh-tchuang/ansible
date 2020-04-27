@@ -1,4 +1,4 @@
-.. \_vyos\_platform\_options:
+.. _vyos_platform_options:
 
 ***************************************
 VyOS プラットフォームのオプション
@@ -32,7 +32,7 @@ VyOS は、Enable モード (権限昇格) に対応します。ここでは、A
     返されるデータ形式  各モジュールのドキュメントを参照してください。 
     ====================  ==========================================
 
-.. |enable\_mode| replace::Enable モード |br| (権限昇格)
+.. |enable_mode| replace::Enable モード |br| (権限昇格)
 
 
 レガシー Playbook の場合でも、VyOS は ``ansible_connection: local`` に対応します。できるだけ早期に ``ansible_connection: network_cli`` を使用するモダナイゼーションが推奨されます。
@@ -45,11 +45,11 @@ CLI の例: ``group_vars/vyos.yml``
 
 .. code-block:: yaml
 
-   ansible\_connection: network\_cli
-   ansible\_network\_os: vyos
-   ansible\_user: myuser
-   ansible\_password: !vault...
-   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible_connection: network_cli
+   ansible_network_os: vyos
+   ansible_user: myuser
+   ansible_password: !vault...
+   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
 - SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
@@ -62,8 +62,8 @@ CLI タスクの例
 .. code-block:: yaml
 
    - name:Retrieve VyOS version info
-     vyos\_command:
+     vyos_command:
        commands: show version
-     when: ansible\_network\_os == 'vyos'
+     when: ansible_network_os == 'vyos'
 
-.. include:: shared\_snippets/SSH\_warning.txt
+.. include:: shared_snippets/SSH_warning.txt

@@ -23,7 +23,7 @@ pyVmomi は、
 
     $ pip install pyvmomi
 
-最新の vSphere(6.0 以降の) 機能を使用する Ansible VMware モジュールは、`vSphere Automation Python SDK` <https://github.com/vmware/vsphere-automation-sdk-python>_ を使用します。VSphere Automation Python SDK には、AWS Console API 向け VMware Cloud、AWS 統合 API 向け NSX VMware Cloud、AWS サイトリカバリー API 向け VMware Cloud、NSX-T API に対するクライアントライブラリー、ドキュメント、サンプルコードもあります。
+最新の vSphere(6.0 以降の) 機能を使用する Ansible VMware モジュールは、`vSphere Automation Python SDK <https://github.com/vmware/vsphere-automation-sdk-python>`_ を使用します。VSphere Automation Python SDK には、AWS Console API 向け VMware Cloud、AWS 統合 API 向け NSX VMware Cloud、AWS サイトリカバリー API 向け VMware Cloud、NSX-T API に対するクライアントライブラリー、ドキュメント、サンプルコードもあります。
 
 VSphere Automation Python SDK は、pip を使用してインストールできます。
 

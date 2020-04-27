@@ -1,4 +1,4 @@
-.. \_slxos\_platform\_options:
+.. _slxos_platform_options:
 
 ***************************************
 SLX-OS プラットフォームのオプション
@@ -33,7 +33,7 @@ Extreme SLX-OS Ansible モジュールは現時点では CLI 接続のみに対�
     返されるデータ形式 ``stdout[0]``
     ====================  ==========================================
 
-.. |enable\_mode| replace::Enable モード |br| (権限昇格)
+.. |enable_mode| replace::Enable モード |br| (権限昇格)
 
 
 SLX-OS は ``ansible_connection: local`` に対応していません。``ansible_connection: network_cli`` を使用する必要があります。
@@ -46,11 +46,11 @@ CLI の例: ``group_vars/slxos.yml``
 
 .. code-block:: yaml
 
-   ansible\_connection: network\_cli
-   ansible\_network\_os: slxos
-   ansible\_user: myuser
-   ansible\_password: !vault...
-   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible_connection: network_cli
+   ansible_network_os: slxos
+   ansible_user: myuser
+   ansible_password: !vault...
+   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
 - SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
@@ -63,10 +63,10 @@ CLI タスクの例
 .. code-block:: yaml
 
    - name:Backup current switch config (slxos)
-     slxos\_config:
+     slxos_config:
        backup: yes
-     register: backup\_slxos\_location
-     when: ansible\_network\_os == 'slxos'
+     register: backup_slxos_location
+     when: ansible_network_os == 'slxos'
 
 
-.. include:: shared\_snippets/SSH\_warning.txt
+.. include:: shared_snippets/SSH_warning.txt

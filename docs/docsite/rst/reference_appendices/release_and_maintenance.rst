@@ -1,6 +1,6 @@
 .. _release_and_maintenance:
 
-Release and maintenance
+リリースおよびメンテナンス
 =======================
 
 .. contents::
@@ -8,53 +8,53 @@ Release and maintenance
 
 .. _release_cycle:
 
-Release cycle
-`````````````
+リリースサイクル
+\`\`\`\`\`\`\`\`\`\`\`\`\`
 
-Ansible is developed and released on a flexible six month release cycle.
-This cycle can be extended in order to allow for larger changes to be properly
-implemented and tested before a new release is made available.
+Ansible は、柔軟な 6 ヶ月のリリースサイクルで開発、リリースされています。
+このサイクルは、大規模な変更を正しく実装して、
+テストしてから新しいリリースが公開されるように、延長することが可能です。
 
-Ansible has a graduated maintenance structure that extends to three major releases.
-For more information, read about the :ref:`development_and_stable_version_maintenance_workflow` or
-see the chart in :ref:`release_schedule` for the degrees to which current releases are maintained.
+Ansible のメンテナンス構造は段階的で、3 つのメジャーリリースまで展開します。
+詳細は、「:ref:`development_and_stable_version_maintenance_workflow`」を確認してください。
+現行リリースがどの程度維持されているかは、:ref:`release_schedule` の表を参照してください。
 
-If you are using a release of Ansible that is no longer maintained, we strongly
-encourage you to upgrade as soon as possible in order to benefit from the
-latest features and security fixes.
+メンテナンスされていない Ansible のリリースを使用している場合には、
+最新の機能やセキュリティー修正からの恩恵を受けられるように、
+できるだけ早くアップグレードすることを強く推奨します。
 
-Older, unmaintained versions of Ansible can contain unfixed security
-vulnerabilities (*CVE*).
+メンテナンスのない、以前の Ansible バージョンには、
+未修正のセキュリティーの脆弱性が含まれている可能性があります (*CVE*)。
 
-You can refer to the :ref:`porting guides<porting_guides>` for tips on updating your Ansible
-playbooks to run on newer versions.
+Ansible Playbook を更新して新しいバージョンで実行するときのヒントは、「:ref:`移植ガイド<porting_guides>`」
+を参照してください。
 
 .. _release_schedule:
 
-Release status
-``````````````
-This table links to the release notes for each major release. These release notes (changelogs) contain the dates and significant changes in each minor release.
+リリースのステータス
+\`\`\`\`\`\`\`\`\`\`\`\`\`\`
+以下の表には、メジャーリリースごとのリリースノートへのリンクが含まれています。このようなリリースノート (changelog) には、各マイナーリリースの日付や、大きな変更が含まれます。
 
 ==============================      =================================================
-Ansible Release                     Status
+Ansible リリース                     ステータス
 ==============================      =================================================
-devel                               In development (2.10 unreleased, trunk)
-`2.9 Release Notes`_                Maintained (security **and** general bug fixes)
-`2.8 Release Notes`_                Maintained (security **and** critical bug fixes)
-`2.7 Release Notes`_                Maintained (security fixes)
-`2.6 Release Notes`_                Unmaintained (end of life)
-`2.5 Release Notes`_                Unmaintained (end of life)
-<2.5                                Unmaintained (end of life)
+devel                               開発中 (未リリースの 2.10 (trunk))
+`2.9 リリースノート`_                メンテナンス対象 (セキュリティー **および** 一般的なバグの修正)
+`2.8 リリースノート`_                メンテナンス対象 (セキュリティー **および** 重要なバグの修正)
+`2.7 リリースノート`_                メンテナンス対象 (セキュリティーの修正)
+`2.6 リリースノート`_                メンテナンス対象外 (エンドオフライフ)
+`2.5 リリースノート`_                メンテナンス対象外 (エンドオフライフ)
+<2.5                                メンテナンス対象外 (エンドオフライフ)
 ==============================      =================================================
 
-You can download the releases from `<https://releases.ansible.com/ansible/>`_.
+各リリースは、`<https://releases.ansible.com/ansible/>`_ からダウンロードできます。
 
-.. note:: Ansible maintenance continues for 3 releases.  Thus the latest Ansible release receives
-    security and general bug fixes when it is first released, security and critical bug fixes when
-    the next Ansible version is released, and **only** security fixes once the follow on to that version is released.
+.. note:: Ansible は、リリース 3 回分、メンテナンスされます。 つまり、最新の Ansible リリースでは、その最新のリリースが最初にリリースされた時はセキュリティーおよび一般的なバグ修正が含まれます。
+    その次のバージョンがリリースされるときは、セキュリティーおよび重要なバグ修正が含まれます。
+    その次のバージョンがリリースされるときは、セキュリティー修正 **のみ** が提供されます。
 
-.. Comment: devel used to point here but we're currently revamping our changelog process and have no
-   link to a static changelog for devel _2.6: https://github.com/ansible/ansible/blob/devel/CHANGELOG.md
+..Comment: devel はこちらを参照していましたが、
+   現在 changelog プロセスを改定中で devel 用の静的な changelog へのリンクはありません。_2.6: https://github.com/ansible/ansible/blob/devel/CHANGELOG.md
 .. _2.9 Release Notes:
 .. _2.9: https://github.com/ansible/ansible/blob/stable-2.9/changelogs/CHANGELOG-v2.9.rst
 .. _2.8 Release Notes:
@@ -69,100 +69,100 @@ You can download the releases from `<https://releases.ansible.com/ansible/>`_.
 
 .. _development_and_stable_version_maintenance_workflow:
 
-Development and stable version maintenance workflow
-```````````````````````````````````````````````````
+開発版および安定版のメンテナンスワークフロー
+\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`
 
-The Ansible community develops and maintains Ansible on GitHub_.
+Ansible コミュニティーは、GitHub_ で Ansible を開発してメンテナンスしましす。
 
-New modules, plugins, features and bugfixes will always be integrated in what will become the next
-major version of Ansible. This work is tracked on the ``devel`` git branch.
+新しいモジュール、プラグイン、機能、バグ修正は常に、
+Ansible の次のメジャーバージョンに統合されます。このような作業内容は ``devel`` git ブランチで追跡されます。
 
-Ansible provides bugfixes and security improvements for the most recent major release. The previous
-major release will only receive fixes for security issues and critical bugs. Ansible only applies
-security fixes to releases which are two releases old. This work is tracked on the
-``stable-<version>`` git branches.
+Ansible は、最新のメジャーリリースにバグ修正とセキュリティーの強化機能を提供します。1 つ前のメジャーリリースには、
+セキュリティーの問題と重要なバグに対する修正のみが提供されます。Ansible は、
+リリース 2 回分に対してのみ、セキュリティー修正が適用されます。このような作業内容は、
+``stable-<version>`` git ブランチで追跡されます。
 
-The fixes that land in maintained stable branches will eventually be released
-as a new version when necessary.
+メンテナンス対象の安定版のブランチに保存された修正は、
+最終的に必要に応じて新しいバージョンとしてリリースされます。
 
-Note that while there are no guarantees for providing fixes for Unmaintained
-releases of Ansible, there can sometimes be exceptions for critical issues.
+メンテナンス対象外の Ansible リリースに修正が提供されるという保証はありませんが、
+重要な問題については例外対応となる可能性がある点に注意してください。
 
 .. _GitHub: https://github.com/ansible/ansible
 
 .. _release_changelogs:
 
-Changelogs
+Changelog
 ~~~~~~~~~~
 
-Since Ansible 2.5, we have generated changelogs based on fragments. Here is the generated changelog for 2.9_ as an example. When creating new features or fixing bugs, create a changelog fragment describing the change. A changelog entry is not needed for new modules or plugins. Details for those items will be generated from the module documentation.
+Ansible 2.5 以降、フラグメントベースで changelog を生成しています。ここでは、2.9_ 向けに生成された changelog を例として紹介します。新機能や、バグ修正の作成時に、変更内容を記述した changelog フラグメントが作成されます。新しいモジュールまたはプラグインには、changelog のエントリーは必要ありません。このようなアイテムの詳細は、モジュールのドキュメントから生成されます。
 
-We've got :ref:`examples and instructions on creating changelog fragments <changelogs_how_to>` in the Community Guide.
+コミュニティーガイドに、:ref:`changelog フラグメントの作成例および手順<changelogs_how_to>` が記載されています。
 
-Older versions logged changes in ``stable-<version>`` branches at ``stable-<version>/CHANGELOG.md``. For example, here is the changelog for `2.4 <https://github.com/ansible/ansible/blob/stable-2.4/CHANGELOG.md>`_ on GitHub.
+以前のバージョンは、``stable-<version>`` branches at ``stable-<version>/CHANGELOG.md`` ブランチで変更内容が記録されます。たとえば、以下は GitHub の `2.4 <https://github.com/ansible/ansible/blob/stable-2.4/CHANGELOG.md>`_ の changelog です。
 
 
-Release candidates
+Release Candidate (リリースの候補)
 ~~~~~~~~~~~~~~~~~~
 
-Before a new release or version of Ansible can be done, it will typically go
-through a release candidate process.
+Ansible の新規リリースまたはバージョンを公開する前に、
+一般的には Release Candidate プロセスを行います。
 
-This provides the Ansible community the opportunity to test Ansible and report
-bugs or issues they might come across.
+このプロセスでは、Ansible コミュニティーは、Ansible をテストして、
+今後発生する可能性のあるバグや修正を報告する機会があります。
 
-Ansible tags the first release candidate (``RC1``) which is usually scheduled
-to last five business days. The final release is done if no major bugs or
-issues are identified during this period.
+Ansible は最初の Release Candidate (``RC1``) とタグ付けします。
+通常、RC はリリース前の最後の 5 営業日にスケジュールされます。この期間に主要なバグや問題が特定されない場合には、
+最終的にリリースされます。
 
-If there are major problems with the first candidate, a second candidate will
-be tagged (``RC2``) once the necessary fixes have landed.
-This second candidate lasts for a shorter duration than the first.
-If no problems have been reported after two business days, the final release is
-done.
+最初の Candidate に主要な問題がある場合には、必要な修正がプッシュされた時点で、
+2 番目の Candidate (``RC2``) のタグが付けられます。
+2 番目の Candidare は、1 番目よりも期間は短くなります。
+2 営業日が経過して問題が報告されない場合には、
+最終的にリリースされます。
 
-More release candidates can be tagged as required, so long as there are
-bugs that the Ansible core maintainers consider should be fixed before the
-final release.
+Ansible の中核となるメンテナーが最終リリース前に修正が必要とみなしたバグが有る場合には、
+必要に応じて Release Candidate のタグを
+さらに付けることができます。
 
 .. _release_freezing:
 
-Feature freeze
+機能フリーズ
 ~~~~~~~~~~~~~~
 
-While there is a pending release candidate, the focus of core developers and
-maintainers will on fixes towards the release candidate.
+保留中の Release Candidate がある場合、
+中核となる開発者やメンテナーは、Release Candidate に向けた修正に焦点を当てます。
 
-Merging new features or fixes that are not related to the release candidate may
-be delayed in order to allow the new release to be shipped as soon as possible.
+できるだけ早く新規リリースを公開できるように、
+Release Candidate に関連のない新機能や修正のマージが遅れる可能性があります。
 
 
-Deprecation Cycle
-`````````````````
+非推奨サイクル
+\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`
 
-Sometimes we need to remove a feature, normally in favor of a reimplementation that we hope does a better job.
-To do this we have a deprecation cycle. First we mark a feature as 'deprecated'. This is normally accompanied with warnings
-to the user as to why we deprecated it, what alternatives they should switch to and when (which version) we are scheduled
-to remove the feature permanently.
+通常、再実装してジョブ実行の改善を希望する場合に、時には機能を削除する必要があります。
+これを実現するために非推奨サイクルがあります。まず、機能を「非推奨」とマークします。これは通常、警告を付けて非推奨とした理由、
+切り替え先の機能、
+完全に機能を削除するタイミング (バージョン) をユーザーに通知します。
 
-The cycle is normally across 4 feature releases (2.x.y, where the x marks a feature release and the y a bugfix release),
-so the feature is normally removed in the 4th release after we announce the deprecation.
-For example, something deprecated in 2.7 will be removed in 2.11, assuming we don't jump to 3.x before that point.
-The tracking is tied to the number of releases, not the release numbering.
+サイクルは通常、4 つの機能リリース (2.x.y (x は機能リリースで、y はバグ修正リリース)) となっており、
+通常、非推奨の通知をしてから 4 番目のリリースでその機能は削除されます。
+たとえば、2.7 で非推奨になった機能は 2.11 に削除されます (この間にリリースが 3.x にならなかった場合)。
+トラッキングは、リリース番号ではなく、リリースの回数と関連があります。
 
-For modules/plugins, we keep the documentation after the removal for users of older versions.
+モジュール/プラグインについては、以前のバージョンをご利用の方のために、削除後もドキュメントは保持します。
 
 .. seealso::
 
    :ref:`community_committer_guidelines`
-       Guidelines for Ansible core contributors and maintainers
+       Ansible で中核となる貢献者およびメンテナー向けガイドライン
    :ref:`testing_strategies`
-       Testing strategies
+       ストラテジーのテスト
    :ref:`ansible_community_guide`
-       Community information and contributing
-   `Ansible release tarballs <https://releases.ansible.com/ansible/>`_
-       Ansible release tarballs
-   `Development Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Mailing list for development topics
+       コミュニティー情報および貢献
+   `Ansible リリースの tarball <https://releases.ansible.com/ansible/>`_
+       Ansible リリースの tarball
+   `開発メーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       開発トピックのメーリングリスト
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

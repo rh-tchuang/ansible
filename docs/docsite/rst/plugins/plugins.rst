@@ -1,4 +1,4 @@
-.. \_plugins\_lookup:
+.. _plugins_lookup:
 
 ********************
 プラグインの使用
@@ -26,9 +26,9 @@ Ansible には、便利なプラグインが多数同梱されていますし、
    shell
    strategy
    vars
-   ../user\_guide/playbooks\_filters
-   ../user\_guide/playbooks\_tests
-   ../user\_guide/plugin\_filtering\_config
+   ../user_guide/playbooks_filters
+   ../user_guide/playbooks_tests
+   ../user_guide/plugin_filtering_config
 
 .. seealso::
 
@@ -41,4 +41,4 @@ Ansible には、便利なプラグインが多数同梱されていますし、
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       \#ansible IRC chat channel
+       #ansible IRC chat channel

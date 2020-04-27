@@ -1,4 +1,4 @@
-.. \_junos\_platform\_options:
+.. _junos_platform_options:
 
 ***************************************
 Junos OS プラットフォームのオプション
@@ -37,7 +37,7 @@ Juniper Junos OS は、複数の接続に対応します。このページには
                                                                       * xml: ``result[1].rpc-reply.interface-information[0].physical-interface[0].name[0].data foo lo0``
     ====================  ==========================================  =========================
 
-.. |enable\_mode| replace::Enable モード |br| (権限昇格)
+.. |enable_mode| replace::Enable モード |br| (権限昇格)
 
 
 レガシー Playbook の場合、Ansible はすべての JUNOS モジュールで ``ansible_connection=local`` に対応します。できるだけ早期に ``ansible_connection=netconf`` または ``ansible_connection=network_cli`` を使用するモダナイゼーションが推奨されます。
@@ -50,12 +50,12 @@ CLI インベントリーの例 ``[junos:vars]``
 
 .. code-block:: yaml
 
-   \[junos:vars]
-   ansible\_connection=network\_cli
-   ansible\_network\_os=junos
-   ansible\_user=myuser
-   ansible\_password=!vault...
-   ansible\_ssh\_common\_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   [junos:vars]
+   ansible_connection=network_cli
+   ansible_network_os=junos
+   ansible_user=myuser
+   ansible_password=!vault...
+   ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
 - SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
@@ -68,9 +68,9 @@ CLI タスクの例
 .. code-block:: yaml
 
    - name:Retrieve Junos OS version
-     junos\_command:
+     junos_command:
        commands: show version
-     when: ansible\_network\_os == 'junos'
+     when: ansible_network_os == 'junos'
 
 
 Ansible での NETCONF の使用
@@ -89,9 +89,9 @@ Ansible 経由で新規スイッチで NETCONF を有効にするには、CLI �
 .. code-block:: yaml
 
    - name:Enable NETCONF
-     connection: network\_cli
-     junos\_netconf:
-     when: ansible\_network\_os == 'junos'
+     connection: network_cli
+     junos_netconf:
+     when: ansible_network_os == 'junos'
 
 NETCONF を有効にしたら、変数を変更して NETCONF 接続を使用します。
 
@@ -100,12 +100,12 @@ NETCONF インベントリーの例 ``[junos:vars]``
 
 .. code-block:: yaml
 
-   \[junos:vars]
-   ansible\_connection=netconf
-   ansible\_network\_os=junos
-   ansible\_user=myuser
-   ansible\_password=!vault |
-   ansible\_ssh\_common\_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   [junos:vars]
+   ansible_connection=netconf
+   ansible_network_os=junos
+   ansible_user=myuser
+   ansible_password=!vault |
+   ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
 NETCONF タスクの例
@@ -114,10 +114,10 @@ NETCONF タスクの例
 .. code-block:: yaml
 
    - name:Backup current switch config (junos)
-     junos\_config:
+     junos_config:
        backup: yes
-     register: backup\_junos\_location
-     when: ansible\_network\_os == 'junos'
+     register: backup_junos_location
+     when: ansible_network_os == 'junos'
 
 
-.. include:: shared\_snippets/SSH\_warning.txt
+.. include:: shared_snippets/SSH_warning.txt

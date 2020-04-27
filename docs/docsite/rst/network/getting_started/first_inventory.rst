@@ -12,7 +12,7 @@
 まず、インベントリーを論理的にグループにまとめます。ベストプラクティスは、サーバーおよびネットワークデバイスを、What (アプリケーション、スタック、またはマイクロサービス)、Where (データセンタまたは地域)、および When (開発段階) でグループ化することです。
 
 - **What**: db、web、leaf、spine
-- **Where**: east、west、floor\_19、building\_A
+- **Where**: east、west、floor_19、building_A
 - **When**: dev、test、staging、prod
 
 グループ名にスペースまたはハイフンは使用しないでください。またグループ名は数値で始めないでください (``19th_floor``ではなく ``nova_19`` を使用)。グループ名では、大文字と小文字が区別されます。
@@ -21,23 +21,23 @@
 
 .. code-block:: ini
 
-   \[leafs]
+   [leafs]
    leaf01
    leaf02
 
-   \[spines]
+   [spines]
    spine01
    spine02
 
-   \[network:children]
+   [network:children]
    leafs
    spines
 
-   \[webservers]
+   [webservers]
    webserver01
    webserver02
 
-   \[datacenter:children]
+   [datacenter:children]
    network
    webservers
 
@@ -49,23 +49,23 @@
 
 .. code-block:: ini
 
-   \[leafs]
-   leaf01 ansible\_host=10.16.10.11 ansible\_network\_os=vyos ansible\_user=my\_vyos\_user
-   leaf02 ansible\_host=10.16.10.12 ansible\_network\_os=vyos ansible\_user=my\_vyos\_user
+   [leafs]
+   leaf01 ansible_host=10.16.10.11 ansible_network_os=vyos ansible_user=my_vyos_user
+   leaf02 ansible_host=10.16.10.12 ansible_network_os=vyos ansible_user=my_vyos_user
 
-   \[spines]
-   spine01 ansible\_host=10.16.10.13 ansible\_network\_os=vyos ansible\_user=my\_vyos\_user
-   spine02 ansible\_host=10.16.10.14 ansible\_network\_os=vyos ansible\_user=my\_vyos\_user
+   [spines]
+   spine01 ansible_host=10.16.10.13 ansible_network_os=vyos ansible_user=my_vyos_user
+   spine02 ansible_host=10.16.10.14 ansible_network_os=vyos ansible_user=my_vyos_user
 
-   \[network:children]
+   [network:children]
    leafs
    spines
 
-   \[servers]
-   server01 ansible\_host=10.16.10.15 ansible\_user=my\_server\_user
-   server02 ansible\_host=10.16.10.16 ansible\_user=my\_server\_user
+   [servers]
+   server01 ansible_host=10.16.10.15 ansible_user=my_server_user
+   server02 ansible_host=10.16.10.16 ansible_user=my_server_user
 
-   \[datacenter:children]
+   [datacenter:children]
    leafs
    spines
    servers
@@ -77,31 +77,31 @@
 
 .. code-block:: ini
 
-   \[leafs]
-   leaf01 ansible\_host=10.16.10.11
-   leaf02 ansible\_host=10.16.10.12
+   [leafs]
+   leaf01 ansible_host=10.16.10.11
+   leaf02 ansible_host=10.16.10.12
 
-   \[leafs:vars]
-   ansible\_network\_os=vyos
-   ansible\_user=my\_vyos\_user
+   [leafs:vars]
+   ansible_network_os=vyos
+   ansible_user=my_vyos_user
 
-   \[spines]
-   spine01 ansible\_host=10.16.10.13
-   spine02 ansible\_host=10.16.10.14
+   [spines]
+   spine01 ansible_host=10.16.10.13
+   spine02 ansible_host=10.16.10.14
 
-   \[spines:vars]
-   ansible\_network\_os=vyos
-   ansible\_user=my\_vyos\_user
+   [spines:vars]
+   ansible_network_os=vyos
+   ansible_user=my_vyos_user
 
-   \[network:children]
+   [network:children]
    leafs
    spines
 
-   \[servers]
-   server01 ansible\_host=10.16.10.15
-   server02 ansible\_host=10.16.10.16
+   [servers]
+   server01 ansible_host=10.16.10.15
+   server02 ansible_host=10.16.10.16
 
-   \[datacenter:children]
+   [datacenter:children]
    leafs
    spines
    servers
@@ -125,41 +125,41 @@
 
 .. code-block:: ini
 
-   \[vyos\_leafs]
-   leaf01 ansible\_host=10.16.10.11
-   leaf02 ansible\_host=10.16.10.12
+   [vyos_leafs]
+   leaf01 ansible_host=10.16.10.11
+   leaf02 ansible_host=10.16.10.12
 
-   \[vyos\_spines]
-   spine01 ansible\_host=10.16.10.13
-   spine02 ansible\_host=10.16.10.14
+   [vyos_spines]
+   spine01 ansible_host=10.16.10.13
+   spine02 ansible_host=10.16.10.14
 
-   \[vyos:children]
-   vyos\_leafs
-   vyos\_spines
+   [vyos:children]
+   vyos_leafs
+   vyos_spines
 
-   \[vyos:vars]
-   ansible\_connection=network\_cli
-   ansible\_network\_os=vyos
-   ansible\_user=my\_vyos\_user
+   [vyos:vars]
+   ansible_connection=network_cli
+   ansible_network_os=vyos
+   ansible_user=my_vyos_user
 
-   \[network:children]
+   [network:children]
    vyos
 
-   \[servers]
-   server01 ansible\_host=10.16.10.15
-   server02 ansible\_host=10.16.10.16
+   [servers]
+   server01 ansible_host=10.16.10.15
+   server02 ansible_host=10.16.10.16
 
-   \[datacenter:children]
+   [datacenter:children]
    vyos
    servers
 
-この設定では、2 つのフラグのみを使用して first\_playbook.yml を実行できます。
+この設定では、2 つのフラグのみを使用して first_playbook.yml を実行できます。
 
 .. code-block:: console
 
-   ansible-playbook -i inventory -k first\_playbook.yml
+   ansible-playbook -i inventory -k first_playbook.yml
 
-``-k`` フラグを使用して、プロンプトで SSH パスワードを入力します。または、``ansible-vault`` を使用して、SSH や他のシークレット、およびパスワードを group\_vars ファイルに保存して保護できます。
+``-k`` フラグを使用して、プロンプトで SSH パスワードを入力します。または、``ansible-vault`` を使用して、SSH や他のシークレット、およびパスワードを group_vars ファイルに保存して保護できます。
 
 
 ``ansible-vault`` による機密データの保護
@@ -179,13 +179,13 @@ VyOS ネットワークデバイス用に暗号化された ssh パスワード�
 
 .. code-block:: console
 
-   ansible-vault encrypt\_string --vault-id my\_user@~/my-ansible-vault-pw-file 'VyOS\_SSH\_password' --name 'ansible\_password'
+   ansible-vault encrypt_string --vault-id my_user@~/my-ansible-vault-pw-file 'VyOS_SSH_password' --name 'ansible_password'
 
 ファイルに保存せずに ansible-vault パスワードを入力する必要がある場合は、プロンプトを要求できます。
 
 .. code-block:: console
 
-   ansible-vault encrypt\_string --vault-id my\_user@prompt 'VyOS\_SSH\_password' --name 'ansible\_password'
+   ansible-vault encrypt_string --vault-id my_user@prompt 'VyOS_SSH_password' --name 'ansible_password'
 
 および、``my_user`` に vault パスワードに入力します。
 
@@ -193,8 +193,8 @@ VyOS ネットワークデバイス用に暗号化された ssh パスワード�
 
 .. code-block:: yaml
 
-   ansible\_password: !vault |
-          $ANSIBLE\_VAULT;1.2;AES256;my\_user
+   ansible_password: !vault |
+          $ANSIBLE_VAULT;1.2;AES256;my_user
           66386134653765386232383236303063623663343437643766386435663632343266393064373933
           3661666132363339303639353538316662616638356631650a316338316663666439383138353032
           63393934343937373637306162366265383461316334383132626462656463363630613832313562
@@ -202,53 +202,53 @@ VyOS ネットワークデバイス用に暗号化された ssh パスワード�
           65656439626166666363323435613131643066353762333232326232323565376635
    Encryption successful
 
-INI 形式はインラインの vault に対応していないため、以下は YAML インベントリーから抽出を使用する例です。
+This is an example using an extract from a  YAML inventory, as the INI format does not support inline vaults:
 
 .. code-block:: yaml
 
   ...
 
-  vyos: \# this is a group in yaml inventory, but you can also do under a host
-vars:
-ansible\_connection: network\_cli
-ansible\_network\_os: vyos
-ansible\_user: my\_vyos\_user
-ansible\_password:  !vault |
-$ANSIBLE\_VAULT;1.2;AES256;my\_user
-66386134653765386232383236303063623663343437643766386435663632343266393064373933
-3661666132363339303639353538316662616638356631650a316338316663666439383138353032
-63393934343937373637306162366265383461316334383132626462656463363630613832313562
-3837646266663835640a313164343535316666653031353763613037656362613535633538386539
-65656439626166666363323435613131643066353762333232326232323565376635
+  vyos: # this is a group in yaml inventory, but you can also do under a host
+    vars:
+      ansible_connection: network_cli
+      ansible_network_os: vyos
+      ansible_user: my_vyos_user
+      ansible_password:  !vault |
+           $ANSIBLE_VAULT;1.2;AES256;my_user
+           66386134653765386232383236303063623663343437643766386435663632343266393064373933
+           3661666132363339303639353538316662616638356631650a316338316663666439383138353032
+           63393934343937373637306162366265383461316334383132626462656463363630613832313562
+           3837646266663835640a313164343535316666653031353763613037656362613535633538386539
+           65656439626166666363323435613131643066353762333232326232323565376635
 
    ...
 
 INI インベントリーでインラインの vault 化した変数を使用するには、これを YAML 形式の「vars」ファイルに保存する必要があります。
-これは host\_vars/ または group\_vars/ にあり、自動的に ``vars_files`` または ``include_vars`` 経由でプレイから取得または参照されます。
+これは host_vars/ または group_vars/ にあり、自動的に ``vars_files`` または ``include_vars`` 経由でプレイから取得または参照されます。
 
 この設定で Playbook を実行するには、``-k`` フラグを削除し、``vault-id`` のフラグを追加します。
 
 .. code-block:: console
 
-   ansible-playbook -i inventory --vault-id my\_user@~/my-ansible-vault-pw-file first\_playbook.yml
+   ansible-playbook -i inventory --vault-id my_user@~/my-ansible-vault-pw-file first_playbook.yml
 
 または、vault パスワードファイルの代わりにプロンプトを使用します。
 
 .. code-block:: console
 
-   ansible-playbook -i inventory --vault-id my\_user@prompt first\_playbook.yml
+   ansible-playbook -i inventory --vault-id my_user@prompt first_playbook.yml
 
-元の値を表示するには、デバッグモジュールを使用します。(この例で使用しているように) YAML ファイルが `ansible_connection` 変数を定義する場合は、次のコマンドを実行すると有効になることに注意してください。これを防ぐには、ansible\_connection 変数なしでファイルのコピーを作成してください。
+元の値を表示するには、デバッグモジュールを使用します。(この例で使用しているように) YAML ファイルが `ansible_connection` 変数を定義する場合は、次のコマンドを実行すると有効になることに注意してください。これを防ぐには、ansible_connection 変数なしでファイルのコピーを作成してください。
 
 .. code-block:: console
 
-   cat vyos.yml | grep -v ansible\_connection >> vyos\_no\_connection.yml
+   cat vyos.yml | grep -v ansible_connection >> vyos_no_connection.yml
 
-   ansible localhost -m debug -a var="ansible\_password" -e "@vyos\_no\_connection.yml" --ask-vault-pass
+   ansible localhost -m debug -a var="ansible_password" -e "@vyos_no_connection.yml" --ask-vault-pass
    Vault password:
 
    localhost | SUCCESS => {
-       "ansible\_password":"VyOS\_SSH\_password"
+       "ansible_password": "VyOS_SSH_password"
    }
 
 

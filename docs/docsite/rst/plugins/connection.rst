@@ -1,4 +1,4 @@
-.. \_connection\_plugins:
+.. _connection_plugins:
 
 Connection プラグイン
 ==================
@@ -13,14 +13,14 @@ Connection プラグインは、Ansibleがターゲットホストに接続し�
 
 このような接続タイプの基本情報は、:ref:`getting started<intro_getting_started>` のセクションで説明しています。
 
-.. \_ssh\_plugins:
+.. _ssh_plugins:
 
 ``ssh`` プラグイン
 ---------------
 
 ssh は、システム管理でデフォルトで使用されるプロトコルであり、Ansible で最も使用されるプロトコルでもあるため、コマンドラインツールに ssh オプションが含まれています。詳細は :ref:`ansible-playbook` を参照してください。
 
-.. \_enabling\_connection:
+.. _enabling_connection:
 
 Connection プラグインの追加
 -------------------------
@@ -28,7 +28,7 @@ Connection プラグインの追加
 カスタムのプラグインを ``connection_plugins`` ディレクトリーに配置して、
 Ansible を拡張して他のトランスポート (SNMP またはメッセージバス) をサポートできます。
 
-.. \_using\_connection:
+.. _using_connection:
 
 Connection プラグインの使用
 ------------------------
@@ -49,7 +49,7 @@ Connection プラグインの使用
 
 プラグインごとに、一般的なバージョンをオーバーライドする特定の変数バージョンがある場合もあります。たとえば、:ref:`ssh <ssh_connection>` プラグインの場合は ``ansible_ssh_host`` です。
 
-.. \_connection\_plugin\_list:
+.. _connection_plugin_list:
 
 プラグイン一覧
 -----------
@@ -81,4 +81,4 @@ Connection プラグインの使用
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       \#ansible IRC chat channel
+       #ansible IRC chat channel

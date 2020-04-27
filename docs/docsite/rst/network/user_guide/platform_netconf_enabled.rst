@@ -1,4 +1,4 @@
-.. \_netconf\_enabled\_platform\_options:
+.. _netconf_enabled_platform_options:
 
 ***************************************
 Netconf が有効なプラットフォームオプション
@@ -31,7 +31,7 @@ Netconf が有効なプラットフォームオプション
     ====================  ==========================================
 
 
-レガシー Playbook の場合、Ansible は netconf\_config モジュールに対してのみ ``ansible_connection=local`` に対応します。できるだけ早期に ``ansible_connection=netconf`` を使用するモダナイゼーションが推奨されます。
+レガシー Playbook の場合、Ansible は netconf_config モジュールに対してのみ ``ansible_connection=local`` に対応します。できるだけ早期に ``ansible_connection=netconf`` を使用するモダナイゼーションが推奨されます。
 
 Ansible での NETCONF の使用
 ========================
@@ -50,9 +50,9 @@ Ansible 経由で新規スイッチで NETCONF を有効にするには、CLI �
 .. code-block:: yaml
 
    - name:Enable NETCONF
-     connection: network\_cli
-     junos\_netconf:
-     when: ansible\_network\_os == 'junos'
+     connection: network_cli
+     junos_netconf:
+     when: ansible_network_os == 'junos'
 
 NETCONF を有効にしたら、変数を変更して NETCONF 接続を使用します。
 
@@ -61,11 +61,11 @@ NETCONF インベントリーの例 ``[junos:vars]``
 
 .. code-block:: yaml
 
-   \[junos:vars]
-   ansible\_connection=netconf
-   ansible\_network\_os=junos
-   ansible\_user=myuser
-   ansible\_password=!vault |
+   [junos:vars]
+   ansible_connection=netconf
+   ansible_network_os=junos
+   ansible_user=myuser
+   ansible_password=!vault |
 
 
 NETCONF タスクの例
@@ -74,9 +74,9 @@ NETCONF タスクの例
 .. code-block:: yaml
 
    - name:Backup current switch config
-     netconf\_config:
+     netconf_config:
        backup: yes
-     register: backup\_junos\_location
+     register: backup_junos_location
 
 設定可能な変数を含む NETCONF タスクの例
 ------------------------------------------------
@@ -84,11 +84,11 @@ NETCONF タスクの例
 .. code-block:: yaml
 
    - name: configure interface while providing different private key file path
-     netconf\_config:
+     netconf_config:
        backup: yes
-     register: backup\_junos\_location
+     register: backup_junos_location
      vars:
-       ansible\_private\_key\_file: /home/admin/.ssh/newprivatekeyfile
+       ansible_private_key_file: /home/admin/.ssh/newprivatekeyfile
 
 注記: netconf 接続プラグインの設定可能な変数は、「:ref:`netconf <netconf_connection>`」を参照してください。
 
@@ -97,14 +97,14 @@ Bastion/Jumphost の設定
 ジャンプホストを使用して NETCONF 対応のデバイスに接続するには、``ANSIBLE_NETCONF_SSH_CONFIG`` 環境変数を設定する必要があります。
 
 ``ANSIBLE_NETCONF_SSH_CONFIG`` は、以下のいずれかに設定できます。
-  \- 1 または TRUE (デフォルトの SSH 設定ファイル ~/.ssh/config の使用を開始するため)。
-  \- カスタムの SSH 設定ファイルへの絶対パス。
+  - 1 または TRUE (デフォルトの SSH 設定ファイル ~/.ssh/config の使用を開始するため)。
+  - カスタムの SSH 設定ファイルへの絶対パス。
 
 SSH 設定ファイルは以下のようになります。 
 
 .. code-block:: ini
 
-  Host \*
+  Host *
     proxycommand ssh -o StrictHostKeyChecking=no -W %h:%p jumphost-username@jumphost.fqdn.com
     StrictHostKeyChecking no
 
@@ -118,11 +118,11 @@ SSH 設定ファイルで使用する秘密鍵のいずれかを指定できま�
 
 または、ssh-agent を使用できます。
 
-ansible\_network\_os 自動検出
+ansible_network_os 自動検出
 ---------------------------------
 
 ホストに対して ``ansible_network_os`` が指定されていない場合、Ansible は使用する ``network_os`` プラグインを自動的に検出しようとします。
 
 ``ansible_network_os`` 自動検出は、``auto`` を ``ansible_network_os`` として使用することで開始することもできます。(注記: 以前は、``auto`` の代わりに ``default`` が使用されていました。
 
-.. include:: shared\_snippets/SSH\_warning.txt
+.. include:: shared_snippets/SSH_warning.txt

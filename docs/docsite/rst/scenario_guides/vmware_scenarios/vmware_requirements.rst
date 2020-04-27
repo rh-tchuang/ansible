@@ -35,7 +35,7 @@ Ansible 用の vCenter SSL 証明書のインストール
 Ansible 用の ESXi SSL 証明書のインストール
 --------------------------------------------
 
-* Ansible VMware モジュール `vmware_host_service_manager` <https://github.com/ansible/ansible/blob/devel/lib/ansible/modules/cloud/vmware/vmware_host_config_manager.py>_ を使用するか、vSphere Web インターフェースを使用して手動で、ESXi で SSH サービスを有効にします。
+* Ansible VMware モジュール `vmware_host_service_manager <https://github.com/ansible/ansible/blob/devel/lib/ansible/modules/cloud/vmware/vmware_host_config_manager.py>`_ を使用するか、vSphere Web インターフェースを使用して手動で、ESXi で SSH サービスを有効にします。
 
 * 管理認証情報を使用して ESXi サーバーに SSH 接続し、``/etc/vmware/ssl`` ディレクトリーに移動します。
 

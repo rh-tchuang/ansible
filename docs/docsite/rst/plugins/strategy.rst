@@ -1,4 +1,4 @@
-.. \_strategy\_plugins:
+.. _strategy_plugins:
 
 Strategy プラグイン
 ================
@@ -9,7 +9,7 @@ Strategy プラグイン
 
 Strategy プラグインは、タスクおよびホストスケジューリングを処理し、Play 実行のフローを制御します。
 
-.. \_enable\_strategy:
+.. _enable_strategy:
 
 Strategy プラグインの有効化
 -------------------------
@@ -17,7 +17,7 @@ Strategy プラグインの有効化
 Ansible に同梱される Strategy プラグインはすべて、デフォルトで有効となっています。カスタムストラテジープラグインは、
 :ref:`ansible.cfg <ansible_configuration_settings>` で設定した lookup ディレクトリーソースのいずれかにこれを配置することで有効にできます。
 
-.. \_using\_strategy:
+.. _using_strategy:
 
 Strategy プラグインの使用
 ----------------------
@@ -42,15 +42,15 @@ Play で :ref:`strategy keyword <playbook_keywords>` を使用して、Play の 
     strategy: debug
     tasks:
       - copy: src=myhosts dest=/etc/hosts
-        notify: restart\_tomcat
+        notify: restart_tomcat
 
       - package: name=tomcat state=present
 
     handlers:
-      \- name: restart\_tomcat
+      - name: restart_tomcat
         service: name=tomcat state=restarted
 
-.. \_strategy\_plugin\_list:
+.. _strategy_plugin_list:
 
 プラグイン一覧
 -----------
@@ -81,4 +81,4 @@ Play で :ref:`strategy keyword <playbook_keywords>` を使用して、Play の 
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       \#ansible IRC chat channel
+       #ansible IRC chat channel

@@ -1,51 +1,51 @@
 .. _interpreter_discovery:
 
-Interpreter Discovery
+インタープリターの検出
 =====================
 
-Most Ansible modules that execute under a POSIX environment require a Python
-interpreter on the target host. Unless configured otherwise, Ansible will
-attempt to discover a suitable Python interpreter on each target host
-the first time a Python module is executed for that host.
+POSIX 環境で実行する Ansible モジュールではほぼ、
+ターゲットホストに Python インタープリターが必要です。特に設定されていない限り、
+Ansible は、Python モジュールがそのホストに対して初めて実行されるときに、
+各ターゲットホストで適切な Python インタープリターの検出を試行します。
 
-To control the discovery behavior:
+検出動作を制御するには、以下を実行します。
 
-* for individual hosts and groups, use the ``ansible_python_interpreter`` inventory variable
-* globally, use the ``interpreter_python`` key in the ``[defaults]`` section of ``ansible.cfg``
+* 個別のホストおよびグループの場合は、``ansible_python_interpreter`` インベントリー変数を使用します。
+* グローバルには、``ansible.cfg`` の ``[defaults]`` セクションに ``interpreter_python`` キーを使用します。
 
-Use one of the following values:
+以下のいずれかの値を使用します。
 
-auto_legacy : (default in 2.8)
-  Detects the target OS platform, distribution, and version, then consults a
-  table listing the correct Python interpreter and path for each
-  platform/distribution/version. If an entry is found, and ``/usr/bin/python`` is absent, uses the discovered interpreter (and path). If an entry
-  is found, and ``/usr/bin/python`` is present, uses ``/usr/bin/python``
-  and issues a warning.
-  This exception provides temporary compatibility with previous versions of
-  Ansible that always defaulted to ``/usr/bin/python``, so if you have
-  installed Python and other dependencies at ``/usr/bin/python`` on some hosts,
-  Ansible will find and use them with this setting.
-  If no entry is found, or the listed Python is not present on the
-  target host, searches a list of common Python interpreter
-  paths and uses the first one found; also issues a warning that future
-  installation of another Python interpreter could alter the one chosen.
+auto_legacy: (デフォルトは 2.8)
+  対象の OS プラットフォーム、ディストリビューション、およびバージョンを検出してから、
+  各プラットフォーム、ディストリビューション、バージョンに対する、
+  正しい Python インタープリターおよび一覧を記載する表を確認してください、エントリーが検出され、``/usr/bin/python`` がない場合は、検出されたインタープリター (およびパス) を使用します。エントリーが見つかり、
+  ``/usr/bin/python`` が存在する場合は、``/usr/bin/python``を使用して、
+  警告を発行します。
+  このような例外により、
+  常に ``/usr/bin/python`` がデフォルト設定されている Ansible の以前のバージョンと一時的に互換性を確保するため、
+  一部のホストの ``/usr/bin/python`` に Python と他の依存関係をインストールした場合には、
+  Ansible はこの設定を使用して Python と他の依存関係を検索して使用します。
+  エントリーが見つからなかった場合や、リストされた Python がターゲットホストにない場合には、
+  一般的な Python インタープリターパスのリストを検索し、最初に検出したインタープリターを使用します。
+  また、今後別の Python インタープリターをインストールすると、
+  選択したパスが変更される可能性があるという警告が表示されます。
 
-auto : (future default in 2.12)
-  Detects the target OS platform, distribution, and version, then consults a
-  table listing the correct Python interpreter and path for each
-  platform/distribution/version. If an entry is found, uses the discovered
-  interpreter.
-  If no entry is found, or the listed Python is not present on the
-  target host, searches a list of common Python interpreter
-  paths and uses the first one found; also issues a warning that future
-  installation of another Python interpreter could alter the one chosen.
+auto: (2.12 では将来のデフォルト)
+  対象の OS プラットフォーム、ディストリビューション、およびバージョンを検出してから、
+  各プラットフォーム、ディストリビューション、バージョンに対する、
+  正しい Python インタープリターおよびパスが記載される表を確認してください、エントリーが見つかった場合には、
+  検出されたインタープリターを使用します。
+  エントリーが見つからなかった場合や、リストされた Python がターゲットホストにない場合には、
+  一般的な Python インタープリターのパスのリストを検索し、最初に検出したインタープリターを使用します。
+  また、今後別の Python インタープリターをインストールすると、
+  選択したパスが変更される可能性があるという警告が表示されます。
 
 auto_legacy_silent
-  Same as ``auto_legacy``, but does not issue warnings.
+  ``auto_legacy`` と同じですが、警告は表示しません。
 
 auto_silent
-  Same as ``auto``, but does not issue warnings.
+  ``auto`` と同じですが、警告は表示しません。
 
-You can still set ``ansible_python_interpreter`` to a specific path at any
-variable level (for example, in host_vars, in vars files, in playbooks, etc.).
-Setting a specific path completely disables automatic interpreter discovery; Ansible always uses the path specified.
+``ansible_python_interpreter`` を、
+変数レベルで特定のパスに設定できます (例: host_vars 内、vars ファイル内、Playbook 内など)。
+特定のパスを設定すると、自動インタープリターの検出が完全に無効化され、Ansible は常に指定されたパスを使用します。

@@ -3,11 +3,11 @@
 Red Hat Ansible Tower
 =====================
 
-`Red Hat Ansible Tower <https://www.ansible.com/products/tower>` is a web console and REST API for operationalizing Ansible across your team, organization, and enterprise. It's designed to be the hub for all of your automation tasks.
+`Red Hat Ansible Tower<https://www.ansible.com/products/tower>` は、チーム、組織、企業全体で Ansible を操作する Web コンソールおよび REST API です。Red Hat Ansible Tower は、すべての自動化タスクのハブとなるように設計されています。
 
-Ansible Tower gives you role-based access control, including control over the use of securely stored credentials for SSH and other services. You can sync your Ansible Tower inventory with a wide variety of cloud sources, and powerful multi-playbook workflows allow you to model
-complex processes.
+Ansible Tower には、セキュアに保存されている SSH や他のサービス認証情報を使用するときの制御するなど、ロールベースアクセス制御が含まれています。Ansible Tower インベントリーは、幅広いクラウドソースと同期でき、強力な Playbook を使用したワークフローを複数使用することで、
+複雑なプロセスをモデル化できます。
 
-It logs all of your jobs, integrates well with LDAP, SAML, and other authentication sources, and has an amazing browsable REST API. Command line tools are available for easy integration with Jenkins as well.
+Ansible Tower は、ジョブすべてをログ記録し、LDAP、SAML、他の認証ソースと統合の相性がよく、ブラウザーで使用可能な素晴らしい REST API が含まれます。また、Jenkins と簡単に統合できるように、コマンドラインも利用できます。
 
-Find out more about Ansible Tower features and how to download it on the `Ansible Tower webpage <https://www.ansible.com/products/tower>`_. Ansible Tower is part of the Red Hat Ansible Automation subscription, and comes bundled with amazing support from Red Hat, Inc.
+Ansible Tower の機能やダウンロード方法は、`Ansible Tower webpage <https://www.ansible.com/products/tower>`_ を参照してください。Ansible Tower は、Red Hat Ansible Automation サブスクリプションに含まれており、Red Hat, Inc の優れたサポートも含まれています。

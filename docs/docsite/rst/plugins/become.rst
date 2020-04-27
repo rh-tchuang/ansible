@@ -1,4 +1,4 @@
-.. \_become\_plugins:
+.. _become_plugins:
 
 become プラグイン
 ==============
@@ -17,7 +17,7 @@ Play で指定されたタスクを実行するのに必要なモジュールや
 そのユーザーのパーミッションでコマンドを実行できるようになります。
 
 
-.. \_enabling\_become:
+.. _enabling_become:
 
 Become プラグインの有効化
 -----------------------
@@ -27,7 +27,7 @@ Ansible に同梱の become プラグインはすでに有効化されていま�
 :ref:`ansible.cfg <ansible_configuration_settings>` で設定した become プラグインのディレクトリーソースの 1 つに配置します。
 
 
-.. \_using\_become:
+.. _using_become:
 
 Become プラグインの使用
 --------------------
@@ -39,7 +39,7 @@ Become プラグインの使用
 プラグイン自体 (以下にリンク) に詳述されているその他の設定オプションを使用して、
 各プラグインの設定をさらに制御できます。
 
-.. \_become\_plugin\_list:
+.. _become_plugin_list:
 
 プラグイン一覧
 -----------
@@ -69,4 +69,4 @@ Become プラグインの使用
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       \#ansible IRC chat channel
+       #ansible IRC chat channel

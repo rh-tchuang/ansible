@@ -1,4 +1,4 @@
-.. \_vars\_plugins:
+.. _vars_plugins:
 
 vars プラグイン
 ============
@@ -7,14 +7,14 @@ vars プラグイン
    :local:
    :depth: 2
 
-Vars プラグインは、インベントリーソース、Playbook、またはコマンドラインに組み込まれていない Ansible 実行に、追加で変数データを挿入します。Playbook は、Vars プラグインを使用して 'host\_vars' と 'group\_vars' の作業のように構築します。
+Vars プラグインは、インベントリーソース、Playbook、またはコマンドラインに組み込まれていない Ansible 実行に、追加で変数データを挿入します。Playbook は、Vars プラグインを使用して 'host_vars' と 'group_vars' の作業のように構築します。
 
 vars プラグインは Ansible 2.0 に部分的に実装され、Ansible 2.4 以降は、完全実装になるように書き直されました。
 
 Ansible に同梱される :ref:`host_group_vars <host_group_vars_vars>` プラグインは、:ref:`host_variables` および :ref:`group_variables` から変数を読み込むことができます。
 
 
-.. \_enable\_vars:
+.. _enable_vars:
 
 vars プラグインの有効化
 ---------------------
@@ -22,7 +22,7 @@ vars プラグインの有効化
 カスタムの Vars プラグインを有効にするには、カスタムのプラグインを、ロール内の Play の隣りにある ``vars_plugins`` ディレクトリーに配置するか、:ref:`ansible.cfg <ansible_configuration_settings>` で設定したディレクトリーソースの 1 つに配置します。
 
 
-.. \_using\_vars:
+.. _using_vars:
 
 vars プラグインの使用
 ------------------
@@ -30,7 +30,7 @@ vars プラグインの使用
 Vars プラグインは、有効になると自動的に使用されます。
 
 
-.. \_vars\_plugin\_list:
+.. _vars_plugin_list:
 
 プラグイン一覧
 ------------
@@ -63,4 +63,4 @@ Vars プラグインは、有効になると自動的に使用されます。
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       \#ansible IRC chat channel
+       #ansible IRC chat channel

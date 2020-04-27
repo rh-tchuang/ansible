@@ -1,501 +1,495 @@
-Glossary
+用語集
 ========
 
-The following is a list (and re-explanation) of term definitions used elsewhere in the Ansible documentation.
+以下は、Ansible ドキュメントの各所で使用される用語の定義 (と再説) 一覧です。
 
-Consult the documentation home page for the full documentation and to see the terms in context, but this should be a good resource
-to check your knowledge of Ansible's components and understand how they fit together.  It's something you might wish to read for review or
-when a term comes up on the mailing list.
+全ドキュメント、および文脈で用語を確認するには、ドキュメントのホームページを参照してください。
+ここでは、Ansible のコンポーネントの知識を確認し、どのように使用するかを理解するのに適しています。 復習のため、
+または用語がメーリングリストで使用されている時などに確認してください。
 
 .. glossary::
 
-    Action
-        An action is a part of a task that specifies which of the modules to
-        run and which arguments to pass to that module.  Each task can have
-        only one action, but it may also have other parameters.
+    アクション
+        アクションはタスクの一部を指し、実行するモジュールや、そのモジュール渡す
+        引数を指定します。 各タスクには、アクションを 1 つのみ指定できますが、
+        他に複数のパラメーターが指定されている可能性があります。
 
-    Ad Hoc
-        Refers to running Ansible to perform some quick command, using
-        :command:`/usr/bin/ansible`, rather than the :term:`orchestration`
-        language, which is :command:`/usr/bin/ansible-playbook`.  An example
-        of an ad hoc command might be rebooting 50 machines in your
-        infrastructure.  Anything you can do ad hoc can be accomplished by
-        writing a :term:`playbook <playbooks>` and playbooks can also glue
-        lots of other operations together.
+    アドホック
+        :command:`/usr/bin/ansible-playbook` という :term:`orchestration` 言語ではなく、
+        Ansible を実行して :command:`/usr/bin/ansible` を使用して
+        クイックコマンドを実行することを意味します。 Ad hoc コマンドの例として、
+        インフラストラクチャーで 50 台のマシンを再起動する
+        コマンドなどが挙げられます。 アドホックは、
+        :term:`playbook <playbooks>` を記述することで行うことができます。また、
+        Playbook を使用して多数の操作を統合することも可能です。
 
-    Async
-        Refers to a task that is configured to run in the background rather
-        than waiting for completion.  If you have a long process that would
-        run longer than the SSH timeout, it would make sense to launch that
-        task in async mode.  Async modes can poll for completion every so many
-        seconds or can be configured to "fire and forget", in which case
-        Ansible will not even check on the task again; it will just kick it
-        off and proceed to future steps.  Async modes work with both
-        :command:`/usr/bin/ansible` and :command:`/usr/bin/ansible-playbook`.
+    非同期
+        完了まで待たずに、バックグラウンドで実行するように
+        設定されているタスクを指します。 SSH タイムアウトの時間よりも長いプロセスがある場合に、
+        非同期モードでタスクを実行すると
+        合理的です。 非同期モードでは、完了しているかを数秒ほどポーリングするか、
+        「Fire and Forget」に設定して、
+        Ansible がタスクを再度確認せずに、実行だけして
+        次のステップに進むことができます。 非同期モードは、
+        :command:`/usr/bin/ansible` および :command:`/usr/bin/ansible-playbook` の両方で使用できます。
 
-    Callback Plugin
-        Refers to some user-written code that can intercept results from
-        Ansible and do something with them.  Some supplied examples in the
-        GitHub project perform custom logging, send email, or even play sound
-        effects.
+    Callback プラグイン
+        Ansible から結果を傍受してその結果を使用し、
+        作業を実行可能にする、ユーザー記述のコードを指します。 GitHub プロジェクトで提供されている例では、
+        カスタムロギング、メールの送信、サウンドエフェクトの再生などさえも
+        実行できます。
 
-    Check Mode
-        Refers to running Ansible with the ``--check`` option, which does not
-        make any changes on the remote systems, but only outputs the changes
-        that might occur if the command ran without this flag.  This is
-        analogous to so-called "dry run" modes in other systems, though the
-        user should be warned that this does not take into account unexpected
-        command failures or cascade effects (which is true of similar modes in
-        other systems).  Use this to get an idea of what might happen, but do
-        not substitute it for a good staging environment.
+    チェックモード
+        「 --check」オプションを使用して Ansible を実行することを指し、
+        リモートシステムに変更を加えず、コマンドをこのフラグなしで
+        実行した場合に発生する可能性のある変更のみを出力します。 これは、
+        他のシステムの「dry run」モードと類似していますが、
+        コマンドが予期せずに失敗した場合や、カスケード効果 (
+        他のシステムの同様のモードにも該当) について考慮されない
+        点に注意が必要です。 このモードを使用して、何が起こるかを確認できますが、
+        適切なステージ環境の代わりとしては使用できません。
 
-    Connection Plugin
-        By default, Ansible talks to remote machines through pluggable
-        libraries.  Ansible uses native OpenSSH (:term:`SSH (Native)`) or
-        a Python implementation called :term:`paramiko`.  OpenSSH is preferred
-        if you are using a recent version, and also enables some features like
-        Kerberos and jump hosts.  This is covered in the :ref:`getting
-        started section <remote_connection_information>`.  There are also
-        other connection types like ``accelerate`` mode, which must be
-        bootstrapped over one of the SSH-based connection types but is very
-        fast, and local mode, which acts on the local system.  Users can also
-        write their own connection plugins.
+    Connection プラグイン
+        デフォルトでは、Ansible は、プラグ可能なライブラリー
+        を使用してリモートマシンと対話します。 Ansible は、ネイティブの OpenSSH (:term:`SSH (Native)`) または
+        :term:`paramiko` と呼ばれる Python の実装を使用します。 最新版を使用している場合には、
+        OpenSSH を使用することが推奨されます。また、OpenSSH を使用すると、Kerberos や
+        ジャンプホストなどの機能を利用できるようになります。 この内容は、「:ref:はじめに
+        <remote_connection_information>」セクションで説明されています。 また、
+        ``accelerate`` mode, モードなどの他の接続タイプは、
+        SSH ベースのいずれかの接続タイプでブートストラップする必要がありますが、
+        非常に高速なローカルモードで、ローカルシステムで機能します。 独自の Connection プラグインを
+        記述することも可能です。
 
-    Conditionals
-        A conditional is an expression that evaluates to true or false that
-        decides whether a given task is executed on a given machine or not.
-        Ansible's conditionals are powered by the 'when' statement, which are
-        discussed in the :ref:`working_with_playbooks`.
+    条件
+        条件は、True または False に評価して、指定のタスクを
+        所定のマシンで実行するかどうかを決定する式のことです。
+        Ansible の条件は、「when」ステートメントで機能します。この内容は、
+        :ref:`working_with_playbooks` で説明されています。
 
-    Declarative
-        An approach to achieving a task that uses a description of the
-        final state rather than a description of the sequence of steps
-        necessary to achieve that state. For a real world example, a
-        declarative specification of a task would be: "put me in California".
-        Depending on your current location, the sequence of steps to get you to
-        California may vary, and if you are already in California, nothing
-        at all needs to be done. Ansible's Resources are declarative; it
-        figures out the steps needed to achieve the final state. It also lets
-        you know whether or not any steps needed to be taken to get to the
-        final state.
+    宣言
+        最終的な状態の達成に必要な
+        手順のシーケンスの説明ではなく、最終的な状態の説明を
+        使用するタスクを実現するアプローチです。実際の例では、
+        タスクの宣言的な仕様は「put me in California」となります。
+        現在の場所によって、カリフォルニアに到着するまでの手順は
+        異なる可能性があり、カリフォルニアにすでにいる場合には、
+        何も作業で行う必要がありません。Ansible のリソースは宣言的で、
+        最終的な状態を実現するのに必要な手順を割り出します。また、最終的な状態に到達するのに
+        必要な手順があるかどうか
+        が分かります。
 
-    Diff Mode
-        A ``--diff`` flag can be passed to Ansible to show what changed on
-        modules that support it. You can combine it with ``--check`` to get a
-        good 'dry run'.  File diffs are normally in unified diff format.
+    差分モード
+        Ansible に "--diff" フラグを渡すと、このフラグをサポートするモジュールでの
+        変更内容を表示できます。``--check`` と組み合わせると、
+        適切な「dry run」が実行されます。 ファイルの差分は、通常、統一された diff 形式にまとめられます。
 
-    Executor
-        A core software component of Ansible that is the power behind
-        :command:`/usr/bin/ansible` directly -- and corresponds to the
-        invocation of each task in a :term:`playbook <playbooks>`.  The
-        Executor is something Ansible developers may talk about, but it's not
-        really user land vocabulary.
+    エグゼキューター
+        :command:`/usr/bin/ansible` directly -- の背後で機能し、
+        :term:`playbook <playbooks>` の各タスクの呼び出しに対応する
+        Ansible のコアとなるソフトウェアコンポーネント。 エグゼキューターは、
+        Ansible の開発者が使用する用語で、ユーザー側が
+        使用する用語ではありません。
 
-    Facts
-        Facts are simply things that are discovered about remote nodes.  While
-        they can be used in :term:`playbooks` and templates just like
-        variables, facts are things that are inferred, rather than set.  Facts
-        are automatically discovered by Ansible when running plays by
-        executing the internal :ref:`setup module <setup_module>` on the remote nodes.  You
-        never have to call the setup module explicitly, it just runs, but it
-        can be disabled to save time if it is not needed or you can tell
-        ansible to collect only a subset of the full facts via the
-        ``gather_subset:`` option. For the convenience of users who are
-        switching from other configuration management systems, the fact module
-        will also pull in facts from the :program:`ohai` and :program:`facter`
-        tools if they are installed.  These are fact libraries from Chef and
-        Puppet, respectively. (These may also be disabled via
-        ``gather_subset:``)
+    ファクト
+        ファクトは、単にリモートノードで検出される内容です。 ファクトは、
+        変数と同様に、:term:`playbooks` とテンプレートで使用できますが、
+        ファクトは設定ではなく、推測される内容です。 ファクト
+        リモートノードで内部の :ref:`setup module <setup_module>` を実行して、
+        プレイを起動すると Ansible により自動的に検出されます。 Ansible で、
+        設定モジュールを呼び出す必要はありません。実行しますが、
+        必要のない場合には、時間節約のため無効にできます。
+        または、Ansible に対して、"gather_subset:" オプションを使用して
+        完全なファクトのサブセットのみを収集するように指示できます。別の設定管理システムから簡易的に切り替えられるように、
+        ファクトモジュールは、
+        :program:`ohai` ツールおよび :program:`facter` ツールがインストールされている場合に、
+        そのツールからファクトをプルします。 上記のプログラムはそれぞれ、Chef と Puppet からの
+        ファクトライブラリーです ("gather_subset:" を使用して、
+        無効にすることも可能です)。
 
-    Filter Plugin
-        A filter plugin is something that most users will never need to
-        understand.  These allow for the creation of new :term:`Jinja2`
-        filters, which are more or less only of use to people who know what
-        Jinja2 filters are.  If you need them, you can learn how to write them
-        in the :ref:`API docs section <developing_filter_plugins>`.
+    Filter プラグイン
+        Filter プラグインについては、多くの場合
+        理解する必要がありません。 このフィルターを使用すると、新しい :term:`Jinja2` フィルターを作成できるようになります。
+        そのため多くの場合は、Jinja2 フィルターを熟知するユーザーにのみ
+        有用です。 必要な場合には、:ref:`API docs section <developing_filter_plugins>` で
+        記述方法を確認できます。
 
-    Forks
-        Ansible talks to remote nodes in parallel and the level of parallelism
-        can be set either by passing ``--forks`` or editing the default in
-        a configuration file.  The default is a very conservative five (5)
-        forks, though if you have a lot of RAM, you can easily set this to
-        a value like 50 for increased parallelism.
+    フォーク
+        Ansible はリモートノードと並列して通話します。この並列
+        レベルは、`--forks`` を指定するか、設定ファイルの
+        デフォルトを編集して設定できます。 デフォルトはフォーク 5 個と非常に少なめですが、
+        メモリーが多くある場合は、この値を簡単に
+        50 などに設定して、並列処理機能を増やすことができます。
 
-    Gather Facts (Boolean)
-        :term:`Facts` are mentioned above.  Sometimes when running a multi-play
-        :term:`playbook <playbooks>`, it is desirable to have some plays that
-        don't bother with fact computation if they aren't going to need to
-        utilize any of these values.  Setting ``gather_facts: False`` on
-        a playbook allows this implicit fact gathering to be skipped.
+    ファクトの収集 (ブール値)
+        :term:`Facts` については上記で説明しています。 マルチプレイ
+        の :term:`playbook <playbooks>` を実行するとき、
+        これらの値をいずれも利用する必要がない場合は、
+        ファクト計算に影響を受けないいくつかのプレイがあることが望ましい場合があります。 Playbook を ``gather_facts: False`` に設定すると、この暗黙のファクト収集を
+        スキップできます。
 
-    Globbing
-        Globbing is a way to select lots of hosts based on wildcards, rather
-        than the name of the host specifically, or the name of the group they
-        are in.  For instance, it is possible to select ``ww*`` to match all
-        hosts starting with ``www``.   This concept is pulled directly from
-        :program:`Func`, one of Michael DeHaan's (an Ansible Founder) earlier
-        projects.  In addition to basic globbing, various set operations are
-        also possible, such as 'hosts in this group and not in another group',
-        and so on.
+    グラッビング (Globbing)
+        グラッビングは、
+        具体的にホストの名前やホストが属しているグループの名前ではなく、
+        ワイルドカードに基づいて多数のホストを選択する方法です。 たとえば、``ww*`` を選択して、
+        ``www` から始まるすべてのホストに一致させることができます。  この概念は、
+        Michael DeHaan (Ansible 創立者) が作成したプロジェクトの 1 つである :program:'Func' から
+        直接引用されました。 基本的なグラッビングに加え、
+        「hosts in this group and not in another group」
+        などのさまざまなセット操作があります。
 
-    Group
-        A group consists of several hosts assigned to a pool that can be
-        conveniently targeted together, as well as given variables that they
-        share in common.
+    グループ
+        グループは、プールに割り当てられた複数のホストで構成されます。
+        これらのホストは、一緒に対象を絞ることができ、
+        それらが共通して共有する特定の変数です。
 
-    Group Vars
-        The :file:`group_vars/` files are files that live in a directory
-        alongside an inventory file, with an optional filename named after
-        each group.  This is a convenient place to put variables that are
-        provided to a given group, especially complex data structures, so that
-        these variables do not have to be embedded in the :term:`inventory`
-        file or :term:`playbook <playbooks>`.
+    グループ変数 (Group Vars)
+        :file:`group_vars/` ファイルは、
+        インベントリーファイルと一緒にディレクトリーに存在するファイルで、
+        オプションのファイル名が、各グループにちなんで名付けられています。 これは、特定のグループに提供される変数、
+        特に複雑なデータ構造を配置するのに便利な場所です。
+        そのため、この変数を :term:`inventory` ファイル、
+        または :term:`playbook <playbooks>` に埋め込む必要はありません。
 
-    Handlers
-        Handlers are just like regular tasks in an Ansible
-        :term:`playbook <playbooks>` (see :term:`Tasks`) but are only run if
-        the Task contains a ``notify`` directive and also indicates that it
-        changed something.  For example, if a config file is changed, then the
-        task referencing the config file templating operation may notify
-        a service restart handler.  This means services can be bounced only if
-        they need to be restarted.  Handlers can be used for things other than
-        service restarts, but service restarts are the most common usage.
+    ハンドラー
+        ハンドラーは、
+        Ansible :term:`playbook <playbooks>` の通常のタスクのような機能を持ちます (:term:`Tasks` を参照) が、
+        タスクに ``notify`` (通知) ディレクティブが含まれ、
+        変更があったことが示唆される場合にのみ実行されます。 たとえば、設定ファイルが変更された後に、
+        その設定ファイルのテンプレート操作を参照するタスクは、
+        サービス再起動ハンドラーに通知する場合があります。 これは、
+        サービスを再起動する必要がある場合にのみバウンスできることを示しています。 ハンドラーはサービスの再起動以外のタスクにも使用できますが、
+        サービスの再起動が最も一般的な使用例になります。
 
-    Host
-        A host is simply a remote machine that Ansible manages.  They can have
-        individual variables assigned to them, and can also be organized in
-        groups.  All hosts have a name they can be reached at (which is either
-        an IP address or a domain name) and, optionally, a port number, if they
-        are not to be accessed on the default SSH port.
+    ホスト
+        ホストは、Ansible が管理するリモートマシンです。 個々の変数を割り当てることができ、
+        グループに
+        編成することもできます。 すべてのホストには、到達可能な名前 (IP アドレスまたはドメイン名のいずれか) があり、
+        デフォルトの SSH ポートでアクセスしない場合は、
+        オプションでポート番号があります。
 
-    Host Specifier
-        Each :term:`Play <plays>` in Ansible maps a series of :term:`tasks` (which define the role,
-        purpose, or orders of a system) to a set of systems.
+    ホスト指定子
+        Ansible の各 :term:`Play <plays>` は、一連の :term:`task` (システムのロール、目的、または順序を定義する) を、
+        システムセットに設定します。
 
-        This ``hosts:`` directive in each play is often called the hosts specifier.
+        各プレイの ``hosts:`` ディレクティブは、しばしばホスト指定子と呼ばれます。
 
-        It may select one system, many systems, one or more groups, or even
-        some hosts that are in one group and explicitly not in another.
+        1 つのシステム、複数のシステム、または 1 つ以上のグループを選択できます。
+        さらには、あるグループに属し、別のグループには明示的に存在しないホストを選択することもできます。
 
-    Host Vars
-        Just like :term:`Group Vars`, a directory alongside the inventory file named
-        :file:`host_vars/` can contain a file named after each hostname in the
-        inventory file, in :term:`YAML` format.  This provides a convenient place to
-        assign variables to the host without having to embed them in the
-        :term:`inventory` file.  The Host Vars file can also be used to define complex
-        data structures that can't be represented in the inventory file.
+    ホスト変数
+        :term:`Group Vars` と同様、
+        :file:`host_vars/` という名前のインベントリーファイルの横にあるディレクトリーには、
+        :term:'YAML' 形式のインベントリーファイルの各ホスト名にちなんで名付けられたファイルを含めることができます。 これにより、
+        変数を :term:`inventory` ファイルに埋め込むことなく、
+        ホストに変数を割り当てる便利な場所を提供します。 インベントリーファイルでは表現できない複雑な
+        データ構造を定義する際にも使用できます。
 
-    Idempotency
-        An operation is idempotent if the result of performing it once is
-        exactly the same as the result of performing it repeatedly without
-        any intervening actions.
+    冪等性
+        操作を 1 回実行した結果が、
+        何も介入せずに繰り返し実行した結果とまったく同じであれば、
+        操作はべき等です。
 
-    Includes
-        The idea that :term:`playbook <playbooks>` files (which are nothing
-        more than lists of :term:`plays`) can include other lists of plays,
-        and task lists can externalize lists of :term:`tasks` in other files,
-        and similarly with :term:`handlers`.  Includes can be parameterized,
-        which means that the loaded file can pass variables.  For instance, an
-        included play for setting up a WordPress blog may take a parameter
-        called ``user`` and that play could be included more than once to
-        create a blog for both ``alice`` and ``bob``.
+    インクルード (Include)
+        (:term:`plays` にすぎない) :term:`playbook <playbooks>` ファイルの概念は、
+        他のプレイ一覧を含める (include) ことができます。
+        また、タスク一覧は、:term:`tasks` のリストを他のファイルに具体化し、
+        同様に :term:`ハンドラー` を具体化できます。 インクルードはパラメーター化できます。
+        つまり、読み込まれたファイルは変数を渡すことができます。 たとえば、
+        WordPress ブログを設定するためのインクルードプレイは、
+        `` user`` と呼ばれるパラメーターを受け取ることができ、
+        そのプレイを複数回インクルードして、`` alice``と `` bob``の両方のブログを作成できます。
 
-    Inventory
-        A file (by default, Ansible uses a simple INI format) that describes
-        :term:`Hosts <Host>` and :term:`Groups <Group>` in Ansible.  Inventory
-        can also be provided via an :term:`Inventory Script` (sometimes called
-        an "External Inventory Script").
+    インベントリー
+        Ansible の 
+        :term:`Hosts <Host>` および :term:`Groups <Group>` を説明するファイル (デフォルトでは Ansible は簡単な INI 形式を使用)。 インベントリーは、
+        :term:`Inventory Script` (「外部インベントリースクリプト」と呼ばれることもあります) からも
+        提供できます。
 
-    Inventory Script
-        A very simple program (or a complicated one) that looks up
-        :term:`hosts <Host>`, :term:`group` membership for hosts, and variable
-        information from an external resource -- whether that be a SQL
-        database, a CMDB solution, or something like LDAP.  This concept was
-        adapted from Puppet (where it is called an "External Nodes
-        Classifier") and works more or less exactly the same way.
+    インベントリースクリプト
+        :term:`hosts <Host>`、
+        ホストの :term:`group` メンバーシップおよび変数情報を、
+        SQL データベース、
+        CMDB ソリューション、または LDAP に類する外部リソースから参照する非常に簡単なプログラム (または複雑なプログラム) のことです。 この概念は、
+        Puppet (「外部ノード分類子」と呼ばれています) から取られたもので、
+        ほぼ同じ様に機能します。
 
     Jinja2
-        Jinja2 is the preferred templating language of Ansible's template
-        module.  It is a very simple Python template language that is
-        generally readable and easy to write.
+        Jinja2 は、
+        Ansible のテンプレートモジュールで推奨されるテンプレート言語です。 これは非常にシンプルな Python テンプレート言語であり、
+        一般的に読みやすく、簡単に記述できます。
 
     JSON
-        Ansible uses JSON for return data from remote modules.  This allows
-        modules to be written in any language, not just Python.
+        Ansible は、JSON を使用してリモートモジュールからデータを返します。 これにより、
+        Python だけでなく、任意の言語でモジュールを作成できます。
 
-    Lazy Evaluation
-        In general, Ansible evaluates any variables in
-        :term:`playbook <playbooks>` content at the last possible second,
-        which means that if you define a data structure that data structure
-        itself can define variable values within it, and everything "just
-        works" as you would expect.  This also means variable strings can
-        include other variables inside of those strings.
+    遅延評価
+        通常、Ansible は、できるだけ遅いタイミングで、
+        :term:'playbook <playbooks>' 内の変数をすべて評価します。
+        つまり、データ構造を定義すると、
+        データ構造自体が変数値を定義でき、
+        すべてが期待どおりに「機能するだけ」です。 これは、
+        変数文字列が、その文字列内に他の変数を含むことができることも意味します。
 
-    Library
-        A collection of modules made available to :command:`/usr/bin/ansible`
-        or an Ansible :term:`playbook <playbooks>`.
+    ライブラリー
+        :command:`/usr/bin/ansible`、
+        または Ansible :term:`playbook <playbooks>` で利用できるモジュールのコレクション
 
-    Limit Groups
-        By passing ``--limit somegroup`` to :command:`ansible` or
-        :command:`ansible-playbook`, the commands can be limited to a subset
-        of :term:`hosts <Host>`.  For instance, this can be used to run
-        a :term:`playbook <playbooks>` that normally targets an entire set of
-        servers to one particular server.
+    グループの制限
+        ``--limit somegroup`` を :command:`ansible` または 
+        :command:`ansible-playbook` に渡すことで、
+        コマンドは、:term:`hosts <Host>` のサブセットに制限できます。 たとえば、これは通常、
+        サーバーのセット全体を 1つの特定のサーバーに向ける :term:`playbook <playbooks>` を実行するために
+        使用できます。
 
-    Local Action
-        A local_action directive in a :term:`playbook <playbooks>` targeting
-        remote machines means that the given step will actually occur on the
-        local machine, but that the variable ``{{ ansible_hostname }}`` can be
-        passed in to reference the remote hostname being referred to in that
-        step.  This can be used to trigger, for example, an rsync operation.
+    ローカルアクション
+        リモートマシンを対象とした :term:`playbook <playbooks>` の local_action ディレクティブは、
+        指定したステップが実際にローカルマシン上で発生することを意味しますが、
+        そのステップで参照されるリモートホスト名を参照するために変数 ``{{ansible_hosutoname}}`` を渡すことができることを意味します。これは、たとえば、rsync 操作を発生させるために使用できます。
 
-    Local Connection
-        By using ``connection: local`` in a :term:`playbook <playbooks>`, or
-        passing ``-c local`` to :command:`/usr/bin/ansible`, this indicates
-        that we are managing the local host and not a remote machine.
+ローカル接続
+`playbook <playbooks>` で ``connection: local`` を使用したり、:command:`/usr/bin/ansible` に ``-c local`` を渡すことで、リモートマシンではなくローカルホストを管理していることを示しています。
 
-    Lookup Plugin
-        A lookup plugin is a way to get data into Ansible from the outside world.
-        Lookup plugins are an extension of Jinja2 and can be accessed in templates, e.g.,
-        ``{{ lookup('file','/path/to/file') }}``.
-        These are how such things as ``with_items``, are implemented.
-        There are also lookup plugins like ``file`` which loads data from
-        a file and ones for querying environment variables, DNS text records,
-        or key value stores.
+lookup プラグイン
+lookup プラグインとは、外部から Ansible にデータを取り込む方法です。lookup プラグインは Jinja2 の拡張機能であり、テンプレート内 (``{{ lookup('file','/path/to/file') }}`` など) でアクセスできます。
+        これらは、``with_items`` のようなものが実装されています。
+        また、ファイルからデータを読み込む ``file``" などの lookup プラグインや、
+    環境変数、DNS テキストレコード、
+        キー値ストアなどを問い合わせるための lookup プラグインもあります。
+    
+    ループ
+        通常、Ansible はプログラミング言語ではありません。``loop`` のようなさまざまな構成要素により、
+    リスト内の複数の項目に対して特定のタスクを繰り返すことができますが、
+        より宣言的であることが望まれます。
+        :ref:`yum <yum_module>`、:ref:`apt <apt_module>` などの特定のモジュールは、実際にリストを直接取得し、そのリストで指定されているパッケージをすべて、1 つのトランザクションでインストールできます。
+        このため、
+        構成が終了するまでの合計時間が大幅に短縮されるため、
+        ループなしで使用できます。
+    
+    モジュール
+        モジュールは、
+    Ansible がリモートマシンに送信する作業の単位です。  モジュールは、
+        :command:`/usr/bin/ansible` または :command:`/usr/bin/ansible-playbook` (
+        複数のタスクを組み合わせて多数の異なるモジュールを使用する場所) で開始します。
+        モジュールは、Perl、Bash、Rubyなどの任意の言語で実装できますが、
+        Pythonで作成すると、
+        いくつかの有用な共有ライブラリコードを利用できます。 モジュールは、:term:`JSON` を返すだけです。 モジュールがリモートマシンで実行すると削除されるため、
+        長時間実行されているデーモンは
+        使用されません。 Ansible は、
+        利用可能なモジュールのコレクションを :term:`library`と呼びます。
 
-    Loops
-        Generally, Ansible is not a programming language. It prefers to be
-        more declarative, though various constructs like ``loop`` allow
-        a particular task to be repeated for multiple items in a list.
-        Certain modules, like :ref:`yum <yum_module>` and :ref:`apt <apt_module>`, actually take
-        lists directly, and can install all packages given in those lists
-        within a single transaction, dramatically speeding up total time to
-        configuration, so they can be used without loops.
+    多層
+        IT システムは一度に 1 つのシステムではなく、
+        複数のシステム間とシステムのグループ間の相互作用によって、
+        明確に定義された順序で管理されるという概念です。 たとえば、データベースサーバーの前に Web サーバーを更新する必要があり、
+        *その* データベースサーバーとさまざまなロードバランサーおよび監視サーバーに
+        接続する必要がある場合は、
+        Web サーバー上の一部を更新する必要があります。 Ansible は、
+        「一度に1つのシステム」の観点から構成を見るのではなく、
+        IT トポロジー全体とワークフロー全体をモデル化します。
+    
+    通知
+    変更イベントを登録し、
+        :term:`play <plays>` の最後に別の :term:`action` を実行する必要があることを、
+        :term:`handler <handlers>` タスクに通知する :term:`task <tasks>` の動作。 ハンドラーが複数のタスクにより通知されても、
+        実行するのは
+        一度だけです。 ハンドラーは、
+        通知された順番ではなく、リストされている順序で実行されます。
+    
+    オーケストレーション
+        多くのソフトウェア自動化システムは、
+        この単語を別の意味で使用しています。 Ansible は、この単語を、指揮者がオーケストラを指揮するものとして使用します。
+    データセンターまたはクラウドアーキテクチャーには、
+        Web サーバー、データベースサーバー、さらにはロードバランサー、監視システム、継続的インテグレーションシステムなど、
+        さまざまな役割を果たすシステムが多数あります。 プロセスを実行する場合は、
+        しばしばローリングアップデートをシミュレートしたり、
+        ソフトウェアを正しくデプロイするために、
+        特定の順序でシステムを操作する必要があります。 システムによっては、いくつかのステップを実行し、その他を実行してから、
+        すでに処理された以前のシステムで、追加の手順が必要になる場合があります。
+        電子メールの送信や、Web サービスへの問い合わせが必要になる場合もあります。
+    Ansible オーケストレーションとは、そのようなプロセスをモデル化することです。
+    
+    Paramiko
+        デフォルトでは、Ansible は SSH 経由でマシンを管理します。  Ansible がデフォルトでこれを行うために使用するライブラリーは、
+        paramiko と呼ばれる Python 駆動の
+        ライブラリーです。 Paramiko ライブラリは一般的に高速で管理が簡単ですが、
+        Kerberos または
+        ジャンプホストを使用する場合は、
+        :term:`playbooks` に接続タイプを指定するか、``-c ssh`` フラグを指定して、OpenSSH などの SSH バイナリーを切り替えます。
+    
+    Playbook
+        Playbook は、Ansible がシステムのオーケストレーション、設定、管理、
+        またはデプロイするための言語です。 これが Playbook と呼ばれるのは、
+    ある種スポーツに似ており、それを使用することで楽しめるはずだからです。
+        したがって、ワークブックではありません。
+    
+    プレイ
+        :term:`playbook <playbooks>` は、プレイの一覧を指します。 最小単位のプレイは、
+        ホスト指定子で選択される :term:`hosts <Host>`のセット (
+        通常は :term:`groups <Group>` で選択されますが、
+        ホスト名 :term:`globs <Globbing>` で選択されることもある) と、システムが実行するロールを定義するためにホストで実行される :term:`tasks` との
+    間のマッピングです。Playbook には、
+        1 つまたは多数のプレイを追加できます。
+    
+    プルモード
+        デフォルトでは、Ansible は :term:`push mode` で実行されます。
+        これにより、各システムと通信するタイミングを非常にきめ細かく制御できます。 プルモードは、
+    特定のスケジュールで N 分ごとに
+        ノードをチェックインする場合に提供されます。 :command:`ansible-pull` と呼ばれる
+        プログラムを使用し、
+        プッシュモードの :term:`playbook <playbooks>` を使用して設定 (または再構成)することもできます。 ほとんどの場合はプッシュモードを使用しますが、
+        多様性と選択のしやすさのために、
+        プルモードが含まれています。
+    
+        :command:`ansible-pull` は、
+    crontab で git から構成の順序を確認し、
+        :term:`local connection` プラグインを使用してマシンをローカルで管理することで機能します。
+    
+    プッシュモード
+        プッシュモードは Ansible のデフォルトモードです。実際には、これは実際のモードではありません。
+        何も考えていないのに Ansible が動くとは
+        まさにこのことです。 プッシュモードを使用すると、Ansible を細かく設定し、
+        ノードがチェックインするのを待たずに、
+        複雑なオーケストレーションプロセスを実行できます。
+    
+登録変数
+        Ansibleですべての :term:`task <tasks>` を実行した結果は、
+        テンプレートまたは条件ステートメントで使用する変数に保存できます。
+        変数を定義するために使用されるキーワードは ``register`` と呼ばれ、
+    アセンブリープログラミングにおけるレジスターの概念からその名前を取っています (ただし、
+        Ansible は、アセンブリープログラミングのように感じることはありません)。 登録に使用できる変数名は
+        無限にあります。
+    
+    リソースモデル
+        Ansible モジュールはリソースの観点から機能します。  たとえば、
+        :ref:`file module <file_module>` は、特定のファイルを選択し、
+    そのリソースの属性が特定のモデルと一致することを保証します。たとえば、
+        :file:`/etc/motd` の所有者
+        が ``root`` に設定されていない場合は ``root`` に変更し、
+        モードが ``0644`` に設定されていない場合は ``0644`` に設定します。 リソースモデルは、
+        :term:'idempotent <idempotency>' (冪等) であり、変更コマンドは、必要でない限り実行されません。
+        Ansible は、実際の状態に関係なく、
+        システムを目的の状態に戻します。
+        状態を取得する方法を指示する必要はありません。
 
-    Modules
-        Modules are the units of work that Ansible ships out to remote
-        machines.   Modules are kicked off by either
-        :command:`/usr/bin/ansible` or :command:`/usr/bin/ansible-playbook`
-        (where multiple tasks use lots of different modules in conjunction).
-        Modules can be implemented in any language, including Perl, Bash, or
-        Ruby -- but can leverage some useful communal library code if written
-        in Python.  Modules just have to return :term:`JSON`.  Once modules are
-        executed on remote machines, they are removed, so no long running
-        daemons are used.  Ansible refers to the collection of available
-        modules as a :term:`library`.
+    ロール
+        ロールは、Ansible の組織のユニットです。 ロールを、
+        :term:`hosts <Host>` (もしくは :term:`groups <group>`、
+        :term:`host patterns <Globbing>` などのセット) に割り当てると、
+        特定の動作を実装する必要があることを示します。 ロールには、特定の変数値、
+        特定の :term:`tasks`、および特定の :term:`handlers`、
+        またはこれらの 1 つ以上を適用することを含むことができます。 ロールはファイル構造に関連付けられているため、
+        ロールは再配布可能な単位になり、
+        :term:`playbooks` 間で、または別のユーザーとも動作を共有できます。
+    
+    ローリングアップデート
+    グループ N 内の多数のノードを一度にアドレス指定して、
+        すべてのノードを一度に更新してシステムをオフラインにすることを回避する行為。 たとえば、
+        非常に大きなボリュームを処理する 500 ノードの Web トポロジーでは、
+        一度に 10 台または 20 台のマシンを更新し、
+        完了したら次の 10 台または 20 台に移行するのが妥当です。 Ansible の 
+        :term:`playbooks` の ``serial:`` キーワードは、ローリングアップデートプールのサイズを制御します。 デフォルトでは、
+        バッチサイズを一度に処理するため、
+        オプトインする必要があります。 OS 構成 (構成ファイルが正しいことの確認など) では、
+        通常、ローリングアップデートモデルを使用する必要はありませんが、
+        必要に応じて使用できます。
 
-    Multi-Tier
-        The concept that IT systems are not managed one system at a time, but
-        by interactions between multiple systems and groups of systems in
-        well defined orders.  For instance, a web server may need to be
-        updated before a database server and pieces on the web server may
-        need to be updated after *THAT* database server and various load
-        balancers and monitoring servers may need to be contacted.  Ansible
-        models entire IT topologies and workflows rather than looking at
-        configuration from a "one system at a time" perspective.
-
-    Notify
-        The act of a :term:`task <tasks>` registering a change event and
-        informing a :term:`handler <handlers>` task that another
-        :term:`action` needs to be run at the end of the :term:`play <plays>`.  If
-        a handler is notified by multiple tasks, it will still be run only
-        once.  Handlers are run in the order they are listed, not in the order
-        that they are notified.
-
-    Orchestration
-        Many software automation systems use this word to mean different
-        things.  Ansible uses it as a conductor would conduct an orchestra.
-        A datacenter or cloud architecture is full of many systems, playing
-        many parts -- web servers, database servers, maybe load balancers,
-        monitoring systems, continuous integration systems, etc.  In
-        performing any process, it is necessary to touch systems in particular
-        orders, often to simulate rolling updates or to deploy software
-        correctly.  Some system may perform some steps, then others, then
-        previous systems already processed may need to perform more steps.
-        Along the way, emails may need to be sent or web services contacted.
-        Ansible orchestration is all about modeling that kind of process.
-
-    paramiko
-        By default, Ansible manages machines over SSH.   The library that
-        Ansible uses by default to do this is a Python-powered library called
-        paramiko.  The paramiko library is generally fast and easy to manage,
-        though users who want to use Kerberos or Jump Hosts may wish to switch
-        to a native SSH binary such as OpenSSH by specifying the connection
-        type in their :term:`playbooks`, or using the ``-c ssh`` flag.
-
-    Playbooks
-        Playbooks are the language by which Ansible orchestrates, configures,
-        administers, or deploys systems.  They are called playbooks partially
-        because it's a sports analogy, and it's supposed to be fun using them.
-        They aren't workbooks :)
-
-    Plays
-        A :term:`playbook <playbooks>` is a list of plays.  A play is
-        minimally a mapping between a set of :term:`hosts <Host>` selected by a host
-        specifier (usually chosen by :term:`groups <Group>` but sometimes by
-        hostname :term:`globs <Globbing>`) and the :term:`tasks` which run on those
-        hosts to define the role that those systems will perform. There can be
-        one or many plays in a playbook.
-
-    Pull Mode
-        By default, Ansible runs in :term:`push mode`, which allows it very
-        fine-grained control over when it talks to each system.  Pull mode is
-        provided for when you would rather have nodes check in every N minutes
-        on a particular schedule.  It uses a program called
-        :command:`ansible-pull` and can also be set up (or reconfigured) using
-        a push-mode :term:`playbook <playbooks>`.  Most Ansible users use push
-        mode, but pull mode is included for variety and the sake of having
-        choices.
-
-        :command:`ansible-pull` works by checking configuration orders out of
-        git on a crontab and then managing the machine locally, using the
-        :term:`local connection` plugin.
-
-    Push Mode
-        Push mode is the default mode of Ansible. In fact, it's not really
-        a mode at all -- it's just how Ansible works when you aren't thinking
-        about it.  Push mode allows Ansible to be fine-grained and conduct
-        nodes through complex orchestration processes without waiting for them
-        to check in.
-
-    Register Variable
-        The result of running any :term:`task <tasks>` in Ansible can be
-        stored in a variable for use in a template or a conditional statement.
-        The keyword used to define the variable is called ``register``, taking
-        its name from the idea of registers in assembly programming (though
-        Ansible will never feel like assembly programming).  There are an
-        infinite number of variable names you can use for registration.
-
-    Resource Model
-        Ansible modules work in terms of resources.   For instance, the
-        :ref:`file module <file_module>` will select a particular file and ensure
-        that the attributes of that resource match a particular model. As an
-        example, we might wish to change the owner of :file:`/etc/motd` to
-        ``root`` if it is not already set to ``root``, or set its mode to
-        ``0644`` if it is not already set to ``0644``.  The resource models
-        are :term:`idempotent <idempotency>` meaning change commands are not
-        run unless needed, and Ansible will bring the system back to a desired
-        state regardless of the actual state -- rather than you having to tell
-        it how to get to the state.
-
-    Roles
-        Roles are units of organization in Ansible.  Assigning a role to
-        a group of :term:`hosts <Host>` (or a set of :term:`groups <group>`,
-        or :term:`host patterns <Globbing>`, etc.) implies that they should
-        implement a specific behavior.  A role may include applying certain
-        variable values, certain :term:`tasks`, and certain :term:`handlers`
-        -- or just one or more of these things.  Because of the file structure
-        associated with a role, roles become redistributable units that allow
-        you to share behavior among :term:`playbooks` -- or even with other users.
-
-    Rolling Update
-        The act of addressing a number of nodes in a group N at a time to
-        avoid updating them all at once and bringing the system offline.  For
-        instance, in a web topology of 500 nodes handling very large volume,
-        it may be reasonable to update 10 or 20 machines at a time, moving on
-        to the next 10 or 20 when done.  The ``serial:`` keyword in an Ansible
-        :term:`playbooks` control the size of the rolling update pool.  The
-        default is to address the batch size all at once, so this is something
-        that you must opt-in to.  OS configuration (such as making sure config
-        files are correct) does not typically have to use the rolling update
-        model, but can do so if desired.
-
-    Serial
+    シリアル
         .. seealso::
-
+    
             :term:`Rolling Update`
-
+    
     Sudo
-        Ansible does not require root logins, and since it's daemonless,
-        definitely does not require root level daemons (which can be
-        a security concern in sensitive environments).  Ansible can log in and
-        perform many operations wrapped in a sudo command, and can work with
-        both password-less and password-based sudo.  Some operations that
-        don't normally work with sudo (like scp file transfer) can be achieved
-        with Ansible's :ref:`copy <copy_module>`, :ref:`template <template_module>`, and
-        :ref:`fetch <fetch_module>` modules while running in sudo mode.
+        Ansible はルートログインを必要としません。
+        デーモンレスであるため、ルートレベルのデーモンは必要ありません (機密性の高い環境では、
+        セキュリティー上の問題になる可能性があります)。 Ansibleは、ログインして、
+        sudo コマンドにラップされた多くの操作を実行でき、
+        パスワードなしの sudo とパスワードベースの sudo の両方で機能します。 (scp ファイル転送など) 
+    通常は sudo で機能しない一部の操作は、
+        sudo モードで実行中に、Ansible の :ref:`copy <copy_module>` モジュール、:ref:`template <template_module>` モジュール、
+        および :ref:`fetch <fetch_module>` モジュールで実行できます。
 
-    SSH (Native)
-        Native OpenSSH as an Ansible transport is specified with ``-c ssh``
-        (or a config file, or a directive in the :term:`playbook <playbooks>`)
-        and can be useful if wanting to login via Kerberized SSH or using SSH
-        jump hosts, etc.  In 1.2.1, ``ssh`` will be used by default if the
-        OpenSSH binary on the control machine is sufficiently new.
-        Previously, Ansible selected ``paramiko`` as a default.  Using
-        a client that supports ``ControlMaster`` and ``ControlPersist`` is
-        recommended for maximum performance -- if you don't have that and
-        don't need Kerberos, jump hosts, or other features, ``paramiko`` is
-        a good choice.  Ansible will warn you if it doesn't detect
-        ControlMaster/ControlPersist capability.
-
-    Tags
-        Ansible allows tagging resources in a :term:`playbook <playbooks>`
-        with arbitrary keywords, and then running only the parts of the
-        playbook that correspond to those keywords.  For instance, it is
-        possible to have an entire OS configuration, and have certain steps
-        labeled ``ntp``, and then run just the ``ntp`` steps to reconfigure
-        the time server information on a remote host.
-
-    Task
-        :term:`Playbooks` exist to run tasks.  Tasks combine an :term:`action`
-        (a module and its arguments) with a name and optionally some other
-        keywords (like :term:`looping directives <loops>`).   :term:`Handlers`
-        are also tasks, but they are a special kind of task that do not run
-        unless they are notified by name when a task reports an underlying
-        change on a remote system.
-
-    Tasks
-        A list of :term:`Task`.
-
-    Templates
-        Ansible can easily transfer files to remote systems but often it is
-        desirable to substitute variables in other files.  Variables may come
-        from the :term:`inventory` file, :term:`Host Vars`, :term:`Group
-        Vars`, or :term:`Facts`. Templates use the :term:`Jinja2` template
-        engine and can also include logical constructs like loops and if
-        statements.
-
-    Transport
-        Ansible uses :term:``Connection Plugins`` to define types of available
-        transports.  These are simply how Ansible will reach out to managed
-        systems.  Transports included are :term:`paramiko`,
-        :term:`ssh <SSH (Native)>` (using OpenSSH), and
-        :term:`local <Local Connection>`.
-
+    SSH (ネイティブ)
+    Ansible トランスポートとしてのネイティブ OpenSSH は「-c ssh
+        」 (もしくは設定ファイルまたは :term:`playbook <playbooks>` のディレクティブ) で指定され、
+        Kerberos SSH またはSSH ジャンプホストなどを使用して
+        ログインする場合などに役立ちます。 1.2.1 では、
+        コントロールマシンの OpenSSH バイナリーが十分に新しい場合、デフォルトで ``ssh`` が使用されます。
+        以前のリリースでは、Ansible はデフォルトとして ``paramiko`` を選択していました。 パフォーマンスを最大限活用するには、
+        ``ControlMaster`` および ``ControlPersist`` に対応するクライアントを使用することが推奨されます。このようなクライアントがなく、
+        Kerberos、ジャンプホスト、
+        またはその他の機能が必要ない場合は、
+        ``paramiko`` を使用することが推奨されます。 Ansible は、
+    ControlMaster/ControlPersist 機能を検出しない場合に警告を表示します。
+    
+    タグ
+        Ansible は、:term:`playbook <playbooks>` 内のリソースに、
+        任意のキーワードでタグ付けし、
+        そのキーワードに対応する Playbook の部分のみを実行できるようにします。 たとえば、
+        OS 全体を構成し、``ntp`` というラベルの付いた特定の手順を作成して、
+        ``ntp`` の手順だけを実行して、
+        リモートホストのタイムサーバー情報を再構成できます。
+    
+    タスク
+        :term:`Playbooks` は、タスクを実行するために存在します。 タスクは、:term:`action` (モジュールとその引数) を、
+        名前とオプションで他のいくつかのキーワード (
+    :term:`looping directives <loops> など) と組み合わせます。:term:`Handlers` もタスクですが、
+        リモートシステムで根本的な変更が報告されたときに
+        名前で通知されない限り
+        実行されない特殊なタスクです。
+    
+    タスク
+        :term:`Task` の一覧です。
+    
+テンプレート
+        Ansible は、ファイルをリモートシステムに簡単に転送できますが、
+        他のファイルの変数を置き換えることが望ましい場合があります。 変数は、
+        :term:`inventory` ファイル、:term:`Host Vars`、:term:`Group
+        Vars`、または :term:`Facts` から取得できます。テンプレートは、:term:`Jinja2` テンプレートエンジンを使用して、
+        ループや if ステートメントなどの論理構造を
+        含めることもできます。
+    
+トランスポート
+        Ansible は、:term:``Connection Plugins`` を使用して、
+        利用可能なトランスポートタイプを定義します。 これは、単に、
+    Ansibleが 管理システムに到達する方法です。 含まれるトランスポートは、:term:`paramiko`、
+        :term:`ssh <SSH (Native)>` (OpenSSH の使用)、および
+        :term:`local <Local Connection>` です。
+    
     When
-        An optional conditional statement attached to a :term:`task <tasks>` that is used to
-        determine if the task should run or not. If the expression following
-        the ``when:`` keyword evaluates to false, the task will be ignored.
+        タスクを実行するかどうかを決定するために使用される :term:`task <tasks>` に添付された
+        オプションの条件ステートメント。``when:`` キーワードに続く式が false と評価されると、
+        タスクは無視されます。
 
-    Vars (Variables)
-        As opposed to :term:`Facts`, variables are names of values (they can
-        be simple scalar values -- integers, booleans, strings) or complex
-        ones (dictionaries/hashes, lists) that can be used in templates and
-        :term:`playbooks`.  They are declared things, not things that are
-        inferred from the remote system's current state or nature (which is
-        what Facts are).
-
+    変数 (Vars)
+        :term:`Facts` とは対照的に、
+        変数は値の名前 (
+        単純なスカラー値 (整数、ブール値、文字列))、
+        またはテンプレートや :term:`playbooks` で使用できる複雑な値 (辞書/ハッシュ、リスト) です。 変数は宣言されたものであり、
+        リモートシステムの現在の状態または性質 (ファクト) から
+    推測されるものではありません。
+    
     YAML
-        Ansible does not want to force people to write programming language
-        code to automate infrastructure, so Ansible uses YAML to define
-        :term:`playbook <playbooks>` configuration languages and also variable
-        files.  YAML is nice because it has a minimum of syntax and is very
-        clean and easy for people to skim.  It is a good data format for
-        configuration files and humans, but also machine readable.  Ansible's
-        usage of YAML stemmed from Michael DeHaan's first use of it inside of
-        Cobbler around 2006.  YAML is fairly popular in the dynamic language
-        community and the format has libraries available for serialization in
-        many languages (Python, Perl, Ruby, etc.).
+        Ansible では、インフラストラクチャーを自動化するプログラミング言語コードの記述が強制されないように、
+        Ansibl e は YAML を使用して、
+    :term:'playbook <playbooks>' 設定言語および
+        変数ファイルを定義しています。 YAML は構文が最小限であり、
+        非常にシンプルで簡単に確認できるため優れています。 YAML は、構成ファイルと、人が判読するのに適切なデータ形式ですが、
+        マシンでも判読可能です。 Ansible での YAML の使用は、
+        2006 年頃に、
+        Cobbler 内で Michael DeHaan が最初に使用したことが引き継がれています。 YAML は動的言語コミュニティーで非常に人気があり、
+        この形式には、
+        多くの言語 (Python、Perl、Ruby など) でのシリアル化に使用できるライブラリーがあります。
 
 .. seealso::
 
    :ref:`ansible_faq`
-       Frequently asked questions
+       よくある質問 (FAQ)
    :ref:`working_with_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_best_practices`
-       Best practices advice
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       ベストプラクティスのアドバイス
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

@@ -1,27 +1,27 @@
 ================
-Python 3 Support
+Python 3 サポート
 ================
 
-Ansible 2.5 and above work with Python 3. Previous to 2.5, using Python 3 was
-considered a tech preview.  This topic discusses how to set up your controller and managed machines
-to use Python 3.
+Ansible 2.5 以降では、Python 3 を使用しますが、Python 3 を使用する 2.5 よりも前のバージョンは、
+テクノロジープレビューとみなされます。 以下のトピックでは、
+Python 3 を使用できるようにコントローラーと管理マシンを設定する方法を説明します。
 
-.. note:: Ansible works with Python version 3.5 and above only.
+.. note:: Ansible は Python バージョン 3.5 以降でのみ動作します。
 
-On the controller side
+コントローラー側
 ----------------------
 
-The easiest way to run :command:`/usr/bin/ansible` under Python 3 is to install it with the Python3
-version of pip.  This will make the default :command:`/usr/bin/ansible` run with Python3:
+Python 3 で :command:`/usr/bin/ansible` を最も簡単に実行するには、
+pip の Python 3 バージョンをインストールします。 これでデフォルトで、Python 3 を使用して :command:`/usr/bin/ansible` を実行できます。
 
 .. code-block:: shell
 
     $ pip3 install ansible
     $ ansible --version | grep "python version"
-      python version = 3.6.2 (default, Sep 22 2017, 08:28:09) [GCC 7.2.1 20170915 (Red Hat 7.2.1-2)]
-
-If you are running Ansible :ref:`from_source` and want to use Python 3 with your source checkout, run your
-command via ``python3``.  For example:
+    python version = 3.6.2 (default, Sep 22 2017, 08:28:09) [GCC 7.2.1 20170915 (Red Hat 7.2.1-2)]
+    
+Ansible :ref:`from_source` を実行していて、ソースのチェックアウトに Python 3 を使用するには、
+``python3`` でコマンドを実行します。 例:
 
 .. code-block:: shell
 
@@ -29,39 +29,39 @@ command via ``python3``.  For example:
     $ python3 $(which ansible) localhost -m ping
     $ python3 $(which ansible-playbook) sample-playbook.yml
 
-.. note:: Individual Linux distribution packages may be packaged for Python2 or Python3.  When running from
-    distro packages you'll only be able to use Ansible with the Python version for which it was
-    installed.  Sometimes distros will provide a means of installing for several Python versions
-    (via a separate package or via some commands that are run after install).  You'll need to check
-    with your distro to see if that applies in your case.
+.. note:: Python 2 または Python 3 向けに、Linux ディストリビューションパッケージが個別でパッケージされている場合があります。 ディストリビューションパッケージから実行する場合には、
+    インストールされている Python のバージョンでのみ、
+    Ansible を使用できます。 ディストリビューションによっては、
+    複数の Python バージョンをインストールする手段を提供するところもあります (別のパッケージや、インストール後に実行するコマンドなど)。 お客様の状況に該当するかどうかは、
+    ディストリビューションの情報を確認してください。
 
 
-Using Python 3 on the managed machines with commands and playbooks
+コマンドおよび Playbook を使用した管理マシンでの Python 3 の使用
 ------------------------------------------------------------------
 
-* Ansible will automatically detect and use Python 3 on many platforms that ship with it. To explicitly configure a
-  Python 3 interpreter, set the ``ansible_python_interpreter`` inventory variable at a group or host level to the
-  location of a Python 3 interpreter, such as :command:`/usr/bin/python3`. The default interpreter path may also be
-  set in ``ansible.cfg``.
+* Ansible は、多数のプラットフォームに同梱されている Python 3 を自動的に検出して使用します。Python 3 インタープリターを明示的に設定するには、
+  グループまたはホストレベルで、:command:`/usr/bin/python3` などのように、
+  ``ansible_python_interpreter`` のインベントリー変数を Python 3 インタープリターの場所に指定します。デフォルトのインタープリターパスも、
+  ``ansible.cfg`` に設定できます。
 
-.. seealso:: :ref:`interpreter_discovery` for more information.
+.. seealso:: 詳細は「:ref:`interpreter_discovery`」を参照してください。
 
 .. code-block:: ini
 
     # Example inventory that makes an alias for localhost that uses Python3
-    localhost-py3 ansible_host=localhost ansible_connection=local ansible_python_interpreter=/usr/bin/python3
+localhost-py3 ansible_host=localhost ansible_connection=local ansible_python_interpreter=/usr/bin/python3
 
-    # Example of setting a group of hosts to use Python3
-    [py3-hosts]
+# Example of setting a group of hosts to use Python3
+[py3-hosts]
     ubuntu16
-    fedora27
-
+fedora27
+    
     [py3-hosts:vars]
     ansible_python_interpreter=/usr/bin/python3
+    
+.. seealso:: 詳細は「:ref:`intro_inventory`」を参照してください。
 
-.. seealso:: :ref:`intro_inventory` for more information.
-
-* Run your command or playbook:
+* コマンドまたは Playbook を実行します。
 
 .. code-block:: shell
 
@@ -69,27 +69,27 @@ Using Python 3 on the managed machines with commands and playbooks
     $ ansible-playbook sample-playbook.yml
 
 
-Note that you can also use the `-e` command line option to manually
-set the python interpreter when you run a command.   This can be useful if you want to test whether
-a specific module or playbook has any bugs under Python 3.  For example:
+コマンドの実行時に、`-e` コマンドラインオプションを指定して、
+手動で Python インタープリターを設定することもできる点に注意してください。  これは、
+Python 3で固有のモジュールや Playbook にバグが発生しているかをテストする場合に便利です。 例:
 
 .. code-block:: shell
 
     $ ansible localhost -m ping -e 'ansible_python_interpreter=/usr/bin/python3'
     $ ansible-playbook sample-playbook.yml -e 'ansible_python_interpreter=/usr/bin/python3'
 
-What to do if an incompatibility is found
+非互換性が見つかった場合の対処方法
 -----------------------------------------
 
-We have spent several releases squashing bugs and adding new tests so that Ansible's core feature
-set runs under both Python 2 and Python 3.  However, bugs may still exist in edge cases and many of
-the modules shipped with Ansible are maintained by the community and not all of those may be ported
-yet.
+Python 2 および Python 3 の両方で Ansible でコアとなる機能が実行できるように、
+複数リリースにわたってバグ修正や、新規テストが追加されました。 ただし、バグはエッジケースなどでまだ存在する可能性があります。
+また、Ansible に同梱されている多くのモジュールは、コミュニティーがメンテナンスを実施しており、
+すべてがポーティングされているわけではありません。
 
-If you find a bug running under Python 3 you can submit a bug report on `Ansible's GitHub project
-<https://github.com/ansible/ansible/issues/>`_.  Be sure to mention Python3 in the bug report so
-that the right people look at it.
+Python 3 で実行中にバグを発見した場合には、
+`Ansible の GitHub プロジェクト <https://github.com/ansible/ansible/issues/>`_ からバグ報告を提出してください。 適切な担当者が対応できるように、
+バグ報告には Python3 と記載するようにしてください。
 
-If you would like to fix the code and submit a pull request on github, you can
-refer to :ref:`developing_python_3` for information on how we fix
-common Python3 compatibility issues in the Ansible codebase.
+コードを修正して github へのプルリクエストを送信する場合は、
+Ansible コードベースで一般的な Python 3 の互換性の問題を修正する方法について、
+:ref:`developing_python_3` を参照してください。

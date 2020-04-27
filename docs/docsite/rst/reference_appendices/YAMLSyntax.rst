@@ -1,89 +1,89 @@
 .. _yaml_syntax:
 
 
-YAML Syntax
+YAML 構文
 ===========
 
-This page provides a basic overview of correct YAML syntax, which is how Ansible
-playbooks (our configuration management language) are expressed.  
+このページでは、Ansible Playbook (Ansible での設定管理言語) の表現方法である、
+正しい YAML 構文を概説します。  
 
-We use YAML because it is easier for humans to read and write than other common
-data formats like XML or JSON.  Further, there are libraries available in most
-programming languages for working with YAML.
+XML や JSON などの一般的な他のデータ形式に比べて人間による解読および記述が容易であるため、
+YAML を使用します。 さらに、プログラミング言語の多くには、
+YAML に対応するライブラリーが提供されています。
 
-You may also wish to read :ref:`working_with_playbooks` at the same time to see how this
-is used in practice.
+:ref:`working_with_playbooks` も合わせて参照し、
+実際にどのように使用されているかを確認してください。
 
 
-YAML Basics
+YAML の基礎
 -----------
 
-For Ansible, nearly every YAML file starts with a list.   
-Each item in the list is a list of key/value pairs, commonly
-called a "hash" or a "dictionary".  So, we need to know how
-to write lists and dictionaries in YAML.
+Ansible で使用する場合には、YAML ファイルのほぼすべてがリストで開始されます。   
+リストの各アイテムは、
+「ハッシュ」または「ディクショナリー」と一般的に呼ばれる、キー/値のペアのリストとなっています。 そのため、
+YAML でリストとディクショナリーを記述する方法を理解する必要があります。
 
-There's another small quirk to YAML.  All YAML files (regardless of their association with Ansible or not) can optionally
-begin with ``---`` and end with ``...``.  This is part of the YAML format and indicates the start and end of a document.
+YAML には、他にも固有の特徴があります。 YAML ファイルはすべて (Ansible との関係の有無に関わらず)、
+任意で ``---`` から開始して、``...`` で終わらせることができます。 これは、YAML 形式の一部で、ドキュメントの最初と最後を示します。
 
-All members of a list are lines beginning at the same indentation level starting with a ``"- "`` (a dash and a space)::
+リストのメンバーが記載されている行はすべて、同じ幅分インデントして、``"- "`` (ダッシュとスペース) で開始します::
 
     ---
     # A list of tasty fruits
-    - Apple
-    - Orange
-    - Strawberry
-    - Mango
-    ...
+- Apple
+- Orange
+- Strawberry
+- Mango
+...
 
-A dictionary is represented in a simple ``key: value`` form (the colon must be followed by a space)::
+ディクショナリーは、シンプルな ``key: value`` の形式で表現します (コロンの後にはスペースを挿入します)::
 
     # An employee record
-    martin:
-        name: Martin D'vloper
-        job: Developer
-        skill: Elite
+martin:
+    name: Martin D'vloper
+    job: Developer
+    skill: Elite
 
-More complicated data structures are possible, such as lists of dictionaries, dictionaries whose values are lists or a mix of both::
+ディクショナリーのリストや、値がリスト場合や、ディクショナリーと値が混合している場合など、より複雑なデータ構造も可能です。
 
     # Employee records
-    -  martin:
-        name: Martin D'vloper
-        job: Developer
-        skills:
-          - python
-          - perl
-          - pascal
-    -  tabitha:
-        name: Tabitha Bitumen
-        job: Developer
-        skills:
-          - lisp
-          - fortran
-          - erlang
+-  martin:
+    name: Martin D'vloper
+    job: Developer
+    skills:
+      - python
+      - perl
+      - pascal
+-  tabitha:
+    name: Tabitha Bitumen
+    job: Developer
+    skills:
+      - lisp
+      - fortran
+      - erlang
 
-Dictionaries and lists can also be represented in an abbreviated form if you really want to::
+ディクショナリーとリストは、必要であれば、略語形式で表現することも可能です::
 
     ---
-    martin: {name: Martin D'vloper, job: Developer, skill: Elite}
+    martin: {name:Martin D'vloper, job:Developer, skill:Elite}
     ['Apple', 'Orange', 'Strawberry', 'Mango']
 
-These are called "Flow collections".
+以下は「フローコレクション」と呼ばれます。
 
 .. _truthiness:
 
-Ansible doesn't really use these too much, but you can also specify a boolean value (true/false) in several forms::
+Ansible では以下の形式はあまり使用されませんが、ブール型値 (True/False) を複数形式で指定することも可能です::
 
     create_key: yes
     needs_agent: no
-    knows_oop: True
-    likes_emacs: TRUE
+    knows_oop:True
+    likes_emacs:TRUE
     uses_cvs: false
 
-Values can span multiple lines using ``|`` or ``>``.  Spanning multiple lines using a "Literal Block Scalar" ``|`` will include the newlines and any trailing spaces.
-Using a "Folded Block Scalar" ``>`` will fold newlines to spaces; it's used to make what would otherwise be a very long line easier to read and edit.
-In either case the indentation will be ignored.
-Examples are::
+値は、 ``|`` または ``>`` を使用して複数行に分けることができます。 「リテラル形式のブロックスカラー」``|`` を使用して複数行に分けた場合には、改行と、末尾にあるスペースが含まれます。
+「折り返し形式のブロックスカラー」``>`` を使用すると、改行を折り返してスペースに置き換えます。この文字を使用して、非常に長い行を簡単に解読し、編集できるようにします。
+いずれの場合も、インデントは無視されます。
+以下に例を示します::
 
     include_newlines: |
                 exactly as you see
@@ -95,7 +95,7 @@ Examples are::
                 single line of text
                 despite appearances
 
-While in the above ``>`` example all newlines are folded into spaces, there are two ways to enforce a newline to be kept::
+上記の ``>`` の例では、改行はすべて折り返されてスペースに変換されますが、改行を強制的に確保させる方法が 2 種類あります。
 
     fold_some_newlines: >
         a
@@ -107,39 +107,39 @@ While in the above ``>`` example all newlines are folded into spaces, there are 
         f
     same_as: "a b\nc d\n  e\nf\n"
 
-Let's combine what we learned so far in an arbitrary YAML example.
-This really has nothing to do with Ansible, but will give you a feel for the format::
+これまでに学習した内容を、任意の YAML 例にまとめてみます。
+以下は、Ansible とは関係ありませんが、どのような形式になるかを示しています。
 
     ---
     # An employee record
-    name: Martin D'vloper
-    job: Developer
-    skill: Elite
-    employed: True
-    foods:
-        - Apple
-        - Orange
-        - Strawberry
-        - Mango
-    languages:
-        perl: Elite
-        python: Elite
-        pascal: Lame
-    education: |
-        4 GCSEs
-        3 A-Levels
-        BSc in the Internet of Things
+name: Martin D'vloper
+job: Developer
+skill: Elite
+employed: True
+foods:
+    - Apple
+    - Orange
+    - Strawberry
+    - Mango
+languages:
+    perl: Elite
+    python: Elite
+    pascal: Lame
+education: |
+    4 GCSEs
+    3 A-Levels
+    BSc in the Internet of Things
 
-That's all you really need to know about YAML to start writing `Ansible` playbooks.
+`Ansible` Playbook の記述を開始するにあたり、以上が YAML について理解しておく必要のある内容です。
 
 Gotchas
 -------
 
-While you can put just about anything into an unquoted scalar, there are some exceptions.
-A colon followed by a space (or newline) ``": "`` is an indicator for a mapping.
-A space followed by the pound sign ``" #"`` starts a comment.
+引用符なしのスカラーに何でも挿入できますが、例外がいくつかあります。
+コロンの後のスペース (または改行) ``": "`` は、マッピングを示すインジケーターです。
+スペースの後にシャープ記号 ``" #"`` を指定すると、その後はコメントになります。
 
-Because of this, the following is going to result in a YAML syntax error::
+このため、以下のような場合には、YAML 構文のエラーが発生します。
 
     foo: somebody said I should put a colon here: so I did
 
@@ -149,7 +149,7 @@ Because of this, the following is going to result in a YAML syntax error::
 
     windows_path: c:\windows
 
-You will want to quote hash values using colons followed by a space or the end of the line::
+コロンを使用してハッシュ記号を引用し、その後ろにスペースを指定するか、行末にしてください::
 
     foo: 'somebody said I should put a colon here: so I did'
     
@@ -157,85 +157,85 @@ You will want to quote hash values using colons followed by a space or the end o
 
 ...and then the colon will be preserved.
 
-Alternatively, you can use double quotes::
+または、二重引用符を使用してください。
 
     foo: "somebody said I should put a colon here: so I did"
     
     windows_drive: "c:"
 
-The difference between single quotes and double quotes is that in double quotes
-you can use escapes::
+二重引用符ではエスケープを使用できる点が、
+一重引用符と二重引用符との相違点です::
 
     foo: "a \t TAB and a \n NEWLINE"
 
-The list of allowed escapes can be found in the YAML Specification under "Escape Sequences" (YAML 1.1) or "Escape Characters" (YAML 1.2).
+使用可能なエスケープの一覧は、YAML 仕様の「Escape Sequences」 (YAML 1.1) または「Escape Characters」(YAML 1.2) に記載されています。
 
-The following is invalid YAML:
+以下は無効な YAML です。
 
 .. code-block:: text
 
     foo: "an escaped \' single quote"
 
 
-Further, Ansible uses "{{ var }}" for variables.  If a value after a colon starts
-with a "{", YAML will think it is a dictionary, so you must quote it, like so::
+さらに、Ansible は変数に "{{ var }}" を使用します。 コロンの後に "{" が指定されている場合には、
+YAML はその値がディクショナリーであると認識するため、以下のように引用する必要があります::
 
     foo: "{{ variable }}"
 
-If your value starts with a quote the entire value must be quoted, not just part of it. Here are some additional examples of how to properly quote things::
+引用符で開始される値は、値の一部だけでなく、値全体を引用符で囲む必要があります。ただしく値を引用する方法について、以下に追加で例を挙げています。
 
     foo: "{{ variable }}/additional/string/literal"
-    foo2: "{{ variable }}\\backslashes\\are\\also\\special\\characters"
+foo2: "{{ variable }}\\backslashes\\are\\also\\special\\characters"
     foo3: "even if it's just a string literal it must all be quoted"
+    
+以下は有効ではありません::
 
-Not valid::
+    foo:"E:\\path\\"rest\\of\\path
 
-    foo: "E:\\path\\"rest\\of\\path
+``'`` および ``"`` 以外に、
+``[] {} > | * & ! % # ` @ ,`` などの特殊文字 (予約文字) が複数あり、引用なしのスカラーの最初の文字として使用できません。
 
-In addition to ``'`` and ``"`` there are a number of characters that are special (or reserved) and cannot be used
-as the first character of an unquoted scalar: ``[] {} > | * & ! % # ` @ ,``.
+また、``? : -`` にも注意が必要です。YAML では、上記の記号の後にスペース以外の文字が続く場合には、文字列の最初に指定できますが、
+YAML プロセッサーの実装は異なるため、引用を使用することが推奨されます。
 
-You should also be aware of ``? : -``. In YAML, they are allowed at the beginning of a string if a non-space
-character follows, but YAML processor implementations differ, so it's better to use quotes.
-
-In Flow Collections, the rules are a bit more strict::
+フローコレクションでは、ルールはもう少し厳密です::
 
     a scalar in block mapping: this } is [ all , valid
 
     flow mapping: { key: "you { should [ use , quotes here" }
 
-Boolean conversion is helpful, but this can be a problem when you want a literal `yes` or other boolean values as a string.
-In these cases just use quotes::
+ブール値の変換は便利ですが、リテラルの `yes` や、文字列として他のブール値を指定する場合など問題になる場合があります。
+上記場合には、引用符だけを使用します。
 
     non_boolean: "yes"
-    other_string: "False"
+    other_string:"False"
 
 
-YAML converts certain strings into floating-point values, such as the string
-`1.0`. If you need to specify a version number (in a requirements.yml file, for
-example), you will need to quote the value if it looks like a floating-point
-value::
+YAML は、
+特定の文字列は `1.0` の文字列など、浮動小数点の値に変換します。バージョン番号を指定する必要がある場合には (requirements.yml ファイル内など)、
+浮動小数点の値のようであれば、
+その値を引用符で囲む必要があります::
 
-  version: "1.0"
+  version:"1.0"
 
 
 .. seealso::
 
    :ref:`working_with_playbooks`
-       Learn what playbooks can do and how to write/run them.
+       Playbook でできることと、Playbook を記述および実行する方法を学びます。
    `YAMLLint <http://yamllint.com/>`_
-       YAML Lint (online) helps you debug YAML syntax if you are having problems
-   `GitHub examples directory <https://github.com/ansible/ansible-examples>`_
-       Complete playbook files from the github project source
-   `Wikipedia YAML syntax reference <https://en.wikipedia.org/wiki/YAML>`_
-       A good guide to YAML syntax
-   `Mailing List <https://groups.google.com/group/ansible-project>`_
-       Questions? Help? Ideas?  Stop by the list on Google Groups
+       YAML ヒント (オンライン) は、問題が発生した場合に YAML 構文のデバッグに役立ちます。
+   `GitHub サンプルディレクトリー <https://github.com/ansible/ansible-examples>`_
+       Github プロジェクトソースからの Playbook ファイルの完了
+   `Wikipedia YAML 構文の参照 <https://en.wikipedia.org/wiki/YAML>`_
+       YAML 構文の適切なガイド
+   `メーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel and #yaml for YAML specific questions
-   `YAML 1.1 Specification <https://yaml.org/spec/1.1/>`_
-       The Specification for YAML 1.1, which PyYAML and libyaml are currently
-       implementing
-   `YAML 1.2 Specification <https://yaml.org/spec/1.2/spec.html>`_
-       For completeness, YAML 1.2 is the successor of 1.1
+`YAML 1.1 仕様 <https://yaml.org/spec/1.1/>`_
+   PyYAML および libyaml が、
+       現在実装している YAML 1.1 の仕様
+       `YAML 1.2 仕様 <https://yaml.org/spec/1.2/spec.html>`_
+   完全を期すため、YAML 1.2 は 1.1 の後継となります。
 

@@ -1,4 +1,4 @@
-.. \_meraki\_platform\_options:
+.. _meraki_platform_options:
 
 ***************************************
 Meraki プラットフォームのオプション
@@ -32,8 +32,8 @@ Meraki タスクの例
 
 .. code-block:: yaml
 
-  meraki\_organization:
-    auth\_key: abc12345
-    org\_name:YourOrg
+  meraki_organization:
+    auth_key: abc12345
+    org_name:YourOrg
     state: present
-  delegate\_to: localhost
+  delegate_to: localhost

@@ -1,14 +1,14 @@
 **********************
-Logging Ansible output
+Ansible 出力のロギング
 **********************
 
-By default Ansible sends output about plays, tasks, and module arguments to your screen (STDOUT) on the control node. If you want to capture Ansible output in a log, you have three options:
+デフォルトでは、Ansible は Play、タスク、およびモジュール引数の出力を、コントロールノードの画面 (STDOUT) に送信します。Ansible 出力をログに記録する場合は、以下の 3 つのオプションを使用することができます。
 
-* To save Ansible output in a single log on the control node, set the ``log_path`` :ref:`configuration file setting <intro_configuration>`. You may also want to set ``display_args_to_stdout``, which helps to differentiate similar tasks by including variable values in the Ansible output.
-* To save Ansible output in separate logs, one on each managed node, set the ``no_target_syslog`` and ``syslog_facility`` :ref:`configuration file settings <intro_configuration>`.
-* To save Ansible output to a secure database, use :ref:`Ansible Tower <ansible_tower>`. Tower allows you to review history based on hosts, projects, and particular inventories over time, using graphs and/or a REST API.
+* コントロールノードの 1 つのログに Ansible 出力を保存するには、``log_path`` の :ref:`設定ファイルオプション<intro_configuration>` を設定します。また、``display_args_to_stdout`` 設定すると、Ansible の出力に変数の値を追加し、同様のタスクを区別しやすくなります。
+* 各管理ノードごとに別のログに Ansible 出力を保存するには、``no_target_syslog`` および ``syslog_facility`` の :ref:`設定ファイルオプション<intro_configuration>` を設定します。
+* Ansible 出力をセキュアなデータベースに保存するには、:ref:`Ansible Tower<ansible_tower>` を使用します。Tower を使用すると、グラフや REST API を使用して、過去のホスト、プロジェクト、および特定のインベントリーに基づいて履歴を確認できます。
 
-Protecting sensitive data with ``no_log``
+``no_log``を使用した機密データの保護
 =========================================
 
-If you save Ansible output to a log, you expose any secret data in your Ansible output, such as passwords and user names. To keep sensitive values out of your logs, mark tasks that expose them with the ``no_log: True`` attribute. However, the ``no_log`` attribute does not affect debugging output, so be careful not to debug playbooks in a production environment. See :ref:`keep_secret_data` for an example.
+Ansible 出力をログに保存すると、パスワードやユーザー名などのシークレットデータを Ansible 出力に公開します。ログから機密な値を除外するには、機密な値を公開するタスクに、``no_logTrue`` 属性でマークを付けます。ただし、``no_log`` 属性はデバッグの出力に影響しないため、本番環境で Playbook のデバッグは行わないでください。例については、:ref:`keep_secret_data` を参照してください。

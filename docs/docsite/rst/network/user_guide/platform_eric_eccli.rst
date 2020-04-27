@@ -1,10 +1,10 @@
-.. \_eic\_eccli\_platform\_options:
+.. _eic_eccli_platform_options:
 
 ***************************************
-ERIC\_ECCLI プラットフォームのオプション
+ERIC_ECCLI プラットフォームのオプション
 ***************************************
 
-現在、Extreme ERIC\_ECCLI の Ansible モジュールは、CLI 接続にのみ対応します。このページには、Ansible で ERIC\_ECCLI の ``network_cli`` を使用する詳細な方法が記載されています。
+現在、Extreme ERIC_ECCLI の Ansible モジュールは、CLI 接続にのみ対応します。このページには、Ansible で ERIC_ECCLI の ``network_cli`` を使用する詳細な方法が記載されています。
 
 .. contents:: トピック
 
@@ -32,9 +32,9 @@ ERIC\_ECCLI プラットフォームのオプション
     返されるデータ形式 ``stdout[0]``
     ====================  ==========================================
 
-.. |enable\_mode| replace::Enable モード |br| (権限昇格)
+.. |enable_mode| replace::Enable モード |br| (権限昇格)
 
-Eric\_ECCLI は、``ansible_connection: local`` に対応していません。``ansible_connection: network_cli`` を使用する必要があります。
+Eric_ECCLI は、``ansible_connection: local`` に対応していません。``ansible_connection: network_cli`` を使用する必要があります。
 
 Ansible での CLI の使用
 ====================
@@ -44,11 +44,11 @@ CLI の例: ``group_vars/eric_eccli.yml``
 
 .. code-block:: yaml
 
-   ansible\_connection: network\_cli
-   ansible\_network\_os: eric\_eccli
-   ansible\_user: myuser
-   ansible\_password: !vault...
-   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible_connection: network_cli
+   ansible_network_os: eric_eccli
+   ansible_user: myuser
+   ansible_password: !vault...
+   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
 - SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
@@ -60,9 +60,9 @@ CLI タスクの例
 
 .. code-block:: yaml
 
-   - name: run show version on remote devices (eric\_eccli)
-     eric\_eccli\_command:
+   - name: run show version on remote devices (eric_eccli)
+     eric_eccli_command:
         commands: show version
-     when: ansible\_network\_os == 'eric\_eccli'
+     when: ansible_network_os == 'eric_eccli'
 
-.. include:: shared\_snippets/SSH\_warning.txt
+.. include:: shared_snippets/SSH_warning.txt

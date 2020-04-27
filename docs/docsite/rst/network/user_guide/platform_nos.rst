@@ -1,4 +1,4 @@
-.. \_nos\_platform\_options:
+.. _nos_platform_options:
 
 ***************************************
 NOS プラットフォームのオプション
@@ -33,7 +33,7 @@ Extreme NOS Ansible モジュールは現時点では CLI 接続のみに対応�
     返されるデータ形式 ``stdout[0]``
     ====================  ==========================================
 
-.. |enable\_mode| replace::Enable モード |br| (権限昇格)
+.. |enable_mode| replace::Enable モード |br| (権限昇格)
 
 NOS は ``ansible_connection: local`` に対応していません。``ansible_connection: network_cli`` を使用する必要があります。
 
@@ -45,11 +45,11 @@ CLI の例: ``group_vars/nos.yml``
 
 .. code-block:: yaml
 
-   ansible\_connection: network\_cli
-   ansible\_network\_os: nos
-   ansible\_user: myuser
-   ansible\_password: !vault...
-   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible_connection: network_cli
+   ansible_network_os: nos
+   ansible_user: myuser
+   ansible_password: !vault...
+   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
 - SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
@@ -62,10 +62,10 @@ CLI タスクの例
 .. code-block:: yaml
 
    - name:Get version information (nos)
-     nos\_command:
+     nos_command:
        commands: "show version"
-     register: show\_ver
-     when: ansible\_network\_os == 'nos'
+     register: show_ver
+     when: ansible_network_os == 'nos'
 
 
-.. include:: shared\_snippets/SSH\_warning.txt
+.. include:: shared_snippets/SSH_warning.txt

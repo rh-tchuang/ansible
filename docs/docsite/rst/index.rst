@@ -1,54 +1,54 @@
 .. _ansible_documentation:
 
-Ansible Documentation
+Ansible ドキュメント
 =====================
 
-About Ansible
-`````````````
+Ansible について
+\`\`\`\`\`\`\`\`\`\`\`\`\`
 
-Ansible is an IT automation tool.  It can configure systems, deploy software, and orchestrate more advanced IT tasks such as continuous deployments or zero downtime rolling updates.
+Ansible は IT 自動化ツールです。 このツールを使用すると、システムの構成、ソフトウェアの展開、より高度なITタスク (継続的なデプロイメントやダウンタイムなしのローリング更新など) のオーケストレーションが可能になります。
 
-Ansible's main goals are simplicity and ease-of-use. It also has a strong focus on security and reliability, featuring a minimum of moving parts, usage of OpenSSH for transport (with other transports and pull modes as alternatives), and a language that is designed around auditability by humans--even those not familiar with the program.
+Ansible の主な目標は単純かつ使いやすいことです。また、セキュリティーと信頼性を重視し、最小限の可動部品、トランスポートでの OpenSSH の使用 (他のトランスポートおよびプルモードを代替として使用)、プログラムに精通していない人でも監査を可能にする言語も備えています。
 
-We believe simplicity is relevant to all sizes of environments, so we design for busy users of all types: developers, sysadmins, release engineers, IT managers, and everyone in between. Ansible is appropriate for managing all environments, from small setups with a handful of instances to enterprise environments with many thousands of instances.
+簡素化はあらゆる規模の環境に関連しているため、開発者、システム管理者、リリースエンジニア、IT マネージャーなど、あらゆるタイプのビジーユーザー向けに設計されています。Ansible は、わずかなインスタンスしかない小規模のセットアップから、インスタンスが数千にも上るエンタープライズ環境まで、すべての環境を管理するのに適しています。
 
-Ansible manages machines in an agent-less manner. There is never a question of how to
-upgrade remote daemons or the problem of not being able to manage systems because daemons are uninstalled.  Because OpenSSH is one of the most peer-reviewed open source components, security exposure is greatly reduced. Ansible is decentralized--it relies on your existing OS credentials to control access to remote machines. If needed, Ansible can easily connect with Kerberos, LDAP, and other centralized authentication management systems.
+Ansible は、エージェントを使用しない方法でマシンを管理します。リモートデーモンをアップグレードする方法、
+またはデーモンがアンインストールされているためにシステムを管理できない問題は決して発生しません。 OpenSSH は、相互評価が最も行われたオープンソースコンポーネントの 1 つであるため、セキュリティーの危険性は大幅に軽減されます。Ansible は、既存の OS 認証情報に依存してリモートマシンへのアクセスを制御します。必要に応じて、Ansible は、Kerberos、LDAP、およびその他の集中化された認証管理システムと簡単に接続できます。
 
-This documentation covers the version of Ansible noted in the upper left corner of this page. We maintain multiple versions of Ansible and of the documentation, so please be sure you are using the version of the documentation that covers the version of Ansible you're using. For recent features, we note the version of Ansible where the feature was added.
+本ガイドは、本ページの左上にある Ansible のバージョンについて説明します。Red Hat は、複数のバージョンの Ansible とドキュメントを管理しているため、参照しているドキュメントが、使用している Ansible のバージョンのものであることを確認してください。最新の機能については、その機能が追加された Ansible のバージョンを記載しています。
 
-Ansible releases a new major release of Ansible approximately three to four times per year. The core application evolves somewhat conservatively, valuing simplicity in language design and setup. However, the community around new modules and plugins being developed and contributed moves very quickly, adding many new modules in each release.
+Ansible は、Ansible のメジャーリリースを年に約 3 ~ 4 回リリースします。コアアプリケーションは若干複雑になり、言語の設計および設定の単純性が高まります。ただし、開発および提供されている新しいモジュールとプラグインを取り巻くコミュニティーは非常に迅速に動き、リリースごとに新しいモジュールが多数追加されます。
 
 
 .. toctree::
    :maxdepth: 2
-   :caption: Installation, Upgrade & Configuration
+   :caption: インストール、アップグレード、および設定
 
    installation_guide/index
    porting_guides/porting_guides
 
 .. toctree::
    :maxdepth: 2
-   :caption: Using Ansible
+   :caption: Ansible の使用
 
    user_guide/index
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contributing to Ansible
+   :caption: Ansible への貢献
 
    community/index
 
 .. toctree::
    :maxdepth: 2
-   :caption: Extending Ansible
+   :caption: Ansible の拡張
 
    dev_guide/index
 
 .. toctree::
    :glob:
    :maxdepth: 1
-   :caption: Common Ansible Scenarios
+   :caption: Ansible の一般的なシナリオ
 
    scenario_guides/cloud_guides
    scenario_guides/network_guides
@@ -56,7 +56,7 @@ Ansible releases a new major release of Ansible approximately three to four time
 
 .. toctree::
    :maxdepth: 2
-   :caption: Ansible for Network Automation
+   .. toctree:::maxdepth:ネットワークの自動化における Ansible:caption::maxdepth:
 
    network/index
 
@@ -70,7 +70,7 @@ Ansible releases a new major release of Ansible approximately three to four time
 
 .. toctree::
    :maxdepth: 1
-   :caption: Reference & Appendices
+   :caption: 参照 & 付録
 
    ../modules/modules_by_category
    reference_appendices/playbooks_keywords
@@ -93,10 +93,10 @@ Ansible releases a new major release of Ansible approximately three to four time
 
 .. toctree::
    :maxdepth: 2
-   :caption: Release Notes
+   :caption: リリースノート
 
 .. toctree::
    :maxdepth: 2
-   :caption: Roadmaps
+   :caption: ロードマップ
 
    roadmap/index.rst

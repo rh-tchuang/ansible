@@ -1,4 +1,4 @@
-.. \_platform\_options:
+.. _platform_options:
 
 ****************
 プラットフォームのオプション
@@ -10,30 +10,30 @@
    :maxdepth: 2
    :caption: プラットフォームのオプション
 
-   platform\_cnos
-   platform\_dellos6
-   platform\_dellos9
-   platform\_dellos10
-   platform\_enos
-   platform\_eos
-   platform\_eric\_eccli
-   platform\_exos
-   platform\_icx
-   platform\_ios
-   platform\_iosxr
-   platform\_ironware
-   platform\_junos
-   platform\_meraki
-   platform\_netvisor
-   platform\_nos
-   platform\_nxos
-   platform\_routeros
-   platform\_slxos
-   platform\_voss
-   platform\_vyos
-   platform\_netconf\_enabled
+   platform_cnos
+   platform_dellos6
+   platform_dellos9
+   platform_dellos10
+   platform_enos
+   platform_eos
+   platform_eric_eccli
+   platform_exos
+   platform_icx
+   platform_ios
+   platform_iosxr
+   platform_ironware
+   platform_junos
+   platform_meraki
+   platform_netvisor
+   platform_nos
+   platform_nxos
+   platform_routeros
+   platform_slxos
+   platform_voss
+   platform_vyos
+   platform_netconf_enabled
 
-.. \_settings\_by\_platform:
+.. _settings_by_platform:
 
 プラットフォーム別の設定
 ================================
@@ -85,6 +85,6 @@
     Netconf に対応する OS `[†]`_  ``<network-os>``                      ✓                 ✓
     ===============================  =======================  ===========  =======  =======  ===========
 
-.. \_`[†]`:
+.. _`[†]`:
 
-**\[†]** Ansible Network Team が管理しています。
+**[†]** Ansible Network Team が管理しています。

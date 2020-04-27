@@ -1,4 +1,4 @@
-.. \_action\_plugins:
+.. _action_plugins:
 
 Action プラグイン
 ==============
@@ -12,14 +12,14 @@ Action プラグインは、:ref:`modules <working_with_modules>` と連携し�
 
 action プラグインが指定されていないモジュールには、「一般的な」action プラグインが使用されます。
 
-.. \_enabling\_action:
+.. _enabling_action:
 
 action プラグインの有効化
 -----------------------
 
 カスタムの action プラグインを有効にするには、カスタムのプラグインを、ロール内の Play の隣りにある ``action_plugins`` ディレクトリーに配置するか、:ref:`ansible.cfg <ansible_configuration_settings>` に設定した action プラグインのディレクトリーソースの 1 つに配置します。
 
-.. \_using\_action:
+.. _using_action:
 
 action プラグインの使用
 --------------------
@@ -53,4 +53,4 @@ action プラグインを直接一覧表示できませんが、対応のモジ�
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       \#ansible IRC chat channel
+       #ansible IRC chat channel

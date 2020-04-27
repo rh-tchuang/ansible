@@ -1,4 +1,4 @@
-.. \_icx\_platform\_options:
+.. _icx_platform_options:
 
 ***************************************
 ICX プラットフォームのオプション
@@ -33,7 +33,7 @@ ICX は、Enable モード (権限昇格) に対応します。ここでは、An
     返されるデータ形式 ``stdout[0]``
     ====================  ==========================================
 
-.. |enable\_mode| replace::Enable モード |br| (権限昇格)
+.. |enable_mode| replace::Enable モード |br| (権限昇格)
 
 
 Ansible での CLI の使用
@@ -44,14 +44,14 @@ CLI の例: ``group_vars/icx.yml``
 
 .. code-block:: yaml
 
-   ansible\_connection: network\_cli
-   ansible\_network\_os: icx
-   ansible\_user: myuser
-   ansible\_password: !vault...
-   ansible\_become: yes
-   ansible\_become\_method: enable
-   ansible\_become\_password: !vault...
-   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible_connection: network_cli
+   ansible_network_os: icx
+   ansible_user: myuser
+   ansible_password: !vault...
+   ansible_become: yes
+   ansible_become_method: enable
+   ansible_become_password: !vault...
+   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
 - SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
@@ -64,9 +64,9 @@ CLI タスクの例
 .. code-block:: yaml
 
    - name:Backup current switch config (icx)
-     icx\_config:
+     icx_config:
        backup: yes
-     register: backup\_icx\_location
-     when: ansible\_network\_os == 'icx'
+     register: backup_icx_location
+     when: ansible_network_os == 'icx'
 
-.. include:: shared\_snippets/SSH\_warning.txt
+.. include:: shared_snippets/SSH_warning.txt

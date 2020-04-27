@@ -1,100 +1,100 @@
 .. _common_return_values:
 
-Return Values
+戻り値
 -------------
 
-.. contents:: Topics
+.. contents:: トピック
 
-Ansible modules normally return a data structure that can be registered into a variable, or seen directly when output by
-the `ansible` program. Each module can optionally document its own unique return values (visible through ansible-doc and on the :ref:`main docsite<ansible_documentation>`).
+Ansible モジュールは通常、変数に登録可能なデータ構造や、
+`ansible` プログラムで出力時に直接確認できるデータ構造を返します。各モジュールはオプションで、独自の戻り値 (ansible-doc や :ref:`主なドキュメントサイト<ansible_documentation>` で確認可能) をドキュメントにまとめることができます。
 
-This document covers return values common to all modules.
+本ガイドでは、全モジュールに共通する戻り値を説明します。
 
-.. note:: Some of these keys might be set by Ansible itself once it processes the module's return information.
+.. note::モジュールの戻り値情報の処理が終わると、Ansible 自体でこのようなキーが設定されるものもあります。
 
 
 Common
 ^^^^^^
 
 backup_file
-```````````
-For those modules that implement `backup=no|yes` when manipulating files, a path to the backup file created.
+\`\`\`\`\`\`\`\`\`\`\`
+ファイルを操作するときに `backup=no|yes` を実装するモジュール向け。作成したバックアップファイルへのパス。
 
 changed
-```````
-A boolean indicating if the task had to make changes.
+\`\`\`\`\`\`\`
+タスクに変更を加える必要があるかどうかを示すブール値。
 
 failed
-``````
-A boolean that indicates if the task was failed or not.
+\`\`\`\`\`\`
+タスクが失敗したかどうかを示すブール値。
 
 invocation
-``````````
-Information on how the module was invoked.
+\`\`\`\`\`\`\`\`\`\`
+モジュールがどのように呼び出されたかを示す情報。
 
 msg
-```
-A string with a generic message relayed to the user.
+\`\`\`
+ユーザーに渡される一般的なメッセージを含む文字列。
 
 rc
-``
-Some modules execute command line utilities or are geared for executing commands directly (raw, shell, command, etc), this field contains 'return code' of these utilities.
+\`\`
+コマンドラインユーティリティーを実行したり、(ロー、shell、コマンドなど) 直接コマンドを実行するように設定されているモジュール。このフィールドにはこのようなユーティリティーの「リターンコード」が含まれます。
 
 results
-```````
-If this key exists, it indicates that a loop was present for the task and that it contains a list of the normal module 'result' per item.
+\`\`\`\`\`\`\`
+このキーが存在する場合には、タスクに対してループが存在し、アイテムごとに通常のモジュール「結果」が含まれていることを示します。
 
 skipped
-```````
-A boolean that indicates if the task was skipped or not
+\`\`\`\`\`\`\`
+タスクがスキップされたかどうかを示すブール値。
 
 stderr
-``````
-Some modules execute command line utilities or are geared for executing commands directly (raw, shell, command, etc), this field contains the error output of these utilities.
+\`\`\`\`\`\`
+コマンドラインユーティリティーを実行したり、(ロー、shell、コマンドなど) 直接コマンドを実行するように設定されているモジュール。このフィールドにはこのようなユーティリティーのエラー出力が含まれます。
 
-stderr_lines
-````````````
-When `stderr` is returned we also always provide this field which is a list of strings, one item per line from the original.
+stderr\_lines
+\`\`\`\`\`\`\`\`\`\`\`\`
+`stderr` が返された時には、このフィールドも表示されます。このフィールドは元のエラー出力からの文字列の一覧 (1 行にアイテム 1 つ) となっています。
 
 stdout
-``````
-Some modules execute command line utilities or are geared for executing commands directly (raw, shell, command, etc). This field contains the normal output of these utilities.
+\`\`\`\`\`\`
+コマンドラインユーティリティーを実行したり、(ロー、shell、コマンドなど) 直接コマンドを実行するように設定されているモジュール。このフィールドには、このユーティリティーの通常の出力が含まれます。
 
-stdout_lines
-````````````
-When `stdout` is returned, Ansible always provides a list of strings, each containing one item per line from the original output.
+stdout\_lines
+\`\`\`\`\`\`\`\`\`\`\`\`
+`stdout` が返されると、Ansible は常に文字列の一覧 (元の出力から 1 行にアイテム 1 つを含める) を渡します。
 
 
 .. _internal_return_values:
 
-Internal use
+Ansible 内での使用
 ^^^^^^^^^^^^
 
-These keys can be added by modules but will be removed from registered variables; they are 'consumed' by Ansible itself.
+以下のキーはモジュールで追加できますが、登録変数からは削除されます。これらのキーは、Ansible 自体が「使用」します。
 
 ansible_facts
-`````````````
-This key should contain a dictionary which will be appended to the facts assigned to the host. These will be directly accessible and don't require using a registered variable.
+\`\`\`\`\`\`\`\`\`\`\`\`\`
+このキーには、ホストに割り当てられたファクトに追加するディクショナリーが含まれているはずです。このキーは、直接アクセスでき、登録変数を使用する必要はありません。
 
 exception
-`````````
-This key can contain traceback information caused by an exception in a module. It will only be displayed on high verbosity (-vvv).
+\`\`\`\`\`\`\`\`\`
+このキーには、モジュールの例外で発生したトレースバックの情報が含まれます。これは、詳細レベル (-vvv) 高でのみ表示されます。
 
 warnings
-````````
-This key contains a list of strings that will be presented to the user.
+\`\`\`\`\`\`\`\`
+このキーには、ユーザーに表示される文字列の一覧が含まれます。
 
 deprecations
-````````````
-This key contains a list of dictionaries that will be presented to the user. Keys of the dictionaries are `msg` and `version`, values are string, value for the `version` key can be an empty string.
+\`\`\`\`\`\`\`\`\`\`\`\`
+このキーには、ユーザーに表示されるディクショナリー一覧が含まれます。ディクショナリーのキーは `msg` と `version` で、値は文字列です。`version` キーの値は空白の文字列に指定できます。
 
 .. seealso::
 
    :ref:`all_modules`
-       Learn about available modules
-   `GitHub modules directory <https://github.com/ansible/ansible/tree/devel/lib/ansible/modules>`_
-       Browse source of core and extras modules
-   `Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Development mailing list
+       利用可能なモジュールについて
+   `GitHub モジュールディレクトリー <https://github.com/ansible/ansible/tree/devel/lib/ansible/modules>`_
+       コアモジュールおよび追加モジュールのソースの参照
+   `メーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       開発メーリングリスト
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

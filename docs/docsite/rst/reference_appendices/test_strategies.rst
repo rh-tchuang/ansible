@@ -1,29 +1,29 @@
 .. _testing_strategies:
 
-Testing Strategies
+ストラテジーのテスト
 ==================
 
 .. _testing_intro:
 
-Integrating Testing With Ansible Playbooks
-``````````````````````````````````````````
+Ansible Playbook とテストの統合
+\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`
 
-Many times, people ask, "how can I best integrate testing with Ansible playbooks?"  There are many options.  Ansible is actually designed
-to be a "fail-fast" and ordered system, therefore it makes it easy to embed testing directly in Ansible playbooks.  In this chapter,
-we'll go into some patterns for integrating tests of infrastructure and discuss the right level of testing that may be appropriate.
+「Ansible Playbook とテストを最適な方法で統合するにはどうしたらいいのか」との質問が多くあります。  統合のオプションは、多数あります。 Ansible は実際には、
+「フェイルファースト (Fail fast)」の順番ベースのシステムとなるように設計されているため、Ansible Playbook に直接、簡単にテストを埋め込むことができます。 本章では、
+インフラストラクチャーのテスト統合パターンについて触れ、適切にテストするための正しいレベルについても説明します。
 
-.. note:: This is a chapter about testing the application you are deploying, not the chapter on how to test Ansible modules during development.  For that content, please hop over to the Development section.
+.. note:: 以下は、デプロイするアプリケーションをテストする内容で、開発時に Ansible モジュールをテストする方法を説明する章ではありません。 Ansible のテスト方法は、開発のセクションで参照してください。
 
-By incorporating a degree of testing into your deployment workflow, there will be fewer surprises when code hits production and, in many cases,
-tests can be leveraged in production to prevent failed updates from migrating across an entire installation.  Since it's push-based, it's
-also very easy to run the steps on the localhost or testing servers. Ansible lets you insert as many checks and balances into your upgrade workflow as you would like to have.
+開発のワークフローにテストをある程度組み込むことで、実稼働環境でコードを使用時に、慌てることが少なくなります。
+多くの場合は、実稼働環境でテストを活用して、更新の失敗が、インストール全体に移行されてしまうのを防ぐことができます。 また、プッシュベースになっているため、
+ローカルホストやテストサーバーで手順を非常に簡単に実行できます。Ansible は、多くのチェックを挿入できるため、アップグレードのワークフローを希望のレベルに調節できます。
 
-The Right Level of Testing
-``````````````````````````
+適切なレベルのテスト
+\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`
 
-Ansible resources are models of desired-state.  As such, it should not be necessary to test that services are started, packages are
-installed, or other such things.  Ansible is the system that will ensure these things are declaratively true.   Instead, assert these
-things in your playbooks.
+Ansible リソースは、任意の状態のモデルです。 サービスの起動、
+パッケージのインストールなどのテストする必要はありません。 Ansible は、上記の内容が True と宣言されていることを確認するシステムで、  代わりに、
+以下の項目を Playbook にアサートします。
 
 .. code-block:: yaml
 
@@ -33,21 +33,21 @@ things in your playbooks.
          state: started
          enabled: yes
 
-If you think the service may not be started, the best thing to do is request it to be started.  If the service fails to start, Ansible
-will yell appropriately. (This should not be confused with whether the service is doing something functional, which we'll show more about how to
-do later).
+サービスが起動しない可能性がある場合には、起動するように要求するのが一番です。 サービスが起動に失敗した場合には、
+Ansible により随時、指示がでます。(上記と、サービスが機能的な内容を実行しているかどうかを混同しないでください。
+この点については、後述します)。
 
 .. _check_mode_drift:
 
-Check Mode As A Drift Test
-``````````````````````````
+ドリフトテストとしての check モード
+\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`
 
-In the above setup, `--check` mode in Ansible can be used as a layer of testing as well.  If running a deployment playbook against an
-existing system, using the `--check` flag to the `ansible` command will report if Ansible thinks it would have had to have made any changes to
-bring the system into a desired state.
+上記の設定では、Ansible で `--check` モードをテストのレイヤーとして使用できます。 既存システムに対してデプロイメント Playbooks を実行する場合は、
+`ansible` コマンドに `--check` フラグを使用して、
+システムを希望する状態にするために Ansible が変更が必要と判断するかどうかを報告します。
 
-This can let you know up front if there is any need to deploy onto the given system.  Ordinarily scripts and commands don't run in check mode, so if you
-want certain steps to always execute in check mode, such as calls to the script module, disable check mode for those tasks::
+このレポートにより、特定のシステムにデプロイメントが必要かどうかが、最初の時点で把握できます。 通常、スクリプトとコマンドはチェックモードで実行されないため、
+スクリプトモジュールへの呼び出しなど、特定の手順を常にチェックモードで実行させたい場合は、これらのタスクのチェックモードを無効にします。
 
 
    roles:
@@ -57,19 +57,19 @@ want certain steps to always execute in check mode, such as calls to the script 
      - script: verify.sh
        check_mode: no
 
-Modules That Are Useful for Testing
-```````````````````````````````````
+テストに便利なモジュール
+\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`
 
-Certain playbook modules are particularly good for testing.  Below is an example that ensures a port is open::
+Playbook のモジュールでは、特にテストに適しているものもあります。 以下の例は、ポートが開放されていることを確認します。
 
    tasks:
 
-     - wait_for:
+     - wait_for：
          host: "{{ inventory_hostname }}"
-         port: 22
+         port:22
        delegate_to: localhost
       
-Here's an example of using the URI module to make sure a web service returns::
+以下の例は、URI モジュールを使用して、Web サービスが返されることを確認します。
 
    tasks:
 
@@ -80,16 +80,16 @@ Here's an example of using the URI module to make sure a web service returns::
          msg: 'service is not happy'
        when: "'AWESOME' not in webpage.content"
 
-It's easy to push an arbitrary script (in any language) on a remote host and the script will automatically fail if it has a non-zero return code::
+リモートホストで任意のスクリプト (言語は問わない) が簡単にプッシュされるので、ゼロ以外のリターンコードが指定されている場合に、スクリプトは自動的に失敗します。
 
    tasks:
 
      - script: test_script1
      - script: test_script2 --parameter value --parameter2 value
 
-If using roles (you should be, roles are great!), scripts pushed by the script module can live in the 'files/' directory of a role.
+ロールを使用する場合は (ロールは便利なので使用を推奨)、スクリプトモジュールがプッシュするスクリプトは、ロールの「files/」ディレクトリーに配置されます。
 
-And the assert module makes it very easy to validate various kinds of truth::
+また、アサートモジュールを使用すると、さまざまな真偽の検証が非常に簡単にできます。
 
    tasks:
 
@@ -101,7 +101,7 @@ And the assert module makes it very easy to validate various kinds of truth::
             - "'not ready' not in cmd_result.stderr"
             - "'gizmo enabled' in cmd_result.stdout"
 
-Should you feel the need to test for existence of files that are not declaratively set by your Ansible configuration, the 'stat' module is a great choice::
+Ansible 設定で設定が宣言されていないファイルの存在をテストする必要がある場合には、「stat」モジュールが最適です。
 
    tasks:
 
@@ -114,162 +114,162 @@ Should you feel the need to test for existence of files that are not declarative
             - p.stat.exists and p.stat.isdir
 
 
-As mentioned above, there's no need to check things like the return codes of commands.  Ansible is checking them automatically.
-Rather than checking for a user to exist, consider using the user module to make it exist.
+上記のように、コマンドのリターンコードなどをチェックする必要はありません。 Ansible がこのようなコードを自動的にチェックします。
+ユーザーの存在をチェックする代わりに、ユーザーモジュールを使用してユーザーを存在させます。
 
-Ansible is a fail-fast system, so when there is an error creating that user, it will stop the playbook run.  You do not have
-to check up behind it.
+Ansible はフェイルファーストシステムであるため、ユーザーの作成時にエラーがあると、Playbook の実行が停止します。 バックグラウンドで行われている内容を
+確認する必要はありません。
 
-Testing Lifecycle
-`````````````````
+ライフサイクルのテスト
+\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`
 
-If writing some degree of basic validation of your application into your playbooks, they will run every time you deploy.
+アプリケーションの基本検証を Playbook に記述すると、デプロイ時に必ずこの検証が実行されます。
 
-As such, deploying into a local development VM and a staging environment will both validate that things are according to plan
-ahead of your production deploy.
+そのため、ローカルの開発仮想マシンやステージ環境にデプロイするといずれも、
+実稼働でのデプロイの前に計画通りに作業が進んでいるかどうかを検証します。
 
-Your workflow may be something like this::
+ワークフローは、次のようになります。
 
-    - Use the same playbook all the time with embedded tests in development
-    - Use the playbook to deploy to a staging environment (with the same playbooks) that simulates production
-    - Run an integration test battery written by your QA team against staging
-    - Deploy to production, with the same integrated tests.
+    - 開発中は、テストが組み込まれた、同じ Playbook を常に使用します。
+    - その Playbook を使用して、実稼働環境をシミュレーションするステージ環境 (同じ Playbook を使用) にデプロイします。
+    - ステージ環境向けに QA チームが記述した統合テストを実行します。
+    - 同じ統合テストを使用して、実稼働環境にデプロイします。
 
-Something like an integration test battery should be written by your QA team if you are a production webservice.  This would include
-things like Selenium tests or automated API tests and would usually not be something embedded into your Ansible playbooks.
+実稼働の Web サービスを使用する場合には、QA チームが同様の統合テストを記述するようにしてください。 たとえば、
+Selenium テストや自動化 API テストなどで、このようなテストは通常 Ansible Playbook には組み込まれていません。
 
-However, it does make sense to include some basic health checks into your playbooks, and in some cases it may be possible to run
-a subset of the QA battery against remote nodes.   This is what the next section covers.
+ただし、基本的なヘルスチェックを Playbook に追加すると便利です。場合によっては、
+リモートノードに対して QA 統合テストを実行することもできます。  この点について、次のセクションで説明します。
 
-Integrating Testing With Rolling Updates
-````````````````````````````````````````
+ローリングアップデートへのテストの統合
+\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`
 
-If you have read into :ref:`playbooks_delegation` it may quickly become apparent that the rolling update pattern can be extended, and you
-can use the success or failure of the playbook run to decide whether to add a machine into a load balancer or not. 
+:ref:`playbooks_delegation` を参照された場合には、ローリングアップデートのパターンを拡張でき、
+また、Playbook の成否でロードバランサーにマシンを 1 台追加するかどうかを決定できることが学習できたはずです。 
 
-This is the great culmination of embedded tests::
+以下は、統合テストをまとめたものです。
 
     ---
 
     - hosts: webservers
-      serial: 5
+      serial:5
 
       pre_tasks:
 
         - name: take out of load balancer pool
           command: /usr/bin/take_out_of_pool {{ inventory_hostname }}
-          delegate_to: 127.0.0.1
+      delegate_to: 127.0.0.1
 
-      roles:
+  roles:
 
-         - common
-         - webserver
-         - apply_testing_checks
+     - common
+     - webserver
+     - apply_testing_checks
 
-      post_tasks:
-  
-        - name: add back to load balancer pool
-          command: /usr/bin/add_back_to_pool {{ inventory_hostname }}
-          delegate_to: 127.0.0.1
+  post_tasks:
 
-Of course in the above, the "take out of the pool" and "add back" steps would be replaced with a call to a Ansible load balancer
-module or appropriate shell command.  You might also have steps that use a monitoring module to start and end an outage window
-for the machine.
+    - name: add back to load balancer pool
+      command: /usr/bin/add_back_to_pool {{ inventory_hostname }}
+          delegate_to:127.0.0.1
 
-However, what you can see from the above is that tests are used as a gate -- if the "apply_testing_checks" step is not performed,
-the machine will not go back into the pool.
+上記では当然、「プールから取得する」手順や「追加し直す」手順は、Ansible のロードバランサーや、
+適切な shell コマンドの呼び出しに置き換えられます。 また、
+マシンのサービス停止期間を開始/終了するモニタリングモジュールを使用する手順なども含まれている場合があります。
 
-Read the delegation chapter about "max_fail_percentage" and you can also control how many failing tests will stop a rolling update
-from proceeding.
+上記で分かるように、テストはゲートとして使用されています。つまり、「apply_testing_checks」の手順が実行されない場合は、
+マシンがプールに戻らないようになっています。
 
-This above approach can also be modified to run a step from a testing machine remotely against a machine::
+ローリングアップデートの続行を停止させるテストの失敗回数を制御できます。この点については、「max_fail_percentage」
+向けの章を参照してください。
+
+上記のアプローチを変更して、リモートのテストマシンから手順を実行することも可能です。
 
     ---
 
     - hosts: webservers
-      serial: 5
+      serial:5
 
       pre_tasks:
 
         - name: take out of load balancer pool
           command: /usr/bin/take_out_of_pool {{ inventory_hostname }}
-          delegate_to: 127.0.0.1
+      delegate_to: 127.0.0.1
 
-      roles:
+  roles:
 
-         - common
-         - webserver
+     - common
+     - webserver
 
-      tasks:
-         - script: /srv/qa_team/app_testing_script.sh --server {{ inventory_hostname }}
-           delegate_to: testing_server
+  tasks:
+     - script: /srv/qa_team/app_testing_script.sh --server {{ inventory_hostname }}
+       delegate_to: testing_server
 
-      post_tasks:
+  post_tasks:
 
-        - name: add back to load balancer pool
-          command: /usr/bin/add_back_to_pool {{ inventory_hostname }}
-          delegate_to: 127.0.0.1
+    - name: add back to load balancer pool
+      command: /usr/bin/add_back_to_pool {{ inventory_hostname }}
+          delegate_to:127.0.0.1
 
-In the above example, a script is run from the testing server against a remote node prior to bringing it back into
-the pool.
+上記の例では、プールにマシンを戻す前に、
+リモートのノードに対してテストサーバーからスクリプトを実行します。
 
-In the event of a problem, fix the few servers that fail using Ansible's automatically generated 
-retry file to repeat the deploy on just those servers.
+問題が発生した場合には、Ansible が自動で生成した再試行ファイルを使用して、失敗したサーバー数台を修正し、
+そのサーバーだけにデプロイメントを繰り返し実行します。
 
-Achieving Continuous Deployment
-```````````````````````````````
+継続的なデプロイメントの実現
+\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`\`
 
-If desired, the above techniques may be extended to enable continuous deployment practices.
+任意で、上記の手法を拡張して、継続してデプロイメントができるようにします。
 
-The workflow may look like this::
+ワークフローは、次のようになります。
 
-    - Write and use automation to deploy local development VMs
-    - Have a CI system like Jenkins deploy to a staging environment on every code change
-    - The deploy job calls testing scripts to pass/fail a build on every deploy
-    - If the deploy job succeeds, it runs the same deploy playbook against production inventory
+    - ローカルの開発仮想マシンをデプロイする自動化を記述して使用します。
+    - コードの変更のたびに、Jenkins などの CI システムをステージ環境にデプロイします。
+    - デプロイメントジョブでテストスクリプトを呼び出し、全デプロイメントのビルドの合否を確認します。
+    - デプロイメントジョブに成功すると、実稼働環境のインベントリーに対して同じデプロイメント Playbook を実行します。
 
-Some Ansible users use the above approach to deploy a half-dozen or dozen times an hour without taking all of their infrastructure
-offline.  A culture of automated QA is vital if you wish to get to this level.  
+Ansible ユーザーによっては、上記のアプローチを使用して、すべてのインフラストラクチャーをオフラインにすることなく、
+1 時間に 6 回または 12 回デプロイしています。 このレベルに到達するには、自動化 QA の文化が必要不可欠です。  
 
-If you are still doing a large amount of manual QA, you should still make the decision on whether to deploy manually as well, but
-it can still help to work in the rolling update patterns of the previous section and incorporate some basic health checks using
-modules like 'script', 'stat', 'uri', and 'assert'.
+大量の QA を手動で続けている場合には、手動でデプロイするべきかどうか決定する必要がありますが、
+前項のようにローリングアップデートのパターンを使用して作業をし、
+「script」、「stat」、「uri」、「assert」などのモジュールで基本的なヘルスチェックを組み込むだけでも役立つ場合があります。
 
-Conclusion
-``````````
+まとめ
+\`\`\`\`\`\`\`\`\`\`
 
-Ansible believes you should not need another framework to validate basic things of your infrastructure is true.  This is the case
-because Ansible is an order-based system that will fail immediately on unhandled errors for a host, and prevent further configuration
-of that host.  This forces errors to the top and shows them in a summary at the end of the Ansible run.
+Ansible では、インフラストラクチャーの基本的な内容が正しいかを検証するフレームワークを別に用意する必要はないと考えます。 これは、
+Ansible は順序ベースのシステムで、ホストに未処理のエラーがあると即座に失敗し、
+そのホストの設定がこれ以上進まないようにします。 こうすることで、エラーが表面化し、Ansible の実行の最後にまとめとして、エラーが表示されます。
 
-However, as Ansible is designed as a multi-tier orchestration system, it makes it very easy to incorporate tests into the end of
-a playbook run, either using loose tasks or roles.  When used with rolling updates, testing steps can decide whether to put a machine
-back into a load balanced pool or not.
+ただし、Ansible は、複数階層のオーケストレーションシステムとして設計されているため、
+非常に簡単に単発のタスクまたはロールを使用して Playbook 実行の最後にテストを組み込むことができます。 ローリングアップデートで使用する場合は、
+テスト手順によりマシンをロードバランサープールに配置するかどうかが決まります。
 
-Finally, because Ansible errors propagate all the way up to the return code of the Ansible program itself, and Ansible by default
-runs in an easy push-based mode, Ansible is a great step to put into a build environment if you wish to use it to roll out systems
-as part of a Continuous Integration/Continuous Delivery pipeline, as is covered in sections above.
+最後に、Ansible のエラーは、Ansible のプログラム自体のリターンコードにまで伝搬され、また Ansible はデフォルトで簡単なプッシュベースモードで実行されるため、
+上記のセクションで説明されているように、
+継続的な統合/デリバリーパイプラインの一部としてシステムを展開する場合に Ansible をビルド環境に活用すると大きな一歩になります。
 
-The focus should not be on infrastructure testing, but on application testing, so we strongly encourage getting together with your
-QA team and ask what sort of tests would make sense to run every time you deploy development VMs, and which sort of tests they would like
-to run against the staging environment on every deploy.  Obviously at the development stage, unit tests are great too.  But don't unit
-test your playbook.  Ansible describes states of resources declaratively, so you don't have to.  If there are cases where you want
-to be sure of something though, that's great, and things like stat/assert are great go-to modules for that purpose.
+インフラストラクチャーではなく、アプリケーションのテストに焦点を当てるため、
+QA チームと連携して、どのようなテストを、開発仮想マシンのデプロイメント時に毎回実行すると便利か、またデプロイメント時に毎回、
+ステージ環境にどのようなテストを実行するかを確認してください。 当然、開発段階ではユニットテストも便利ですが、 Playbook のユニットテストは
+実行しないでください。 Ansible は、リソースの状態を宣言的に記述するため、Playbook のユニットテストは必要ありません。 テストして確認する内容がある場合には、役に立ちますし、
+そのような目的には、stat/assert のモジュールが適しています。
 
-In all, testing is a very organizational and site-specific thing.  Everybody should be doing it, but what makes the most sense for your
-environment will vary with what you are deploying and who is using it -- but everyone benefits from a more robust and reliable deployment
-system.
+結局、テストは非常に組織的で、サイト固有の内容となっています。 テストは必ず行うべきですが、
+お使いの環境に最も有用なテストは、デプロイメントの内容や、使用するものにより異なります。
+しかし、誰もが、強力で信頼性の高いデプロイメントシステムから恩恵を受けることができます。
 
 .. seealso::
 
    :ref:`all_modules`
-       All the documentation for Ansible modules
+       Ansible モジュールの全ドキュメント
    :ref:`working_with_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_delegation`
-       Delegation, useful for working with load balancers, clouds, and locally executed steps.
-   `User Mailing List <https://groups.google.com/group/ansible-project>`_
-       Have a question?  Stop by the google group!
+       委譲 (ロードバランサー、クラウド、ローカルに実行されたステップを使用する際に役に立ちます)
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel
 

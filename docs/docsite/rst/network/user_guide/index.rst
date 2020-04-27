@@ -1,4 +1,4 @@
-.. \_network\_advanced:
+.. _network_advanced:
 
 ***************************************************
 Ansible を使用してネットワークを自動する高度なトピック
@@ -16,9 +16,9 @@ Ansible を初めて使用する場合や、ネットワーク管理に Ansible 
    :maxdepth: 2
    :caption: 高度なトピック
 
-   network\_resource\_modules
+   network_resource_modules
    faq
-   network\_best\_practices\_2.5
-   network\_debug\_troubleshooting
-   network\_working\_with\_command\_output
-   platform\_index
+   network_best_practices_2.5
+   network_debug_troubleshooting
+   network_working_with_command_output
+   platform_index

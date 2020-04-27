@@ -1,4 +1,4 @@
-.. \_voss\_platform\_options:
+.. _voss_platform_options:
 
 ***************************************
 VOSS プラットフォームのオプション
@@ -34,7 +34,7 @@ Ansible の Voss で ``network_cli`` を使用します。
     返されるデータ形式 ``stdout[0]``
     ====================  ==========================================
 
-.. |enable\_mode| replace::Enable モード |br| (権限昇格)
+.. |enable_mode| replace::Enable モード |br| (権限昇格)
 
 
 VOSS は ``ansible_connection: local`` に対応していません。``ansible_connection: network_cli`` を使用する必要があります。
@@ -47,13 +47,13 @@ CLI の例: ``group_vars/voss.yml``
 
 .. code-block:: yaml
 
-   ansible\_connection: network\_cli
-   ansible\_network\_os: voss
-   ansible\_user: myuser
-   ansible\_become: yes
-   ansible\_become\_method: enable
-   ansible\_password: !vault...
-   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible_connection: network_cli
+   ansible_network_os: voss
+   ansible_user: myuser
+   ansible_become: yes
+   ansible_become_method: enable
+   ansible_password: !vault...
+   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
 - SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
@@ -66,8 +66,8 @@ CLI タスクの例
 .. code-block:: yaml
 
    - name:Retrieve VOSS info
-     voss\_command:
+     voss_command:
        commands: show sys-info
-     when: ansible\_network\_os == 'voss'
+     when: ansible_network_os == 'voss'
 
-.. include:: shared\_snippets/SSH\_warning.txt
+.. include:: shared_snippets/SSH_warning.txt

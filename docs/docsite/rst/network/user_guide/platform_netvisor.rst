@@ -1,4 +1,4 @@
-.. \_netvisor\_platform\_options:
+.. _netvisor_platform_options:
 
 **********************************
 Pluribus NETVISOR プラットフォームのオプション
@@ -33,7 +33,7 @@ Pluribus NETVISOR Ansible モジュールは現時点では CLI 接続のみに�
     返されるデータ形式 ``stdout[0]``
     ====================  ==========================================
 
-.. |enable\_mode| replace::Enable モード |br| (権限昇格)
+.. |enable_mode| replace::Enable モード |br| (権限昇格)
 
 Pluribus NETVISOR は ``ansible_connection: local`` に対応していません。``ansible_connection: network_cli`` を使用する必要があります。
 
@@ -45,11 +45,11 @@ CLI の例: ``group_vars/netvisor.yml``
 
 .. code-block:: yaml
 
-   ansible\_connection: network\_cli
-   ansible\_network\_os: netvisor
-   ansible\_user: myuser
-   ansible\_password: !vault...
-   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible_connection: network_cli
+   ansible_network_os: netvisor
+   ansible_user: myuser
+   ansible_password: !vault...
+   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
 - SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
@@ -62,12 +62,12 @@ CLI タスクの例
 .. code-block:: yaml
 
    - name:Create access list
-     pn\_access\_list:
-       pn\_name: "foo"
-       pn\_scope: "local"
+     pn_access_list:
+       pn_name: "foo"
+       pn_scope: "local"
        state: "present"
-     register: acc\_list
-     when: ansible\_network\_os == 'netvisor'
+     register: acc_list
+     when: ansible_network_os == 'netvisor'
 
 
-.. include:: shared\_snippets/SSH\_warning.txt
+.. include:: shared_snippets/SSH_warning.txt

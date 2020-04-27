@@ -1,4 +1,4 @@
-.. \_enos\_platform\_options:
+.. _enos_platform_options:
 
 ***************************************
 ENOS プラットフォームのオプション
@@ -34,7 +34,7 @@ ENOS は、Enable モード (権限昇格) に対応します。ここでは、A
     返されるデータ形式 ``stdout[0]``
     ====================  ==========================================
 
-.. |enable\_mode| replace::Enable モード |br| (権限昇格)
+.. |enable_mode| replace::Enable モード |br| (権限昇格)
 
 +---------------------------+-----------------------------------------------+
 
@@ -48,14 +48,14 @@ CLI の例: ``group_vars/enos.yml``
 
 .. code-block:: yaml
 
-   ansible\_connection: network\_cli
-   ansible\_network\_os: enos
-   ansible\_user: myuser
-   ansible\_password: !vault...
-   ansible\_become: yes
-   ansible\_become\_method: enable
-   ansible\_become\_password: !vault...
-   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible_connection: network_cli
+   ansible_network_os: enos
+   ansible_user: myuser
+   ansible_password: !vault...
+   ansible_become: yes
+   ansible_become_method: enable
+   ansible_become_password: !vault...
+   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
 - SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
@@ -68,8 +68,8 @@ CLI タスクの例
 .. code-block:: yaml
 
    - name:Retrieve ENOS OS version
-     enos\_command:
+     enos_command:
        commands: show version
-     when: ansible\_network\_os == 'enos'
+     when: ansible_network_os == 'enos'
 
-.. include:: shared\_snippets/SSH\_warning.txt
+.. include:: shared_snippets/SSH_warning.txt

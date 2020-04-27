@@ -1,4 +1,4 @@
-.. \_netconf\_plugins:
+.. _netconf_plugins:
 
 Netconf プラグイン
 ===============
@@ -16,14 +16,14 @@ Netconf プラグインは、ネットワークデバイスに対する Netconf 
 プラットフォームがプロプライエタリー Netconf RPC 仕様に対応している場合は、
 プラットフォーム固有の netconf プラグインに定義されるプロプライエタリー Netconf RPC に対応している場合です。
 
-.. \_enabling\_netconf:
+.. _enabling_netconf:
 
 netconf プラグインの追加
 -------------------------
 
 ``netconf_plugins`` ディレクトリーにカスタムのプラグインを配置して、Ansible が他のネットワークデバイスに対応するように拡張できます。
 
-.. \_using\_netconf:
+.. _using_netconf:
 
 netconf プラグインの使用
 ------------------------
@@ -37,7 +37,7 @@ netconf プラグインの多くは設定なしで動作します。netconf プ�
 
 プラグインは、自己文書化されており、プラグインごとに、設定オプションについて文書化する必要があります。
 
-.. \_netconf\_plugin\_list:
+.. _netconf_plugin_list:
 
 プラグイン一覧
 -----------
@@ -59,4 +59,4 @@ netconf プラグインの多くは設定なしで動作します。netconf プ�
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       \#ansible-network IRC chat channel
+       #ansible-network IRC chat channel

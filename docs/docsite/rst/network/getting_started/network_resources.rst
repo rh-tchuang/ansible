@@ -1,5 +1,5 @@
 
-.. \_network\_resources:
+.. _network_resources:
 
 ************************
 リソースと次のステップ
@@ -13,8 +13,8 @@
 
 ネットワーク自動化での Ansible の使用について、詳細をご覧ください。
 
-- `Ansible の Web サイト<https://www.ansible.com/overview/networking>`_ におけるネットワークの自動化
-- Ansible Network の `ブログ投稿<https://www.ansible.com/blog/topic/networks>`_
+- `Ansible の Web サイト <https://www.ansible.com/overview/networking>`_ におけるネットワークの自動化
+- Ansible Network の `ブログ投稿 <https://www.ansible.com/blog/topic/networks>`_
 
 イベント (ビデオおよび個人)
 ===============================

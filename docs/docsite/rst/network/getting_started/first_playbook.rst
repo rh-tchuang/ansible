@@ -1,5 +1,5 @@
 
-.. \_first\_network\_playbook:
+.. _first_network_playbook:
 
 ***************************************************
 最初のコマンドおよび Playbook の実行
@@ -38,7 +38,7 @@ Ansible のバージョンを確認します (2.5 以下である必要があり
 
 .. code-block:: bash
 
-   ssh my\_vyos\_user@vyos.example.net
+   ssh my_vyos_user@vyos.example.net
    show config
    exit
 
@@ -52,16 +52,16 @@ Ansible のバージョンを確認します (2.5 以下である必要があり
 
 .. code-block:: bash
 
-   ansible all -i vyos.example.net, -c network\_cli -u my\_vyos\_user -k -m vyos\_facts -e ansible\_network\_os=vyos
+   ansible all -i vyos.example.net, -c network_cli -u my_vyos_user -k -m vyos_facts -e ansible_network_os=vyos
 
 このコマンドのフラグは、7 つの値を設定します。
-  \- コマンドを適用するホストグループ (この場合は all)
-  \- インベントリー (-i, ターゲットに設定するデバイス (最後のコンマがない -i はインベントリーファイルを指定なし))
-  \- 接続方法 (-c、ansible の接続方法および実行方法)
-  \- ユーザー (-u、SSH 接続のユーザー名)
-  \- SSH 接続の方法 (-k、パスワードのプロンプト有り)
-  \- モジュール (-m、実行する ansible モジュール)
-  \- 追加変数 (-e、この場合は、ネットワーク OS 値の設定)
+  - コマンドを適用するホストグループ (この場合は all)
+  - インベントリー (-i, ターゲットに設定するデバイス (最後のコンマがない -i はインベントリーファイルを指定なし))
+  - 接続方法 (-c、ansible の接続方法および実行方法)
+  - ユーザー (-u、SSH 接続のユーザー名)
+  - SSH 接続の方法 (-k、パスワードのプロンプト有り)
+  - モジュール (-m、実行する ansible モジュール)
+  - 追加変数 (-e、この場合は、ネットワーク OS 値の設定)
 
 注記:ssh 鍵で ``ssh-agent`` を使用する場合、Ansible は自動的にこれを読み込みます。``-k`` フラグは省略できます。
 
@@ -73,7 +73,7 @@ Ansible のバージョンを確認します (2.5 以下である必要があり
 
 1. :download:`first_playbook.yml <sample_files/first_playbook.yml>` をダウンロードします。これは以下のようになります。
 
-.. literalinclude:: sample\_files/first\_playbook.yml
+.. literalinclude:: sample_files/first_playbook.yml
    :language: YAML
 
 Playbook は、上記のコマンドラインの 7 つの中から 3 つの値 (グループ (``hosts: all``)、接続方法 (``connection: network_cli``) 、およびモジュール (各タスク)) を選択します。これらの値が Playbook に設定されると、それらをコマンドラインで省略できます。Playbook は、config 出力を表示する別のタスクも追加します。Playbook でモジュールが実行されると、出力はコンソールに書き込まれるのではなく、今後のタスクで使用するためにメモリーに保持されます。ここでのデバッグタスクを使用すると、シェルで結果を確認できます。
@@ -82,62 +82,62 @@ Playbook は、上記のコマンドラインの 7 つの中から 3 つの値 (
 
 .. code-block:: bash
 
-   ansible-playbook -i vyos.example.net, -u ansible -k -e ansible\_network\_os=vyos first\_playbook.yml
+   ansible-playbook -i vyos.example.net, -u ansible -k -e ansible_network_os=vyos first_playbook.yml
 
 Playbook には、2 つのタスクを持つプレイが 1 つ含まれており、次のような出力が生成されます。
 
 .. code-block:: bash
 
-   $ ansible-playbook -i vyos.example.net, -u ansible -k -e ansible\_network\_os=vyos first\_playbook.yml
+   $ ansible-playbook -i vyos.example.net, -u ansible -k -e ansible_network_os=vyos first_playbook.yml
 
-   PLAY \[First Playbook]
+   PLAY [First Playbook]
    ***************************************************************************************************************************
 
-   TASK \[Get config for VyOS devices]
+   TASK [Get config for VyOS devices]
    ***************************************************************************************************************************
-   ok: \[vyos.example.net]
+   ok: [vyos.example.net]
 
-   TASK \[Display the config]
+   TASK [Display the config]
    ***************************************************************************************************************************
-   ok: \[vyos.example.net] => {
+   ok: [vyos.example.net] => {
        "msg":"The hostname is vyos and the OS is VyOS"
    }
 
 3. デバイス設定を取得できるようになったため、Ansible での更新を試行してください。最初の Playbook の拡張バージョンである :download:`first_playbook_ext.yml <sample_files/first_playbook_ext.yml>` をダウンロードします。
 
-.. literalinclude:: sample\_files/first\_playbook\_ext.yml
+.. literalinclude:: sample_files/first_playbook_ext.yml
    :language: YAML
 
 最初の Playbook の拡張では、1 つのプレイに 4 つのタスクがあります。上記と同じコマンドで実行します。この出力では、Ansible が設定に加えられた変更が表示されます。
 
 .. code-block:: bash
 
-   $ ansible-playbook -i vyos.example.net, -u ansible -k -e ansible\_network\_os=vyos first\_playbook\_ext.yml
+   $ ansible-playbook -i vyos.example.net, -u ansible -k -e ansible_network_os=vyos first_playbook_ext.yml
 
-   PLAY \[First Playbook]
+   PLAY [First Playbook]
    ************************************************************************************************************************************
 
-   TASK \[Get config for VyOS devices]
+   TASK [Get config for VyOS devices]
    **********************************************************************************************************************************
-   ok: \[vyos.example.net]
+   ok: [vyos.example.net]
 
-   TASK \[Display the config]
+   TASK [Display the config]
    *************************************************************************************************************************************
-   ok: \[vyos.example.net] => {
+   ok: [vyos.example.net] => {
        "msg":"The hostname is vyos and the OS is VyOS"
    }
 
-   TASK \[Update the hostname]
+   TASK [Update the hostname]
    *************************************************************************************************************************************
-   changed: \[vyos.example.net]
+   changed: [vyos.example.net]
 
-   TASK \[Get changed config for VyOS devices]
+   TASK [Get changed config for VyOS devices]
    *************************************************************************************************************************************
-   ok: \[vyos.example.net]
+   ok: [vyos.example.net]
 
-   TASK \[Display the changed config]
+   TASK [Display the changed config]
    *************************************************************************************************************************************
-   ok: \[vyos.example.net] => {
+   ok: [vyos.example.net] => {
        "msg":"The hostname is vyos-changed and the OS is VyOS"
    }
 
@@ -147,7 +147,7 @@ Playbook には、2 つのタスクを持つプレイが 1 つ含まれており
 
 
 
-.. \_network\_gather\_facts:
+.. _network_gather_facts:
 
 ネットワークデバイスからのファクトの収集
 ====================================
@@ -159,34 +159,34 @@ Playbook には、2 つのタスクを持つプレイが 1 つ含まれており
 .. code-block:: yaml
 
   - hosts: arista
-    gather\_facts:True
-    gather\_subset: min
-    module\_defaults:
-      eos\_facts:
-        gather\_network\_resources: interfaces
+    gather_facts:True
+    gather_subset: min
+    module_defaults:
+      eos_facts:
+        gather_network_resources: interfaces
 
 Playbook は以下のインターフェースのファクトを返します。
 
 .. code-block:: yaml
 
-  ansible\_facts:
-     ansible\_network\_resources:
+  ansible_facts:
+     ansible_network_resources:
         interfaces:
-        \- enabled: true
+        - enabled: true
           name:Ethernet1
           mtu:'1476'
-        \- enabled: true
+        - enabled: true
           name:Loopback0
-        \- enabled: true
+        - enabled: true
           name:Loopback1
-        \- enabled: true
+        - enabled: true
           mtu:'1476'
           name:Tunnel0
-        \- enabled: true
+        - enabled: true
           name:Ethernet1
-        \- enabled: true
+        - enabled: true
           name:Tunnel1
-        \- enabled: true
+        - enabled: true
           name:Ethernet1
 
 

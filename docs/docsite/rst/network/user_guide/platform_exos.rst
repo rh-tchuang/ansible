@@ -1,4 +1,4 @@
-.. \_exos\_platform\_options:
+.. _exos_platform_options:
 
 ***************************************
 EXOS プラットフォームのオプション
@@ -33,7 +33,7 @@ Extreme EXOS Ansible モジュールは、複数の接続に対応していま�
     返されるデータ形式  ``stdout[0].``                              ``stdout[0].messages[0].``
     ====================  ==========================================  =========================
 
-.. |enable\_mode| replace::Enable モード |br| (権限昇格)
+.. |enable_mode| replace::Enable モード |br| (権限昇格)
 
 EXOS は ``ansible_connection: local`` に対応していません。``ansible_connection: network_cli`` または ``ansible_connection: httpapi`` を使用する必要があります。
 
@@ -45,11 +45,11 @@ CLI の例: ``group_vars/exos.yml``
 
 .. code-block:: yaml
 
-   ansible\_connection: network\_cli
-   ansible\_network\_os: exos
-   ansible\_user: myuser
-   ansible\_password: !vault...
-   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible_connection: network_cli
+   ansible_network_os: exos
+   ansible_user: myuser
+   ansible_password: !vault...
+   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
 - SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
@@ -62,9 +62,9 @@ CLI タスクの例
 .. code-block:: yaml
 
    - name:Retrieve EXOS OS version
-     exos\_command:
+     exos_command:
        commands: show version
-     when: ansible\_network\_os == 'exos'
+     when: ansible_network_os == 'exos'
 
 
 
@@ -76,12 +76,12 @@ EXOS-API の例: ``group_vars/exos.yml``
 
 .. code-block:: yaml
 
-   ansible\_connection: httpapi
-   ansible\_network\_os: exos
-   ansible\_user: myuser
-   ansible\_password: !vault...
-   proxy\_env:
-     http\_proxy: http://proxy.example.com:8080
+   ansible_connection: httpapi
+   ansible_network_os: exos
+   ansible_user: myuser
+   ansible_password: !vault...
+   proxy_env:
+     http_proxy: http://proxy.example.com:8080
 
 - (Web プロキシーを経由せず) ホストに直接アクセスしている場合は、``proxy_env`` 設定を削除できます。
 - ``https`` を使用して Web プロキシー経由でホストにアクセスする場合は、``http_proxy`` を ``https_proxy`` に変更します。
@@ -93,10 +93,10 @@ EXOS-API タスクの例
 .. code-block:: yaml
 
    - name:Retrieve EXOS OS version
-     exos\_command:
+     exos_command:
        commands: show version
-     when: ansible\_network\_os == 'exos'
+     when: ansible_network_os == 'exos'
 
 この例では、``group_vars`` で定義された ``proxy_env`` 変数は、タスクのモジュールで使用される ``environment`` オプションに渡されます。
 
-.. include:: shared\_snippets/SSH\_warning.txt
+.. include:: shared_snippets/SSH_warning.txt

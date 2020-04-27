@@ -1,4 +1,4 @@
-.. \_cliconf\_plugins:
+.. _cliconf_plugins:
 
 Cliconf プラグイン
 ===============
@@ -13,14 +13,14 @@ Ansible がこれらのネットワークデバイスでタスクを実行する
 通常、これらのプラグインはネットワークデバイスプラットフォームに 1 対 1 で対応します。適切な cliconf プラグインは、
 ``ansible_network_os`` 変数に基づいて自動的に読み込まれます。
 
-.. \_enabling\_cliconf:
+.. _enabling_cliconf:
 
 cliconf プラグインの追加
 -------------------------
 
 ``cliconf_plugins`` ディレクトリーにカスタムのプラグインをドロップして、Ansible が他のネットワークデバイスをサポートするように拡張できます。
 
-.. \_using\_cliconf:
+.. _using_cliconf:
 
 cliconf プラグインの使用
 ------------------------
@@ -32,7 +32,7 @@ cliconf プラグインの多くは設定なしで動作します。タスクを
 
 プラグインは、自己文書化されており、プラグインごとに、設定オプションについて文書化する必要があります。
 
-.. \_cliconf\_plugin\_list:
+.. _cliconf_plugin_list:
 
 プラグイン一覧
 -----------
@@ -54,4 +54,4 @@ cliconf プラグインの多くは設定なしで動作します。タスクを
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       \#ansible-network IRC chat channel
+       #ansible-network IRC chat channel

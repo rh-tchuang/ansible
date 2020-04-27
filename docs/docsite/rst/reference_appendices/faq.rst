@@ -1,32 +1,32 @@
 .. _ansible_faq:
 
-Frequently Asked Questions
+よくある質問 (FAQ)
 ==========================
 
-Here are some commonly asked questions and their answers.
+以下に、よくある質問とその回答を紹介しています。
 
 
 .. _set_environment:
 
-How can I set the PATH or any other environment variable for a task or entire playbook?
+タスクや Playbook 全体に PATH または他の環境変数をどのように設定すればいいですか
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Setting environment variables can be done with the `environment` keyword. It can be used at the task or other levels in the play::
+環境変数を設定するには、`environment` キーワードを使用します。environment キーワードは、プレイ内のタスクや他のレベルで使用できます。
 
     environment:
       PATH: "{{ ansible_env.PATH }}:/thingy/bin"
       SOME: value
 
-.. note:: starting in 2.0.1 the setup task from gather_facts also inherits the environment directive from the play, you might need to use the `|default` filter to avoid errors if setting this at play level.
+.. note:: 2.0.1 以降で、gather_facts の設定タスクは、プレイからの環境ディレクティブも継承します。これがプレイレベルで設定されている場合には、`|default` フィルターを使用したエラーの回避が必要になる場合があります。
 
 .. _faq_setting_users_and_ports:
 
-How do I handle different machines needing different user accounts or ports to log in with?
+異なるユーザーアカウントまたはポートでログインする必要のある各種マシンをどのように処理すればいいですか
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Setting inventory variables in the inventory file is the easiest way.
+インベントリーファイルにインベントリー変数を設定する方法が最も簡単です。
 
-For instance, suppose these hosts have different usernames and ports:
+たとえば、以下では、ホストに異なるユーザー名とポートが指定されています。
 
 .. code-block:: ini
 
@@ -34,7 +34,7 @@ For instance, suppose these hosts have different usernames and ports:
     asdf.example.com  ansible_port=5000   ansible_user=alice
     jkl.example.com   ansible_port=5001   ansible_user=bob
 
-You can also dictate the connection type to be used, if you want:
+任意で、使用する接続タイプを指定できます。
 
 .. code-block:: ini
 
@@ -43,35 +43,35 @@ You can also dictate the connection type to be used, if you want:
     /path/to/chroot1    ansible_connection=chroot
     foo.example.com     ansible_connection=paramiko
 
-You may also wish to keep these in group variables instead, or file them in a group_vars/<groupname> file.
-See the rest of the documentation for more information about how to organize variables.
+上記の値をグループ変数や、group_vars/<groupname> ファイルに格納できます。
+変数を整理する方法、本ガイドの他の部分を参照してください。
 
 .. _use_ssh:
 
-How do I get ansible to reuse connections, enable Kerberized SSH, or have Ansible pay attention to my local SSH config file?
+Ansible を使用して接続を再利用したり、ケルベロス設定した SSH を有効にしたり、Ansible がローカルの SSH 設定を使用するにはどうしたらいいですか
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Switch your default connection type in the configuration file to 'ssh', or use '-c ssh' to use
-Native OpenSSH for connections instead of the python paramiko library.  In Ansible 1.2.1 and later, 'ssh' will be used
-by default if OpenSSH is new enough to support ControlPersist as an option.
+設定ファイルのデフォルトの接続タイプを「ssh」に切り替えるか、Python Paramiko ライブラリーの代わりに、「-c ssh」で、
+ネイティブの OpenSSH の接続を使用してください。 Ansible 1.2.1 以降では、OpenSSH が新しく、
+オプションとして ControlPersist をサポートする場合にはデフォルトで「ssh」を使用します。
 
-Paramiko is great for starting out, but the OpenSSH type offers many advanced options.  You will want to run Ansible
-from a machine new enough to support ControlPersist, if you are using this connection type.  You can still manage
-older clients.  If you are using RHEL 6, CentOS 6, SLES 10 or SLES 11 the version of OpenSSH is still a bit old, so
-consider managing from a Fedora or openSUSE client even though you are managing older nodes, or just use paramiko.
+Paramiko は使用を開始するときには便利ですが、OpenSSH のタイプでは多数の詳細オプションを利用できます。 OpenSSH の接続タイプを使用する場合には、
+ControlPersist をサポート可能な新しいマシンから Ansible を実行してください。 以前のクライアントを
+管理し続けることが可能です。 RHEL 6、CentOS 6、SLES 10、または SLES 11 を使用している場合は、
+OpenSSH のバージョンが若干古いため、以前のノードを管理している場合でも、Fedora または openSUSE のクライアントからの管理を検討するか、Paramiko を使用してください。
 
-We keep paramiko as the default as if you are first installing Ansible on an EL box, it offers a better experience
-for new users.
+EL ボックスに Ansible を先にインストールしている場合には、新規ユーザーにとって Paramiko のほうが使用しやすいため、
+Paramiko はデフォルトのままとなっています。
 
 .. _use_ssh_jump_hosts:
 
-How do I configure a jump host to access servers that I have no direct access to?
+アクセス権のないサーバーにジャンプホストを使用してアクセスできるように設定するにはどうすればいいですか
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-You can set a `ProxyCommand` in the
-`ansible_ssh_common_args` inventory variable. Any arguments specified in
-this variable are added to the sftp/scp/ssh command line when connecting
-to the relevant host(s). Consider the following inventory group:
+
+`ansible_ssh_common_args` インベントリー変数に `ProxyCommand` を設定できます。該当のホストに接続したときに、
+この変数に指定した引数は、
+sftp/scp/ssh コマンドラインに追加されます。以下のインベントリーグループがある場合は::
 
 ..  code-block:: ini
 
@@ -79,221 +79,221 @@ to the relevant host(s). Consider the following inventory group:
     foo ansible_host=192.0.2.1
     bar ansible_host=192.0.2.2
 
-You can create `group_vars/gatewayed.yml` with the following contents::
+以下のコンテンツを使用して `group_vars/gatewayed.yml` を作成できます::
 
     ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q user@gateway.example.com"'
 
-Ansible will append these arguments to the command line when trying to
-connect to any hosts in the group `gatewayed`. (These arguments are used
-in addition to any `ssh_args` from `ansible.cfg`, so you do not need to
-repeat global `ControlPersist` settings in `ansible_ssh_common_args`.)
+Ansible は、
+`gatewayed` のグループのホストに接続しようとすると、コマンドラインに 3 つの引数を追加します。(`ansible.cfg` からの `ssh_args` に加えて、
+上記の引数が使用されるため、
+`ansible_ssh_common_args` の `ControlPersist` グローバル設定を繰り返す必要はありません。)
 
-Note that `ssh -W` is available only with OpenSSH 5.4 or later. With
-older versions, it's necessary to execute `nc %h:%p` or some equivalent
-command on the bastion host.
+`ssh -W` は、OpenSSH 5.4 以降でのみ利用できます。以前のバージョンでは、
+`nc %h:%p` を実行するか、
+bastion ホストで同等のコマンドを実行する必要があります。
 
-With earlier versions of Ansible, it was necessary to configure a
-suitable `ProxyCommand` for one or more hosts in `~/.ssh/config`,
-or globally by setting `ssh_args` in `ansible.cfg`.
+Ansible の以前のバージョンでは、
+`~/.ssh/config` のホスト 1 台または複数台に適切な `ProxyCommand` を設定するか、
+`ansible.cfg` に `ssh_args` をグローバルに設定する必要がありました。
 
 .. _ssh_serveraliveinterval:
 
-How do I get Ansible to notice a dead target in a timely manner?
+Ansible がダウンしているターゲットを適宜検出できるようにするにはどうすればいいですか
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-You can add ``-o ServerAliveInterval=NumberOfSeconds`` in ``ssh_args`` from ``ansible.cfg``. Without this option, SSH and therefore Ansible will wait until the TCP connection times out. Another solution is to add ``ServerAliveInterval`` into your global SSH configuration. A good value for ``ServerAliveInterval`` is up to you to decide; keep in mind that ``ServerAliveCountMax=3`` is the SSH default so any value you set will be tripled before terminating the SSH session.
+``ansible.cfg`` の ``ssh_args`` に ``-o ServerAliveInterval=NumberOfSeconds`` を追加してください。このオプションがないと、Ansible は TCP 接続がタイムアウトになるまで待機します。別の解決策として、グローバルの SSH 設定に、``ServerAliveInterval`` を追加してください。``ServerAliveInterval`` に適した値は、ユーザーが決定します。ただし、SSH のデフォルトは ``ServerAliveCountMax=3`` であるため、SSH セッションの終了前に設定した値が 3 倍になる点に注意してください。
 
 .. _ec2_cloud_performance:
 
-How do I speed up management inside EC2?
+EC2 内の管理の速度を高めるにはどうすればいいですか
 ++++++++++++++++++++++++++++++++++++++++
 
-Don't try to manage a fleet of EC2 machines from your laptop.  Connect to a management node inside EC2 first
-and run Ansible from there.
+ラップトップから EC2 マシンを管理しないようにしてください。 先に EC2 内の管理ノードに接続して、
+そこから Ansible を実行してください。
 
 .. _python_interpreters:
 
-How do I handle python not having a Python interpreter at /usr/bin/python on a remote machine?
+リモートマシンの /usr/bin/python に Python インタープリターを配置せずに、Python に対応するにはどうすればいいですか
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-While you can write Ansible modules in any language, most Ansible modules are written in Python,
-including the ones central to letting Ansible work.
+Ansible モジュールはどの言語でも記述できますが、Ansible を動作させるコアモジュールなど、
+Ansible モジュールの多くは Python で記述されています。
 
-By default, Ansible assumes it can find a :command:`/usr/bin/python` on your remote system that is
-either Python2, version 2.6 or higher or Python3, 3.5 or higher.
+デフォルトでは、Ansible は、リモートシステムにある :command:`/usr/bin/python` を見つけることができることを前提としています。
+つまり、Python2 のバージョン 2.6 以降、または Python3 のバージョン 3.5 以降です。
 
-Setting the inventory variable ``ansible_python_interpreter`` on any host will tell Ansible to
-auto-replace the Python interpreter with that value instead. Thus, you can point to any Python you
-want on the system if :command:`/usr/bin/python` on your system does not point to a compatible
-Python interpreter.
+ホストに ``ansible_python_interpreter`` のインベントリー変数を設定すると、Ansible に対して、
+Python インタープリターをこのインベントリー変数の値に自動で置き換えるように指示を出します。このように、
+お使いのシステムの :command:`/usr/bin/python` が互換性のある Python インタープリターを参照していない場合には、
+希望の Python を参照できます。
 
-Some platforms may only have Python 3 installed by default. If it is not installed as
-:command:`/usr/bin/python`, you will need to configure the path to the interpreter via
-``ansible_python_interpreter``. Although most core modules will work with Python 3, there may be some
-special purpose ones which do not or you may encounter a bug in an edge case. As a temporary
-workaround you can install Python 2 on the managed host and configure Ansible to use that Python via
-``ansible_python_interpreter``. If there's no mention in the module's documentation that the module
-requires Python 2, you can also report a bug on our `bug tracker
-<https://github.com/ansible/ansible/issues>`_ so that the incompatibility can be fixed in a future release.
+プラットフォームによっては、デフォルトで Python3 しかインストールされていない場合もあります。Python3 が、
+:command:`/usr/bin/python` としてインストールされていない場合は、
+``ansible_python_interpreter`` を使用してこのインタープリターへのパスを設定する必要があります。コアモジュールの多くが Python 3 と連携しますが、
+特別な目的を持つモジュールでは、特殊なケースでバグが発生したり、Python 3 と連携しない可能性があります。一時的な回避策として、
+管理ホストに Python 2 をインストールし、
+``ansible_python_interpreter`` を使用して、この Python を使用するように、Ansible を設定できます。モジュールのドキュメントに、Python 2 が必要であると記載されていない場合には、
+今後この非互換性の問題が解決されるように、`バグトラッカー
+<https://github.com/ansible/ansible/issues>`_ で、バグを報告してください。
 
-Do not replace the shebang lines of your python modules.  Ansible will do this for you automatically at deploy time.
+Python モジュールのシバン (!#) の行は置き換えないでください。 デプロイ時に Ansible が自動でこれを実行します。
 
-Also, this works for ANY interpreter, i.e ruby: `ansible_ruby_interpreter`, perl: `ansible_perl_interpreter`, etc,
-so you can use this for custom modules written in any scripting language and control the interpreter location.
+また、これは `ansible_ruby_interpreter`、perl: `ansible_perl_interpreter` など、どのインタープリターでも機能するため、
+任意のスクリプト言語で記述したカスタムモジュールにこれを使用して、インタープリターの場所を管理できます。
 
-Keep in mind that if you put `env` in your module shebang line (`#!/usr/bin/env <other>`),
-this facility will be ignored so you will be at the mercy of the remote `$PATH`.
+モジュールのシバンの行 (`#!/usr/bin/env <other>`) に `env` を挿入すると、
+この機能は無視され、リモートの `$PATH` の設定が使用されます。
 
 .. _installation_faqs:
 
-How do I handle the package dependencies required by Ansible package dependencies during Ansible installation ?
+Ansible インストール中に Ansible パッケージに必要な依存関係にどのように対応すればいいですか
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-While installing Ansible, sometimes you may encounter errors such as `No package 'libffi' found` or `fatal error: Python.h: No such file or directory`
-These errors are generally caused by the missing packages which are dependencies of the packages required by Ansible.
-For example, `libffi` package is dependency of `pynacl` and `paramiko` (Ansible -> paramiko -> pynacl -> libffi).
+Ansible のインストール時に `No package 'libffi' found` または `fatal error Python.h:No such file or directory`
+などのエラーが発生する場合があります。このようなエラーは通常、Ansible で必要なパッケージの依存関係パッケージがない場合に発生します。
+たとえば、`libffi` パッケージは `pynacl` と `paramiko` (Ansible -> paramiko -> pynacl -> libffi) の依存関係です。
 
-In order to solve these kinds of dependency issue, you may need to install required packages using the OS native package managers (e.g., `yum`, `dnf` or `apt`) or as mentioned in the package installation guide.
+このような依存関係の問題を解決するには、OS ネイティブのパッケージマネージャー (`yum`、`dnf`、または `apt` またはパッケージのインストールガイドに記載のもの) のインストールが必要になる場合があります。
 
-Please refer the documentation of the respective package for such dependencies and their installation methods.
+このような依存関係とそのインストール方法は、各パッケージのドキュメントを参照してください。
 
-Common Platform Issues
+一般的なプラットフォームの問題
 ++++++++++++++++++++++
 
-What customer platforms does Red Hat support?
+Red Hat では、どのような顧客のプラットフォームをサポートしていますか
 ---------------------------------------------
 
-A number of them! For a definitive list please see this `Knowledge Base article <https://access.redhat.com/articles/3168091>`_.
+さまざまなプラットフォームをサポートしています。具体的な一覧は、`ナレッジベースの記事<https://access.redhat.com/articles/3168091>`_ を参照してください。
 
-Running in a virtualenv
+virtualenv での実行
 -----------------------
 
-You can install Ansible into a virtualenv on the controller quite simply:
+コントローラーの virtualenv に Ansible を簡単にインストールできます。
 
 .. code-block:: shell
 
     $ virtualenv ansible
-    $ source ./ansible/bin/activate
-    $ pip install ansible
+$ source ./ansible/bin/activate
+$ pip install ansible
 
-If you want to run under Python 3 instead of Python 2 you may want to change that slightly:
+Python 2 ではなく Python 3 で実行する場合は、以下のように変更する場合があります。
 
 .. code-block:: shell
 
     $ virtualenv -p python3 ansible
-    $ source ./ansible/bin/activate
-    $ pip install ansible
+$ source ./ansible/bin/activate
+$ pip install ansible
 
-If you need to use any libraries which are not available via pip (for instance, SELinux Python
-bindings on systems such as Red Hat Enterprise Linux or Fedora that have SELinux enabled) then you
-need to install them into the virtualenv.  There are two methods:
+pip で入手できないライブラリーを使用する必要がある場合 (
+例: SELinux が有効な Red Hat Enterprise Linux または Fedora などのシステムにある SELinux Python のバインディング) は、
+virtualenv にインストールする必要があります。 方法は 2 種類あります。
 
-* When you create the virtualenv, specify ``--system-site-packages`` to make use of any libraries
-  installed in the system's Python:
-
-  .. code-block:: shell
-
-      $ virtualenv ansible --system-site-packages
-
-* Copy those files in manually from the system.  For instance, for SELinux bindings you might do:
+* virtualenv の作成時に、``--system-site-packages`` を指定して、
+  お使いのシステムの Python にインストールされているライブラリーを使用します。
 
   .. code-block:: shell
 
       $ virtualenv ansible --system-site-packages
-      $ cp -r -v /usr/lib64/python3.*/site-packages/selinux/ ./py3-ansible/lib64/python3.*/site-packages/
+
+* システムから手動でこれらのファイルをコピーします。 たとえば、SELinux バインディングでは、以下を行うことができます。
+
+  .. code-block:: shell
+
+      $ virtualenv ansible --system-site-packages
+$ cp -r -v /usr/lib64/python3.*/site-packages/selinux/ ./py3-ansible/lib64/python3.*/site-packages/
       $ cp -v /usr/lib64/python3.*/site-packages/*selinux*.so ./py3-ansible/lib64/python3.*/site-packages/
 
 
-Running on BSD
+BSD の実行
 --------------
 
 .. seealso:: :ref:`working_with_bsd`
 
 
-Running on Solaris
+Solaris での実行
 ------------------
 
-By default, Solaris 10 and earlier run a non-POSIX shell which does not correctly expand the default
-tmp directory Ansible uses ( :file:`~/.ansible/tmp`). If you see module failures on Solaris machines, this
-is likely the problem. There are several workarounds:
+デフォルトでは Solaris 10 以前では POSIX 以外のシェルを実行しますが、
+Ansible が使用するデフォルトの tmp ディレクトリー ( :file:`~/.ansible/tmp`) を正しく展開しません。Solaris マシンでモジュールの問題が発生する場合には、
+上記が問題の可能性が高いです。回避策はいくつかあります。
 
-* You can set ``remote_tmp`` to a path that will expand correctly with the shell you are using (see the plugin documentation for :ref:`C shell<csh_shell>`, :ref:`fish shell<fish_shell>`, and :ref:`Powershell<powershell_shell>`).  For
-  example, in the ansible config file you can set::
+* 使用するシェル (:ref:`C shell<csh_shell>`、:ref:`fish shell<fish_shell>`、および :ref:`Powershell<powershell_shell>` のプラグインのドキュメントを参照) で正しく展開されるパスに、``remote_tmp`` を設定します。 設定する ansible 設定ファイルで、
+  以下を指定します。
 
     remote_tmp=$HOME/.ansible/tmp
 
-  In Ansible 2.5 and later, you can also set it per-host in inventory like this::
+  Ansible 2.5 以降では、以下のようにインベントリーでホストごとに設定することも可能です。
 
     solaris1 ansible_remote_tmp=$HOME/.ansible/tmp
 
-* You can set :ref:`ansible_shell_executable<ansible_shell_executable>` to the path to a POSIX compatible shell.  For
-  instance, many Solaris hosts have a POSIX shell located at :file:`/usr/xpg4/bin/sh` so you can set
-  this in inventory like so::
+* :ref:`ansible_shell_executable<ansible_shell_executable>` を、POSIX の互換性のあるシェルのパスに設定します。 たとえば、
+  多数の Solaris ホストの POSIX シェルは、:file:`/usr/xpg4/bin/sh` に配置されているため、
+  インベントリーのこの値を以下のように設定できます。
 
     solaris1 ansible_shell_executable=/usr/xpg4/bin/sh
 
-  (bash, ksh, and zsh should also be POSIX compatible if you have any of those installed).
+  (bash、ksh および zsh がインストールされている場合には、これも POSIX の互換性が必要です)。
 
-Running on z/OS
+z/OS での実行
 ---------------
 
-There are a few common errors that one might run into when trying to execute Ansible on z/OS as a target.
+z/OS でターゲットとして Ansible を実行しようとすると、複数の共通のエラーが発生する可能性があります。
 
-* Version 2.7.6 of python for z/OS will not work with Ansible because it represents strings internally as EBCDIC.
+* z/OS 向けの Python バージョン 2.7.6 は、内部で文字列を EBCDIC として表現するため、Ansible では機能しない。
 
-  To get around this limitation, download and install a later version of `python for z/OS <https://www.rocketsoftware.com/zos-open-source>`_ (2.7.13 or 3.6.1) that represents strings internally as ASCII.  Version 2.7.13 is verified to work.
+  この制限を回避するには、文字列を ASCII で表現する `python for z/OS <https://www.rocketsoftware.com/zos-open-source>`_ (2.7.13 または 3.6.1) をダウンロードしてインストールしてください。 バージョン 2.7.13 では機能することが確認されています。
 
-* When ``pipelining = False`` in `/etc/ansible/ansible.cfg` then Ansible modules are transferred in binary mode via sftp however execution of python fails with
-
-  .. error::
-      SyntaxError: Non-UTF-8 code starting with \'\\x83\' in file /a/user1/.ansible/tmp/ansible-tmp-1548232945.35-274513842609025/AnsiballZ_stat.py on line 1, but no encoding declared; see https://python.org/dev/peps/pep-0263/ for details
-
-  To fix it set ``pipelining = True`` in `/etc/ansible/ansible.cfg`.
-
-* Python interpret cannot be found in default location ``/usr/bin/python`` on target host.
+* `/etc/ansible/ansible.cfg` で ``pipelining = False`` と指定されている場合には、Ansible モジュールは Python の実行エラーが何であっても、sftp 経由でバイナリーモードで転送される。
 
   .. error::
-      /usr/bin/python: EDC5129I No such file or directory
+      SyntaxError:Non-UTF-8 code starting with \\'\\x83\\' in file /a/user1/.ansible/tmp/ansible-tmp-1548232945.35-274513842609025/AnsiballZ\_stat.py on line 1, but no encoding declared; see https://python.org/dev/peps/pep-0263/ for details
 
-  To fix this set the path to the python installation in your inventory like so::
+  これを修正するには、`/etc/ansible/ansible.cfg` で ``pipelining = True`` と指定してください。
+
+* Python インタープリターがターゲットホストのデフォルトの場所 ``/usr/bin/python`` で検出できない。
+
+  .. error::
+      /usr/bin/python:EDC5129I No such file or directory
+
+  これを解決するには、以下のようにインベントリーでパスを Python インストールに設定してください。
 
     zos1 ansible_python_interpreter=/usr/lpp/python/python-2017-04-12-py27/python27/bin/python
 
-* Start of python fails with ``The module libpython2.7.so was not found.``
+* ``The module libpython2.7.so was not found.`` のエラーで Python が起動しない。
 
   .. error::
     EE3501S The module libpython2.7.so was not found.
 
-  On z/OS, you must execute python from gnu bash.  If gnu bash is installed at ``/usr/lpp/bash``, you can fix this in your inventory by specifying an ``ansible_shell_executable``::
+  z/OS では、gnu bash から python を実行する必要があります。 gnu bash が ``/usr/lpp/bash`` でインストールされている場合には、インベントリーで ``ansible_shell_executable`` を指定して修正できます。
 
     zos1 ansible_shell_executable=/usr/lpp/bash/bin/bash
 
 
 .. _use_roles:
 
-What is the best way to make content reusable/redistributable?
+コンテンツを再利用/再配信できるようにする最適な方法は何ですか
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-If you have not done so already, read all about "Roles" in the playbooks documentation.  This helps you make playbook content
-self-contained, and works well with things like git submodules for sharing content with others.
+Playbook ドキュメントの「ロール」の情報をまだ読んでいない場合は、一読してください。 Playbook のコンテンツを自己完結型にし、
+git submodules などと連携させて、他とのコンテンツ共有が容易になります。
 
-If some of these plugin types look strange to you, see the API documentation for more details about ways Ansible can be extended.
+このようなプラグインタイプの詳細は、Ansible の拡張方法に関する詳細を API ドキュメントで確認してください。
 
 .. _configuration_file:
 
-Where does the configuration file live and what can I configure in it?
+設定ファイルの配置場所はどこですか。または、どのように設定すればいいですか
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-See :ref:`intro_configuration`.
+:ref:`intro_configuration` を参照してください。
 
 .. _who_would_ever_want_to_disable_cowsay_but_ok_here_is_how:
 
-How do I disable cowsay?
+cowsay はどのように無効化すればいいですか
 ++++++++++++++++++++++++
 
-If cowsay is installed, Ansible takes it upon itself to make your day happier when running playbooks.  If you decide
-that you would like to work in a professional cow-free environment, you can either uninstall cowsay, set ``nocows=1`` in ansible.cfg, or set the :envvar:`ANSIBLE_NOCOWS` environment variable:
+cowsay がインストールされている場合には、Playbook を実行すると、Ansible がすべてを引き受けて処理します。 プロフェッショナルな cowsay なしの環境で作業することにした場合には、
+cowsay をアンインストールするか、ansible.cfg に ``nocows=1`` を設定するか、:envvar:`ANSIBLE_NOCOWS` の環境変数を設定します。
 
 .. code-block:: shell-session
 
@@ -301,24 +301,24 @@ that you would like to work in a professional cow-free environment, you can eith
 
 .. _browse_facts:
 
-How do I see a list of all of the ansible\_ variables?
+ansible_ variables の一覧をどのようにすれば確認できますか
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Ansible by default gathers "facts" about the machines under management, and these facts can be accessed in Playbooks and in templates. To see a list of all of the facts that are available about a machine, you can run the "setup" module as an ad-hoc action:
+Ansible はデフォルトで、管理対象のマシンの「ファクト」を収集し、このファクトには Playbook またはテンプレートでアクセスできます。あるマシンに関するファクトの一覧を表示するには、「setup」モジュールを ad-hoc アクションとして実行できます。
 
 .. code-block:: shell-session
 
     ansible -m setup hostname
 
-This will print out a dictionary of all of the facts that are available for that particular host. You might want to pipe the output to a pager.This does NOT include inventory variables or internal 'magic' variables. See the next question if you need more than just 'facts'.
+このコマンドでは、特定のホストで利用可能な全ファクトのディクショナリーが出力されます。ページャーの出力をパイプする場合には、インベントリー変数や内部の「magic」変数は含まれません。「ファクト」以外の情報が必要な場合には、次の質問を確認してください。
 
 
 .. _browse_inventory_vars:
 
-How do I see all the inventory variables defined for my host?
+ホストに定義されたインベントリー変数をすべて確認するにはどうすればいいですか
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-By running the following command, you can see inventory variables for a host:
+以下のコマンドを実行すると、ホストのインベントリー変数を確認できます。
 
 .. code-block:: shell-session
 
@@ -327,25 +327,25 @@ By running the following command, you can see inventory variables for a host:
 
 .. _browse_host_vars:
 
-How do I see all the variables specific to my host?
+ホスト固有の全変数を確認するにはどうすればいいですか
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 
-To see all host specific variables, which might include facts and other sources:
+ホスト固有の変数をすべて確認するには以下を実行します (ファクトや他のソースが含まれる可能性があります)。
 
 .. code-block:: shell-session
 
     ansible -m debug -a "var=hostvars['hostname']" localhost
 
-Unless you are using a fact cache, you normally need to use a play that gathers facts first, for facts included in the task above.
+ファクトキャッシュを使用していない限り、上記のタスクに含まれるファクトについては、通常、先にファクトを収集する Play を使用する必要があります。
 
 
 .. _host_loops:
 
-How do I loop over a list of hosts in a group, inside of a template?
+テンプレート内のグループに含まれるホストの一覧をループするにはどうすればいいですか
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-A pretty common pattern is to iterate over a list of hosts inside of a host group, perhaps to populate a template configuration
-file with a list of servers. To do this, you can just access the "$groups" dictionary in your template, like this:
+一般的なパターンとして、サーバー一覧でテンプレート設定ファイルを生成するなど、
+ホストグループ内のホスト一覧で繰り返し作業を行います。これには、以下のようにお使いのテンプレートで "$groups" ディクショナリーにアクセスするだけです。
 
 .. code-block:: jinja
 
@@ -353,13 +353,13 @@ file with a list of servers. To do this, you can just access the "$groups" dicti
         {{ host }}
     {% endfor %}
 
-If you need to access facts about these hosts, for instance, the IP address of each hostname, you need to make sure that the facts have been populated. For example, make sure you have a play that talks to db_servers::
+このようなホストに関するファクト (例: 各ホスト名の IP アドレスなど) を使用する必要がある場合には、ファクトが生成されていることを確認する必要があります。たとえば、db_servers と対話するプレイがあることを確認します。
 
     - hosts:  db_servers
       tasks:
         - debug: msg="doesn't matter what you do, just that they were talked to previously."
 
-Then you can use the facts inside your template, like this:
+次に、以下のように、テンプレート内のファクトを使用できます。
 
 .. code-block:: jinja
 
@@ -369,124 +369,124 @@ Then you can use the facts inside your template, like this:
 
 .. _programatic_access_to_a_variable:
 
-How do I access a variable name programmatically?
+プログラムで変数名にアクセスするにはどうすればいいですか
 +++++++++++++++++++++++++++++++++++++++++++++++++
 
-An example may come up where we need to get the ipv4 address of an arbitrary interface, where the interface to be used may be supplied
-via a role parameter or other input.  Variable names can be built by adding strings together, like so:
+たとえば、ロールのパラメーターや他の入力情報で使用するインターフェースを指定する場合など、任意のインターフェースの IPv4 アドレスを取得する必要があるときなどに、
+プログラムで変数名にアクセスします。 以下のように、変数名は、以下のように文字列を追加することで構築できます。
 
 .. code-block:: jinja
 
     {{ hostvars[inventory_hostname]['ansible_' + which_interface]['ipv4']['address'] }}
 
-The trick about going through hostvars is necessary because it's a dictionary of the entire namespace of variables.  'inventory_hostname'
-is a magic variable that indicates the current host you are looping over in the host loop.
+変数の全 namespace に含まれるディクショナリーであるため、hostvars 全体をチェックするにはコツが必要です。
+「inventory_hostname」はマジック変数で、ホストループでループを行う現在のホストを指定します。
 
-Also see dynamic_variables_.
+「dynamic_variables_」も参照してください。
 
 
 .. _access_group_variable:
 
-How do I access a group variable?
+グループ変数にアクセスするにはどうすればいいですか
 +++++++++++++++++++++++++++++++++
 
-Technically, you don't, Ansible does not really use groups directly. Groups are label for host selection and a way to bulk assign variables, they are not a first class entity, Ansible only cares about Hosts and Tasks.
+Ansible は、技術的にはグループ変数にアクセスせず、直接グループを使用するわけではありません。グループは、ホスト選択のラベルとして機能し、変数を一括で割り当てる手段を提供します。グループは、第一級オブジェクトではありません。Ansible が関心があるのは、ホストとタスクのみです。
 
-That said, you could just access the variable by selecting a host that is part of that group, see first_host_in_a_group_ below for an example.
+ただし、対象のグループに含まれるホストを選択すると、変数にアクセスできます。例については、first_host_in_a_group_ below を参照してください。
 
 
 .. _first_host_in_a_group:
 
-How do I access a variable of the first host in a group?
+グループ内の最初のホストの変数にアクセスするにはどうすればいいですか
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-What happens if we want the ip address of the first webserver in the webservers group?  Well, we can do that too.  Note that if we
-are using dynamic inventory, which host is the 'first' may not be consistent, so you wouldn't want to do this unless your inventory
-is static and predictable.  (If you are using :ref:`ansible_tower`, it will use database order, so this isn't a problem even if you are using cloud
-based inventory scripts).
+webservers グループの最初の webserver の IP アドレスが必要な場合にはどうすればいいですか。 Ansible ではこれも可能です。 動的なインベントリーを使用する場合には、
+最初に使用するホストに一貫性がないため、
+インベントリーが静的な場合や推測可能な場合以外での使用は推奨されません。 (:ref:`ansible_tower` を使用する場合には、データベースの順番を使用するため、
+クラウドベースのインベントリースクリプトを使用している場合でも問題はありません)。
 
-Anyway, here's the trick:
+以下に方法を示します。
 
 .. code-block:: jinja
 
     {{ hostvars[groups['webservers'][0]]['ansible_eth0']['ipv4']['address'] }}
 
-Notice how we're pulling out the hostname of the first machine of the webservers group.  If you are doing this in a template, you
-could use the Jinja2 '#set' directive to simplify this, or in a playbook, you could also use set_fact::
+webserver グループの最初のマシンのホスト名を取得している点に注意してください。 テンプレートでこれを行う場合は、
+Jinja2 (#set' directive to simplify this, or in a playbook, you could also use set_fact::) を使用できます。
 
     - set_fact: headnode={{ groups[['webservers'][0]] }}
 
     - debug: msg={{ hostvars[headnode].ansible_eth0.ipv4.address }}
 
-Notice how we interchanged the bracket syntax for dots -- that can be done anywhere.
+ドットの代わりにカッコの構文を使用している点に注意してください。これはどこでも使用できます。
 
 .. _file_recursion:
 
-How do I copy files recursively onto a target host?
+ターゲットホストにファイルを再帰的にコピーするにはどうすればいいですか
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The "copy" module has a recursive parameter.  However, take a look at the "synchronize" module if you want to do something more efficient for a large number of files.  The "synchronize" module wraps rsync.  See the module index for info on both of these modules.
+「copy」モジュールには、再帰的なパラメーターがあります。 ただし、大量のファイルを効率的に処理するには、「synchronize」モジュールも確認してください。 「synchroize」モジュールは、rsync もラップします。 copy と synchroize モジュールの情報は、モジュールのインデックスを参照してください。
 
 .. _shell_env:
 
-How do I access shell environment variables?
+shell 環境変数にアクセスするにはどうすればいいですか
 ++++++++++++++++++++++++++++++++++++++++++++
 
-If you just need to access existing variables ON THE CONTROLLER, use the 'env' lookup plugin.
-For example, to access the value of the HOME environment variable on the management machine::
+既存の変数 ON THE CONTROLLER へのアクセスだけが必要な場合は、lookup プラグイン「env」を使用してください。
+たとえば、管理マシンで HOME 環境変数の値にアクセスするには、以下を指定します。
 
    ---
    # ...
-     vars:
-        local_home: "{{ lookup('env','HOME') }}"
+vars:
+local_home: "{{ lookup('env','HOME') }}"
 
 
-For environment variables on the TARGET machines, they are available via facts in the 'ansible_env' variable:
+ターゲットマシンの環境変数の場合には、'ansible_env' 変数のファクトを使用して入手します。
 
 .. code-block:: jinja
 
    {{ ansible_env.SOME_VARIABLE }}
 
-If you need to set environment variables for TASK execution, see :ref:`playbooks_environment` in the :ref:`Advanced Playbooks <playbooks_special_topics>` section.
-There are several ways to set environment variables on your target machines. You can use the :ref:`template <template_module>`, :ref:`replace <replace_module>`, or :ref:`lineinfile <lineinfile_module>` modules to introduce environment variables into files.
-The exact files to edit vary depending on your OS and distribution and local configuration.
+タスクの実行に環境変数を設定する必要がある場合には、:ref:`高度な Playbook <playbooks_special_topics>` セクションの :ref:`playbooks_environment` を参照してください。
+ターゲットマシンで環境変数を設定する方法は複数存在します。テンプレートの :ref:`template <template_module>` モジュール、:ref:`replace <replace_module>` モジュールまたは :ref:`lineinfile <lineinfile_module>` モジュールを使用して、環境変数をファイルに導入できます。
+OS、ディストリビューション、設定により、変数するファイルは異なります。
 
 .. _user_passwords:
 
-How do I generate encrypted passwords for the user module?
+ユーザーモジュールの暗号化パスワードを生成するにはどうすればいいですか
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Ansible ad-hoc command is the easiest option:
+Ansible ad-hoc コマンドを使用するのが最も簡単なオプションです。
 
 .. code-block:: shell-session
 
     ansible all -i localhost, -m debug -a "msg={{ 'mypassword' | password_hash('sha512', 'mysecretsalt') }}"
 
-The mkpasswd utility that is available on most Linux systems is also a great option:
+また、他に優れたオプションとして、大半の Linux システムで利用可能な mkpasswd ユーティリティーを使用する方法があります。
 
 .. code-block:: shell-session
 
     mkpasswd --method=sha-512
 
 
-If this utility is not installed on your system (e.g. you are using macOS) then you can still easily
-generate these passwords using Python. First, ensure that the `Passlib <https://bitbucket.org/ecollins/passlib/wiki/Home>`_
-password hashing library is installed:
+お使いのシステムにこのユーティリティーがインストールされていない場合 (例: MacOS を使用している場合など) には、
+Python を使用してこのようなパスワードを簡単に生成できます。まず、`Passlib <https://bitbucket.org/ecollins/passlib/wiki/Home>`_ パスワードが、
+hashing ライブラリーにインストールされていることを確認します。
 
 .. code-block:: shell-session
 
     pip install passlib
 
-Once the library is ready, SHA512 password values can then be generated as follows:
+ライブラリーの準備ができたら、以下のように SHA512 パスワードの値を生成できます。
 
 .. code-block:: shell-session
 
     python -c "from passlib.hash import sha512_crypt; import getpass; print(sha512_crypt.using(rounds=5000).hash(getpass.getpass()))"
 
-Use the integrated :ref:`hash_filters` to generate a hashed version of a password.
-You shouldn't put plaintext passwords in your playbook or host_vars; instead, use :ref:`playbooks_vault` to encrypt sensitive data.
+統合された :ref:`hash_filters` を使用して、ハッシュ化されたパスワードを生成します。
+Playbook や host_vars にプレーンテキストのパスワードを挿入するべきではありません。代わりに、:ref:`playbooks_vault` を使用して、機密データを暗号化してください。
 
-In OpenBSD, a similar option is available in the base system called encrypt(1):
+OpenBSD には、ベースステムの encrypt(1) と呼ばれる、よく似たオプションがあります。
 
 .. code-block:: shell-session
 
@@ -494,14 +494,14 @@ In OpenBSD, a similar option is available in the base system called encrypt(1):
 
 .. _dot_or_array_notation:
 
-Ansible allows dot notation and array notation for variables. Which notation should I use?
+Ansible では、変数のドット表記とアレイ表記が可能ですが、どちらの表記を使用するべきですか
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The dot notation comes from Jinja and works fine for variables without special
-characters. If your variable contains dots (.), colons (:), or dashes (-), if
-a key begins and ends with two underscores, or if a key uses any of the known
-public attributes, it is safer to use the array notation. See :ref:`playbooks_variables`
-for a list of the known public attributes.
+ドット表記は Jinja からのもので、
+特殊文字を使用せずに変数と合わせて使用できます。変数にドット (.)、コロン (:)、またはハイフン (-) が含まれていて、
+キーが 2 つのアンダースコアで開始および終了する場合、
+またはキーが既知のパブリック属性のいずれかを使用する場合は、配列表記を使用する方が安全です。既知のパブリック属性の一覧は、「:ref:`playbooks_variables`」
+を参照してください。
 
 .. code-block:: jinja
 
@@ -510,123 +510,123 @@ for a list of the known public attributes.
     item['region']['Mid-Atlantic']
     It is {{ temperature['Celsius']['-3'] }} outside.
 
-Also array notation allows for dynamic variable composition, see dynamic_variables_.
+また、アレイ表記は、動的な変数の構成が可能です。詳細は、dynamic_variables_ を参照してください。
 
-Another problem with 'dot notation' is that some keys can cause problems because they collide with attributes and methods of python dictionaries.
+「ドット表記」の他の問題として、ドット表記のキーによっては、Python ディクショナリーの属性とメソッドと競合するため、問題が発生する可能性があります。
 
 .. code-block:: jinja
 
     item.update # this breaks if item is a dictionary, as 'update()' is a python method for dictionaries
-    item['update'] # this works
+item['update'] # this works
 
 
 .. _argsplat_unsafe:
 
-When is it unsafe to bulk-set task arguments from a variable?
+変数からタスク引数の一括設定をすると安全でないのはどのような場合ですか
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-You can set all of a task's arguments from a dictionary-typed variable. This
-technique can be useful in some dynamic execution scenarios. However, it
-introduces a security risk. We do not recommend it, so Ansible issues a
-warning when you do something like this::
+ディクショナリー型の変数からタスクの引数をすべて設定できます。この手法は、
+動的な実行シナリオで便利な場合があります。ただし、
+セキュリティーのリスクが伴います。これは推奨されないため、以下のようなことを行ったときに、
+Ansible は警告を表示します。
 
     #...
-    vars:
-      usermod_args:
-        name: testuser
-        state: present
-        update_password: always
-    tasks:
-    - user: '{{ usermod_args }}'
+vars:
+  usermod_args:
+    name: testuser
+    state: present
+    update_password: always
+tasks:
+- user: '{{ usermod_args }}'
 
-This particular example is safe. However, constructing tasks like this is
-risky because the parameters and values passed to ``usermod_args`` could
-be overwritten by malicious values in the ``host facts`` on a compromised
-target machine. To mitigate this risk:
+この特定の例は、安全です。ただし、
+``usermod_args`` に渡されるパラメーターや値が、
+ウイルスなどに感染したターゲットマシンの ``host facts`` に含まれる悪意のある値で上書きされる可能性があるため、
+このようなタスクの構築にはリスクがあります。このリスクを軽減するには、以下を実行します。
 
-* set bulk variables at a level of precedence greater than ``host facts`` in the order of precedence found in :ref:`ansible_variable_precedence` (the example above is safe because play vars take precedence over facts)
-* disable the :ref:`inject_facts_as_vars` configuration setting to prevent fact values from colliding with variables (this will also disable the original warning)
+* :ref:`ansible_variable_precedence` にある優先順位で、``host facts`` より優先順位の高いレベルで一括変数を設定します (変数はファクトより優先度が高いので、上記の例は安全です)
+* ファクトの値が変数と競合しないように :ref:`inject_facts_as_vars` 設定オプションを無効にします (元の警告も無効になります)
 
 
 .. _commercial_support:
 
-Can I get training on Ansible?
+Ansible のトレーニングはありますか
 ++++++++++++++++++++++++++++++
 
-Yes!  See our `services page <https://www.ansible.com/products/consulting>`_ for information on our services and training offerings. Email `info@ansible.com <mailto:info@ansible.com>`_ for further details.
+はい。あります。 サービスおよびトレーニングサービスに関する情報は、`サービスページ <https://www.ansible.com/products/consulting>`_ を参照してください。詳細は、`info@ansible.com <mailto:info@ansible.com>`_ までお問い合わせください。
 
-We also offer free web-based training classes on a regular basis. See our `webinar page <https://www.ansible.com/resources/webinars-training>`_ for more info on upcoming webinars.
+また、定期的に、Web ベースのトレーニングも無料で提供しています。今後発表されるウェビナーの詳細は、`ウェビナーページ <https://www.ansible.com/resources/webinars-training>`_ を参照してください。
 
 
 .. _web_interface:
 
-Is there a web interface / REST API / etc?
+Web インターフェースや REST API などがありますか
 ++++++++++++++++++++++++++++++++++++++++++
 
-Yes!  Ansible, Inc makes a great product that makes Ansible even more powerful and easy to use. See :ref:`ansible_tower`.
+はい。あります。 Ansible, Inc は、Ansible がより強力で使いやすくなるように、優れた製品を提供しています。:ref:`ansible_tower` を参照してください。
 
 
 .. _docs_contributions:
 
-How do I submit a change to the documentation?
+ドキュメントへの変更を提出するにはどうすればいいですか
 ++++++++++++++++++++++++++++++++++++++++++++++
 
-Great question!  Documentation for Ansible is kept in the main project git repository, and complete instructions for contributing can be found in the docs README `viewable on GitHub <https://github.com/ansible/ansible/blob/devel/docs/docsite/README.md>`_.  Thanks!
+ご質問ありがとうございます。 Ansible のドキュメントは、主要プロジェクトの git リポジトリーに保存されており、寄稿に関する説明が `GitHub の README <https://github.com/ansible/ansible/blob/devel/docs/docsite/README.md>` に記載されています。 こちらを参照してください。
 
 
 .. _keep_secret_data:
 
-How do I keep secret data in my playbook?
+Playbook に機密データを保存するにはどうすればいいですか?
 +++++++++++++++++++++++++++++++++++++++++
 
-If you would like to keep secret data in your Ansible content and still share it publicly or keep things in source control, see :ref:`playbooks_vault`.
+Ansible のコンテンツに機密データを保存してそのコンテンツを公開するか、ソースコントロールに保持する場合は、:ref:`playbooks_vault` を参照してください。
 
-If you have a task that you don't want to show the results or command given to it when using -v (verbose) mode, the following task or playbook attribute can be useful::
+-v (詳細) モードの使用時にコマンドをタスクに渡さないようにしたり、結果を表示しないようにする場合に、以下のタスクまたは Playbook 属性が便利です。
 
     - name: secret task
       shell: /usr/bin/do_something --value={{ secret_value }}
-      no_log: True
+      no_log:True
 
-This can be used to keep verbose output but hide sensitive information from others who would otherwise like to be able to see the output.
+詳細な出力を確認できるユーザーに対して、出力を詳細に保ちながらも、機密情報を非表示にするときに使用できます。
 
-The no_log attribute can also apply to an entire play::
+no_log 属性は、プレイ全体にも適用できます。
 
     - hosts: all
-      no_log: True
+      no_log:True
 
-Though this will make the play somewhat difficult to debug.  It's recommended that this
-be applied to single tasks only, once a playbook is completed. Note that the use of the
-no_log attribute does not prevent data from being shown when debugging Ansible itself via
-the :envvar:`ANSIBLE_DEBUG` environment variable.
+ただし、これを使用すると、プレイのデバッグが困難になります。 Playbook が完了すると、
+この属性は単一のタスクにのみ適用することが推奨されます。no_log 属性
+を使用しても、
+:envvar:`ANSIBLE_DEBUG` 環境変数で Ansible 自体をデバッグするときに、データが表示されてしまう点に注意してください。
 
 
 .. _when_to_use_brackets:
 .. _dynamic_variables:
 .. _interpolate_variables:
 
-When should I use {{ }}? Also, how to interpolate variables or dynamic variable names
+{{ }} はいつ使用すればいいですか。また、変数または動的な変数名を挿入するにはどうすればいいですか
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-A steadfast rule is 'always use ``{{ }}`` except when ``when:``'.
-Conditionals are always run through Jinja2 as to resolve the expression,
-so ``when:``, ``failed_when:`` and ``changed_when:`` are always templated and you should avoid adding ``{{ }}``.
+不動のルールとして、``when:``' 条件を使用する場合以外は ``{{ }}`` を使用します。
+この条件は、式の解決として Jinja2 を調べます。
+したがって、``when:``、``failed_when:``、および ``changed_when:`` はテンプレート化されるため、``{{ }}`` の追加は回避してください。
 
-In most other cases you should always use the brackets, even if previously you could use variables without specifying (like ``loop`` or ``with_`` clauses), as this made it hard to distinguish between an undefined variable and a string.
+それ以外のケースでは、``loop`` または ``with_`` 句などを指定せずに以前は変数を使用できていた場合でも、常にカッコを使用するようにしてください。理由は、未定義の変数と文字列を区別しにくいためです。
 
-Another rule is 'moustaches don't stack'. We often see this:
+他には「波括弧は並べて使用できない」というルールがありますが、これは頻繁に見受けられます。
 
 .. code-block:: jinja
 
      {{ somevar_{{other_var}} }}
 
-The above DOES NOT WORK as you expect, if you need to use a dynamic variable use the following as appropriate:
+上記の例は想定通り、機能しません。動的変数を使用する必要がある場合には、随時、以下を使用してください。
 
 .. code-block:: jinja
 
     {{ hostvars[inventory_hostname]['somevar_' + other_var] }}
 
-For 'non host vars' you can use the :ref:`vars lookup<vars_lookup>` plugin:
+「non host vars」の場合には、:ref:`vars lookup<vars_lookup>` プラグインを使用できます。
 
 .. code-block:: jinja
 
@@ -635,65 +635,65 @@ For 'non host vars' you can use the :ref:`vars lookup<vars_lookup>` plugin:
 
 .. _why_no_wheel:
 
-Why don't you ship in X format?
+なぜ X 形式で提供していないのですか
 +++++++++++++++++++++++++++++++
 
-In most cases it has to do with maintainability. There are many ways to ship software and we do not have the resources to release Ansible on every platform.
-In some cases there are technical issues. For example, our dependencies are not present on Python Wheels.
+多くの場合に、メンテナンスができるかどうかに関係します。ソフトウェアの提供方法は多数あり、全プラットフォームで Ansible をリリースするリソースがありません。
+場合によっては、技術的な問題があります。たとえば、Python Wheels には依存関係がありません。
 
 .. _ansible_host_delegated:
 
-How do I get the original ansible_host when I delegate a task?
+タスクを委譲した場合に元の ansible_host をどのように取得すればいいですか
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-As the documentation states, connection variables are taken from the ``delegate_to`` host so ``ansible_host`` is overwritten,
-but you can still access the original via ``hostvars``::
+ドキュメントに記載されているように、接続変数は ``delegate_to`` ホストから取得されるので、``ansible_host`` は上書きされますが、
+``hostvars`` を使用して元の ansible_host にアクセスできます。
 
    original_host: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
 
-This works for all overridden connection variables, like ``ansible_user``, ``ansible_port``, etc.
+これは、``ansible_user``、``ansible_port`` などのように、上書きされた接続変数すべてに有効です。
 
 
 .. _scp_protocol_error_filename:
 
-How do I fix 'protocol error: filename does not match request' when fetching a file?
+ファイルの取得時の「protocol error: filename does not match request」のエラーはどのように修正すればいいですか
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Newer releases of OpenSSH have a `bug <https://bugzilla.mindrot.org/show_bug.cgi?id=2966>`_ in the SCP client that can trigger this error on the Ansible controller when using SCP as the file transfer mechanism::
+OpenSSH の比較的新しいリリースには、SCP クライアントに `バグ <https://bugzilla.mindrot.org/show_bug.cgi?id=2966>`_ があり、ファイル転送メカニズムとして SCP を使用する場合に、Ansible コントローラーで以下のエラーがトリガーされる可能性があります。
 
     failed to transfer file to /tmp/ansible/file.txt\r\nprotocol error: filename does not match request
 
-In these releases, SCP tries to validate that the path of the file to fetch matches the requested path.
-The validation
-fails if the remote filename requires quotes to escape spaces or non-ascii characters in its path. To avoid this error:
+新しいリリースでは、SCP は、取得するファイルのパスが要求したパスと一致するかを検証しようとします。
+リモートのファイル名が、
+パスでスペースや ASCII 文字以外の文字を引用符でエスケープする必要がある場合には、検証に失敗します。このエラーを回避するには、以下を行います。
 
-* Use SFTP instead of SCP by setting ``scp_if_ssh`` to ``smart`` (which tries SFTP first) or to ``False``. You can do this in one of four ways:
-    * Rely on the default setting, which is ``smart`` - this works if ``scp_if_ssh`` is not explicitly set anywhere
-    * Set a :ref:`host variable <host_variables>` or :ref:`group variable <group_variables>` in inventory: ``ansible_scp_if_ssh: False``
-    * Set an environment variable on your control node: ``export ANSIBLE_SCP_IF_SSH=False``
-    * Pass an environment variable when you run Ansible: ``ANSIBLE_SCP_IF_SSH=smart ansible-playbook``
-    * Modify your ``ansible.cfg`` file: add ``scp_if_ssh=False`` to the ``[ssh_connection]`` section
-* If you must use SCP, set the ``-T`` arg to tell the SCP client to ignore path validation. You can do this in one of three ways:
-    * Set a :ref:`host variable <host_variables>` or :ref:`group variable <group_variables>`: ``ansible_scp_extra_args=-T``,
-    * Export or pass an environment variable: ``ANSIBLE_SCP_EXTRA_ARGS=-T``
-    * Modify your ``ansible.cfg`` file: add ``scp_extra_args=-T`` to the ``[ssh_connection]`` section
+* ``scp_if_ssh`` を ``smart`` (先に SFTP を試す) または ``False`` に設定して、SCP の代わりに SFTP を使用します。以下の 4 つの方法から 1 つ実行してください。
+    * ``smart`` のデフォルトの設定に依存する。``scp_if_ssh`` が明示的にどこにも設定されていない場合に機能します。
+    * <group_variables>インベントリーに :ref:`ホスト変数` <host_variables>または :ref:`グループ変数` を設定 (``ansible_scp_if_ssh: False``) する。
+    * コントロールノードで環境変数を設定する (``export ANSIBLE_SCP_IF_SSH=False``)。
+    * Ansible の実行時に、環境変数 ``ANSIBLE_SCP_IF_SSH=smart ansible-playbook``を指定する。
+    * ``ansible.cfg`` ファイルを変更 (``scp_if_ssh=False`` を ``[ssh_connection]`` セクションに追加) する。
+* SCP を使用する必要がある場合には、``-T`` の引数を設定して、SCP クライアントにパスの検証を無視するように指示します。以下の 3 つの方法から 1 つ実行してください。
+    * :ref:`ホスト変数 <host_variables>` または :ref:`グループ変数 <group_variables>` を設定する (``ansible_scp_extra_args=-T``)。
+    * 環境変数をエクスポートするか、指定する (``ANSIBLE_SCP_EXTRA_ARGS=-T``)。
+    * ``ansible.cfg`` ファイルを変更する (``scp_extra_args=-T`` を ``[ssh_connection]`` セクションに追加)。
 
-.. note:: If you see an ``invalid argument`` error when using ``-T``, then your SCP client is not performing filename validation and will not trigger this error.
+.. note:: ``-T`` の使用時に ``invalid argument`` エラーが表示される場合は、SCP クライアントがファイル名を検証しておらず、このエラーはトリガーされません。
 
 .. _i_dont_see_my_question:
 
-I don't see my question here
+ここに記載されている以外に質問があります。
 ++++++++++++++++++++++++++++
 
-Please see the section below for a link to IRC and the Google Group, where you can ask your question there.
+以下のセクションに、IRC および Google グループへのリンクがあります。こちらから、質問をしてください。
 
 .. seealso::
 
    :ref:`working_with_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_best_practices`
-       Best practices advice
-   `User Mailing List <https://groups.google.com/group/ansible-project>`_
-       Have a question?  Stop by the google group!
+       ベストプラクティスのアドバイス
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

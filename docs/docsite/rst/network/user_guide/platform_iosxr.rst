@@ -1,4 +1,4 @@
-.. \_iosxr\_platform\_options:
+.. _iosxr_platform_options:
 
 ***************************************
 IOS-XR プラットフォームのオプション
@@ -36,7 +36,7 @@ IOS-XR は、複数の接続に対応します。このページには、各接�
     返されるデータ形式  各モジュールのモジュールドキュメントを参照してください。    各モジュールのモジュールドキュメントを参照してください。
     ====================  ==========================================  =========================
 
-.. |enable\_mode| replace::Enable モード |br| (権限昇格)
+.. |enable_mode| replace::Enable モード |br| (権限昇格)
 
 
 レガシー Playbook の場合、Ansible はすべての IOS-XR モジュールで ``ansible_connection=local`` に対応します。できるだけ早期に ``ansible_connection=netconf`` または ``ansible_connection=network_cli`` を使用するモダナイゼーションが推奨されます。
@@ -49,12 +49,12 @@ CLI インベントリーの例 ``[iosxr:vars]``
 
 .. code-block:: yaml
 
-   \[iosxr:vars]
-   ansible\_connection=network\_cli
-   ansible\_network\_os=iosxr
-   ansible\_user=myuser
-   ansible\_password=!vault...
-   ansible\_ssh\_common\_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   [iosxr:vars]
+   ansible_connection=network_cli
+   ansible_network_os=iosxr
+   ansible_user=myuser
+   ansible_password=!vault...
+   ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
 - SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
@@ -67,9 +67,9 @@ CLI タスクの例
 .. code-block:: yaml
 
    - name:Retrieve IOS-XR version
-     iosxr\_command:
+     iosxr_command:
        commands: show version
-     when: ansible\_network\_os == 'iosxr'
+     when: ansible_network_os == 'iosxr'
 
 
 Ansible での NETCONF の使用
@@ -88,9 +88,9 @@ Ansible 経由で新しいスイッチで NETCONF を有効にするには、CLI
 .. code-block:: yaml
 
    - name:Enable NETCONF
-     connection: network\_cli
-     iosxr\_netconf:
-     when: ansible\_network\_os == 'iosxr'
+     connection: network_cli
+     iosxr_netconf:
+     when: ansible_network_os == 'iosxr'
 
 NETCONF を有効にしたら、変数を変更して NETCONF 接続を使用します。
 
@@ -99,12 +99,12 @@ NETCONF インベントリーの例: ``[iosxr:vars]``
 
 .. code-block:: yaml
 
-   \[iosxr:vars]
-   ansible\_connection=netconf
-   ansible\_network\_os=iosxr
-   ansible\_user=myuser
-   ansible\_password=!vault |
-   ansible\_ssh\_common\_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   [iosxr:vars]
+   ansible_connection=netconf
+   ansible_network_os=iosxr
+   ansible_user=myuser
+   ansible_password=!vault |
+   ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
 NETCONF タスクの例
@@ -113,12 +113,12 @@ NETCONF タスクの例
 .. code-block:: yaml
 
    - name:Configure hostname and domain-name
-     iosxr\_system:
+     iosxr_system:
        hostname: iosxr01
-       domain\_name: test.example.com
-       domain\_search:
-         \- ansible.com
-         \- redhat.com
-         \- cisco.com
+       domain_name: test.example.com
+       domain_search:
+         - ansible.com
+         - redhat.com
+         - cisco.com
 
-.. include:: shared\_snippets/SSH\_warning.txt
+.. include:: shared_snippets/SSH_warning.txt

@@ -1,4 +1,4 @@
-.. \_resource\_modules:
+.. _resource_modules:
 
 ************************
 ネットワークリソースモジュール
@@ -50,7 +50,7 @@ parsed
  .. code-block:: YAML
 
    - name: configure l3 interface
-     ios\_l3\_interfaces:
+     ios_l3_interfaces:
        config: "{{ config }}"
        state: <state>
 
@@ -96,31 +96,31 @@ parsed
 
 .. code-block:: yaml
 
-   ok: \[nxos101] =>
+   ok: [nxos101] =>
      result:
        after:
          contact:IT Support
          location:Room E, Building 6, Seattle, WA 98134
          users:
-         \- algorithm: md5
+         - algorithm: md5
            group: network-admin
-           localized\_key: true
+           localized_key: true
            password:'0x73fd9a2cc8c53ed3dd4ed8f4ff157e69'
-           privacy\_password:'0x73fd9a2cc8c53ed3dd4ed8f4ff157e69'
+           privacy_password:'0x73fd9a2cc8c53ed3dd4ed8f4ff157e69'
            username: admin
        before:
          contact:IT Support
          location:Room E, Building 5, Seattle HQ
          users:
-         \- algorithm: md5
+         - algorithm: md5
            group: network-admin
-           localized\_key: true
+           localized_key: true
            password:'0x73fd9a2cc8c53ed3dd4ed8f4ff157e69'
-           privacy\_password:'0x73fd9a2cc8c53ed3dd4ed8f4ff157e69'
+           privacy_password:'0x73fd9a2cc8c53ed3dd4ed8f4ff157e69'
            username: admin
        changed: true
        commands:
-       \- snmp-server location Room E, Building 6, Seattle, WA 98134
+       - snmp-server location Room E, Building 6, Seattle, WA 98134
        failed: false
 
 
@@ -134,16 +134,16 @@ parsed
 
   - name:Example of facts being pushed right back to device.
     hosts: arista
-    gather\_facts: false
+    gather_facts: false
     tasks:
       - name: grab arista eos facts
-        eos\_facts:
-          gather\_subset: min
-          gather\_network\_resources: l3\_interfaces
+        eos_facts:
+          gather_subset: min
+          gather_network_resources: l3_interfaces
 
   - name:Ensure that the IP address information is accurate.
-    eos\_l3\_interfaces:
-      config: "{{ ansible\_network\_resources\['l3\_interfaces'] }}"
+    eos_l3_interfaces:
+      config: "{{ ansible_network_resources['l3_interfaces'] }}"
       register: result
 
   - name:Ensure config did not change.
@@ -152,7 +152,7 @@ parsed
 
 .. seealso::
 
-  `Ansible 2.9 のネットワーク機能<https://www.ansible.com/blog/network-features-coming-soon-in-ansible-engine-2.9>`_
+  `Ansible 2.9 のネットワーク機能 <https://www.ansible.com/blog/network-features-coming-soon-in-ansible-engine-2.9>`_
     ネットワークリソースモジュールに関する入門ブログの投稿。
-  `ネットワークリソースモジュールの詳細<https://www.ansible.com/deep-dive-into-ansible-network-resource-module>`_
+  `ネットワークリソースモジュールの詳細 <https://www.ansible.com/deep-dive-into-ansible-network-resource-module>`_
     ネットワークリソースモジュールの詳細な説明

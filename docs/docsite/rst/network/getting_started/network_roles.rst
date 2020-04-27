@@ -1,5 +1,5 @@
 
-.. \_using\_network\_roles:
+.. _using_network_roles:
 
 *************************
 Ansible ネットワークロールの使用
@@ -15,7 +15,7 @@ Ansible ネットワークロールの使用
 
 ロールの役割とはなんですか。なぜそれを気にかける必要がありますか。Ansible ロールは基本的に、既知のファイル構造に分割される Playbook です。Playbook からロールに移動すると、Ansible ワークフローの共有、読み取り、および更新が容易になります。ユーザーは、独自のロールを作成できます。たとえば、独自の DNS Playbook を作成する必要はありません。代わりに、DNS サーバーおよびロールを指定して、これを設定します。
 
-ワークフローをさらに単純化するために、Ansible Network チームは一般的なネットワークユースケース向けに一連のロールを作成しました。このようなロールを使用すると、ホイールを再作成する必要がなくなります。独自の ``create_vlan`` Playbook またはロールを作成し、維持する代わりに、ネットワークのトポロジーとインベントリーを記述するパーサーテンプレートの設計、コード化、および保守に集中し、Ansible のネットワークロールが機能するようにできます。Ansible Galaxy では、`ネットワーク関連のロール<https://galaxy.ansible.com/ansible-network>`_ を参照してください。
+ワークフローをさらに単純化するために、Ansible Network チームは一般的なネットワークユースケース向けに一連のロールを作成しました。このようなロールを使用すると、ホイールを再作成する必要がなくなります。独自の ``create_vlan`` Playbook またはロールを作成し、維持する代わりに、ネットワークのトポロジーとインベントリーを記述するパーサーテンプレートの設計、コード化、および保守に集中し、Ansible のネットワークロールが機能するようにできます。Ansible Galaxy では、`ネットワーク関連のロール <https://galaxy.ansible.com/ansible-network>`_ を参照してください。
 
 DNS Playbook のサンプル
 ---------------------
@@ -27,35 +27,35 @@ DNS Playbook のサンプル
    ---
    - name: configure cisco routers
      hosts: routers
-     connection: network\_cli
-     gather\_facts: no
+     connection: network_cli
+     gather_facts: no
      vars:
        dns:"8.8.8.8 8.8.4.4"
 
      tasks:
-      \- name: configure hostname
-        ios\_config:
-          lines: hostname {{ inventory\_hostname }}
+      - name: configure hostname
+        ios_config:
+          lines: hostname {{ inventory_hostname }}
 
       - name: configure DNS
-        ios\_config:
+        ios_config:
           lines: ip name-server {{dns}}
 
 ``ansible-playbook`` コマンドを使用してこの Playbook を実行すると、以下の出力が表示されます。 この例では、``-l`` オプションを使用して Playbook を **rtr1** ノードでのみ実行することを制限します。
 
 .. code-block:: bash
 
-   \[user@ansible ~]$ ansible-playbook playbook.yml -l rtr1
+   [user@ansible ~]$ ansible-playbook playbook.yml -l rtr1
 
-   PLAY \[configure cisco routers] \*************************************************
+   PLAY [configure cisco routers] *************************************************
 
-   TASK \[configure hostname] \******************************************************
-   changed: \[rtr1]
+   TASK [configure hostname] ******************************************************
+   changed: [rtr1]
 
-   TASK \[configure DNS] \***********************************************************
-   changed: \[rtr1]
+   TASK [configure DNS] ***********************************************************
+   changed: [rtr1]
 
-   PLAY RECAP \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+   PLAY RECAP *********************************************************************
    rtr1                       : ok=2    changed=2    unreachable=0    failed=0
 
 
@@ -63,9 +63,9 @@ DNS Playbook のサンプル
 
 .. code-block:: bash
 
-   rtr1\#sh run | i name
-hostname rtr1
-ip name-server 8.8.8.8 8.8.4.4
+   rtr1#sh run | i name
+   hostname rtr1
+   ip name-server 8.8.8.8 8.8.4.4
 
 Playbook のロールへの変換
 ---------------------------------
@@ -74,57 +74,57 @@ Playbook のロールへの変換
 
 .. code-block:: bash
 
-   \[user@ansible ~]$ ansible-galaxy init system-demo
-\[user@ansible ~]$ cd system-demo/
-\[user@ansible system-demo]$ tree
-.
-├── defaults
-│   └── main.yml
-├── files
-├── handlers
-│   └── main.yml
-├── meta
-│   └── main.yml
-├── README.md
-├── tasks
-│   └── main.yml
-├── templates
-├── tests
-│   ├── inventory
-│   └── test.yml
-└── vars
-└── main.yml
+   [user@ansible ~]$ ansible-galaxy init system-demo
+   [user@ansible ~]$ cd system-demo/
+   [user@ansible system-demo]$ tree
+   .
+   ├── defaults
+   │   └── main.yml
+   ├── files
+   ├── handlers
+   │   └── main.yml
+   ├── meta
+   │   └── main.yml
+   ├── README.md
+   ├── tasks
+   │   └── main.yml
+   ├── templates
+   ├── tests
+   │   ├── inventory
+   │   └── test.yml
+   └── vars
+     └── main.yml
 
 この最初のデモでは、**tasks** ディレクトリーおよび **vars** ディレクトリーのみを使用しています。 ディレクトリー構造は以下のようになります。
 
 .. code-block:: bash
 
-   \[user@ansible system-demo]$ tree
-.
-├── tasks
-│   └── main.yml
-└── vars
-└── main.yml
+   [user@ansible system-demo]$ tree
+   .
+   ├── tasks
+   │   └── main.yml
+   └── vars
+       └── main.yml
 
 次に、``vars`` セクションおよび ``tasks`` セクションの内容を元の Ansible Playbook からロールに移動します。まず、これらのタスクを ``tasks/main.yml`` ファイルに移動します。
 
 .. code-block:: bash
 
-   \[user@ansible system-demo]$ cat tasks/main.yml
+   [user@ansible system-demo]$ cat tasks/main.yml
    ---
    - name: configure hostname
-     ios\_config:
-       lines: hostname {{ inventory\_hostname }}
+     ios_config:
+       lines: hostname {{ inventory_hostname }}
 
    - name: configure DNS
-     ios\_config:
+     ios_config:
        lines: ip name-server {{dns}}
 
 次に、変数を ``vars/main.yml`` ファイルに移動します。
 
 .. code-block:: bash
 
-   \[user@ansible system-demo]$ cat vars/main.yml
+   [user@ansible system-demo]$ cat vars/main.yml
    ---
    dns:"8.8.8.8 8.8.4.4"
 
@@ -135,40 +135,40 @@ Playbook のロールへの変換
    ---
    - name: configure cisco routers
      hosts: routers
-     connection: network\_cli
-     gather\_facts: no
+     connection: network_cli
+     gather_facts: no
 
      roles:
-       \- system-demo
+       - system-demo
 
 要約すると、このデモでは、3 つのディレクトリー数と 3 つの YAML ファイル数の合計を使用するようになりました。 ロールを表す ``system-demo`` ディレクトリーがあります。 この ``system-demo`` には、``tasks`` および ``vars`` の 2 つのディレクトリーがあります。 ``main.yml`` には、それぞれのフォルダーがあります。 ``vars/main.yml`` には、``playbook.yml`` の変数が含まれます。 ``tasks/main.yml`` には、``playbook.yml`` のタスクが含まれます。 ``playbook.yml`` ファイルは、vars および tasks を直接指定するのではなく、ロールを呼び出すように変更されました。 以下は、現在の作業ディレクトリーのツリーです。
 
 .. code-block:: bash
 
-   \[user@ansible ~]$ tree
-.
-├── playbook.yml
-└── system-demo
-├── tasks
-│   └── main.yml
-└── vars
-└── main.yml
+   [user@ansible ~]$ tree
+   .
+   ├── playbook.yml
+   └── system-demo
+       ├── tasks
+       │   └── main.yml
+       └── vars
+           └── main.yml
 
 Playbook を実行すると、出力が若干異なる同じ動作になります。
 
 .. code-block:: bash
 
-   \[user@ansible ~]$ ansible-playbook playbook.yml -l rtr1
+   [user@ansible ~]$ ansible-playbook playbook.yml -l rtr1
 
-   PLAY \[configure cisco routers] \*************************************************
+   PLAY [configure cisco routers] *************************************************
 
-   TASK \[system-demo : configure hostname] \****************************************
-   ok: \[rtr1]
+   TASK [system-demo : configure hostname] ****************************************
+   ok: [rtr1]
 
-   TASK \[system-demo : configure DNS] \*********************************************
-   ok: \[rtr1]
+   TASK [system-demo : configure DNS] *********************************************
+   ok: [rtr1]
 
-   PLAY RECAP \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+   PLAY RECAP *********************************************************************
    rtr1             : ok=2    changed=0    unreachable=0    failed=0
 
 上記のように、各タスクの前にロール名 (この場合は ``system-demo``) が追加されます。 複数のロールを含む Playbook を実行する場合、これはタスクがどこから呼び出されるかを正確に特定するのに役立ちます。 この Playbook は、開始した 1 つのファイル Playbook の動作が同じであるため、``変更`` せずに ``ok`` を返しました。
@@ -177,9 +177,9 @@ Playbook を実行すると、出力が若干異なる同じ動作になりま�
 
 .. code-block:: bash
 
-   rtr1\#sh run | i name
-hostname rtr1
-ip name-server 8.8.8.8 8.8.4.4
+   rtr1#sh run | i name
+   hostname rtr1
+   ip name-server 8.8.8.8 8.8.4.4
 
 
 このため、Ansible ロールは単に分解された Playbook として見なすことができます。ロールらはシンプルで、効果的で、再利用が可能です。 別のユーザーは、カスタムの「ハードコードされた」Playbook を作成する代わりに、単に ``system-demo`` ロールを含めることができます。
@@ -196,13 +196,13 @@ DNS サーバーを変更するにはどうすれば良いですか。 ロール
 
 .. code-block:: bash
 
-   \[user@ansible system-demo]$ mv vars defaults
-\[user@ansible system-demo]$ tree
-.
-├── defaults
-│   └── main.yml
-├── tasks
-│   └── main.yml
+   [user@ansible system-demo]$ mv vars defaults
+   [user@ansible system-demo]$ tree
+   .
+   ├── defaults
+   │   └── main.yml
+   ├── tasks
+   │   └── main.yml
 
 デフォルトの動作を上書きするために、Playbook に新規の ``vars`` セクションを追加します (ここでは、``dns`` 変数が 8.8.8.8 および 8.8.4.4 に設定されています)。 このデモでは、``dns`` を 1.1.1.1 に設定し、``playbook.yml`` は以下のようになります。
 
@@ -211,10 +211,10 @@ DNS サーバーを変更するにはどうすれば良いですか。 ロール
    ---
    - name: configure cisco routers
      hosts: routers
-     connection: network\_cli
-     gather\_facts: no
+     connection: network_cli
+     gather_facts: no
      vars:
-       dns:1.1.1.1
+       dns: 1.1.1.1
      roles:
        - system-demo
 
@@ -222,14 +222,14 @@ DNS サーバーを変更するにはどうすれば良いですか。 ロール
 
 .. code-block:: bash
 
-   \[user@ansible ~]$ ansible-playbook playbook.yml -l rtr2
+   [user@ansible ~]$ ansible-playbook playbook.yml -l rtr2
 
 **rtr2** Cisco ルーターの設定は以下のようになります。
 
 .. code-block:: bash
 
-   rtr2\#sh run | i name-server
-ip name-server 1.1.1.1
+   rtr2#sh run | i name-server
+   ip name-server 1.1.1.1
 
 Playbook で設定された変数が ``defaults`` ディレクトリーよりも優先されるようになりました。 実際に、変数を設定する他の場所も、``defaults`` ディレクトリーの値よりも優先されます。
 
@@ -240,38 +240,38 @@ Playbook で設定された変数が ``defaults`` ディレクトリーよりも
 
 .. code-block:: bash
 
-   \[user@ansible ~]$ ansible-playbook playbook.yml -e "dns=192.168.1.1" -l rtr3
+   [user@ansible ~]$ ansible-playbook playbook.yml -e "dns=192.168.1.1" -l rtr3
 
 Cisco IOS XE ルーターの結果には、優先度の最も高い 192.168.1.1 設定のみが含まれます。
 
 .. code-block:: bash
 
-   rtr3\#sh run | i name-server
-ip name-server 192.168.1.1
+   rtr3#sh run | i name-server
+   ip name-server 192.168.1.1
 
-これはどのように役立ちますか。 なぜそれを気にかけないといけませんか。 追加の変数は通常、ネットワークオペレーターがデフォルトをオーバーライドするために使用されます。 この強力な例は、Red Hat Ansible Tower と Survey 機能です。 Web UI で、ネットワークオペレーターに Web フォームによるパラメーターの入力を要求できます。 これは、非技術的 Playbook の作成者が Web ブラウザーを使用して Playbook を実行するのが非常に簡単な場合があります。詳細は、「`Ansible Tower Job Template Surveys <https://docs.ansible.com/ansible-tower/latest/html/userguide/workflow_templates.html#surveys>`\_」を参照してください。
+これはどのように役立ちますか。 なぜそれを気にかけないといけませんか。 追加の変数は通常、ネットワークオペレーターがデフォルトをオーバーライドするために使用されます。 この強力な例は、Red Hat Ansible Tower と Survey 機能です。 Web UI で、ネットワークオペレーターに Web フォームによるパラメーターの入力を要求できます。 これは、非技術的 Playbook の作成者が Web ブラウザーを使用して Playbook を実行するのが非常に簡単な場合があります。詳細は、「 `Ansible Tower Job Template Surveys <https://docs.ansible.com/ansible-tower/latest/html/userguide/workflow_templates.html#surveys>`_ 」を参照してください。
 
 
 Ansible で対応しているネットワークロール
 ===============================
 
-Ansible Network チームは、Ansible Galaxy で `ネットワーク関連のロール<https://galaxy.ansible.com/ansible-network>`_ を開発し、対応します。このようなロールを使用して、ネットワーク自動化の作業を開始できます。このようなロールは、最新の Ansible ネットワークコンテンツにアクセスできるように約 2 時間ごとに更新されます。
+Ansible Network チームは、Ansible Galaxy で `ネットワーク関連のロール <https://galaxy.ansible.com/ansible-network>`_ を開発し、対応します。このようなロールを使用して、ネットワーク自動化の作業を開始できます。このようなロールは、最新の Ansible ネットワークコンテンツにアクセスできるように約 2 時間ごとに更新されます。
 
 このようなロールは以下のカテゴリーに分類されます。
 
-* **ユーザーロール** \- 設定の管理など、ユーザーロールはタスクにフォーカスします。`config_manager <https://galaxy.ansible.com/ansible-network/config_manager>`\_、`cloud_vpn <https://galaxy.ansible.com/ansible-network/cloud_vpn>`_ などのロールを Playbook で直接使用します。これらのロールはプラットフォーム/プロバイダーに依存しないため、異なるネットワークプラットフォームまたはクラウドプロバイダーで同じロールおよび Playbook を使用できます。
-* **プラットフォームプロバイダーロール** \- プロバイダーロールは、ユーザーロールとさまざまなネットワーク OS の間で変換され、それぞれ API が異なります。各プロバイダーロールは、対応しているユーザーロールからの入力を許可し、特定のネットワーク OS 用にその入力を変換します。ネットワークユーザーロールは、このようなプロバイダーロールに依存して機能を実装します。たとえば、`config_manager <https://galaxy.ansible.com/ansible-network/config_manager>`_ ユーザーロールは `cisco_ios <https://galaxy.ansible.com/ansible-network/cisco_ios>`_ プロバイダーロールを使用して、Cisco IOS ネットワークデバイスにタスクを実装します。
-* **クラウドのプロバイダーロールおよびプロビジョナーロール** \- 同様に、クラウドユーザーロールは、クラウドのプロバイダーロールおよびプロビジョナーロールに依存して、特定のクラウドプロバイダーのクラウド機能を実装します。たとえば、`cloud_vpn <https://galaxy.ansible.com/ansible-network/cloud_vpn>`_ ロールは、AWS と通信する `aws <https://galaxy.ansible.com/ansible-network/aws>`_ プロバイダーロールに依存します。
+* **ユーザーロール** - 設定の管理など、ユーザーロールはタスクにフォーカスします。`config_manager <https://galaxy.ansible.com/ansible-network/config_manager>`_、 `cloud_vpn <https://galaxy.ansible.com/ansible-network/cloud_vpn>`_ などのロールを Playbook で直接使用します。これらのロールはプラットフォーム/プロバイダーに依存しないため、異なるネットワークプラットフォームまたはクラウドプロバイダーで同じロールおよび Playbook を使用できます。
+* **プラットフォームプロバイダーロール** - プロバイダーロールは、ユーザーロールとさまざまなネットワーク OS の間で変換され、それぞれ API が異なります。各プロバイダーロールは、対応しているユーザーロールからの入力を許可し、特定のネットワーク OS 用にその入力を変換します。ネットワークユーザーロールは、このようなプロバイダーロールに依存して機能を実装します。たとえば、 `config_manager <https://galaxy.ansible.com/ansible-network/config_manager>`_ ユーザーロールは `cisco_ios <https://galaxy.ansible.com/ansible-network/cisco_ios>`_ プロバイダーロールを使用して、Cisco IOS ネットワークデバイスにタスクを実装します。
+* **クラウドのプロバイダーロールおよびプロビジョナーロール** - 同様に、クラウドユーザーロールは、クラウドのプロバイダーロールおよびプロビジョナーロールに依存して、特定のクラウドプロバイダーのクラウド機能を実装します。たとえば、 `cloud_vpn <https://galaxy.ansible.com/ansible-network/cloud_vpn>`_ ロールは、AWS と通信する `aws <https://galaxy.ansible.com/ansible-network/aws>`_ プロバイダーロールに依存します。
 
 
-ネットワークユーザーロールに最低でも 1 つのプラットフォームプロバイダーロールをインストールし、``ansible_network_provider`` をそのプロバイダー (``ansible_network_provider: ansible-network.cisco_ios``など) に設定する必要があります。Ansible Galaxy は、Ansible Galaxy のロール詳細に記載されているその他の依存関係を自動的にインストールします。
+ネットワークユーザーロールに最低でも 1 つのプラットフォームプロバイダーロールをインストールし、``ansible_network_provider`` をそのプロバイダー (``ansible_network_provider: ansible-network.cisco_ios`` など) に設定する必要があります。Ansible Galaxy は、Ansible Galaxy のロール詳細に記載されているその他の依存関係を自動的にインストールします。
 
 たとえば、Cisco IOS デバイスで ``config_manager`` ロールを使用するには、以下のコマンドを使用します。
 
 .. code-block:: bash
 
-   \[user@ansible]$ ansible-galaxy install ansible-network.cisco\_ios
-\[user@ansible]$ ansible-galaxy install ansible-network.config\_manager
+   [user@ansible]$ ansible-galaxy install ansible-network.cisco_ios
+   [user@ansible]$ ansible-galaxy install ansible-network.config_manager
 
 ロールは、Ansible Galaxy の例 (各ロールの **Read Me** タブ) で詳細に説明されています。
 
@@ -292,8 +292,8 @@ Ansible Galaxy ロールバージョンには、2 つのコンポーネントが
 
 .. code-block:: bash
 
-  \[user@ansible]$ ansible-galaxy install ansible-network.network\_engine,v2.7.0 --force
-\[user@ansible]$ ansible-galaxy install ansible-network.cisco\_nxos,v2.7.1 --force
+  [user@ansible]$ ansible-galaxy install ansible-network.network_engine,v2.7.0 --force
+  [user@ansible]$ ansible-galaxy install ansible-network.cisco_nxos,v2.7.1 --force
 
 .. seealso::
 

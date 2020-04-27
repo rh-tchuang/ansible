@@ -1,4 +1,4 @@
-.. \_routeros\_platform\_options:
+.. _routeros_platform_options:
 
 ***************************************
 RouterOS プラットフォームのオプション
@@ -30,7 +30,7 @@ RouterOS プラットフォームのオプション
     返されるデータ形式 ``stdout[0]``
     ====================  ==========================================
 
-.. |enable\_mode| replace::Enable モード |br| (権限昇格)
+.. |enable_mode| replace::Enable モード |br| (権限昇格)
 
 
 RouterOS は ``ansible_connection: local`` に対応していません。``ansible_connection: network_cli`` を使用する必要があります。
@@ -43,14 +43,14 @@ CLI の例: ``group_vars/routeros.yml``
 
 .. code-block:: yaml
 
-   ansible\_connection: network\_cli
-   ansible\_network\_os: routeros
-   ansible\_user: myuser
-   ansible\_password: !vault...
-   ansible\_become: yes
-   ansible\_become\_method: enable
-   ansible\_become\_password: !vault...
-   ansible\_ssh\_common\_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
+   ansible_connection: network_cli
+   ansible_network_os: routeros
+   ansible_user: myuser
+   ansible_password: !vault...
+   ansible_become: yes
+   ansible_become_method: enable
+   ansible_become_password: !vault...
+   ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q bastion01"'
 
 
 - SSH キー (ssh-agent を含む) を使用している場合は、``ansible_password`` 設定を削除できます。
@@ -63,9 +63,9 @@ CLI タスクの例
 .. code-block:: yaml
 
    - name:Display resource statistics (routeros)
-     routeros\_command:
+     routeros_command:
        commands: /system resource print
-     register: routeros\_resources
-     when: ansible\_network\_os == 'routeros'
+     register: routeros_resources
+     when: ansible_network_os == 'routeros'
 
-.. include:: shared\_snippets/SSH\_warning.txt
+.. include:: shared_snippets/SSH_warning.txt

@@ -1,103 +1,103 @@
 .. _general_precedence_rules:
 
-Controlling how Ansible behaves: precedence rules
+Ansible の動作の制御：優先順位のルール
 =================================================
 
-To give you maximum flexibility in managing your environments, Ansible offers many ways to control how Ansible behaves: how it connects to managed nodes, how it works once it has connected.
-If you use Ansible to manage a large number of servers, network devices, and cloud resources, you may define Ansible behavior in several different places and pass that information to Ansible in several different ways.
-This flexibility is convenient, but it can backfire if you do not understand the precedence rules.
+Ansible には、環境に最大限の柔軟性をもたせられるように、管理対象ノードへの接続方法や、接続後の動作など Ansible の動作を制御する手段が多数あります。
+Ansible を使用して多数のサーバー、ネットワークデバイス、クラウドリソースを管理する場合に、Ansible の動作をさまざまな場所で定義して、さまざまな方法で Ansible にその情報を渡すことができます。
+柔軟性があると便利ですが、優先順位ルールを理解していない場合には、逆効果となる可能性があります。
 
-These precedence rules apply to any setting that can be defined in multiple ways (by configuration settings, command-line options, playbook keywords, variables).
+このような優先順位ルールは、複数の方法で定義できるオプション (設定オプション、コマンドラインオプション、Playbook キーワード、変数) に適用されます。
 
 .. contents::
    :local:
 
-Precedence categories
+優先順位のカテゴリー
 ---------------------
 
-Ansible offers four sources for controlling its behavior. In order of precedence from lowest (most easily overridden) to highest (overrides all others), the categories are:
+Ansible では、動作の制御に使用するソースが 4 つあります。カテゴリーは以下のとおりです (優先順位の低いもの (最も簡単にオーバーライドされる) から高いもの (他のすべてをオーバーライドする)に並べています)。
 
- * Configuration settings
- * Command-line options
- * Playbook keywords
- * Variables
+ * 設定オプション
+ * コマンドラインオプション
+ * Playbook キーワード
+ * 変数
 
-Each category overrides any information from all lower-precedence categories. For example, a playbook keyword will override any configuration setting.
+各カテゴリーは、そのカテゴリーよりも優先順位の低いカテゴリーからの情報をすべてオーバーライドします。たとえば、Playbook キーワードは、設定オプションをオーバーライドします。
 
-Within each precedence category, specific rules apply. However, generally speaking, 'last defined' wins and overrides any previous definitions.
+各優先順位カテゴリーで、固有のルールが適用されます。ただし、一般的に「最後に定義 (last defined)」の内容が優先度が高く、以前の定義をオーバーライドします。
 
-Configuration settings
+設定オプション
 ^^^^^^^^^^^^^^^^^^^^^^
 
-:ref:`Configuration settings<ansible_configuration_settings>` include both values from the ``ansible.cfg`` file and environment variables. Within this category, values set in configuration files have lower precedence. Ansible uses the first ``ansible.cfg`` file it finds, ignoring all others. Ansible searches for ``ansible.cfg`` in these locations in order:
+:ref:`設定オプション<ansible_configuration_settings>` には ``ansible.cfg`` ファイルと環境変数の両方の値が含まれます。このカテゴリーでは、設定ファイルに指定した値のほうが優先順位が低くなります。Ansible は最初に検出した ``ansible.cfg`` ファイルを使用して、それ以外はすべて無視します。また、Ansible は``ansible.cfg`` がないか、以下の場所を上から順に検索します。
 
- * ``ANSIBLE_CONFIG`` (environment variable if set)
- * ``ansible.cfg`` (in the current directory)
- * ``~/.ansible.cfg`` (in the home directory)
+ * ``ANSIBLE_CONFIG`` (環境変数が設定されている場合)
+ * ``ansible.cfg`` (現在のディレクトリー)
+ * ``~/.ansible.cfg`` (ホームディレクトリー)
  * ``/etc/ansible/ansible.cfg``
 
-Environment variables have a higher precedence than entries in ``ansible.cfg``. If you have environment variables set on your control node, they override the settings in whichever ``ansible.cfg`` file Ansible loads. The value of any given environment variable follows normal shell precedence: the last value defined overwrites previous values.
+環境変数は、``ansible.cfg`` のエントリーよりも優先順位が高くなっています。コントロールノードに環境変数を設定している場合には、Ansible が読み込む ``ansible.cfg`` ファイルの設定よりも、環境変数が優先されます。指定された環境変数の値は、Shell の通常の優先順位 (最後に定義した値が、それ以前の値をオーバーライド) に準拠します。
 
-Command-line options
+コマンドラインオプション
 ^^^^^^^^^^^^^^^^^^^^
 
-Any command-line option will override any configuration setting.
+コマンドラインオプションは、設定オプションをすべてオーバーライドします。
 
-When you type something directly at the command line, you may feel that your hand-crafted values should override all others, but Ansible does not work that way. Command-line options have low precedence - they override configuration only. They do not override playbook keywords, variables from inventory or variables from playbooks.
+コマンドラインに直接入力すると、手動で入力した値が、それ以外の設定をすべてオーバーライドするように感じますが、Ansible の仕様は異なります。コマンドラインオプションの優先順位は低いため、オーバーライドできるのは、設定のみです。Playbook のキーワードや、インベントリーからの変数、Playbook から変数をオーバーライドすることはありません。
 
-You can override all other settings from all other sources in all other precedence categories at the command line by  :ref:`general_precedence_extra_vars`, but that is not a command-line option, it is a way of passing a :ref:`variable<general_precedence_variables>`.
+:ref:`general_precedence_extra_vars` を使用すると、コマンドライン以外の優先順位カテゴリーの他のソースからの設定をすべて、コマンドラインでオーバーライドできますが、これはコマンドラインオプションではなく、:ref:`variable<general_precedence_variables>` を渡す手段としてコマンドラインを使用しています。
 
-At the command line, if you pass multiple values for a parameter that accepts only a single value, the last defined value wins. For example, this :ref:`ad-hoc task<intro_adhoc>` will connect as ``carol``, not as ``mike``::
+コマンドラインで、単一の値しか許容できないパラメーターに複数の値を指定すると、最後に定義した値が優先されます。たとえば、以下の :ref:`ad-hoc task<intro_adhoc>` では、``mike`` ではなく、``carol`` として接続されます::
 
       ansible -u mike -m ping myhost -u carol
 
-Some parameters allow multiple values. In this case, Ansible will append all values from the hosts listed in inventory files inventory1 and inventory2::
+パラメーターによっては、複数の値を使用できます。以下の場合には、Ansible は、インベントリーファイル「inventory1」と「inventory2」に記載されているホストからの値をすべて追加します。
 
    ansible -i /path/inventory1 -i /path/inventory2 -m ping all
 
-The help for each :ref:`command-line tool<command_line_tools>` lists available options for that tool.
+各 :ref:`コマンドラインツール<command_line_tools>` のヘルプは、対象のツールで利用可能なオプションを表示します。
 
-Playbook keywords
+Playbook キーワード
 ^^^^^^^^^^^^^^^^^
 
-Any :ref:`playbook keyword<playbook_keywords>` will override any command-line option and any configuration setting.
+変数は、:ref:`Playbook のキーワード<playbook_keywords>`、コマンドラインオプション、設定オプションをすべてオーバーライドします。
 
-Within playbook keywords, precedence flows with the playbook itself; the more specific wins against the more general:
+Playbook キーワード内の優先順位は、Playbook の内容 (一般的な設定より具体的な設定が優先される) により左右されます。
 
-- play (most general)
-- blocks/includes/imports/roles (optional and can contain tasks and each other)
-- tasks (most specific)
+- プレイ (最も一般的)
+- blocks/includes/imports/roles (任意、タスクを含めることも、blocks/includes/imports/roles の設定を相互に含めることができる)
+- タスク (最も具体的)
 
-A simple example::
+簡単な例::
 
    - hosts: all
      connection: ssh
      tasks:
-       - name: This task uses ssh.
+       - name:This task uses ssh.
          ping:
 
-       - name: This task uses paramiko.
+       - name:This task uses paramiko.
          connection: paramiko
          ping:
 
-In this example, the ``connection`` keyword is set to ``ssh`` at the play level. The first task inherits that value, and connects using ``ssh``. The second task inherits that value, overrides it, and connects using ``paramiko``.
-The same logic applies to blocks and roles as well. All tasks, blocks, and roles within a play inherit play-level keywords; any task, block, or role can override any keyword by defining a different value for that keyword within the task, block, or role.
+この例では、``connection`` キーワードは、プレイレベルで ``ssh`` に設定されます。最初のタスクはこの値を継承して、``ssh`` を使用して接続します。次のタスクはこの値を継承してオーバーライドし、``paramiko`` を使用して接続します。
+blocks や roles でも同じロジックが適用されます。プレイ内の task、block、role はすべて、プレイレベルのキーワードを継承します。キーワードより task または block、role を優先させるには、task、block、role 内の対象のキーワードに異なる値を定義します。
 
-Remember that these are KEYWORDS, not variables. Both playbooks and variable files are defined in YAML but they have different significance.
-Playbooks are the command or 'state description' structure for Ansible, variables are data we use to help make playbooks more dynamic.
+上記は、変数ではなく、キーワードである点に注意してください。Playbook や変数ファイルはいずれも YAML で設定しますが、それぞれ重要性が異なります。
+Playbook はコマンドまたは Ansible の「状態記述」構造で、変数は Playbook をより動的に使用できるようにするためのデータです。
 
 .. _general_precedence_variables:
 
-Variables
+変数
 ^^^^^^^^^
 
-Any variable will override any playbook keyword, any command-line option, and any configuration setting.
+変数は、Playbook のキーワード、コマンドラインオプション、設定オプションすべてをオーバーライドします。
 
-Variables that have equivalent playbook keywords, command-line options, and configuration settings are known as :ref:`connection_variables`. Originally designed for connection parameters, this category has expanded to include other core variables like the temporary directory and the python interpreter.
+同等の Playbook キーワード、コマンドラインオプション、および設定オプションを含む変数は :ref:`connection_variables` と呼ばれています。このカテゴリーは、当初は設定パラメーター向けに設計されてましたが、一時ディレクトリーや Python インタープリターなど、他のコア変数を含めるように拡張されました。
 
-Connection variables, like all variables, can be set in multiple ways and places. You can define variables for hosts and groups in :ref:`inventory<intro_inventory>`. You can define variables for tasks and plays in ``vars:`` blocks in :ref:`playbooks<about_playbooks>`. However, they are still variables - they are data, not keywords or configuration settings. Variables that override playbook keywords, command-line options, and configuration settings follow the same rules of :ref:`variable precedence <ansible_variable_precedence>` as any other variables.
+接続変数はすべての変数と同様に、複数の手法や場所で設定できます。ホストとグループの変数は、:ref:`インベントリー<intro_inventory>` で定義できます。:ref:`playbooks<about_playbooks>` の ``vars:`` ブロックで、タスクとプレイの変数を定義できます。ただし、上記は、キーワードや設定オプションではなく、データを格納する変数です。Playbook キーワード、コマンドラインオプション、設定オプションをオーバーライドする変数は、他の変数が使用する :ref:`変数の優先順位 <ansible_variable_precedence>` と同じルールに従います。
 
-When set in a playbook, variables follow the same inheritance rules as playbook keywords. You can set a value for the play, then override it in a task, block, or role::
+変数は、Playbook に設定される場合には、Playbook キーワードと同じ継承ルールに従います。プレイの値を設定すると、タスク、ブロック、またはロールの値をオーバーライドできます。
 
    - hosts: cloud
      gather_facts: false
@@ -105,36 +105,36 @@ When set in a playbook, variables follow the same inheritance rules as playbook 
      vars:
        ansible_become_user: admin
      tasks:
-       - name: This task uses admin as the become user.
+       - name:This task uses admin as the become user.
          dnf:
            name: some-service
            state: latest
        - block:
-           - name: This task uses service-admin as the become user.
+           - name:This task uses service-admin as the become user.
              # a task to configure the new service
-           - name: This task also uses service-admin as the become user, defined in the block.
+           - name:This task also uses service-admin as the become user, defined in the block.
              # second task to configure the service
-         vars:
-           ansible_become_user: service-admin
-       - name: This task (outside of the block) uses admin as the become user again.
+vars:
+ansible_become_user: service-admin
+       - name:This task (outside of the block) uses admin as the become user again.
          service:
            name: some-service
            state: restarted
 
-Variable scope: how long is a value available?
+変数の範囲: 値が有効な期間
 """"""""""""""""""""""""""""""""""""""""""""""
 
-Variable values set in a playbook exist only within the playbook object that defines them. These 'playbook object scope' variables are not available to subsequent objects, including other plays.
+Playbook に設定した変数の値は、その値を定義する Playbook オブジェクト内にのみ存在します。このような「範囲が Playbook オブジェクト」の変数は、他のプレイなど、後続のオブジェクトでは利用できません。
 
-Variable values associated directly with a host or group, including variables defined in inventory, by vars plugins, or using modules like :ref:`set_fact<set_fact_module>` and :ref:`include_vars<include_vars_module>`, are available to all plays. These 'host scope' variables are also available via the ``hostvars[]`` dictionary.
+インベントリー、vars プラグイン、:ref:`set_fact<set_fact_module>` や :ref:`include_vars<include_vars_module>` といったモジュールの使用など、ホストやグループに直接関連付けられた変数値は、全プレイで利用できます。また、上記のような「範囲がホスト」の変数は ``hostvars[]`` ディクショナリーで利用できます。
 
 .. _general_precedence_extra_vars:
 
-Using ``-e`` extra variables at the command line
+コマンドラインでの追加変数 (``-e``) の使用
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To override all other settings in all other categories, you can use extra variables: ``--extra-vars`` or ``-e`` at the command line. Values passed with ``-e`` are variables, not command-line options, and they will override configuration settings, command-line options, and playbook keywords as well as variables set elsewhere. For example, this task will connect as ``brian`` not as ``carol``::
+コマンドラインで追加変数 (``--extra-vars`` または ``-e``) を使用して、他のカテゴリーの全設定をオーバーライドできます。``-e`` で渡される値は、コマンドラインオプションではなく変数で、他で設定した変数をはじめ、設定オプション、コマンドラインオプション、Playbook キーワードをオーバーライドします。たとえば、以下のタスクでは、``carol`` ではなく ``brian`` として接続されます。
 
    ansible -u carol -e 'ansible_user=brian' -a whoami all
 
-You must specify both the variable name and the value with ``--extra-vars``.
+変数名と値は、``--extra-vars`` で指定する必要があります。

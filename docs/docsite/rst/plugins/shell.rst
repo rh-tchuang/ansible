@@ -1,4 +1,4 @@
-.. \_shell\_plugins:
+.. _shell_plugins:
 
 Shell プラグイン
 =============
@@ -10,7 +10,7 @@ Shell プラグイン
 Shell プラグインが機能し、Ansible が実行する基本的なコマンドが適切にフォーマットされ、かつターゲットマシンと連携することを確認します。
 これにより、ユーザーが Ansible によるタスクの実行方法に関連する特定の動作を設定できるようになります。
 
-.. \_enabling\_shell:
+.. _enabling_shell:
 
 Shell プラグインの有効化
 ----------------------
@@ -21,7 +21,7 @@ Shell プラグインの有効化
 .. warning:: デフォルトの ``/bin/sh`` が POSIX に準拠していないシェルで、実行に利用できない場合は、
  使用するプラグインを変更するべきではありません。
 
-.. \_using\_shell:
+.. _using_shell:
 
 Shell プラグインの使用
 -------------------
@@ -55,4 +55,4 @@ Shell プラグインの使用
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       \#ansible IRC chat channel
+       #ansible IRC chat channel

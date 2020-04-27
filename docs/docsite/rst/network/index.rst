@@ -1,4 +1,4 @@
-.. \_network\_guide:
+.. _network_guide:
 
 ******************************
 ネットワーク自動化での Ansible
@@ -13,6 +13,6 @@ Ansible を初めて使用する場合や、ネットワーク管理に Ansible 
 .. toctree::
    :maxdepth: 3
 
-   getting\_started/index
-   user\_guide/index
-   dev\_guide/index
+   getting_started/index
+   user_guide/index
+   dev_guide/index
