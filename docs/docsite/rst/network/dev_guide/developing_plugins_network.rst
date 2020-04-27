@@ -1,6 +1,6 @@
 
-.. \_developing\_modules\_network:
-.. \_developing\_plugins\_network:
+.. _developing_modules_network:
+.. _developing_plugins_network:
 
 **************************
 ネットワーク接続プラグイン
@@ -32,7 +32,7 @@ connection = Connection(module.\_socket\_path)
 .. contents::
    :local:
 
-.. \_developing\_plugins\_httpapi:
+.. _developing_plugins_httpapi:
 
 httpapi プラグインの開発
 ==========================
@@ -137,7 +137,7 @@ NETCONF プラグインの開発
 * ``plugins/netconf/junos.py`` に実装されたベンダー固有の Junos RPC メソッドを参照してください。
 * 今回の例では、``ansible_network_os`` の値を netconf プラグインファイルの名前 (ここでは ``junos``) に設定します。
 
-.. \_developing\_plugins\_network\_cli:
+.. _developing_plugins_network_cli:
 
 network\_cli プラグインの開発
 ==============================

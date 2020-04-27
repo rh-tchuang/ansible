@@ -1,4 +1,4 @@
-.. \_network\_developer\_guide:
+.. _network_developer_guide:
 
 **************************************
 ネットワーク自動化のための開発者ガイド

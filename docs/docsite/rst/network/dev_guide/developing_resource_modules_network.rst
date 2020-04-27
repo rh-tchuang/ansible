@@ -1,5 +1,5 @@
 
-.. \_developing\_resource\_modules:
+.. _developing_resource_modules:
 
 ***********************************
 ネットワークリソースモジュールの開発
