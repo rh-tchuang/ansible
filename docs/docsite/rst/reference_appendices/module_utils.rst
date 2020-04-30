@@ -2,26 +2,26 @@
 .. _module_utils:
 
 ***************************************************************
-Ansible 参考資料:モジュールユーティリティー
+Ansible Reference: Module Utilities
 ***************************************************************
 
-このページでは、
-Python で Ansible モジュールを記述するときに役立つユーティリティーをまとめています。
+This page documents utilities intended to be helpful when writing
+Ansible modules in Python.
 
 
 AnsibleModule
 --------------
 
-この機能を使用するには、モジュールに ``from ansible.module_utils.basic import AnsibleModule`` を追加します。
+To use this functionality, include ``from ansible.module_utils.basic import AnsibleModule`` in your module.
 
 .. autoclass:: ansible.module_utils.basic.AnsibleModule
    :members:
 
 
-基本
+Basic
 ------
 
-この機能を使用するには、モジュールに ``import ansible.module_utils.basic`` を追加します。
+To use this functionality, include ``import ansible.module_utils.basic`` in your module.
 
 .. automodule:: ansible.module_utils.basic
    :members:

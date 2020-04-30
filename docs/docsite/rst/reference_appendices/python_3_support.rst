@@ -11,8 +11,7 @@ Python 3 を使用できるようにコントローラーと管理マシンを�
 コントローラー側
 ----------------------
 
-Python 3 で :command:`/usr/bin/ansible` を最も簡単に実行するには、
-pip の Python 3 バージョンをインストールします。 これでデフォルトで、Python 3 を使用して :command:`/usr/bin/ansible` を実行できます。
+Python 3 で :command:`/usr/bin/ansible` を最も簡単に実行するには、pip の Python 3 バージョンをインストールします。 これでデフォルトで、Python 3 を使用して :command:`/usr/bin/ansible` を実行できます。
 
 .. code-block:: shell
 
@@ -20,8 +19,7 @@ pip の Python 3 バージョンをインストールします。 これでデ�
     $ ansible --version | grep "python version"
     python version = 3.6.2 (default, Sep 22 2017, 08:28:09) [GCC 7.2.1 20170915 (Red Hat 7.2.1-2)]
     
-Ansible :ref:`from_source` を実行していて、ソースのチェックアウトに Python 3 を使用するには、
-``python3`` でコマンドを実行します。 例:
+Ansible :ref:`from_source` を実行していて、ソースのチェックアウトに Python 3 を使用するには、``python3`` でコマンドを実行します。 例:
 
 .. code-block:: shell
 
@@ -49,13 +47,13 @@ Ansible :ref:`from_source` を実行していて、ソースのチェックア�
 .. code-block:: ini
 
     # Example inventory that makes an alias for localhost that uses Python3
-localhost-py3 ansible_host=localhost ansible_connection=local ansible_python_interpreter=/usr/bin/python3
+    localhost-py3 ansible_host=localhost ansible_connection=local ansible_python_interpreter=/usr/bin/python3
 
-# Example of setting a group of hosts to use Python3
-[py3-hosts]
+    # Example of setting a group of hosts to use Python3
+    [py3-hosts]
     ubuntu16
-fedora27
-    
+    fedora27
+
     [py3-hosts:vars]
     ansible_python_interpreter=/usr/bin/python3
     

@@ -44,7 +44,7 @@
     foo.example.com     ansible_connection=paramiko
 
 上記の値をグループ変数や、group_vars/<groupname> ファイルに格納できます。
-変数を整理する方法、本ガイドの他の部分を参照してください。
+変数を整理する方法は、本ガイドの他の部分を参照してください。
 
 .. _use_ssh:
 
@@ -105,7 +105,7 @@ Ansible がダウンしているターゲットを適宜検出できるように
 
 .. _ec2_cloud_performance:
 
-EC2 内の管理の速度を高めるにはどうすればいいですか
+EC2 内の管理を高速化するにはどうすればいいですか
 ++++++++++++++++++++++++++++++++++++++++
 
 ラップトップから EC2 マシンを管理しないようにしてください。 先に EC2 内の管理ノードに接続して、
@@ -149,11 +149,11 @@ Python モジュールのシバン (!#) の行は置き換えないでくださ�
 Ansible インストール中に Ansible パッケージに必要な依存関係にどのように対応すればいいですか
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Ansible のインストール時に `No package 'libffi' found` または `fatal error Python.h:No such file or directory`
+Ansible のインストール時に `No package 'libffi' found`、`fatal error Python.h:No such file or directory`
 などのエラーが発生する場合があります。このようなエラーは通常、Ansible で必要なパッケージの依存関係パッケージがない場合に発生します。
-たとえば、`libffi` パッケージは `pynacl` と `paramiko` (Ansible -> paramiko -> pynacl -> libffi) の依存関係です。
+たとえば、`libffi` パッケージが `pynacl` と `paramiko` (Ansible -> paramiko -> pynacl -> libffi) の依存関係にある場合です。
 
-このような依存関係の問題を解決するには、OS ネイティブのパッケージマネージャー (`yum`、`dnf`、または `apt` またはパッケージのインストールガイドに記載のもの) のインストールが必要になる場合があります。
+このような依存関係の問題を解決するには、OS ネイティブのパッケージマネージャー (`yum`、`dnf`、`apt` など) またはパッケージのインストールガイドに記載のものをインストールすることが必要になる場合があります。
 
 このような依存関係とそのインストール方法は、各パッケージのドキュメントを参照してください。
 
@@ -163,7 +163,7 @@ Ansible のインストール時に `No package 'libffi' found` または `fatal
 Red Hat では、どのような顧客のプラットフォームをサポートしていますか
 ---------------------------------------------
 
-さまざまなプラットフォームをサポートしています。具体的な一覧は、`ナレッジベースの記事<https://access.redhat.com/articles/3168091>`_ を参照してください。
+さまざまなプラットフォームをサポートしています。具体的な一覧は、`ナレッジベースの記事 <https://access.redhat.com/articles/3168091>`_ を参照してください。
 
 virtualenv での実行
 -----------------------
@@ -173,16 +173,16 @@ virtualenv での実行
 .. code-block:: shell
 
     $ virtualenv ansible
-$ source ./ansible/bin/activate
-$ pip install ansible
+    $ source ./ansible/bin/activate
+    $ pip install ansible
 
 Python 2 ではなく Python 3 で実行する場合は、以下のように変更する場合があります。
 
 .. code-block:: shell
 
     $ virtualenv -p python3 ansible
-$ source ./ansible/bin/activate
-$ pip install ansible
+    $ source ./ansible/bin/activate
+    $ pip install ansible
 
 pip で入手できないライブラリーを使用する必要がある場合 (
 例: SELinux が有効な Red Hat Enterprise Linux または Fedora などのシステムにある SELinux Python のバインディング) は、
@@ -200,11 +200,11 @@ virtualenv にインストールする必要があります。 方法は 2 種�
   .. code-block:: shell
 
       $ virtualenv ansible --system-site-packages
-$ cp -r -v /usr/lib64/python3.*/site-packages/selinux/ ./py3-ansible/lib64/python3.*/site-packages/
+      $ cp -r -v /usr/lib64/python3.*/site-packages/selinux/ ./py3-ansible/lib64/python3.*/site-packages/
       $ cp -v /usr/lib64/python3.*/site-packages/*selinux*.so ./py3-ansible/lib64/python3.*/site-packages/
 
 
-BSD の実行
+BSD での実行
 --------------
 
 .. seealso:: :ref:`working_with_bsd`
@@ -246,7 +246,7 @@ z/OS でターゲットとして Ansible を実行しようとすると、複数
 * `/etc/ansible/ansible.cfg` で ``pipelining = False`` と指定されている場合には、Ansible モジュールは Python の実行エラーが何であっても、sftp 経由でバイナリーモードで転送される。
 
   .. error::
-      SyntaxError:Non-UTF-8 code starting with \\'\\x83\\' in file /a/user1/.ansible/tmp/ansible-tmp-1548232945.35-274513842609025/AnsiballZ\_stat.py on line 1, but no encoding declared; see https://python.org/dev/peps/pep-0263/ for details
+      SyntaxError:Non-UTF-8 code starting with \'\x83\' in file /a/user1/.ansible/tmp/ansible-tmp-1548232945.35-274513842609025/AnsiballZ_stat.py on line 1, but no encoding declared; see https://python.org/dev/peps/pep-0263/ for details
 
   これを修正するには、`/etc/ansible/ansible.cfg` で ``pipelining = True`` と指定してください。
 
@@ -392,7 +392,7 @@ Ansible はデフォルトで、管理対象のマシンの「ファクト」を
 
 Ansible は、技術的にはグループ変数にアクセスせず、直接グループを使用するわけではありません。グループは、ホスト選択のラベルとして機能し、変数を一括で割り当てる手段を提供します。グループは、第一級オブジェクトではありません。Ansible が関心があるのは、ホストとタスクのみです。
 
-ただし、対象のグループに含まれるホストを選択すると、変数にアクセスできます。例については、first_host_in_a_group_ below を参照してください。
+ただし、対象のグループに含まれるホストを選択すると、変数にアクセスできます。例については、以下の first_host_in_a_group_ を参照してください。
 
 
 .. _first_host_in_a_group:
@@ -412,7 +412,7 @@ webservers グループの最初の webserver の IP アドレスが必要な場
     {{ hostvars[groups['webservers'][0]]['ansible_eth0']['ipv4']['address'] }}
 
 webserver グループの最初のマシンのホスト名を取得している点に注意してください。 テンプレートでこれを行う場合は、
-Jinja2 (#set' directive to simplify this, or in a playbook, you could also use set_fact::) を使用できます。
+Jinja2 (#set' ディレクトリーはこれを簡易にするためのもの。また Playbook では、set_fact を使用することもできます::) を使用できます。
 
     - set_fact: headnode={{ groups[['webservers'][0]] }}
 
@@ -448,7 +448,7 @@ local_home: "{{ lookup('env','HOME') }}"
    {{ ansible_env.SOME_VARIABLE }}
 
 タスクの実行に環境変数を設定する必要がある場合には、:ref:`高度な Playbook <playbooks_special_topics>` セクションの :ref:`playbooks_environment` を参照してください。
-ターゲットマシンで環境変数を設定する方法は複数存在します。テンプレートの :ref:`template <template_module>` モジュール、:ref:`replace <replace_module>` モジュールまたは :ref:`lineinfile <lineinfile_module>` モジュールを使用して、環境変数をファイルに導入できます。
+ターゲットマシンで環境変数を設定する方法は複数存在します。テンプレートの :ref:`template <template_module>` モジュール、:ref:`replace <replace_module>` モジュール、または :ref:`lineinfile <lineinfile_module>` モジュールを使用して、環境変数をファイルに導入できます。
 OS、ディストリビューション、設定により、変数するファイルは異なります。
 
 .. _user_passwords:
@@ -469,7 +469,7 @@ Ansible ad-hoc コマンドを使用するのが最も簡単なオプション�
     mkpasswd --method=sha-512
 
 
-お使いのシステムにこのユーティリティーがインストールされていない場合 (例: MacOS を使用している場合など) には、
+お使いのシステムにこのユーティリティーがインストールされていない場合 (例: MacOS を使用している場合など) は、
 Python を使用してこのようなパスワードを簡単に生成できます。まず、`Passlib <https://bitbucket.org/ecollins/passlib/wiki/Home>`_ パスワードが、
 hashing ライブラリーにインストールされていることを確認します。
 
@@ -517,7 +517,7 @@ Ansible では、変数のドット表記とアレイ表記が可能ですが、
 .. code-block:: jinja
 
     item.update # this breaks if item is a dictionary, as 'update()' is a python method for dictionaries
-item['update'] # this works
+    item['update'] # this works
 
 
 .. _argsplat_unsafe:
@@ -577,7 +577,7 @@ Web インターフェースや REST API などがありますか
 
 .. _keep_secret_data:
 
-Playbook に機密データを保存するにはどうすればいいですか?
+Playbook に機密データを保存するにはどうすればいいですか
 +++++++++++++++++++++++++++++++++++++++++
 
 Ansible のコンテンツに機密データを保存してそのコンテンツを公開するか、ソースコントロールに保持する場合は、:ref:`playbooks_vault` を参照してください。
@@ -612,7 +612,7 @@ no_log 属性は、プレイ全体にも適用できます。
 この条件は、式の解決として Jinja2 を調べます。
 したがって、``when:``、``failed_when:``、および ``changed_when:`` はテンプレート化されるため、``{{ }}`` の追加は回避してください。
 
-それ以外のケースでは、``loop`` または ``with_`` 句などを指定せずに以前は変数を使用できていた場合でも、常にカッコを使用するようにしてください。理由は、未定義の変数と文字列を区別しにくいためです。
+それ以外のケースでは、``loop`` または ``with_`` 句などを指定せずに以前は変数を使用できていた場合でも、常に括弧を使用するようにしてください。理由は、未定義の変数と文字列を区別しにくいためです。
 
 他には「波括弧は並べて使用できない」というルールがありますが、これは頻繁に見受けられます。
 
@@ -669,20 +669,20 @@ OpenSSH の比較的新しいリリースには、SCP クライアントに `バ
 
 * ``scp_if_ssh`` を ``smart`` (先に SFTP を試す) または ``False`` に設定して、SCP の代わりに SFTP を使用します。以下の 4 つの方法から 1 つ実行してください。
     * ``smart`` のデフォルトの設定に依存する。``scp_if_ssh`` が明示的にどこにも設定されていない場合に機能します。
-    * <group_variables>インベントリーに :ref:`ホスト変数` <host_variables>または :ref:`グループ変数` を設定 (``ansible_scp_if_ssh: False``) する。
+    * <group_variables> インベントリーに :ref:`ホスト変数` <host_variables> または :ref:`グループ変数` を設定 (``ansible_scp_if_ssh: False``) する。
     * コントロールノードで環境変数を設定する (``export ANSIBLE_SCP_IF_SSH=False``)。
-    * Ansible の実行時に、環境変数 ``ANSIBLE_SCP_IF_SSH=smart ansible-playbook``を指定する。
+    * Ansible の実行時に、環境変数 ``ANSIBLE_SCP_IF_SSH=smart ansible-playbook`` を指定する。
     * ``ansible.cfg`` ファイルを変更 (``scp_if_ssh=False`` を ``[ssh_connection]`` セクションに追加) する。
-* SCP を使用する必要がある場合には、``-T`` の引数を設定して、SCP クライアントにパスの検証を無視するように指示します。以下の 3 つの方法から 1 つ実行してください。
+* SCP を使用する必要がある場合は、``-T`` の引数を設定して、SCP クライアントにパスの検証を無視するように指示します。以下の 3 つの方法から 1 つ実行してください。
     * :ref:`ホスト変数 <host_variables>` または :ref:`グループ変数 <group_variables>` を設定する (``ansible_scp_extra_args=-T``)。
     * 環境変数をエクスポートするか、指定する (``ANSIBLE_SCP_EXTRA_ARGS=-T``)。
     * ``ansible.cfg`` ファイルを変更する (``scp_extra_args=-T`` を ``[ssh_connection]`` セクションに追加)。
 
-.. note:: ``-T`` の使用時に ``invalid argument`` エラーが表示される場合は、SCP クライアントがファイル名を検証しておらず、このエラーはトリガーされません。
+.. note:: ``-T`` の使用時に ``invalid argument`` エラーが表示される場合は、SCP クライアントがファイル名を検証しておらず、このエラーは発生しません。
 
 .. _i_dont_see_my_question:
 
-ここに記載されている以外に質問があります。
+ここに記載されている以外に質問があります
 ++++++++++++++++++++++++++++
 
 以下のセクションに、IRC および Google グループへのリンクがあります。こちらから、質問をしてください。

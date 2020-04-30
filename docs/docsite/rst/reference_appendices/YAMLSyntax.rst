@@ -30,37 +30,37 @@ YAML には、他にも固有の特徴があります。 YAML ファイルはす
 
     ---
     # A list of tasty fruits
-- Apple
-- Orange
-- Strawberry
-- Mango
-...
+    - Apple
+    - Orange
+    - Strawberry
+    - Mango
+    ...
 
 ディクショナリーは、シンプルな ``key: value`` の形式で表現します (コロンの後にはスペースを挿入します)::
 
     # An employee record
-martin:
-    name: Martin D'vloper
-    job: Developer
-    skill: Elite
+    martin:
+        name: Martin D'vloper
+        job: Developer
+        skill: Elite
 
 ディクショナリーのリストや、値がリスト場合や、ディクショナリーと値が混合している場合など、より複雑なデータ構造も可能です。
 
     # Employee records
--  martin:
-    name: Martin D'vloper
-    job: Developer
-    skills:
-      - python
-      - perl
-      - pascal
--  tabitha:
-    name: Tabitha Bitumen
-    job: Developer
-    skills:
-      - lisp
-      - fortran
-      - erlang
+    -  martin:
+        name: Martin D'vloper
+        job: Developer
+        skills:
+          - python
+          - perl
+          - pascal
+    -  tabitha:
+        name: Tabitha Bitumen
+        job: Developer
+        skills:
+          - lisp
+          - fortran
+          - erlang
 
 ディクショナリーとリストは、必要であれば、略語形式で表現することも可能です::
 
@@ -80,8 +80,8 @@ Ansible では以下の形式はあまり使用されませんが、ブール型
     likes_emacs:TRUE
     uses_cvs: false
 
-値は、 ``|`` または ``>`` を使用して複数行に分けることができます。 「リテラル形式のブロックスカラー」``|`` を使用して複数行に分けた場合には、改行と、末尾にあるスペースが含まれます。
-「折り返し形式のブロックスカラー」``>`` を使用すると、改行を折り返してスペースに置き換えます。この文字を使用して、非常に長い行を簡単に解読し、編集できるようにします。
+値は、 ``|`` または ``>`` を使用して複数行に分けることができます。 「リテラル形式のブロックスカラー」 ``|`` を使用して複数行に分けた場合には、改行と、末尾にあるスペースが含まれます。
+「折り返し形式のブロックスカラー」 ``>`` を使用すると、改行を折り返してスペースに置き換えます。この文字を使用して、非常に長い行を簡単に解読し、編集できるようにします。
 いずれの場合も、インデントは無視されます。
 以下に例を示します::
 
@@ -112,23 +112,23 @@ Ansible では以下の形式はあまり使用されませんが、ブール型
 
     ---
     # An employee record
-name: Martin D'vloper
-job: Developer
-skill: Elite
-employed: True
-foods:
-    - Apple
-    - Orange
-    - Strawberry
-    - Mango
-languages:
-    perl: Elite
-    python: Elite
-    pascal: Lame
-education: |
-    4 GCSEs
-    3 A-Levels
-    BSc in the Internet of Things
+    name: Martin D'vloper
+    job: Developer
+    skill: Elite
+    employed: True
+    foods:
+        - Apple
+        - Orange
+        - Strawberry
+        - Mango
+    languages:
+        perl: Elite
+        python: Elite
+        pascal: Lame
+    education: |
+        4 GCSEs
+        3 A-Levels
+        BSc in the Internet of Things
 
 `Ansible` Playbook の記述を開始するにあたり、以上が YAML について理解しておく必要のある内容です。
 
@@ -145,7 +145,7 @@ Gotchas
 
     windows_drive: c:
 
-...but this will work::
+...ただし、これは機能します::
 
     windows_path: c:\windows
 
@@ -155,7 +155,7 @@ Gotchas
     
     windows_drive: 'c:'
 
-...and then the colon will be preserved.
+...そしてコロンが保存されます。
 
 または、二重引用符を使用してください。
 
@@ -185,12 +185,12 @@ YAML はその値がディクショナリーであると認識するため、以
 引用符で開始される値は、値の一部だけでなく、値全体を引用符で囲む必要があります。ただしく値を引用する方法について、以下に追加で例を挙げています。
 
     foo: "{{ variable }}/additional/string/literal"
-foo2: "{{ variable }}\\backslashes\\are\\also\\special\\characters"
+foo2: "{{ variable }}\backslashes\are\also\special\characters"
     foo3: "even if it's just a string literal it must all be quoted"
     
 以下は有効ではありません::
 
-    foo:"E:\\path\\"rest\\of\\path
+    foo:"E:\path\"rest\of\path
 
 ``'`` および ``"`` 以外に、
 ``[] {} > | * & ! % # ` @ ,`` などの特殊文字 (予約文字) が複数あり、引用なしのスカラーの最初の文字として使用できません。
@@ -226,16 +226,15 @@ YAML は、
    `YAMLLint <http://yamllint.com/>`_
        YAML ヒント (オンライン) は、問題が発生した場合に YAML 構文のデバッグに役立ちます。
    `GitHub サンプルディレクトリー <https://github.com/ansible/ansible-examples>`_
-       Github プロジェクトソースからの Playbook ファイルの完了
+       Github プロジェクトソースにあるすべての Playbook ファイル
    `Wikipedia YAML 構文の参照 <https://en.wikipedia.org/wiki/YAML>`_
        YAML 構文の適切なガイド
    `メーリングリスト <https://groups.google.com/group/ansible-project>`_
        ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel and #yaml for YAML specific questions
-`YAML 1.1 仕様 <https://yaml.org/spec/1.1/>`_
-   PyYAML および libyaml が、
-       現在実装している YAML 1.1 の仕様
-       `YAML 1.2 仕様 <https://yaml.org/spec/1.2/spec.html>`_
-   完全を期すため、YAML 1.2 は 1.1 の後継となります。
+   `YAML 1.1 仕様 <https://yaml.org/spec/1.1/>`_
+       PyYAML および libyaml が、現在実装している YAML 1.1 の仕様
+   `YAML 1.2 仕様 <https://yaml.org/spec/1.2/spec.html>`_
+        完全を期すため、YAML 1.2 は 1.1 の後継となります。
 

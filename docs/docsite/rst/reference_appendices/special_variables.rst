@@ -38,7 +38,7 @@ ansible_parent_role_names
     現在のロールが :ref:`include_role <include_role_module>` アクションまたは :ref:`import_role <import_role_module>` アクションで実行されていると、この変数には親のロールの全一覧と、その一覧の最初の項目である最新のロール (このロールを追加/インポートしたロール) が含まれます。
     複数の包含がある場合には、この一覧は *最後* のロール (このロールに含まれるロール) を、一覧の *最初* の項目として一覧に追加します。固有のロールを一覧に複数回存在させることも可能です。
 
-    例:When role **A** includes role **B**, inside role B, ``ansible_parent_role_names`` will equal to ``['A']``.If role **B** then includes role **C**, the list becomes ``['B', 'A']``.
+    例:ロール **A** にロール **B** に含まれている場合、ロール B の内部では ``ansible_parent_role_names`` は ``['A']`` と等しくなります。If role **B** then includes role **C**, the list becomes ``['B', 'A']``.
 
 ansible_parent_role_paths
     現在のロールが :ref:`include_role <include_role_module>` アクションまたは :ref:`import_role <import_role_module>` アクションで実行されていると、この変数には親のロールの全一覧と、その一覧の最初の項目である最新のロール (このロールを追加/インポートしたロール) が含まれます。
@@ -54,7 +54,7 @@ ansible_play_hosts_all
     プレイが対象としたホストの一覧
 
 ansible_play_role_names
-    現在のプレイに現在インポートされているロールの名前。この一覧には、依存関係を介して暗黙的に組み込まれるロール名は**含まれません**
+    現在のプレイに現在インポートされているロールの名前。この一覧には、依存関係を介して暗黙的に組み込まれるロール名は **含まれません**
     。
 
 ansible_playbook_python
@@ -68,7 +68,7 @@ ansible_run_tags
     CLI オプション ``--tags`` の内容。現在の実行に含まれるタグを指定します。
 
 ansible_search_path
-    アクションプラグインとルックアップの現在の検索パス。``template: src=myfile`` を指定したときに検索する相対パス
+    アクションプラグインとルックアップの現在の検索パス。``template: src=myfile`` を指定したときに検索する相対パスです。
 
 ansible_skip_tags
     CLI オプション ``--skip_tags`` の内容。このオプションでは、現在の実行で省略するタグを指定します。
@@ -104,10 +104,10 @@ omit
     タスクのオプションを省略できるようにする特別変数 (つまり ``- user: name=bob home={{ bobs_home|default(omit) }}``)
 
 play_hosts
-    非推奨。ansible_play_batch と同じ
+    非推奨。ansible_play_batch と同じです。
 
 ansible_play_name
-    現在実行されているプレイの名前。``2.8`` で追加。
+    現在実行されているプレイの名前。``2.8`` で追加されました。
 
 playbook_dir
     ``ansible-playbook`` コマンドラインに渡した Playbook のディレクトリーへのパス
@@ -116,7 +116,7 @@ role_name
     現在実行中のロール名
 
 role_names
-    非推奨。ansible_play_role_names と同じ
+    非推奨。ansible_play_role_names と同じです。
 
 role_path
     現在実行中のロールのディレクトリーへのパス

@@ -1,6 +1,6 @@
 .. _general_precedence_rules:
 
-Ansible の動作の制御：優先順位のルール
+Ansible の動作の制御: 優先順位のルール
 =================================================
 
 Ansible には、環境に最大限の柔軟性をもたせられるように、管理対象ノードへの接続方法や、接続後の動作など Ansible の動作を制御する手段が多数あります。
@@ -15,7 +15,7 @@ Ansible を使用して多数のサーバー、ネットワークデバイス、
 優先順位のカテゴリー
 ---------------------
 
-Ansible では、動作の制御に使用するソースが 4 つあります。カテゴリーは以下のとおりです (優先順位の低いもの (最も簡単にオーバーライドされる) から高いもの (他のすべてをオーバーライドする)に並べています)。
+Ansible では、動作の制御に使用するソースが 4 つあります。カテゴリーは以下のとおりです (優先順位の低いもの (最も簡単にオーバーライドされる) から高いもの (他のすべてをオーバーライドする) に並べています)。
 
  * 設定オプション
  * コマンドラインオプション
@@ -29,7 +29,7 @@ Ansible では、動作の制御に使用するソースが 4 つあります。
 設定オプション
 ^^^^^^^^^^^^^^^^^^^^^^
 
-:ref:`設定オプション<ansible_configuration_settings>` には ``ansible.cfg`` ファイルと環境変数の両方の値が含まれます。このカテゴリーでは、設定ファイルに指定した値のほうが優先順位が低くなります。Ansible は最初に検出した ``ansible.cfg`` ファイルを使用して、それ以外はすべて無視します。また、Ansible は``ansible.cfg`` がないか、以下の場所を上から順に検索します。
+:ref:`設定オプション<ansible_configuration_settings>` には ``ansible.cfg`` ファイルと環境変数の両方の値が含まれます。このカテゴリーでは、設定ファイルに指定した値のほうが優先順位が低くなります。Ansible は最初に検出した ``ansible.cfg`` ファイルを使用して、それ以外はすべて無視します。また、Ansible は ``ansible.cfg`` がないか、以下の場所を上から順に検索します。
 
  * ``ANSIBLE_CONFIG`` (環境変数が設定されている場合)
  * ``ansible.cfg`` (現在のディレクトリー)
@@ -62,7 +62,7 @@ Playbook キーワード
 
 変数は、:ref:`Playbook のキーワード<playbook_keywords>`、コマンドラインオプション、設定オプションをすべてオーバーライドします。
 
-Playbook キーワード内の優先順位は、Playbook の内容 (一般的な設定より具体的な設定が優先される) により左右されます。
+Playbook キーワード内の優先順位は、Playbook の内容により左右されます (一般的な設定より具体的な設定が優先されます)。
 
 - プレイ (最も一般的)
 - blocks/includes/imports/roles (任意、タスクを含めることも、blocks/includes/imports/roles の設定を相互に含めることができる)
@@ -105,18 +105,18 @@ Playbook はコマンドまたは Ansible の「状態記述」構造で、変�
      vars:
        ansible_become_user: admin
      tasks:
-       - name:This task uses admin as the become user.
+       - name: This task uses admin as the become user.
          dnf:
            name: some-service
            state: latest
        - block:
-           - name:This task uses service-admin as the become user.
+           - name: This task uses service-admin as the become user.
              # a task to configure the new service
-           - name:This task also uses service-admin as the become user, defined in the block.
+           - name: This task also uses service-admin as the become user, defined in the block.
              # second task to configure the service
-vars:
-ansible_become_user: service-admin
-       - name:This task (outside of the block) uses admin as the become user again.
+         vars:
+           ansible_become_user: service-admin
+       - name: This task (outside of the block) uses admin as the become user again.
          service:
            name: some-service
            state: restarted
