@@ -44,7 +44,7 @@ YAML には、他にも固有の特徴があります。 YAML ファイルはす
         job: Developer
         skill: Elite
 
-ディクショナリーのリストや、値がリスト場合や、ディクショナリーと値が混合している場合など、より複雑なデータ構造も可能です。
+ディクショナリーのリストや、値がリスト場合や、ディクショナリーと値が混合している場合など、より複雑なデータ構造も可能です::
 
     # Employee records
     -  martin:
@@ -95,7 +95,7 @@ Ansible では以下の形式はあまり使用されませんが、ブール型
                 single line of text
                 despite appearances
 
-上記の ``>`` の例では、改行はすべて折り返されてスペースに変換されますが、改行を強制的に確保させる方法が 2 種類あります。
+上記の ``>`` の例では、改行はすべて折り返されてスペースに変換されますが、改行を強制的に確保させる方法が 2 種類あります::
 
     fold_some_newlines: >
         a
@@ -108,7 +108,7 @@ Ansible では以下の形式はあまり使用されませんが、ブール型
     same_as: "a b\nc d\n  e\nf\n"
 
 これまでに学習した内容を、任意の YAML 例にまとめてみます。
-以下は、Ansible とは関係ありませんが、どのような形式になるかを示しています。
+以下は、Ansible とは関係ありませんが、どのような形式になるかを示しています::
 
     ---
     # An employee record
@@ -139,7 +139,7 @@ Gotchas
 コロンの後のスペース (または改行) ``": "`` は、マッピングを示すインジケーターです。
 スペースの後にシャープ記号 ``" #"`` を指定すると、その後はコメントになります。
 
-このため、以下のような場合には、YAML 構文のエラーが発生します。
+このため、以下のような場合には、YAML 構文のエラーが発生します::
 
     foo: somebody said I should put a colon here: so I did
 
@@ -157,7 +157,7 @@ Gotchas
 
 ...そしてコロンが保存されます。
 
-または、二重引用符を使用してください。
+または、二重引用符を使用してください::
 
     foo: "somebody said I should put a colon here: so I did"
     
@@ -182,10 +182,10 @@ YAML はその値がディクショナリーであると認識するため、以
 
     foo: "{{ variable }}"
 
-引用符で開始される値は、値の一部だけでなく、値全体を引用符で囲む必要があります。ただしく値を引用する方法について、以下に追加で例を挙げています。
+引用符で開始される値は、値の一部だけでなく、値全体を引用符で囲む必要があります。ただしく値を引用する方法について、以下に追加で例を挙げています::
 
     foo: "{{ variable }}/additional/string/literal"
-foo2: "{{ variable }}\backslashes\are\also\special\characters"
+    foo2: "{{ variable }}\backslashes\are\also\special\characters"
     foo3: "even if it's just a string literal it must all be quoted"
     
 以下は有効ではありません::
@@ -205,7 +205,7 @@ YAML プロセッサーの実装は異なるため、引用を使用すること
     flow mapping: { key: "you { should [ use , quotes here" }
 
 ブール値の変換は便利ですが、リテラルの `yes` や、文字列として他のブール値を指定する場合など問題になる場合があります。
-上記場合には、引用符だけを使用します。
+上記場合には、引用符だけを使用します::
 
     non_boolean: "yes"
     other_string:"False"
@@ -216,7 +216,7 @@ YAML は、
 浮動小数点の値のようであれば、
 その値を引用符で囲む必要があります::
 
-  version:"1.0"
+  version: "1.0"
 
 
 .. seealso::

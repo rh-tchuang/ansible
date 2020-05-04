@@ -47,7 +47,7 @@ Ansible により随時、指示がでます。(上記と、サービスが機�
 システムを希望する状態にするために Ansible が変更が必要と判断するかどうかを報告します。
 
 このレポートにより、特定のシステムにデプロイメントが必要かどうかが、最初の時点で把握できます。 通常、スクリプトとコマンドはチェックモードで実行されないため、
-スクリプトモジュールへの呼び出しなど、特定の手順を常にチェックモードで実行させたい場合は、これらのタスクのチェックモードを無効にします。
+スクリプトモジュールへの呼び出しなど、特定の手順を常にチェックモードで実行させたい場合は、これらのタスクのチェックモードを無効にします::
 
 
    roles:
@@ -60,7 +60,7 @@ Ansible により随時、指示がでます。(上記と、サービスが機�
 テストに便利なモジュール
 ```````````````````````````````````
 
-Playbook のモジュールでは、特にテストに適しているものもあります。 以下の例は、ポートが開放されていることを確認します。
+Playbook のモジュールでは、特にテストに適しているものもあります。 以下の例は、ポートが開放されていることを確認します::
 
    tasks:
 
@@ -69,7 +69,7 @@ Playbook のモジュールでは、特にテストに適しているものも�
          port:22
        delegate_to: localhost
       
-以下の例は、URI モジュールを使用して、Web サービスが返されることを確認します。
+以下の例は、URI モジュールを使用して、Web サービスが返されることを確認します::
 
    tasks:
 
@@ -80,7 +80,7 @@ Playbook のモジュールでは、特にテストに適しているものも�
          msg: 'service is not happy'
        when: "'AWESOME' not in webpage.content"
 
-リモートホストで任意のスクリプト (言語は問わない) が簡単にプッシュされるため、ゼロ以外のリターンコードが指定されていると、スクリプトは自動的に失敗します。
+リモートホストで任意のスクリプト (言語は問わない) が簡単にプッシュされるため、ゼロ以外のリターンコードが指定されていると、スクリプトは自動的に失敗します::
 
    tasks:
 
@@ -89,7 +89,7 @@ Playbook のモジュールでは、特にテストに適しているものも�
 
 ロールを使用する場合 (ロールは便利なので使用を推奨)、スクリプトモジュールがプッシュするスクリプトは、ロールの「files/」ディレクトリーに配置されます。
 
-また、アサートモジュールを使用すると、さまざまな真偽の検証が非常に簡単にできます。
+また、アサートモジュールを使用すると、さまざまな真偽の検証が非常に簡単にできます::
 
    tasks:
 
@@ -101,7 +101,7 @@ Playbook のモジュールでは、特にテストに適しているものも�
             - "'not ready' not in cmd_result.stderr"
             - "'gizmo enabled' in cmd_result.stdout"
 
-Ansible 設定で設定が宣言されていないファイルの存在をテストする必要がある場合には、「stat」モジュールが最適です。
+Ansible 設定で設定が宣言されていないファイルの存在をテストする必要がある場合には、「stat」モジュールが最適です::
 
    tasks:
 
@@ -128,7 +128,7 @@ Ansible はフェイルファーストシステムであるため、ユーザー
 そのため、ローカルの開発仮想マシンやステージ環境にデプロイすると、
 いずれも実稼働でのデプロイの前に計画通りに作業が進んでいるかどうかを検証します。
 
-ワークフローは、次のようになります。
+ワークフローは、次のようになります::
 
     - 開発中は、テストが組み込まれた、同じ Playbook を常に使用します。
     - その Playbook を使用して、実稼働環境をシミュレーションするステージ環境 (同じ Playbook を使用) にデプロイします。
@@ -147,30 +147,30 @@ Selenium テストや自動化 API テストなどで、このようなテスト
 :ref:`playbooks_delegation` を参照された場合には、ローリングアップデートのパターンを拡張でき、
 また、Playbook の成否でロードバランサーにマシンを 1 台追加するかどうかを決定できることが学習できたはずです。 
 
-以下は、統合テストをまとめたものです。
+以下は、統合テストをまとめたものです::
 
     ---
 
     - hosts: webservers
-      serial:5
+      serial: 5
 
       pre_tasks:
 
         - name: take out of load balancer pool
           command: /usr/bin/take_out_of_pool {{ inventory_hostname }}
-      delegate_to: 127.0.0.1
+          delegate_to: 127.0.0.1
 
-  roles:
+      roles:
 
-     - common
-     - webserver
-     - apply_testing_checks
+         - common
+         - webserver
+         - apply_testing_checks
 
-  post_tasks:
-
-    - name: add back to load balancer pool
-      command: /usr/bin/add_back_to_pool {{ inventory_hostname }}
-          delegate_to:127.0.0.1
+      post_tasks:
+  
+        - name: add back to load balancer pool
+          command: /usr/bin/add_back_to_pool {{ inventory_hostname }}
+          delegate_to: 127.0.0.1
 
 上記では当然、「プールから取得する」手順や「追加し直す」手順は、Ansible のロードバランサーや、
 適切な shell コマンドの呼び出しに置き換えられます。 また、
@@ -182,33 +182,33 @@ Selenium テストや自動化 API テストなどで、このようなテスト
 ローリングアップデートの続行を停止させるテストの失敗回数を制御できます。この点については、「max_fail_percentage」
 向けの章を参照してください。
 
-上記のアプローチを変更して、リモートのテストマシンから手順を実行することも可能です。
+上記のアプローチを変更して、リモートのテストマシンから手順を実行することも可能です::
 
     ---
 
     - hosts: webservers
-      serial:5
+      serial: 5
 
       pre_tasks:
 
         - name: take out of load balancer pool
           command: /usr/bin/take_out_of_pool {{ inventory_hostname }}
-      delegate_to: 127.0.0.1
+          delegate_to: 127.0.0.1
 
-  roles:
+      roles:
 
-     - common
-     - webserver
+         - common
+         - webserver
 
-  tasks:
-     - script: /srv/qa_team/app_testing_script.sh --server {{ inventory_hostname }}
-       delegate_to: testing_server
+      tasks:
+         - script: /srv/qa_team/app_testing_script.sh --server {{ inventory_hostname }}
+           delegate_to: testing_server
 
-  post_tasks:
+      post_tasks:
 
-    - name: add back to load balancer pool
-      command: /usr/bin/add_back_to_pool {{ inventory_hostname }}
-          delegate_to:127.0.0.1
+        - name: add back to load balancer pool
+          command: /usr/bin/add_back_to_pool {{ inventory_hostname }}
+          delegate_to: 127.0.0.1
 
 上記の例では、プールにマシンを戻す前に、
 リモートのノードに対してテストサーバーからスクリプトを実行します。
@@ -221,7 +221,7 @@ Selenium テストや自動化 API テストなどで、このようなテスト
 
 任意で、上記の手法を拡張して、継続してデプロイメントができるようにします。
 
-ワークフローは、次のようになります。
+ワークフローは、次のようになります::
 
     - ローカルの開発仮想マシンをデプロイする自動化を記述して使用します。
     - コードの変更のたびに、Jenkins などの CI システムをステージ環境にデプロイします。
