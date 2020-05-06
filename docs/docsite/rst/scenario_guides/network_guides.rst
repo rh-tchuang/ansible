@@ -1,10 +1,10 @@
 .. _network_guides:
 
 *************************
-Network Technology Guides
+ネットワークテクノロジーガイド
 *************************
 
-The guides in this section cover using Ansible with specific network technologies. They explore particular use cases in greater depth and provide a more "top-down" explanation of some basic features.
+本セクションのガイドでは、特定のネットワーク技術を使用した Ansible の使用方法を説明します。特定のユースケースをより深く考察し、基本的な機能の一部を「トップダウン」で説明します。
 
 .. toctree::
    :maxdepth: 1
@@ -13,4 +13,4 @@ The guides in this section cover using Ansible with specific network technologie
    guide_meraki
    guide_infoblox
 
-To learn more about Network Automation with Ansible, see :ref:`network_getting_started` and :ref:`network_advanced`.
+Ansible を使用したネットワークの自動化の詳細は、:ref:`network_getting_started` および :ref:`network_advanced` を参照してください。

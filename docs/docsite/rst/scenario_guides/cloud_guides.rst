@@ -1,10 +1,10 @@
 .. _cloud_guides:
 
 *******************
-Public Cloud Guides
+パブリッククラウドガイド
 *******************
 
-The guides in this section cover using Ansible with a range of public cloud platforms. They explore particular use cases in greater depth and provide a more "top-down" explanation of some basic features.
+本セクションのガイドでは、さまざまなパブリッククラウドプラットフォームでの Ansible の使用を説明します。特定のユースケースをより深く考察し、基本的な機能の一部を「トップダウン」で説明します。
 
 .. toctree::
    :maxdepth: 1

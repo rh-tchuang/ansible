@@ -1,29 +1,29 @@
-Kubernetes and OpenShift Guide
+Kubernetes および OpenShift ガイド
 ==============================
 
-Modules for interacting with the Kubernetes (K8s) and OpenShift API are under development, and can be used in preview mode. To use them, review the requirements, and then follow the installation and use instructions.
+Kubernetes (K8s) および OpenShift API と対話するためのモジュールは開発中であり、プレビューモードで使用できます。このモジュールを使用するには、要件を確認し、インストールを行い、その他の手順に従います。
 
-Requirements
+要件
 ------------
 
-To use the modules, you'll need the following:
+モジュールを使用するには、以下が必要になります。
 
-- Run Ansible from source. For assistance, view `running from source <./intro_installation.html/#running-from-source>`_
-- `OpenShift Rest Client <https://github.com/openshift/openshift-restclient-python>`_ installed on the host that will execute the modules
+- ソースから Ansible を実行します。手順は、「`ソースからの実行 <./intro_installation.html/#running-from-source>`_」を参照してください。
+- モジュールを実行するホストに `OpenShift Rest Client` <https://github.com/openshift/openshift-restclient-python>_ がインストールされています。
 
 
-Installation and use
+インストールと使用
 --------------------
 
-The individual modules, as of this writing, are not part of the Ansible repository, but they can be accessed by installing the role, `ansible.kubernetes-modules <https://galaxy.ansible.com/ansible/kubernetes-modules/>`_, and including it in a playbook.
+このページの作成時点では、個々のモジュールは Ansible リポジトリーの一部ではありませんが、ロール `ansible.kubernetes-modules <https://galaxy.ansible.com/ansible/kubernetes-modules/>`_ をインストールし、それを Playbook に含めることでアクセスできます。
 
-To install, run the following:
+インストールするには、以下を実行します。
 
 .. code-block:: bash
 
     $ ansible-galaxy install ansible.kubernetes-modules
 
-Next, include it in a playbook, as follows:
+次に、以下のように Playbook に追加します。
 
 .. code-block:: bash
 
@@ -34,22 +34,22 @@ Next, include it in a playbook, as follows:
         - role: ansible.kubernetes-modules
         - role: hello-world
 
-Because the role is referenced, ``hello-world`` is able to access the modules, and use them to deploy an application.
+ロールは参照されるため、``hello-world`` はモジュールにアクセスでき、そのモジュールを使用してアプリケーションをデプロイできます。
 
-The modules are found in the ``library`` folder of the role. Each includes full documentation for parameters and the returned data structure. However, not all modules include examples, only those where `testing data <https://github.com/openshift/openshift-restclient-python/tree/master/openshift/ansiblegen/examples>`_ has been created.
+モジュールは、ロールの ``library`` ディレクトリーにあります。各ディレクトリーは、パラメーターの詳細なドキュメンテーションと、返されるデータ構造が含まれます。ただし、すべてのモジュールにサンプルが含まれているわけではなく、`テストデータ <https://github.com/openshift/openshift-restclient-python/tree/master/openshift/ansiblegen/examples>`_ が作成されているモジュールのみが作成されます。
 
-Authenticating with the API
+API での認証
 ---------------------------
 
-By default the OpenShift Rest Client will look for ``~/.kube/config``, and if found, connect using the active context. You can override the location of the file using the``kubeconfig`` parameter, and the context, using the ``context`` parameter.
+デフォルトで、OpenShift Rest Client は ``~/.kube/config`` を検索し、それが存在する場合は、アクティブなコンテキストを使用して接続します。``context`` パラメーターを使用すると、``kubeconfig`` パラメーターおよびコンテキストを使用してファイルの場所を上書きできます。
 
-Basic authentication is also supported using the ``username`` and ``password`` options. You can override the URL using the ``host`` parameter. Certificate authentication works through the ``ssl_ca_cert``, ``cert_file``, and ``key_file`` parameters, and for token authentication, use the ``api_key`` parameter.
+基本認証は、``username`` オプションおよび ``password`` オプションを使用してもサポートされます。``host`` パラメーターを使用して URL を上書きできます。証明書認証は、``ssl_ca_cert`` パラメーター、``cert_file`` パラメーター、および ``key_file`` パラメーターで機能し、トークン認証には ``api_key`` パラメーターを使用します。
 
-To disable SSL certificate verification, set ``verify_ssl`` to false.
+SSL 証明書の検証を無効にするには、``verify_ssl`` を false に設定します。
 
-Filing issues
+問題の報告
 `````````````
 
-If you find a bug or have a suggestion regarding individual modules or the role, please file issues at `OpenShift Rest Client issues <https://github.com/openshift/openshift-restclient-python/issues>`_.
+バグが見つかった場合や、個々のモジュールまたはロールに関する提案をお寄せいただける場合は、`OpenShift Rest Client issues <https://github.com/openshift/openshift-restclient-python/issues>`_ で問題を報告してください。
 
-There is also a utility module, k8s_common.py, that is part of the `Ansible <https://github.com/ansible/ansible>`_ repo. If you find a bug or have suggestions regarding it, please file issues at `Ansible issues <https://github.com/ansible/ansible/issues>`_.
+また、`Ansible <https://github.com/ansible/ansible>`_ リポジトリーに含まれる k8s_common.py ユーティリティーモジュールもあります。バグが見つかった場合や製品に関する提案をお寄せいただける場合は、`Ansible issues <https://github.com/ansible/ansible/issues>`_ で問題を報告してください。

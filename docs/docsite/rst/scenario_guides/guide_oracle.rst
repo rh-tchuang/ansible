@@ -1,42 +1,42 @@
 ===================================
-Oracle Cloud Infrastructure Guide
+Oracle Cloud Infrastructure ガイド
 ===================================
 
 ************
-Introduction
+はじめに
 ************
 
-Oracle provides a number of Ansible modules to interact with Oracle Cloud Infrastructure (OCI). In this guide, we will explain how you can use these modules to orchestrate, provision and configure your infrastructure on OCI. 
+Oracle 社は、Oracle Cloud Infrastructure (OCI) と対話するための Ansible モジュールを多数提供しています。本ガイドでは、そのモジュールを使用して、OCI でインフラストラクチャーをオーケストレーションし、プロビジョニングし、設定する方法を説明します。 
 
 ************
-Requirements
+要件
 ************
-To use the OCI Ansible modules, you must have the following prerequisites on your control node, the computer from which Ansible playbooks are executed.
+OCI Ansible モジュールを使用するには、Ansible Playbook を実行するコンピューターのコントロールノードに、以下の前提条件を設定する必要があります。
 
-1. `An Oracle Cloud Infrastructure account. <https://cloud.oracle.com/en_US/tryit>`_
+1. `Oracle Cloud Infrastructure アカウント <https://cloud.oracle.com/en_US/tryit>`_
 
-2. A user created in that account, in a security group with a policy that grants the necessary permissions for working with resources in those compartments. For guidance, see `How Policies Work <https://docs.cloud.oracle.com/iaas/Content/Identity/Concepts/policies.htm>`_.
+2. それらのコンパートメント内のリソースを操作するために必要なパーミッションを付与するポリシーを持つセキュリティグループで、そのアカウントで作成されたユーザー。詳細は「`ポリシーの仕組み <https://docs.cloud.oracle.com/iaas/Content/Identity/Concepts/policies.htm>`_」を参照してください。
 
-3. The necessary credentials and OCID information.
+3. 必要な認証情報と OCID 情報。
 
 ************
-Installation
+インストール
 ************ 
-1. Install the Oracle Cloud Infrastructure Python SDK (`detailed installation instructions <https://oracle-cloud-infrastructure-python-sdk.readthedocs.io/en/latest/installation.html>`_):
+1. Oracle Cloud Infrastructure Python SDK をインストールします (`詳細なインストール手順 <https://oracle-cloud-infrastructure-python-sdk.readthedocs.io/en/latest/installation.html>`_)。
 
 .. code-block:: bash
 
         pip install oci
 
-2.  Install the Ansible OCI Modules in one of two ways:
+2.  以下のいずれかの方法で Ansible OCI モジュールをインストールします。
 
-a.	From Galaxy: 
+a. 	Galaxy の場合: 
 
 .. code-block:: bash
 
  ansible-galaxy install oracle.oci_ansible_modules
 
-b.	From GitHub:
+b. 	GitHub の場合:
 
 .. code-block:: bash
 
@@ -47,57 +47,57 @@ b.	From GitHub:
     $ cd oci-ansible-modules
 
 
-Run one of the following commands:
+以下のコマンドのいずれかを実行します。
 
-- If Ansible is installed only for your user: 
+- Ansible をお使いのユーザーにのみインストールする場合は、以下を実行します。 
 
 .. code-block:: bash
 
     $ ./install.py
 
-- If Ansible is installed as root: 
+- Ansible を root でインストールする場合は、以下を実行します。 
 
 .. code-block:: bash
 
     $ sudo ./install.py
 
 *************
-Configuration
+構成
 *************
 
-When creating and configuring Oracle Cloud Infrastructure resources, Ansible modules use the authentication information outlined `here <https://docs.cloud.oracle.com/iaas/Content/API/Concepts/sdkconfig.htm>`_.
-.
+Oracle Cloud Infrastructure リソースを作成して設定する際に、Ansible モジュールは `こちら <https://docs.cloud.oracle.com/iaas/Content/API/Concepts/sdkconfig.htm>`_ で説明されている認証情報を使用します。
+
  
 ********
-Examples
+例
 ********
-Launch a compute instance
+コンピュートインスタンスの起動
 =========================
-This `sample launch playbook <https://github.com/oracle/oci-ansible-modules/tree/master/samples/compute/launch_compute_instance>`_
-launches a public Compute instance and then accesses the instance from an Ansible module over an SSH connection. The sample illustrates how to:
+この `sample launch playbook <https://github.com/oracle/oci-ansible-modules/tree/master/samples/compute/launch_compute_instance>`_ は、
+パブリックのコンピュートインスタンスを起動し、SSH 接続を経由して Ansible モジュールからインスタンスにアクセスします。このサンプルは、以下を実行する方法を示しています。
 
-- Generate a temporary, host-specific SSH key pair.
-- Specify the public key from the key pair for connecting to the instance, and then launch the instance.
-- Connect to the newly launched instance using SSH.
+- 一時的なホスト固有の SSH キーペアを生成します。
+- インスタンスへの接続に使用するキーペアの公開鍵を指定し、インスタンスを起動します。
+- SSH を使用して、新たに起動したインスタンスに接続します。
 
-Create and manage Autonomous Data Warehouses
+Autonomous Data Warehouse の作成および管理
 ============================================
-This `sample warehouse playbook <https://github.com/oracle/oci-ansible-modules/tree/master/samples/database/autonomous_data_warehouse>`_ creates an Autonomous Data Warehouse and manage its lifecycle. The sample shows how to:
+この `sample warehouse playbook <https://github.com/oracle/oci-ansible-modules/tree/master/samples/database/autonomous_data_warehouse>`_ は、Autonomous Data Warehouse (自立型データウェアハウス) を作成して、そのライフサイクルを管理します。このサンプルは、以下を実行する方法を示しています。
 
-- Set up an Autonomous Data Warehouse.
-- List all of the Autonomous Data Warehouse instances available in a compartment, filtered by the display name.
-- Get the "facts" for a specified Autonomous Data Warehouse.
-- Stop and start an Autonomous Data Warehouse instance.
-- Delete an Autonomous Data Warehouse instance.
+- Autonomous Data Warehouse. を設定します。
+- 表示名で対象を絞った、コンパートメントで利用可能な Autonomous Data Warehouse を一覧表示します。
+- 指定された Autonomous Data Warehouse の「ファクト」を取得します。
+- Autonomous Data Warehouse インスタンスを停止して開始します。
+- Autonomous Data Warehouse インスタンスを削除します。
 
-Create and manage Autonomous Transaction Processing
+Autonomous Transaction Processing の作成と管理
 ===================================================
-This `sample playbook <https://github.com/oracle/oci-ansible-modules/tree/master/samples/database/autonomous_database>`_
-creates an Autonomous Transaction Processing database and manage its lifecycle. The sample shows how to:
+この `sample playbook <https://github.com/oracle/oci-ansible-modules/tree/master/samples/database/autonomous_database>`_ は、
+Autonomous Transaction Processing (自律型トランザクション処理) データベースを作成し、そのライフサイクルを管理します。このサンプルは、以下を実行する方法を示しています。
 
-- Set up an Autonomous Transaction Processing database instance.
-- List all of the Autonomous Transaction Processing instances in a compartment, filtered by the display name.
-- Get the "facts" for a specified Autonomous Transaction Processing instance.
-- Delete an Autonomous Transaction Processing database instance.
+- Autonomous Transaction Processing データベースインスタンスを設定します。
+- 表示名で対象を絞った、コンパートメントで利用可能な Autonomous Transaction Processing を一覧表示します。
+- 指定された Autonomous Transaction Processing インスタンスの「ファクト」を取得します。
+- Autonomous Transaction Processing データベースインスタンスを削除します。
 
-You can find more examples here: `Sample Ansible Playbooks <https://docs.cloud.oracle.com/iaas/Content/API/SDKDocs/ansiblesamples.htm>`_.
+詳細: `Ansible Playbook のサンプル <https://docs.cloud.oracle.com/iaas/Content/API/SDKDocs/ansiblesamples.htm>`_.

@@ -1,53 +1,53 @@
-Rackspace Cloud Guide
+Rackspace Cloud ガイド
 =====================
 
 .. _rax_introduction:
 
-Introduction
+はじめに
 ````````````
 
-.. note:: This section of the documentation is under construction. We are in the process of adding more examples about the Rackspace modules and how they work together.  Once complete, there will also be examples for Rackspace Cloud in `ansible-examples <https://github.com/ansible/ansible-examples/>`_.
+.. note:: 本ガイドの本セクションは作成中です。Rackspace モジュールと、そのモジュールがどのように連携するかについて、サンプルをさらに追加している最中です。 完了したら、`ansible-examples <https://github.com/ansible/ansible-examples/>`_ に Rackspace Cloud のサンプルが含まれます。
 
-Ansible contains a number of core modules for interacting with Rackspace Cloud.  
+Ansible には、Rackspace Cloud と対話するためのコアモジュールが多数含まれています。  
 
-The purpose of this section is to explain how to put Ansible modules together 
-(and use inventory scripts) to use Ansible in a Rackspace Cloud context.
+このセクションは、Ansibleモジュールを組み合わせ (およびインベントリースクリプトを使用し) て、
+Rackspace Cloud コンテキストで Ansible を使用する方法を説明することを目的としています。
 
-Prerequisites for using the rax modules are minimal.  In addition to ansible itself, 
-all of the modules require and are tested against pyrax 1.5 or higher. 
-You'll need this Python module installed on the execution host.  
+rax モジュールを使用する前提条件は最小限です。 Ansible 自体に加えて、
+すべてのモジュールは pyrax 1.5 以上を必要とし、テストされています。
+この Python モジュールは、実行ホストにインストールする必要があります。  
 
-``pyrax`` is not currently available in many operating system
-package repositories, so you will likely need to install it via pip:
+``pyrax`` は、現在、多くのオペレーティングシステムパッケージリポジトリーで利用できないため、
+pip を使用してインストールする必要がある可能性があります。
 
 .. code-block:: bash
 
     $ pip install pyrax
 
-Ansible creates an implicit localhost that executes in the same context as the ``ansible-playbook`` and the other CLI tools.
-If for any reason you need or want to have it in your inventory you should do something like the following:
+Ansible は、``ansible-playbook`` およびその他の CLI ツールと同じコンテキストで実行される暗黙的なローカルホストを作成します。
+なんらかの理由で、またはインベントリーに保存する必要があるまたは保存したい場合には、以下のような作業を行う必要があります。
 
 .. code-block:: ini
 
     [localhost]
     localhost ansible_connection=local ansible_python_interpreter=/usr/local/bin/python2
 
-For more information see :ref:`Implicit Localhost <implicit_localhost>`
+詳細は「:ref:`暗黙的なローカルホスト<implicit_localhost>`」を参照してください。
 
-In playbook steps, we'll typically be using the following pattern:
+Playbook ステップでは、通常、以下のパターンを使用します。
 
 .. code-block:: yaml
 
     - hosts: localhost
-      gather_facts: False
+      gather_facts:False
       tasks:
 
 .. _credentials_file:
 
-Credentials File
+認証情報ファイル
 ````````````````
 
-The `rax.py` inventory script and all `rax` modules support a standard `pyrax` credentials file that looks like:
+`rax.py` インベントリースクリプトと、すべての `rax` モジュールは、以下のような標準の `pyrax` 認証情報ファイルに対応します。
 
 .. code-block:: ini
 
@@ -55,21 +55,21 @@ The `rax.py` inventory script and all `rax` modules support a standard `pyrax` c
     username = myraxusername
     api_key = d41d8cd98f00b204e9800998ecf8427e
 
-Setting the environment parameter ``RAX_CREDS_FILE`` to the path of this file will help Ansible find how to load
-this information.
+環境パラメーター ``RAX_CREDS_FILE`` をこのファイルのパスに設定すると、
+Ansible は、この情報を読み込む方法を見つけるのに役に立ちます。
 
-More information about this credentials file can be found at 
+この認証情報ファイルに関する詳細情報: 
 https://github.com/pycontribs/pyrax/blob/master/docs/getting_started.md#authenticating
 
 
 .. _virtual_environment:
 
-Running from a Python Virtual Environment (Optional)
+Python 仮想環境からの実行 (オプション)
 ++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Most users will not be using virtualenv, but some users, particularly Python developers sometimes like to.
+ほとんどのユーザーは virtualenv を使用しませんが、一部のユーザー、特に Python の開発者はそれを使用する場合があります。
 
-There are special considerations when Ansible is installed to a Python virtualenv, rather than the default of installing at a global scope. Ansible assumes, unless otherwise instructed, that the python binary will live at /usr/bin/python.  This is done via the interpreter line in modules, however when instructed by setting the inventory variable 'ansible_python_interpreter', Ansible will use this specified path instead to find Python.  This can be a cause of confusion as one may assume that modules running on 'localhost', or perhaps running via 'local_action', are using the virtualenv Python interpreter.  By setting this line in the inventory, the modules will execute in the virtualenv interpreter and have available the virtualenv packages, specifically pyrax. If using virtualenv, you may wish to modify your localhost inventory definition to find this location as follows:
+Ansible が Python virtualenv にインストールされる場合には、デフォルトのグローバルスコープでのインストールではなく、特別な考慮事項があります。Ansible は、特に指示がない限り、python バイナリーが /usr/bin/python にあることを前提としています。 これは、モジュールのインタープリターの行を使用して行われますが、インベントリー変数「ansible_python_interpreter」を設定して指示すると、Ansible は Python の検索の代わりに、この指定されたパスを使用します。 これは、「localhost」で実行しているモジュール、または「local_action」で実行されるモジュールが virtualenv Python インタープリターを使用していると仮定するため、混乱が生じる可能性があります。 この行をインベントリーに設定すると、モジュールは virtualenv インタープリターで実行され、virtualenv パッケージ (具体的には pyrax) が利用できるようになります。virtualenv を使用している場合は、以下のように、この場所が検出されるように、localhost インベントリー定義を変更します。
 
 .. code-block:: ini
 
@@ -78,181 +78,181 @@ There are special considerations when Ansible is installed to a Python virtualen
 
 .. note::
 
-    pyrax may be installed in the global Python package scope or in a virtual environment.  There are no special considerations to keep in mind when installing pyrax.
+    pyrax は、グローバルの Python パッケージスコープまたは仮想環境にインストールできます。 pyrax をインストールする際には、特別な留意事項はありません。
 
 .. _provisioning:
 
-Provisioning
+プロビジョニング
 ````````````
 
-Now for the fun parts.
 
-The 'rax' module provides the ability to provision instances within Rackspace Cloud.  Typically the provisioning task will be performed from your Ansible control server (in our example, localhost) against the Rackspace cloud API.  This is done for several reasons:
 
-    - Avoiding installing the pyrax library on remote nodes
-    - No need to encrypt and distribute credentials to remote nodes
-    - Speed and simplicity
+「rax」モジュールは、Rackspace Cloud 内でインスタンスをプロビジョニングする機能を提供します。 通常、プロビジョニングタスクは、Rackspace cloud API に対して Ansible コントロールサーバー (この例ではローカルホスト) から実行されます。 これにはいくつかの理由があります。
+
+    - リモートノードに pyrax ライブラリーをインストールしないようにする
+    - 認証情報を暗号化してリモートノードに配布する必要はない
+    - スピードと単純化
 
 .. note::
 
-   Authentication with the Rackspace-related modules is handled by either 
-   specifying your username and API key as environment variables or passing
-   them as module arguments, or by specifying the location of a credentials
-   file.
+   Rackspace 関連のモジュールを使用した認証は、
+   ユーザー名と API キーを環境変数として指定するか、
+   モジュールの引数として渡すか、
+   認証情報ファイルの場所を指定することで処理されます。
 
-Here is a basic example of provisioning an instance in ad-hoc mode:
+以下は、アドホックモードでのインスタンスをプロビジョニングする基本的な例です。
 
 .. code-block:: bash
 
     $ ansible localhost -m rax -a "name=awx flavor=4 image=ubuntu-1204-lts-precise-pangolin wait=yes"
 
-Here's what it would look like in a playbook, assuming the parameters were defined in variables:
+以下は、パラメーターが変数に定義されていると仮定した場合の、Playbook で表示される内容です。
 
 .. code-block:: yaml
 
     tasks:
-      - name: Provision a set of instances
+      - name:Provision a set of instances
         rax:
             name: "{{ rax_name }}"
-            flavor: "{{ rax_flavor }}"
-            image: "{{ rax_image }}"
-            count: "{{ rax_count }}"
-            group: "{{ group }}"
+        flavor: "{{ rax_flavor }}"
+        image: "{{ rax_image }}"
+        count: "{{ rax_count }}"
+        group: "{{ group }}"
             wait: yes
         register: rax
         delegate_to: localhost
-
-The rax module returns data about the nodes it creates, like IP addresses, hostnames, and login passwords.  By registering the return value of the step, it is possible used this data to dynamically add the resulting hosts to inventory (temporarily, in memory). This facilitates performing configuration actions on the hosts in a follow-on task.  In the following example, the servers that were successfully created using the above task are dynamically added to a group called "raxhosts", with each nodes hostname, IP address, and root password being added to the inventory.
+    
+rax モジュールは、IP アドレス、ホスト名、ログインパスワードなど、作成するノードのデータを返します。 ステップの戻り値を登録すると、このデータを使用して、作成されるホストをインベントリー (通常はメモリー内) に動的に追加できます。これにより、後続のタスクによるホストでの設定アクションの実行が容易になります。 以下の例では、上記のタスクを使用して正常に作成されたサーバーは「raxhosts」というグループに動的に追加され、各ノードのホスト名、IP アドレス、および root パスワードがインベントリーに追加されます。
 
 .. code-block:: yaml
 
-    - name: Add the instances we created (by public IP) to the group 'raxhosts'
+    - name:Add the instances we created (by public IP) to the group 'raxhosts'
       add_host:
           hostname: "{{ item.name }}"
-          ansible_host: "{{ item.rax_accessipv4 }}"
-          ansible_password: "{{ item.rax_adminpass }}"
-          groups: raxhosts
-      loop: "{{ rax.success }}"
+      ansible_host: "{{ item.rax_accessipv4 }}"
+      ansible_password: "{{ item.rax_adminpass }}"
+      groups: raxhosts
+  loop: "{{ rax.success }}"
       when: rax.action == 'create'
-
-With the host group now created, the next play in this playbook could now configure servers belonging to the raxhosts group.
+    
+これでホストグループが作成され、この Playbook の次のプレイで raxhosts グループに属するサーバーを設定できるようになりました。
 
 .. code-block:: yaml
 
-    - name: Configuration play
+    - name:Configuration play
       hosts: raxhosts
       user: root
       roles:
         - ntp
         - webserver
 
-The method above ties the configuration of a host with the provisioning step.  This isn't always what you want, and leads us 
-to the next section.
+上記の方法は、ホストの設定と、プロビジョニング手順を関連付けます。 これは常に必要なことではなく、
+次のセクションに進みます。
 
 .. _host_inventory:
 
-Host Inventory
+ホストインベントリー
 ``````````````
 
-Once your nodes are spun up, you'll probably want to talk to them again.  The best way to handle this is to use the "rax" inventory plugin, which dynamically queries Rackspace Cloud and tells Ansible what nodes you have to manage.  You might want to use this even if you are spinning up cloud instances via other tools, including the Rackspace Cloud user interface. The inventory plugin can be used to group resources by metadata, region, OS, etc.  Utilizing metadata is highly recommended in "rax" and can provide an easy way to sort between host groups and roles. If you don't want to use the ``rax.py`` dynamic inventory script, you could also still choose to manually manage your INI inventory file, though this is less recommended.
+ノードが起動したら、おそらく再度通信するようにしたいでしょう。 これを処理する最善の方法は、「rax」インベントリープラグインを使用することです。これは、Rackspace Cloud に動的にクエリーを実行し、管理する必要があるノードを Ansible に通知します。 これは、別のツール (Rackspace Cloud ユーザーインターフェースなど) を介してクラウドインスタンスを起動している場合であっても使用することができます。インベントリープラグインは、リソースをメタデータ、リージョン、OS などでまとめるのに使用できます。 メタデータの使用は「rax」で強く推奨され、ホストグループとロールとの間で簡単に並べ替えることができます。動的インベントリースクリプト ``rax.py`` を使用しない場合は、INI インベントリーファイルを手動で管理することもできますが、これは推奨されていません。
 
-In Ansible it is quite possible to use multiple dynamic inventory plugins along with INI file data.  Just put them in a common directory and be sure the scripts are chmod +x, and the INI-based ones are not.
+Ansible では、INI ファイルデータとともに複数の動的インベントリープラグインを使用できます。 単にそれらを共通のディレクトリーに配置し、スクリプトが chmod +x で、INI ベースのディレクトリーではないことを確認します。
 
 .. _raxpy:
 
 rax.py
 ++++++
 
-To use the Rackspace dynamic inventory script, copy ``rax.py`` into your inventory directory and make it executable. You can specify a credentials file for ``rax.py`` utilizing the ``RAX_CREDS_FILE`` environment variable.
+Rackspace 動的インベントリースクリプトを使用するには、``rax.py`` をインベントリーディレクトリーにコピーして、実行可能にします。``RAX_CREDS_FILE`` 環境変数を使用して、``rax.py`` の認証情報ファイルを指定できます。
 
-.. note:: Dynamic inventory scripts (like ``rax.py``) are saved in ``/usr/share/ansible/inventory`` if Ansible has been installed globally.  If installed to a virtualenv, the inventory scripts are installed to ``$VIRTUALENV/share/inventory``.
+.. note:: 動的インベントリースクリプト (``rax.py`` など) は、Ansible がグローバルにインストールされている場合は、``/usr/share/ansible/inventory`` に保存されます。 virtualenv にインストールされている場合、インベントリースクリプトは ``$VIRTUALENV/share/inventory`` にインストールされます。
 
-.. note:: Users of :ref:`ansible_tower` will note that dynamic inventory is natively supported by Tower, and all you have to do is associate a group with your Rackspace Cloud credentials, and it will easily synchronize without going through these steps::
+.. note:: :ref:`ansible_tower` のユーザーは、Tower が動的インベントリーをネイティブにサポートしており、グループを Rackspace Cloud 認証情報に関連付けるだけで、このステップを実行せずに簡単に同期できます。
 
     $ RAX_CREDS_FILE=~/.raxpub ansible all -i rax.py -m setup
 
-``rax.py`` also accepts a ``RAX_REGION`` environment variable, which can contain an individual region, or a comma separated list of regions.
+``rax.py`` は、個別のリージョンまたはコンマ区切りのリージョン一覧を指定できる ``RAX_REGION`` 環境変数も受け入れます。
 
-When using ``rax.py``, you will not have a 'localhost' defined in the inventory.  
+``rax.py`` を使用する場合は、インベントリーに「localhost」を定義しません。  
 
-As mentioned previously, you will often be running most of these modules outside of the host loop, and will need 'localhost' defined.  The recommended way to do this, would be to create an ``inventory`` directory, and place both the ``rax.py`` script and a file containing ``localhost`` in it.
+前述のように、ほとんどのモジュールはホストループの外部で実行されることが多く、「localhost」を定義する必要があります。 これを行うには、``inventory`` ディレクトリーを作成し、``rax.py`` スクリプトと、``localhost`` を含むファイルの両方をそのディレクトリーに置くことが推奨されます。
 
-Executing ``ansible`` or ``ansible-playbook`` and specifying the ``inventory`` directory instead 
-of an individual file, will cause ansible to evaluate each file in that directory for inventory.
+``ansible`` または ``ansible-playbook`` を実行し、個々のファイルの代わりに、``inventory`` ディレクトリーを指定すると、
+Ansible がそのディレクトリー内の各ファイルをインベントリー用に評価します。
 
-Let's test our inventory script to see if it can talk to Rackspace Cloud.
+インベントリースクリプトをテストし、Rackspace Cloud と通信できるかどうかを確認します。
 
 .. code-block:: bash
 
     $ RAX_CREDS_FILE=~/.raxpub ansible all -i inventory/ -m setup
 
-Assuming things are properly configured, the ``rax.py`` inventory script will output information similar to the 
-following information, which will be utilized for inventory and variables. 
+適切に設定されていると仮定すると、``rax.py`` インベントリースクリプトは、以下のような情報を出力します。
+これは、インベントリーおよび変数に使用されます。 
 
 .. code-block:: json
 
     {
         "ORD": [
-            "test"
-        ],
+        "test"
+    ],
         "_meta": {
             "hostvars": {
                 "test": {
-                    "ansible_host": "198.51.100.1",
-                    "rax_accessipv4": "198.51.100.1",
-                    "rax_accessipv6": "2001:DB8::2342",
+                    "ansible_host":"198.51.100.1",
+                    "rax_accessipv4":"198.51.100.1",
+                    "rax_accessipv6":"2001:DB8::2342",
                     "rax_addresses": {
                         "private": [
-                            {
-                                "addr": "192.0.2.2",
-                                "version": 4
-                            }
-                        ],
+                        {
+                            "addr": "192.0.2.2",
+                            "version": 4
+                        }
+                    ],
                         "public": [
-                            {
-                                "addr": "198.51.100.1",
-                                "version": 4
-                            },
-                            {
-                                "addr": "2001:DB8::2342",
-                                "version": 6
-                            }
-                        ]
+                        {
+                            "addr": "198.51.100.1",
+                            "version": 4
+                        },
+                        {
+                            "addr": "2001:DB8::2342",
+                            "version": 6
+                        }
+                    ]
                     },
                     "rax_config_drive": "",
-                    "rax_created": "2013-11-14T20:48:22Z",
+                    "rax_created":"2013-11-14T20:48:22Z",
                     "rax_flavor": {
                         "id": "performance1-1",
                         "links": [
-                            {
-                                "href": "https://ord.servers.api.rackspacecloud.com/111111/flavors/performance1-1",
-                                "rel": "bookmark"
-                            }
-                        ]
+                        {
+                            "href": "https://ord.servers.api.rackspacecloud.com/111111/flavors/performance1-1",
+                            "rel": "bookmark"
+                        }
+                    ]
                     },
                     "rax_hostid": "e7b6961a9bd943ee82b13816426f1563bfda6846aad84d52af45a4904660cde0",
                     "rax_human_id": "test",
-                    "rax_id": "099a447b-a644-471f-87b9-a7f580eb0c2a",
+                    "rax_id":"099a447b-a644-471f-87b9-a7f580eb0c2a",
                     "rax_image": {
                         "id": "b211c7bf-b5b4-4ede-a8de-a4368750c653",
                         "links": [
-                            {
-                                "href": "https://ord.servers.api.rackspacecloud.com/111111/images/b211c7bf-b5b4-4ede-a8de-a4368750c653",
-                                "rel": "bookmark"
-                            }
-                        ]
+                        {
+                            "href": "https://ord.servers.api.rackspacecloud.com/111111/images/b211c7bf-b5b4-4ede-a8de-a4368750c653",
+                            "rel": "bookmark"
+                        }
+                    ]
                     },
                     "rax_key_name": null,
                     "rax_links": [
-                        {
-                            "href": "https://ord.servers.api.rackspacecloud.com/v2/111111/servers/099a447b-a644-471f-87b9-a7f580eb0c2a",
-                            "rel": "self"
-                        },
-                        {
-                            "href": "https://ord.servers.api.rackspacecloud.com/111111/servers/099a447b-a644-471f-87b9-a7f580eb0c2a",
-                            "rel": "bookmark"
-                        }
-                    ],
+                    {
+                        "href": "https://ord.servers.api.rackspacecloud.com/v2/111111/servers/099a447b-a644-471f-87b9-a7f580eb0c2a",
+                        "rel": "self"
+                    },
+                    {
+                        "href": "https://ord.servers.api.rackspacecloud.com/111111/servers/099a447b-a644-471f-87b9-a7f580eb0c2a",
+                        "rel": "bookmark"
+                    }
+                ],
                     "rax_metadata": {
                         "foo": "bar"
                     },
@@ -260,35 +260,35 @@ following information, which will be utilized for inventory and variables.
                     "rax_name_attr": "name",
                     "rax_networks": {
                         "private": [
-                            "192.0.2.2"
-                        ],
+                        "192.0.2.2"
+                    ],
                         "public": [
-                            "198.51.100.1",
-                            "2001:DB8::2342"
-                        ]
+                        "198.51.100.1",
+                        "2001:DB8::2342"
+                    ]
                     },
-                    "rax_os-dcf_diskconfig": "AUTO",
-                    "rax_os-ext-sts_power_state": 1,
+                    "rax_os-dcf_diskconfig":"AUTO",
+                    "rax_os-ext-sts_power_state":1,
                     "rax_os-ext-sts_task_state": null,
                     "rax_os-ext-sts_vm_state": "active",
-                    "rax_progress": 100,
-                    "rax_status": "ACTIVE",
-                    "rax_tenant_id": "111111",
-                    "rax_updated": "2013-11-14T20:49:27Z",
-                    "rax_user_id": "22222"
+                    "rax_progress":100,
+                    "rax_status":"ACTIVE",
+                    "rax_tenant_id":"111111",
+                    "rax_updated":"2013-11-14T20:49:27Z",
+                    "rax_user_id":"22222"
                 }
             }
         }
     }
-
+    
 .. _standard_inventory:
 
-Standard Inventory
+標準インベントリー
 ++++++++++++++++++
 
-When utilizing a standard ini formatted inventory file (as opposed to the inventory plugin), it may still be advantageous to retrieve discoverable hostvar information  from the Rackspace API.
+(インベントリープラグインではなく) 標準の ini 形式のインベントリーファイルを使用する場合でも、検出可能な hostvar 情報を Rackspace API から取得すると有効な場合があります。
 
-This can be achieved with the ``rax_facts`` module and an inventory file similar to the following:
+これは、``rax_facts`` モジュールと、以下のようなインベントリーファイルを使用して実行できます。
 
 .. code-block:: ini
 
@@ -298,82 +298,82 @@ This can be achieved with the ``rax_facts`` module and an inventory file similar
 
 .. code-block:: yaml
 
-    - name: Gather info about servers
+    - name:Gather info about servers
       hosts: test_servers
-      gather_facts: False
+      gather_facts:False
       tasks:
-        - name: Get facts about servers
+        - name:Get facts about servers
           rax_facts:
             credentials: ~/.raxpub
             name: "{{ inventory_hostname }}"
-            region: "{{ rax_region }}"
-          delegate_to: localhost
-        - name: Map some facts
-          set_fact:
-            ansible_host: "{{ rax_accessipv4 }}"
+        region: "{{ rax_region }}"
+      delegate_to: localhost
+    - name: Map some facts
+      set_fact:
+        ansible_host: "{{ rax_accessipv4 }}"
+    
+どのように機能するかを知る必要はありませんが、返される変数の種類を把握しておくといいでしょう、
 
-While you don't need to know how it works, it may be interesting to know what kind of variables are returned.
-
-The ``rax_facts`` module provides facts as followings, which match the ``rax.py`` inventory script:
+``rax_facts`` モジュールは、以下のようにファクトを提供します。これは ``rax.py`` インベントリースクリプトに一致します。
 
 .. code-block:: json
 
     {
         "ansible_facts": {
-            "rax_accessipv4": "198.51.100.1",
-            "rax_accessipv6": "2001:DB8::2342",
+            "rax_accessipv4":"198.51.100.1",
+            "rax_accessipv6":"2001:DB8::2342",
             "rax_addresses": {
                 "private": [
-                    {
-                        "addr": "192.0.2.2",
-                        "version": 4
-                    }
-                ],
+                {
+                    "addr": "192.0.2.2",
+                    "version": 4
+                }
+            ],
                 "public": [
-                    {
-                        "addr": "198.51.100.1",
-                        "version": 4
-                    },
-                    {
-                        "addr": "2001:DB8::2342",
-                        "version": 6
-                    }
-                ]
+                {
+                    "addr": "198.51.100.1",
+                    "version": 4
+                },
+                {
+                    "addr": "2001:DB8::2342",
+                    "version": 6
+                }
+            ]
             },
             "rax_config_drive": "",
-            "rax_created": "2013-11-14T20:48:22Z",
+            "rax_created":"2013-11-14T20:48:22Z",
             "rax_flavor": {
                 "id": "performance1-1",
                 "links": [
-                    {
-                        "href": "https://ord.servers.api.rackspacecloud.com/111111/flavors/performance1-1",
-                        "rel": "bookmark"
-                    }
-                ]
+                {
+                    "href": "https://ord.servers.api.rackspacecloud.com/111111/flavors/performance1-1",
+                    "rel": "bookmark"
+                }
+            ]
             },
             "rax_hostid": "e7b6961a9bd943ee82b13816426f1563bfda6846aad84d52af45a4904660cde0",
             "rax_human_id": "test",
-            "rax_id": "099a447b-a644-471f-87b9-a7f580eb0c2a",
+            "rax_id":"099a447b-a644-471f-87b9-a7f580eb0c2a",
             "rax_image": {
                 "id": "b211c7bf-b5b4-4ede-a8de-a4368750c653",
                 "links": [
-                    {
-                        "href": "https://ord.servers.api.rackspacecloud.com/111111/images/b211c7bf-b5b4-4ede-a8de-a4368750c653",
-                        "rel": "bookmark"
-                    }
-                ]
+                {
+                    "href": "https://ord.servers.api.rackspacecloud.com/111111/images/b211c7bf-b5b4-4ede-a8de-a4368750c653",
+                    "rel": "bookmark"
+                }
+            ]
             },
             "rax_key_name": null,
             "rax_links": [
-                {
-                    "href": "https://ord.servers.api.rackspacecloud.com/v2/111111/servers/099a447b-a644-471f-87b9-a7f580eb0c2a",
-                    "rel": "self"
-                },
-                {
-                    "href": "https://ord.servers.api.rackspacecloud.com/111111/servers/099a447b-a644-471f-87b9-a7f580eb0c2a",
-                    "rel": "bookmark"
-                }
-            ],
+            {
+                "href": "https://ord.servers.api.rackspacecloud.com/v2/111111/servers/099a447b-a644-471f-87b9-a7f580eb0c2a",
+                "rel": "self"
+            },
+            {
+                "href": "https://ord.servers.api.rackspacecloud.com/111111/servers/099a447b-a644-471f-87b9-a7f580eb0c2a",
+                "rel": "bookmark"
+            }
+        ],
             "rax_metadata": {
                 "foo": "bar"
             },
@@ -381,114 +381,114 @@ The ``rax_facts`` module provides facts as followings, which match the ``rax.py`
             "rax_name_attr": "name",
             "rax_networks": {
                 "private": [
-                    "192.0.2.2"
-                ],
+                "192.0.2.2"
+            ],
                 "public": [
-                    "198.51.100.1",
-                    "2001:DB8::2342"
-                ]
+                "198.51.100.1",
+                "2001:DB8::2342"
+            ]
             },
-            "rax_os-dcf_diskconfig": "AUTO",
-            "rax_os-ext-sts_power_state": 1,
+            "rax_os-dcf_diskconfig":"AUTO",
+            "rax_os-ext-sts_power_state":1,
             "rax_os-ext-sts_task_state": null,
             "rax_os-ext-sts_vm_state": "active",
-            "rax_progress": 100,
-            "rax_status": "ACTIVE",
-            "rax_tenant_id": "111111",
-            "rax_updated": "2013-11-14T20:49:27Z",
-            "rax_user_id": "22222"
+            "rax_progress":100,
+            "rax_status":"ACTIVE",
+            "rax_tenant_id":"111111",
+            "rax_updated":"2013-11-14T20:49:27Z",
+            "rax_user_id":"22222"
         },
         "changed": false
     }
+    
 
-
-Use Cases
+ユースケース
 `````````
 
-This section covers some additional usage examples built around a specific use case.
+本セクションでは、特定のユースケースを中心とした、その他の使用例を説明します。
 
 .. _network_and_server:
 
-Network and Server
+ネットワークおよびサーバー
 ++++++++++++++++++
 
-Create an isolated cloud network and build a server
+分離したクラウドネットワークを作成し、サーバーを構築します。
 
 .. code-block:: yaml
 
-    - name: Build Servers on an Isolated Network
+    - name:Build Servers on an Isolated Network
       hosts: localhost
-      gather_facts: False
+      gather_facts:False
       tasks:
-        - name: Network create request
+        - name:Network create request
           rax_network:
             credentials: ~/.raxpub
             label: my-net
-            cidr: 192.168.3.0/24
-            region: IAD
+            cidr:192.168.3.0/24
+            region:IAD
             state: present
           delegate_to: localhost
 
-        - name: Server create request
+        - name:Server create request
           rax:
             credentials: ~/.raxpub
             name: web%04d.example.org
-            flavor: 2
+            flavor:2
             image: ubuntu-1204-lts-precise-pangolin
             disk_config: manual
             networks:
               - public
               - my-net
-            region: IAD
+            region:IAD
             state: present
-            count: 5
+            count:5
             exact_count: yes
             group: web
             wait: yes
-            wait_timeout: 360
+            wait_timeout:360
           register: rax
           delegate_to: localhost
 
 .. _complete_environment:
 
-Complete Environment
+完全な環境
 ++++++++++++++++++++
 
-Build a complete webserver environment with servers, custom networks and load balancers, install nginx and create a custom index.html
+サーバー、カスタムネットワーク、およびロードバランサーで完全な Web サーバー環境を構築し、nginx をインストールしてカスタムの index.html を作成します。
 
 .. code-block:: yaml
 
     ---
-    - name: Build environment
+    - name:Build environment
       hosts: localhost
-      gather_facts: False
+      gather_facts:False
       tasks:
-        - name: Load Balancer create request
+        - name:Load Balancer create request
           rax_clb:
             credentials: ~/.raxpub
             name: my-lb
-            port: 80
-            protocol: HTTP
-            algorithm: ROUND_ROBIN
-            type: PUBLIC
-            timeout: 30
-            region: IAD
+            port:80
+            protocol:HTTP
+            algorithm:ROUND_ROBIN
+            type:PUBLIC
+            timeout:30
+            region:IAD
             wait: yes
             state: present
             meta:
               app: my-cool-app
           register: clb
 
-        - name: Network create request
+        - name:Network create request
           rax_network:
             credentials: ~/.raxpub
             label: my-net
-            cidr: 192.168.3.0/24
+            cidr:192.168.3.0/24
             state: present
-            region: IAD
+            region:IAD
           register: network
 
-        - name: Server create request
+        - name:Server create request
           rax:
             credentials: ~/.raxpub
             name: web%04d.example.org
@@ -499,205 +499,205 @@ Build a complete webserver environment with servers, custom networks and load ba
               - public
               - private
               - my-net
-            region: IAD
+            region:IAD
             state: present
-            count: 5
+            count:5
             exact_count: yes
             group: web
             wait: yes
           register: rax
 
-        - name: Add servers to web host group
+        - name:Add servers to web host group
           add_host:
             hostname: "{{ item.name }}"
-            ansible_host: "{{ item.rax_accessipv4 }}"
-            ansible_password: "{{ item.rax_adminpass }}"
-            ansible_user: root
-            groups: web
-          loop: "{{ rax.success }}"
-          when: rax.action == 'create'
+        ansible_host: "{{ item.rax_accessipv4 }}"
+        ansible_password: "{{ item.rax_adminpass }}"
+        ansible_user: root
+        groups: web
+      loop: "{{ rax.success }}"
+      when: rax.action == 'create'
 
-        - name: Add servers to Load balancer
-          rax_clb_nodes:
-            credentials: ~/.raxpub
-            load_balancer_id: "{{ clb.balancer.id }}"
-            address: "{{ item.rax_networks.private|first }}"
-            port: 80
-            condition: enabled
-            type: primary
-            wait: yes
-            region: IAD
-          loop: "{{ rax.success }}"
-          when: rax.action == 'create'
+    - name: Add servers to Load balancer
+      rax_clb_nodes:
+        credentials: ~/.raxpub
+        load_balancer_id: "{{ clb.balancer.id }}"
+        address: "{{ item.rax_networks.private|first }}"
+        port: 80
+        condition: enabled
+        type: primary
+        wait: yes
+        region: IAD
+      loop: "{{ rax.success }}"
+      when: rax.action == 'create'
 
-    - name: Configure servers
-      hosts: web
-      handlers:
-        - name: restart nginx
-          service: name=nginx state=restarted
+- name: Configure servers
+  hosts: web
+  handlers:
+    - name: restart nginx
+      service: name=nginx state=restarted
 
-      tasks:
-        - name: Install nginx
-          apt: pkg=nginx state=latest update_cache=yes cache_valid_time=86400
-          notify:
-            - restart nginx
+  tasks:
+    - name: Install nginx
+      apt: pkg=nginx state=latest update_cache=yes cache_valid_time=86400
+      notify:
+        - restart nginx
 
-        - name: Ensure nginx starts on boot
-          service: name=nginx state=started enabled=yes
+    - name: Ensure nginx starts on boot
+      service: name=nginx state=started enabled=yes
 
-        - name: Create custom index.html
-          copy: content="{{ inventory_hostname }}" dest=/usr/share/nginx/www/index.html
+    - name: Create custom index.html
+      copy: content="{{ inventory_hostname }}" dest=/usr/share/nginx/www/index.html
                 owner=root group=root mode=0644
-
+    
 .. _rackconnect_and_manged_cloud:
 
-RackConnect and Managed Cloud
+RackConnect および Managed Cloud
 +++++++++++++++++++++++++++++
 
-When using RackConnect version 2 or Rackspace Managed Cloud there are Rackspace automation tasks that are executed on the servers you create after they are successfully built. If your automation executes before the RackConnect or Managed Cloud automation, you can cause failures and unusable servers.
+RackConnect バージョン 2 または Rackspace Managed Cloud を使用する場合は、正常に構築された後に作成するサーバーで実行される Rackspace の自動化タスクがあります。その自動化が「RackConnect」または「Managed Cloud」の自動化前に実行される場合は、障害が発生し、サーバーが利用できなくなる場合があります。
 
-These examples show creating servers, and ensuring that the Rackspace automation has completed before Ansible continues onwards.
+これらの例は、サーバーを作成し、Ansible が続行する前に、Rackspace 自動化が完了したことを確認します。
 
-For simplicity, these examples are joined, however both are only needed when using RackConnect.  When only using Managed Cloud, the RackConnect portion can be ignored.
+分かりやすくするために、この例は結合されていますが、どちらも RackConnect を使用する場合に限り必要です。 Managed Cloud のみを使用する場合、RackConnect の部分は無視されます。
 
-The RackConnect portions only apply to RackConnect version 2.
+RackConnect の部分は、RackConnect バージョン 2 にのみ適用されます。
 
 .. _using_a_control_machine:
 
-Using a Control Machine
+コントロールマシンの使用
 ***********************
 
 .. code-block:: yaml
 
-    - name: Create an exact count of servers
+    - name:Create an exact count of servers
       hosts: localhost
-      gather_facts: False
+      gather_facts:False
       tasks:
-        - name: Server build requests
+        - name:Server build requests
           rax:
             credentials: ~/.raxpub
             name: web%03d.example.org
             flavor: performance1-1
             image: ubuntu-1204-lts-precise-pangolin
             disk_config: manual
-            region: DFW
+            region:DFW
             state: present
-            count: 1
+            count:1
             exact_count: yes
             group: web
             wait: yes
           register: rax
 
-        - name: Add servers to in memory groups
+        - name:Add servers to in memory groups
           add_host:
             hostname: "{{ item.name }}"
-            ansible_host: "{{ item.rax_accessipv4 }}"
-            ansible_password: "{{ item.rax_adminpass }}"
-            ansible_user: root
-            rax_id: "{{ item.rax_id }}"
-            groups: web,new_web
-          loop: "{{ rax.success }}"
-          when: rax.action == 'create'
+        ansible_host: "{{ item.rax_accessipv4 }}"
+        ansible_password: "{{ item.rax_adminpass }}"
+        ansible_user: root
+        rax_id: "{{ item.rax_id }}"
+        groups: web,new_web
+      loop: "{{ rax.success }}"
+      when: rax.action == 'create'
 
-    - name: Wait for rackconnect and managed cloud automation to complete
-      hosts: new_web
-      gather_facts: false
-      tasks:
-        - name: ensure we run all tasks from localhost
-          delegate_to: localhost
-          block:
-            - name: Wait for rackconnnect automation to complete
-              rax_facts:
-                credentials: ~/.raxpub
-                id: "{{ rax_id }}"
-                region: DFW
+- name: Wait for rackconnect and managed cloud automation to complete
+  hosts: new_web
+  gather_facts: false
+  tasks:
+    - name: ensure we run all tasks from localhost
+      delegate_to: localhost
+      block:
+        - name: Wait for rackconnnect automation to complete
+          rax_facts:
+            credentials: ~/.raxpub
+            id: "{{ rax_id }}"
+                region:DFW
               register: rax_facts
               until: rax_facts.ansible_facts['rax_metadata']['rackconnect_automation_status']|default('') == 'DEPLOYED'
-              retries: 30
-              delay: 10
-
-            - name: Wait for managed cloud automation to complete
-              rax_facts:
+              retries:30
+              delay:10
+    
+            - name:Wait for managed cloud automation to complete
+          rax_facts:
                 credentials: ~/.raxpub
                 id: "{{ rax_id }}"
-                region: DFW
+                region:DFW
               register: rax_facts
               until: rax_facts.ansible_facts['rax_metadata']['rax_service_level_automation']|default('') == 'Complete'
-              retries: 30
-              delay: 10
-
-    - name: Update new_web hosts with IP that RackConnect assigns
+              retries:30
+              delay:10
+    
+    - name:Update new_web hosts with IP that RackConnect assigns
       hosts: new_web
       gather_facts: false
       tasks:
-        - name: Get facts about servers
+        - name:Get facts about servers
           rax_facts:
             name: "{{ inventory_hostname }}"
-            region: DFW
-          delegate_to: localhost
-        - name: Map some facts
-          set_fact:
-            ansible_host: "{{ rax_accessipv4 }}"
-
-    - name: Base Configure Servers
+        region: DFW
+      delegate_to: localhost
+    - name: Map some facts
+      set_fact:
+        ansible_host: "{{ rax_accessipv4 }}"
+    
+- name:Base Configure Servers
       hosts: web
       roles:
         - role: users
-
+    
         - role: openssh
           opensshd_PermitRootLogin: "no"
-
+    
         - role: ntp
-
+    
 .. _using_ansible_pull:
 
-Using Ansible Pull
+Ansible Pull の使用
 ******************
 
 .. code-block:: yaml
 
     ---
-    - name: Ensure Rackconnect and Managed Cloud Automation is complete
+    - name:Ensure Rackconnect and Managed Cloud Automation is complete
       hosts: all
       tasks:
         - name: ensure we run all tasks from localhost
           delegate_to: localhost
           block:
-            - name: Check for completed bootstrap
+            - name:Check for completed bootstrap
               stat:
                 path: /etc/bootstrap_complete
               register: bootstrap
 
-            - name: Get region
+            - name:Get region
               command: xenstore-read vm-data/provider_data/region
               register: rax_region
               when: bootstrap.stat.exists != True
 
-            - name: Wait for rackconnect automation to complete
+            - name:Wait for rackconnect automation to complete
               uri:
                 url: "https://{{ rax_region.stdout|trim }}.api.rackconnect.rackspace.com/v1/automation_status?format=json"
                 return_content: yes
               register: automation_status
               when: bootstrap.stat.exists != True
               until: automation_status['automation_status']|default('') == 'DEPLOYED'
-              retries: 30
-              delay: 10
+              retries:30
+              delay:10
 
-            - name: Wait for managed cloud automation to complete
+            - name:Wait for managed cloud automation to complete
               wait_for:
                 path: /tmp/rs_managed_cloud_automation_complete
-                delay: 10
+                delay:10
               when: bootstrap.stat.exists != True
 
-            - name: Set bootstrap completed
+            - name:Set bootstrap completed
               file:
                 path: /etc/bootstrap_complete
                 state: touch
                 owner: root
                 group: root
-                mode: 0400
+                mode:0400
 
-    - name: Base Configure Servers
+    - name:Base Configure Servers
       hosts: all
       roles:
         - role: users
@@ -709,63 +709,63 @@ Using Ansible Pull
 
 .. _using_ansible_pull_with_xenstore:
 
-Using Ansible Pull with XenStore
+XenStore での Ansible Pull の使用
 ********************************
 
 .. code-block:: yaml
 
     ---
-    - name: Ensure Rackconnect and Managed Cloud Automation is complete
+    - name:Ensure Rackconnect and Managed Cloud Automation is complete
       hosts: all
       tasks:
-        - name: Check for completed bootstrap
+        - name:Check for completed bootstrap
           stat:
             path: /etc/bootstrap_complete
           register: bootstrap
 
-        - name: Wait for rackconnect_automation_status xenstore key to exist
+        - name:Wait for rackconnect_automation_status xenstore key to exist
           command: xenstore-exists vm-data/user-metadata/rackconnect_automation_status
           register: rcas_exists
           when: bootstrap.stat.exists != True
           failed_when: rcas_exists.rc|int > 1
           until: rcas_exists.rc|int == 0
-          retries: 30
-          delay: 10
+          retries:30
+          delay:10
 
-        - name: Wait for rackconnect automation to complete
+        - name:Wait for rackconnect automation to complete
           command: xenstore-read vm-data/user-metadata/rackconnect_automation_status
           register: rcas
           when: bootstrap.stat.exists != True
           until: rcas.stdout|replace('"', '') == 'DEPLOYED'
-          retries: 30
-          delay: 10
+          retries:30
+          delay:10
 
-        - name: Wait for rax_service_level_automation xenstore key to exist
+        - name:Wait for rax_service_level_automation xenstore key to exist
           command: xenstore-exists vm-data/user-metadata/rax_service_level_automation
           register: rsla_exists
           when: bootstrap.stat.exists != True
           failed_when: rsla_exists.rc|int > 1
           until: rsla_exists.rc|int == 0
-          retries: 30
-          delay: 10
+          retries:30
+          delay:10
 
-        - name: Wait for managed cloud automation to complete
+        - name:Wait for managed cloud automation to complete
           command: xenstore-read vm-data/user-metadata/rackconnect_automation_status
           register: rsla
           when: bootstrap.stat.exists != True
           until: rsla.stdout|replace('"', '') == 'DEPLOYED'
-          retries: 30
-          delay: 10
+          retries:30
+          delay:10
 
-        - name: Set bootstrap completed
+        - name:Set bootstrap completed
           file:
             path: /etc/bootstrap_complete
             state: touch
             owner: root
             group: root
-            mode: 0400
+            mode:0400
 
-    - name: Base Configure Servers
+    - name:Base Configure Servers
       hosts: all
       roles:
         - role: users
@@ -777,33 +777,33 @@ Using Ansible Pull with XenStore
 
 .. _advanced_usage:
 
-Advanced Usage
+高度な使用方法
 ``````````````
 
 .. _awx_autoscale:
 
-Autoscaling with Tower
+Tower を使用した自動スケーリング
 ++++++++++++++++++++++
 
-:ref:`ansible_tower` also contains a very nice feature for auto-scaling use cases.  
-In this mode, a simple curl script can call a defined URL and the server will "dial out" to the requester 
-and configure an instance that is spinning up.  This can be a great way to reconfigure ephemeral nodes.
-See the Tower documentation for more details.  
+:ref:`ansible_tower` には、自動スケーリングのユースケースに使用する非常に優れた機能も含まれています。  
+このモードでは、簡単な curl スクリプトは定義された URL を呼び出すことができ、サーバーはリクエスターに「ダイヤルアウト」し、
+起動しているインスタンスを構成します。 これは、一時ノードを再設定する優れた方法です。
+詳細は Tower のドキュメントを参照してください。  
 
-A benefit of using the callback in Tower over pull mode is that job results are still centrally recorded 
-and less information has to be shared with remote hosts.
+プルモードの Tower でコールバックを使用する利点は、ジョブの結果が依然として中央に記録されることです。
+また、リモートホストと共有する情報も少なくなります。
 
 .. _pending_information:
 
-Orchestration in the Rackspace Cloud
+Rackspace Cloud のオーケストレーション
 ++++++++++++++++++++++++++++++++++++
 
-Ansible is a powerful orchestration tool, and rax modules allow you the opportunity to orchestrate complex tasks, deployments, and configurations.  The key here is to automate provisioning of infrastructure, like any other piece of software in an environment.  Complex deployments might have previously required manual manipulation of load balancers, or manual provisioning of servers.  Utilizing the rax modules included with Ansible, one can make the deployment of additional nodes contingent on the current number of running nodes, or the configuration of a clustered application dependent on the number of nodes with common metadata.  One could automate the following scenarios, for example:
+Ansible は強力なオーケストレーションツールであり、rax モジュールを使用すると複雑なタスク、デプロイメント、および設定のオーケストレーションが可能になります。 ここでは、環境内にあるソフトウェアの他の部分と同様に、インフラストラクチャーのプロビジョニングを自動化することが重要になります。 複雑なデプロイメントでは、以前ロードバランサーの手動操作またはサーバーの手動プロビジョニングが必要になる場合があります。 Ansible に含まれる rax モジュールを利用することで、現在実行中のノードの数に応じてノードを追加したり、共通のメタデータを持つノードの数に応じてクラスターアプリケーションを構成できます。 たとえば、以下のようなシナリオを自動化できます。
 
-* Servers that are removed from a Cloud Load Balancer one-by-one, updated, verified, and returned to the load balancer pool
-* Expansion of an already-online environment, where nodes are provisioned, bootstrapped, configured, and software installed
-* A procedure where app log files are uploaded to a central location, like Cloud Files, before a node is decommissioned
-* Servers and load balancers that have DNS records created and destroyed on creation and decommissioning, respectively
+* Cloud Load Balancer から 1 つずつ削除され、更新され、検証され、ロードバランサープールに返されるサーバー
+* ノードのプロビジョニング、ブートストラップ、設定、およびソフトウェアがインストールされている、すでにオンライン環境の拡張
+* ノードが非推奨になる前に、アプリケーションログファイルが中央の場所 (Cloud Files など) にアップロードされる手順
+* DNS レコードが作成時に作成され、廃止時に破棄されるサーバーとロードバランサー
 
 
 

@@ -1,31 +1,31 @@
-Vultr Guide
+Vultr ガイド
 ===========
 
-Ansible offers a set of modules to interact with `Vultr <https://www.vultr.com>`_ cloud platform.
+Ansible は、`Vultr <https://www.vultr.com>`_ クラウドプラットフォームと対話するためのモジュールセットを提供します。
 
-This set of module forms a framework that allows one to easily manage and orchestrate one's infrastructure on Vultr cloud platform.
+このモジュールセットは、Vultr クラウドプラットフォームのインフラストラクチャーを簡単に管理および調整できるようにするフレームワークを形成します。
 
 
-Requirements
+要件
 ------------
 
-There is actually no technical requirement; simply an already created Vultr account.
+技術的要件はありません。すでに作成されている Vultr アカウントが必要です。
 
 
-Configuration
+構成
 -------------
 
-Vultr modules offer a rather flexible way with regard to configuration.
+Vultr モジュールは、構成に関してかなり柔軟な方法を提供します。
 
-Configuration is read in that order:
+設定は、以下の順序で読み込まれます。
 
-- Environment Variables (eg. ``VULTR_API_KEY``, ``VULTR_API_TIMEOUT``)
-- File specified by environment variable ``VULTR_API_CONFIG``
-- ``vultr.ini`` file located in current working directory
+- 環境変数 (例: ``VULTR_API_KEY``、``VULTR_API_TIMEOUT``)
+- 環境変数 ``VULTR_API_CONFIG`` で指定されるファイル
+- 現在の作業ディレクトリーにある ``vultr.ini`` ファイル
 - ``$HOME/.vultr.ini``
 
 
-Ini file are structured this way:
+Ini ファイルは以下のような構成になっています。
 
 .. code-block:: ini
 
@@ -38,133 +38,133 @@ Ini file are structured this way:
   timeout = 30
 
 
-If ``VULTR_API_ACCOUNT`` environment variable or ``api_account`` module parameter is not specified, modules will look for the section named "default".
+``VULTR_API_ACCOUNT`` 環境変数または ``api_account`` モジュールパラメーターが指定されないと、モジュールは「default」という名前のセクションを探します。
 
 
-Authentication
+認証
 --------------
 
-Before using the Ansible modules to interact with Vultr, ones need an API key.
-If one doesn't own one yet, log in to `Vultr <https://www.vultr.com>`_ go to Account, then API, enable API then the API key should show up.
+Ansible モジュールを使用して Vultr と対話する前に、API キーが必要になります。
+AIP キーを所有していない場合は、`Vultr <https://www.vultr.com>`_ にログインし、アカウント、API の順に移動して API を有効すると、API キーが表示されます。
 
-Ensure you allow the usage of the API key from the proper IP addresses.
+適切な IP アドレスから API キーを使用できるようにします。
 
-Refer to the Configuration section to find out where to put this information.
+この情報をどこに配置するかは、「構成」セクションを参照してください。
 
-To check that everything is working properly run the following command:
+すべてが適切に機能していることを確認するには、次のコマンドを実行します。
 
 .. code-block:: console
 
   #> VULTR_API_KEY=XXX ansible -m vultr_account_info localhost
-  localhost | SUCCESS => {
-    "changed": false,
-    "vultr_account_info": {
-        "balance": -8.9,
-        "last_payment_amount": -10.0,
-        "last_payment_date": "2018-07-21 11:34:46",
-        "pending_charges": 6.0
-    },
-    "vultr_api": {
-        "api_account": "default",
-        "api_endpoint": "https://api.vultr.com",
-        "api_retries": 5,
-        "api_timeout": 60
-    }
-  }
+localhost | SUCCESS => {
+"changed": false,
+"vultr_account_info": {
+"balance": -8.9,
+"last_payment_amount": -10.0,
+"last_payment_date": "2018-07-21 11:34:46",
+"pending_charges": 6.0
+},
+"vultr_api": {
+"api_account": "default",
+"api_endpoint": "https://api.vultr.com",
+"api_retries": 5,
+"api_timeout": 60
+}
+}
 
 
-If a similar output displays then everything is setup properly, else please ensure the proper ``VULTR_API_KEY`` has been specified and that Access Control on Vultr > Account > API page are accurate.
+同様の出力が表示され、すべての設定が適切に行われた場合は、適切な ``VULTR_API_KEY`` が正しく指定されており、Vultr > Account > API ページのアクセス制御が正確であることを確認してください。
 
 
-Usage
+使用法
 -----
 
-Since `Vultr <https://www.vultr.com>`_ offers a public API, the execution of the module to manage the infrastructure on their platform will happen on localhost. This translates to:
+`Vultr <https://www.vultr.com>`_ はパブリック API を提供するため、プラットフォーム上でインフラストラクチャーを管理するモジュールの実行はローカルホストで行われます。これは以下に変換されます。
 
 .. code-block:: yaml
 
   ---
   - hosts: localhost
     tasks:
-      - name: Create a 10G volume
+      - name:Create a 10G volume
         vultr_block_storage:
           name: my_disk
-          size: 10
-          region: New Jersey
+          size:10
+          region:New Jersey
 
 
-From that point on, only you creativity is the limit. Make sure to read the documentation of the `available modules <https://docs.ansible.com/ansible/latest/modules/list_of_cloud_modules.html#vultr>`_.
+これ以降は、ユーザーの創造性が限界となります。`利用可能なモジュール <https://docs.ansible.com/ansible/latest/modules/list_of_cloud_modules.html#vultr>`_ のドキュメントを参照してください。
 
 
-Dynamic Inventory
+動的インベントリー
 -----------------
 
-Ansible provides a dynamic inventory plugin for `Vultr <https://www.vultr.com>`_.
-The configuration process is exactly the same as the one for the modules.
+Ansible は、`Vultr <https://www.vultr.com>`_ の動的インベントリープラグインを提供します。
+設定プロセスは、モジュールのプロセスと完全に同じです。
 
-To be able to use it you need to enable it first by specifying the following in the ``ansible.cfg`` file:
+これを使用できるようにするには、最初に ``ansible.cfg`` ファイルで以下を指定して有効にする必要があります。
 
 .. code-block:: ini
 
   [inventory]
   enable_plugins=vultr
 
-And provide a configuration file to be used with the plugin, the minimal configuration file looks like this:
+また、プラグインで使用する設定ファイルを提供します。最小設定ファイルは以下のようになります。
 
 .. code-block:: yaml
 
   ---
   plugin: vultr
 
-To list the available hosts one can simply run:
+利用可能なホストを一覧表示するには、以下を実行します。
 
 .. code-block:: console
 
   #> ansible-inventory -i vultr.yml --list
 
 
-For example, this allows you to take action on nodes grouped by location or OS name:
+たとえば、これにより、場所別または OS 名別にグループにまとめたノードでアクションを実行できます。
 
 .. code-block:: yaml
 
   ---
-  - hosts: Amsterdam
+  - hosts:Amsterdam
     tasks:
-      - name: Rebooting the machine
+      - name:Rebooting the machine
         shell: reboot
-        become: True
+        become:True
 
 
-Integration tests
+統合テスト
 -----------------
 
-Ansible includes integration tests for all Vultr modules.
+Ansible には、すべての Vultr モジュールの統合テストが含まれます。
 
-These tests are meant to run against the public Vultr API and that is why they require a valid key to access the API.
+このテストは、パブリックの Vultr API に対して実行されることが意図されていますが、これは API にアクセスするために有効なキーを必要とするためです。
 
-Prepare the test setup:
+テスト設定を準備します。
 
 .. code-block:: shell
 
   $ cd ansible # location the ansible source is
-  $ source ./hacking/env-setup
+$ source ./hacking/env-setup
 
-Set the Vultr API key:
+Vultr API キーを設定します。
 
 .. code-block:: shell
 
   $ cd test/integration
-  $ cp cloud-config-vultr.ini.template cloud-config-vultr.ini
-  $ vi cloud-config-vultr.ini
+$ cp cloud-config-vultr.ini.template cloud-config-vultr.ini
+$ vi cloud-config-vultr.ini
 
-Run all Vultr tests:
+すべての Vultr テストを実行します。
 
 .. code-block:: shell
 
   $ ansible-test integration cloud/vultr/ -v --diff --allow-unsupported
 
 
-To run a specific test, e.g. vultr_account_info:
+特定のテスト (例: vultr_account_info) を実行するには、以下を実行します。
 
 .. code-block:: shell
 

@@ -1,14 +1,14 @@
 .. _vmware_ansible:
 
 ******************
-VMware Guide
+VMware ガイド
 ******************
 
-Welcome to the Ansible for VMware Guide!
+VMware 向け Ansible ガイドでようこそ!
 
-The purpose of this guide is to teach you everything you need to know about using Ansible with VMware.
+本ガイドの目的は、VMware で Ansible を使用する際に必要な知識を学習することです。
 
-To get started, please select one of the following topics.
+最初に以下のトピックのいずれかを選択してください。
 
 .. toctree::
    :maxdepth: 1

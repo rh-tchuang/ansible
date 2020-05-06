@@ -1,144 +1,144 @@
-Amazon Web Services Guide
+Amazon Web Services ガイド
 =========================
 
 .. _aws_intro:
 
-Introduction
+はじめに
 ````````````
 
-Ansible contains a number of modules for controlling Amazon Web Services (AWS).  The purpose of this
-section is to explain how to put Ansible modules together (and use inventory scripts) to use Ansible in AWS context.
+Ansible には、Amazon Web Services (AWS) を制御するモジュールが多数含まれています。 このセクションでは、
+Ansible モジュールをまとめて (およびインベントリースクリプトを使用して) AWS コンテキストで Ansible を使用する方法を説明します。
 
-Requirements for the AWS modules are minimal.  
+AWS モジュールの要件は最小限です。  
 
-All of the modules require and are tested against recent versions of boto.  You'll need this Python module installed on your control machine.  Boto can be installed from your OS distribution or python's "pip install boto".
+すべてのモジュールには、最新バージョンの boto に必要で、テストされています。 この Python モジュールは、コントロールマシンにインストールする必要があります。 boto は、OS ディストリビューションまたは python の「pip install boto」からインストールできます。
 
-Whereas classically ansible will execute tasks in its host loop against multiple remote machines, most cloud-control steps occur on your local machine with reference to the regions to control.
+従来、ansible はホストループ内のタスクを複数のリモートマシンに対して実行しますが、ほとんどのクラウド制御手順は、制御するリージョンを参照するローカルマシンで実行されます。
 
-In your playbook steps we'll typically be using the following pattern for provisioning steps::
+Playbook の手順では、通常、プロビジョニング手順に以下のパターンを使用します。
 
     - hosts: localhost
-      gather_facts: False
+      gather_facts:False
       tasks:
         - ...
 
 .. _aws_authentication:
 
-Authentication
+認証
 ``````````````
    
-Authentication with the AWS-related modules is handled by either 
-specifying your access and secret key as ENV variables or module arguments.
+AWS 関連モジュールでの認証は、
+ENV 変数またはモジュール引数としてアクセスおよび秘密鍵を指定することにより処理されます。
 
-For environment variables::
+環境変数の場合::
 
     export AWS_ACCESS_KEY_ID='AK123'
     export AWS_SECRET_ACCESS_KEY='abc123'
 
-For storing these in a vars_file, ideally encrypted with ansible-vault::
+vars_file に保存するには、ansible-vault で暗号化することが理想的です::
 
     ---
     ec2_access_key: "--REMOVED--"
     ec2_secret_key: "--REMOVED--"
 
-Note that if you store your credentials in vars_file, you need to refer to them in each AWS-module. For example::
+認証情報を vars_file に保存する場合は、各 Alicloud モジュールで認証情報を参照する必要があることに注意してください。例::
 
     - ec2
       aws_access_key: "{{ec2_access_key}}"
-      aws_secret_key: "{{ec2_secret_key}}"
+  aws_secret_key: "{{ec2_secret_key}}"
       image: "..."
-
+    
 .. _aws_provisioning:
 
-Provisioning
+プロビジョニング
 ````````````
 
-The ec2 module provisions and de-provisions instances within EC2.  
+ec2 モジュールは、EC2 内でインスタンスのプロビジョニングおよびプロビジョニング解除を行います。  
 
-An example of making sure there are only 5 instances tagged 'Demo' in EC2 follows.  
+EC2 で「Demo」とタグ付けされたインスタンスが 5 つしか存在しないことを確認する例を以下に示します。  
 
-In the example below, the "exact_count" of instances is set to 5.  This means if there are 0 instances already existing, then
-5 new instances would be created.  If there were 2 instances, only 3 would be created, and if there were 8 instances, 3 instances would
-be terminated.
+以下の例では、インスタンスの「exact_count」は 5 に設定されます。 これは、インスタンスがない場合は、
+新規インスタンスが 5 個作成されることを示しています。 インスタンスが 2 個ある場合には、3 個作成され、インスタンスが 8 個ある場合には、
+3 個のインスタンスが終了します。
 
-What is being counted is specified by the "count_tag" parameter.  The parameter "instance_tags" is used to apply tags to the newly created
-instance.::
-
-    # demo_setup.yml
-
-    - hosts: localhost
-      gather_facts: False
-
-      tasks:
-
-        - name: Provision a set of instances
-          ec2: 
-             key_name: my_key
-             group: test
-             instance_type: t2.micro
-             image: "{{ ami_id }}"
-             wait: true 
-             exact_count: 5
-             count_tag:
-                Name: Demo
-             instance_tags:
-                Name: Demo
-          register: ec2
-
-The data about what instances are created is being saved by the "register" keyword in the variable named "ec2".
-
-From this, we'll use the add_host module to dynamically create a host group consisting of these new instances.  This facilitates performing configuration actions on the hosts immediately in a subsequent task.::
+カウントされるものは「count_tag」パラメーターで指定します。 「instance_tags」パラメーターは、
+新たに作成されたインスタンスをタグに適用するために使用されます::
 
     # demo_setup.yml
 
-    - hosts: localhost
-      gather_facts: False
+- hosts: localhost
+  gather_facts: False
 
-      tasks:
-
-        - name: Provision a set of instances
-          ec2: 
-             key_name: my_key
-             group: test
-             instance_type: t2.micro
-             image: "{{ ami_id }}"
-             wait: true 
-             exact_count: 5
-             count_tag:
-                Name: Demo
-             instance_tags:
-                Name: Demo
-          register: ec2
-    
-       - name: Add all instance public IPs to host group
-         add_host: hostname={{ item.public_ip }} groups=ec2hosts
-         loop: "{{ ec2.instances }}"
-
-With the host group now created, a second play at the bottom of the same provisioning playbook file might now have some configuration steps::
-
-    # demo_setup.yml
+  tasks:
 
     - name: Provision a set of instances
-      hosts: localhost
-      # ... AS ABOVE ...
+      ec2: 
+         key_name: my_key
+         group: test
+         instance_type: t2.micro
+         image: "{{ ami_id }}"
+         wait: true 
+         exact_count: 5
+         count_tag:
+            Name: Demo
+         instance_tags:
+            Name: Demo
+      register: ec2
 
-    - hosts: ec2hosts
-      name: configuration play
-      user: ec2-user
-      gather_facts: true
+作成されるインスタンスに関するデータは、「ec2」という変数の「register」キーワードによって保存されます。
 
-      tasks:
+このモジュールから add_host モジュールを使用し、これらの新規インスタンスで構成されるホストグループを動的に作成します。 これにより、後続のタスクで、ホストでの設定アクションをすぐに実行できます::
 
-         - name: Check NTP service
-           service: name=ntpd state=started
+    # demo_setup.yml
+
+- hosts: localhost
+  gather_facts: False
+
+  tasks:
+
+    - name: Provision a set of instances
+      ec2: 
+         key_name: my_key
+         group: test
+         instance_type: t2.micro
+         image: "{{ ami_id }}"
+         wait: true 
+         exact_count: 5
+         count_tag:
+            Name: Demo
+         instance_tags:
+            Name: Demo
+      register: ec2
+
+   - name: Add all instance public IPs to host group
+     add_host: hostname={{ item.public_ip }} groups=ec2hosts
+     loop: "{{ ec2.instances }}"
+
+これでホストグループが作成されましたが、同じプロビジョニング用 Playbook ファイルの下部に、いくつかの構成手順が指定されている 2 番目のプレイが追加されている可能性があります。
+
+    # demo_setup.yml
+
+- name: Provision a set of instances
+  hosts: localhost
+  # ... AS ABOVE ...
+
+- hosts: ec2hosts
+  name: configuration play
+  user: ec2-user
+  gather_facts: true
+
+  tasks:
+
+     - name: Check NTP service
+       service: name=ntpd state=started
 
 .. _aws_security_groups:
 
-Security Groups
+セキュリティーグループ
 ```````````````
 
-Security groups on AWS are stateful. The response of a request from your instance is allowed to flow in regardless of inbound security group rules and vice-versa.
-In case you only want allow traffic with AWS S3 service, you need to fetch the current IP ranges of AWS S3 for one region and apply them as an egress rule.::
+AWS のセキュリティーグループはステートフルです。インスタンスからの要求の応答は、受信セキュリティーグループルールやその逆に関係なくフローできます。
+AWS S3 サービスを使用するトラフィックのみを許可する場合には、あるリージョンに対して AWS S3 の現在の IP 範囲を取得し、それを egress ルールとして適用する必要があります。
 
     - name: fetch raw ip ranges for aws s3
       set_fact:
@@ -165,118 +165,118 @@ In case you only want allow traffic with AWS S3 service, you need to fetch the c
 
 .. _aws_host_inventory:
 
-Host Inventory
+ホストインベントリー
 ``````````````
 
-Once your nodes are spun up, you'll probably want to talk to them again.  With a cloud setup, it's best to not maintain a static list of cloud hostnames
-in text files.  Rather, the best way to handle this is to use the ec2 dynamic inventory script. See :ref:`dynamic_inventory`. 
+ノードが起動したら、おそらく再度通信するようにしたいでしょう。 クラウド設定では、テキストファイルに、
+クラウドホスト名の静的リストを維持しないことが推奨されます。 これを処理する最善の方法は、ec2 動的インベントリースクリプトを使用することです。:ref:`dynamic_inventory` を参照してください。 
 
-This will also dynamically select nodes that were even created outside of Ansible, and allow Ansible to manage them.
+これにより、Ansible 外で作成されたノードも動的に選択され、Ansible がノードを管理できるようになります。
 
-See :ref:`dynamic_inventory` for how to use this, then return to this chapter.
+これを使用する方法は :ref:`dynamic_inventory` を参照してから、本章に戻ります。
 
 .. _aws_tags_and_groups:
 
-Tags And Groups And Variables
+タグ、グループ、および変数
 `````````````````````````````
 
-When using the ec2 inventory script, hosts automatically appear in groups based on how they are tagged in EC2.
+ec2 インベントリースクリプトを使用すると、ホストは EC2 でタグ付けされる方法に基づいて自動的にグループに表示されます。
 
-For instance, if a host is given the "class" tag with the value of "webserver",
-it will be automatically discoverable via a dynamic group like so::
+たとえば、ホストに「webserver」の値で「class」タグが付与される場合は、
+以下のように、動的グループを介して自動的に検出されます::
 
    - hosts: tag_class_webserver
      tasks:
        - ping
 
-Using this philosophy can be a great way to keep systems separated by the function they perform.
+この原理を使用すると、実行する機能でシステムを分離することができます。
 
-In this example, if we wanted to define variables that are automatically applied to each machine tagged with the 'class' of 'webserver', 'group_vars'
-in ansible can be used.  See :ref:`splitting_out_vars`.
+この例では、「webserver」の「class」でタグ付けされた各マシンに自動的に適用される変数を定義すると、
+ansible の「group_vars」が使用できます。 「:ref:`splitting_out_vars`」を参照してください。
 
-Similar groups are available for regions and other classifications, and can be similarly assigned variables using the same mechanism.
+同様のグループは、リージョンおよびその他の分類に利用でき、同じメカニズムを使用して同様に変数を割り当てることができます。
 
 .. _aws_pull:
 
-Autoscaling with Ansible Pull
+Ansible Pull を使用した自動スケーリング
 `````````````````````````````
 
-Amazon Autoscaling features automatically increase or decrease capacity based on load.  There are also Ansible modules shown in the cloud documentation that
-can configure autoscaling policy.
+Amazon Autoscaling 機能は、負荷に応じて容量を自動的に増減します。 また、クラウドドキュメントで説明されるように、
+自動スケーリングポリシーを設定する Ansible モジュールがあります。
 
-When nodes come online, it may not be sufficient to wait for the next cycle of an ansible command to come along and configure that node.  
+ノードがオンラインになると、ansible コマンドの次のサイクルが反映されてそのノードを設定するのを待つことができない可能性があります。  
 
-To do this, pre-bake machine images which contain the necessary ansible-pull invocation.  Ansible-pull is a command line tool that fetches a playbook from a git server and runs it locally.  
+これには、必要な ansible-pull 呼び出しが含まれる事前のマシンイメージが必要です。 Ansible-pull は、git サーバーから Playbook を取得し、ローカルで実行するコマンドラインツールです。  
 
-One of the challenges of this approach is that there needs to be a centralized way to store data about the results of pull commands in an autoscaling context.
-For this reason, the autoscaling solution provided below in the next section can be a better approach.
+このアプローチの課題の 1 つとして、pull コマンドの結果に関するデータを自動スケーリングコンテキストに保存する集中的な方法が必要になります。
+このため、次のセクションで提供される自動スケーリングソリューションの方が適切な方法です。
 
-Read :ref:`ansible-pull` for more information on pull-mode playbooks.
+pull モードの Playbook の詳細は、:ref:`ansible-pull` を参照してください。
 
 .. _aws_autoscale:
 
-Autoscaling with Ansible Tower
+Ansible Tower を使用した自動スケーリング
 ``````````````````````````````
 
-:ref:`ansible_tower` also contains a very nice feature for auto-scaling use cases.  In this mode, a simple curl script can call
-a defined URL and the server will "dial out" to the requester and configure an instance that is spinning up.  This can be a great way
-to reconfigure ephemeral nodes.  See the Tower install and product documentation for more details.
+:ref:`ansible_tower` には、自動スケーリングのユースケースに使用する非常に優れた機能も含まれています。 このモードでは、単純な curl スクリプトが定義済みの URL を呼び出すことができ、
+サーバーはリクエスターに「ダイヤルアウト」して、起動しているインスタンスを構成します。 これは、
+一時ノードを再設定する優れた方法です。 詳細は、Tower のインストールおよび製品のドキュメントを参照してください。
 
-A benefit of using the callback in Tower over pull mode is that job results are still centrally recorded and less information has to be shared
-with remote hosts.
+pull モードで Tower のコールバックを使用する利点は、ジョブの結果が引き続き中央で記録され、
+リモートホストと共有する必要のある情報が少なくなることです。
 
 .. _aws_cloudformation_example:
 
-Ansible With (And Versus) CloudFormation
+CloudFormation を使用した Ansible (Ansible と CloudFormation の比較)
 ````````````````````````````````````````
 
-CloudFormation is a Amazon technology for defining a cloud stack as a JSON or YAML document.   
+CloudFormation は、クラウドスタックを JSON または YAML のドキュメントとして定義する Amazon テクノロジーです。   
 
-Ansible modules provide an easier to use interface than CloudFormation in many examples, without defining a complex JSON/YAML document.
-This is recommended for most users.
+Ansible モジュールは、複雑な JSON/YAML ドキュメントを定義せずに、多くの例で CloudFormation よりも簡単にインターフェースを使用できます。
+これは、ほとんどのユーザーに推奨されます。
 
-However, for users that have decided to use CloudFormation, there is an Ansible module that can be used to apply a CloudFormation template
-to Amazon.
+ただし、CloudFormation を使用するユーザーには、
+CloudFormation テンプレートを Amazon に適用するのに使用できる Ansible モジュールがあります。
 
-When using Ansible with CloudFormation, typically Ansible will be used with a tool like Packer to build images, and CloudFormation will launch
-those images, or ansible will be invoked through user data once the image comes online, or a combination of the two.
+CloudFormation で Ansible を使用する場合は、通常、Ansible を Packer などのツールで使用してイメージを作成し、CloudFormation がそのイメージを起動するか、
+イメージがオンラインになると、ユーザーデータを通じて ansible が呼び出されるか、その組み合わせとなります。
 
-Please see the examples in the Ansible CloudFormation module for more details.
+詳細は、Ansible CloudFormation モジュールのサンプルを参照してください。
 
 .. _aws_image_build:
 
-AWS Image Building With Ansible
+Ansible での AWS イメージの構築
 ```````````````````````````````
 
-Many users may want to have images boot to a more complete configuration rather than configuring them entirely after instantiation.  To do this,
-one of many programs can be used with Ansible playbooks to define and upload a base image, which will then get its own AMI ID for usage with
-the ec2 module or other Ansible AWS modules such as ec2_asg or the cloudformation module.   Possible tools include Packer, aminator, and Ansible's
-ec2_ami module.  
+多くのユーザーは、イメージをインスタンス化後に完全に設定するのではなく、より完全な設定で起動できます。 これを行うには、
+Ansible Playbook で数多くあるプログラムの 1 つを使用してベースイメージを定義し、アップロードすることができます。
+これにより、ec2 モジュールや、ec2_asg、cloudformation などの Ansible AWS モジュールで使用する独自の AMI ID を取得します。  利用可能なツールには、Packer、aminator、
+および Ansible の ec2_ami モジュールが含まれます。  
 
-Generally speaking, we find most users using Packer.
+一般的には、Packer が使用されます。
 
-See the Packer documentation of the `Ansible local Packer provisioner <https://www.packer.io/docs/provisioners/ansible-local.html>`_ and `Ansible remote Packer provisioner <https://www.packer.io/docs/provisioners/ansible.html>`_.
+Packer ドキュメントの「`Ansible のローカル Packer プロビジョナー <https://www.packer.io/docs/provisioners/ansible-local.html>`_」および「`Ansible リモート Packer プロビジョナー <https://www.packer.io/docs/provisioners/ansible.html>`_」を参照してください。
 
-If you do not want to adopt Packer at this time, configuring a base-image with Ansible after provisioning (as shown above) is acceptable.
+現時点では、Packer を使用しない場合は、プロビジョニング後に (上記のように) Ansible を使用したベースイメージの設定が可能です。
 
 .. _aws_next_steps:
 
-Next Steps: Explore Modules
+次のステップ:モジュールの検証
 ```````````````````````````
 
-Ansible ships with lots of modules for configuring a wide array of EC2 services.  Browse the "Cloud" category of the module
-documentation for a full list with examples.
+Ansible には、幅広い EC2 サービスを設定する多くのモジュールが含まれています。 モジュールドキュメントの「Cloud」カテゴリーを参照してください。
+サンプルを含む完全なリストが紹介されています。
 
 .. seealso::
 
    :ref:`all_modules`
-       All the documentation for Ansible modules
+       Ansible モジュールの全ドキュメント
    :ref:`working_with_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_delegation`
-       Delegation, useful for working with loud balancers, clouds, and locally executed steps.
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       委譲 (ロードバランサー、クラウド、ローカルで実行した手順を使用する際に役に立ちます)
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel
 

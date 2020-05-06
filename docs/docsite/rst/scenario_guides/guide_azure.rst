@@ -1,91 +1,91 @@
-Microsoft Azure Guide
+Microsoft Azure ガイド
 =====================
 
-Ansible includes a suite of modules for interacting with Azure Resource Manager, giving you the tools to easily create
-and orchestrate infrastructure on the Microsoft Azure Cloud.
+Ansible には、Azure Resource Manager と対話するためのモジュールのスイートが含まれており、簡単に作成し、
+Microsoft Azure Cloud 上のインフラストラクチャーを調整するツールを提供します。
 
-Requirements
+要件
 ------------
 
-Using the Azure Resource Manager modules requires having specific Azure SDK modules
-installed on the host running Ansible.
+Azure Resource Manager モジュールを使用するには、
+Ansible を実行しているホストに特定の Azure SDK モジュールをインストールする必要があります。
 
 .. code-block:: bash
 
     $ pip install 'ansible[azure]'
 
-If you are running Ansible from source, you can install the dependencies from the
-root directory of the Ansible repo.
+ソースから Ansible を実行している場合は、
+Ansible リポジトリーの root ディレクトリーから依存関係をインストールできます。
 
 .. code-block:: bash
 
     $ pip install .[azure]
 
-You can also directly run Ansible in `Azure Cloud Shell <https://shell.azure.com>`_, where Ansible is pre-installed.
+また、Ansible が事前にインストールされている `Azure Cloud Shell <https://shell.azure.com>`_ で Ansible を直接実行することもできます。
 
-Authenticating with Azure
+API での認証
 -------------------------
 
-Using the Azure Resource Manager modules requires authenticating with the Azure API. You can choose from two authentication strategies:
+Azure Resource Manager モジュールを使用するには、Azure API で認証する必要があります。以下の認証ストラテジーを選択できます。
 
-* Active Directory Username/Password
-* Service Principal Credentials
+* Active Directory ユーザー名/パスワード
+* サービスプリンシパルの認証情報
 
-Follow the directions for the strategy you wish to use, then proceed to `Providing Credentials to Azure Modules`_ for
-instructions on how to actually use the modules and authenticate with the Azure API.
+使用する戦略の指示に従い、実際にモジュールを使用して Azure API で認証する方法について、「`Azure モジュールへの認証情報の提供`_」
+に進んでください。
 
 
-Using Service Principal
+サービスプリンシパルの使用
 .......................
 
-There is now a detailed official tutorial describing `how to create a service principal <https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal>`_.
+「`サービスプリンシパルの作成方法 <https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal>`_」を説明する詳細な公式チュートリアルがあります。
 
-After stepping through the tutorial you will have:
+チュートリアルを実行すると、以下が可能になります。
 
-* Your Client ID, which is found in the "client id" box in the "Configure" page of your application in the Azure portal
-* Your Secret key, generated when you created the application. You cannot show the key after creation.
-  If you lost the key, you must create a new one in the "Configure" page of your application.
-* And finally, a tenant ID. It's a UUID (e.g. ABCDEFGH-1234-ABCD-1234-ABCDEFGHIJKL) pointing to the AD containing your
-  application. You will find it in the URL from within the Azure portal, or in the "view endpoints" of any given URL.
+* Azure ポータルのアプリケーションの「設定」ページの「クライアント ID」ボックスにあるクライアント ID
+* シークレットキーは、アプリケーションの作成時に生成されます。作成後にキーを表示することはできません。
+  キーが失われた場合は、アプリケーションの「設定」ページで新しいキーを作成する必要があります。
+* 最後にテナント ID。これは、
+  アプリケーションを含む AD を指す UUID (例: ABCDEFGH-1234-ABCD-1234-ABCDEFGHIJKL) です。これは、Azure ポータルまたは指定の URL の「エンドポイントの表示」にある URL にあります。
 
 
-Using Active Directory Username/Password
+Active Directory のユーザー名/パスワードの使用
 ........................................
 
-To create an Active Directory username/password:
+Active Directory のユーザー名/パスワードを作成するには、以下を実行します。
 
-* Connect to the Azure Classic Portal with your admin account
-* Create a user in your default AAD. You must NOT activate Multi-Factor Authentication
-* Go to Settings - Administrators
-* Click on Add and enter the email of the new user.
-* Check the checkbox of the subscription you want to test with this user.
-* Login to Azure Portal with this new user to change the temporary password to a new one. You will not be able to use the
-  temporary password for OAuth login.
+* 管理者アカウントを使用して Azure Classic Portal に接続します。
+* デフォルトの AAD でユーザーを作成します。マルチファクター認証をアクティブにしないでください。
+* Settings、Administrator に移動します。
+* Add をクリックして、新規ユーザーの電子メールを入力します。
+* このユーザーでテストするサブスクリプションのチェックボックスにチェックを付けます。
+* この新規ユーザーで Azure Portal にログインし、一時パスワードを新規パスワードに変更します。OAuth ログインに、
+  一時パスワードを使用することはできません。
 
-Providing Credentials to Azure Modules
+Azure モジュールへの認証情報の提供
 ......................................
 
-The modules offer several ways to provide your credentials. For a CI/CD tool such as Ansible Tower or Jenkins, you will
-most likely want to use environment variables. For local development you may wish to store your credentials in a file
-within your home directory. And of course, you can always pass credentials as parameters to a task within a playbook. The
-order of precedence is parameters, then environment variables, and finally a file found in your home directory.
+モジュールは、認証情報を提供する複数の方法を提供します。Ansible Tower、Jenkins などの CI/CD ツールでは、
+ほとんどの場合は、環境変数を使用してください。ローカル開発の場合は、
+認証情報をホームディレクトリー内のファイルに保存できます。当然ながら、認証情報をパラメーターとして Playbook 内のタスクに渡すことができます。優先順位は、
+パラメーター、環境変数、最後にホームディレクトリーにあるファイルの順になります。
 
-Using Environment Variables
+追加の環境変数
 ```````````````````````````
 
-To pass service principal credentials via the environment, define the following variables:
+環境経由でサービスプリンシパルの認証情報を渡すには、以下の変数を定義します。
 
 * AZURE_CLIENT_ID
 * AZURE_SECRET
 * AZURE_SUBSCRIPTION_ID
 * AZURE_TENANT
 
-To pass Active Directory username/password via the environment, define the following variables:
+環境経由で Active Directory のユーザー名/パスワードのペアを渡すには、以下の変数を定義します。
 
 * AZURE_AD_USER
 * AZURE_PASSWORD
 
-To pass Active Directory username/password in ADFS via the environment, define the following variables:
+環境経由で Active Directory のユーザー名/パスワードを渡すには、以下の変数を定義します。
 
 * AZURE_AD_USER
 * AZURE_PASSWORD
@@ -93,13 +93,13 @@ To pass Active Directory username/password in ADFS via the environment, define t
 * AZURE_TENANT
 * AZURE_ADFS_AUTHORITY_URL
 
-"AZURE_ADFS_AUTHORITY_URL" is optional. It's necessary only when you have own ADFS authority like https://yourdomain.com/adfs.
+「AZURE_ADFS_AUTHORITY_URL」は任意です。これは、https://yourdomain.com/adfs といった独自の認証機関がある場合にのみ必要です。
 
-Storing in a File
+ファイルへの保存
 `````````````````
 
-When working in a development environment, it may be desirable to store credentials in a file. The modules will look
-for credentials in ``$HOME/.azure/credentials``. This file is an ini style file. It will look as follows:
+開発環境で作業する場合は、ファイルに認証情報を保存することが望ましい場合があります。モジュールは、
+``$HOME/.azure/credentials`` を認証情報を探します。このファイルは ini 形式のファイルです。以下のようになります。
 
 .. code-block:: ini
 
@@ -109,28 +109,28 @@ for credentials in ``$HOME/.azure/credentials``. This file is an ini style file.
     secret=xxxxxxxxxxxxxxxxx
     tenant=xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 
-.. note:: If your secret values contain non-ASCII characters, you must `URL Encode <https://www.w3schools.com/tags/ref_urlencode.asp>`_ them to avoid login errors.
+.. note:: シークレット値に ASCII 以外の文字が含まれる場合は、ログインエラーを防ぐために `URL Encode <https://www.w3schools.com/tags/ref_urlencode.asp>`_ を行う必要があります。
 
-It is possible to store multiple sets of credentials within the credentials file by creating multiple sections. Each
-section is considered a profile. The modules look for the [default] profile automatically. Define AZURE_PROFILE in the
-environment or pass a profile parameter to specify a specific profile.
+複数のセクションを作成すると、認証情報ファイルに複数の認証情報セットを保存できます。それぞれのセクションは、
+プロファイルとみなされます。モジュールが自動的に [default] プロファイルを検索します。環境で AZURE_PROFILE を定義するか、
+プロファイルパラメーターを渡して特定のプロファイルを指定します。
 
-Passing as Parameters
+パラメーターとして渡す
 `````````````````````
 
-If you wish to pass credentials as parameters to a task, use the following parameters for service principal:
+認証情報をパラメーターとしてタスクに渡すには、サービスプリンシパルについて以下のパラメーターを使用します。
 
 * client_id
 * secret
 * subscription_id
 * tenant
 
-Or, pass the following parameters for Active Directory username/password:
+または、Active Directory のユーザー名/パスワードについて以下のパラメーターを渡します。
 
 * ad_user
 * password
 
-Or, pass the following parameters for ADFS username/pasword:
+または、以下のパラメーターを ADFS username/pasword に渡します。
 
 * ad_user
 * password
@@ -138,159 +138,159 @@ Or, pass the following parameters for ADFS username/pasword:
 * tenant
 * adfs_authority_url
 
-"adfs_authority_url" is optional. It's necessary only when you have own ADFS authority like https://yourdomain.com/adfs.
+"adfs_authority_url" は任意です。これは、https://yourdomain.com/adfs といった独自の認証機関がある場合にのみ必要です。
 
 
-Other Cloud Environments
+その他のクラウド環境
 ------------------------
 
-To use an Azure Cloud other than the default public cloud (eg, Azure China Cloud, Azure US Government Cloud, Azure Stack),
-pass the "cloud_environment" argument to modules, configure it in a credential profile, or set the "AZURE_CLOUD_ENVIRONMENT"
-environment variable. The value is either a cloud name as defined by the Azure Python SDK (eg, "AzureChinaCloud",
-"AzureUSGovernment"; defaults to "AzureCloud") or an Azure metadata discovery URL (for Azure Stack).
+デフォルトのパブリッククラウド (Azure China Cloud、Azure US Government Cloud、Azure Stack など) 以外の Azure Cloud を使用するには、
+「cloud_environment」引数をモジュールに渡すか、認証情報プロファイルで構成するか、
+「AZURE_CLOUD_ENVIRONMENT」環境を設定します。値は、Azure Python SDK で定義されたクラウド名 (「AzureChinaCloud」、「AzureUSGovernment」など。
+デフォルトは「AzureCloud」) または Azure メタデータ検出 URL (Azure Stack の場合) のいずれかです。
 
-Creating Virtual Machines
+仮想マシンの作成
 -------------------------
 
-There are two ways to create a virtual machine, both involving the azure_rm_virtualmachine module. We can either create
-a storage account, network interface, security group and public IP address and pass the names of these objects to the
-module as parameters, or we can let the module do the work for us and accept the defaults it chooses.
+仮想マシンを作成する 2 つの方法は、azure_rm_virtualmachine モジュールに関連する方法があります。ストレージアカウント、ネットワークインターフェース、セキュリティグループ、パブリック IP アドレスを作成して、
+これらのオブジェクトの名前をパラメーターとしてモジュールに渡すか、
+その作業をモジュールに任せて、選択したデフォルトを受け入れることができます。
 
-Creating Individual Components
+個別コンポーネントの作成
 ..............................
 
-An Azure module is available to help you create a storage account, virtual network, subnet, network interface,
-security group and public IP. Here is a full example of creating each of these and passing the names to the
-azure_rm_virtualmachine module at the end:
+Azure モジュールは、ストレージアカウント、仮想ネットワーク、サブネット、ネットワークインターフェース、
+セキュリティーグループ、およびパブリック IP の作成に役立ちます。これをそれぞれを作成し、
+最後に azure_rm_virtualmachine モジュールに名前を渡す完全な例を次に示します。
 
 .. code-block:: yaml
 
-    - name: Create storage account
+    - name:Create storage account
       azure_rm_storageaccount:
-        resource_group: Testing
+        resource_group:Testing
         name: testaccount001
-        account_type: Standard_LRS
+        account_type:Standard_LRS
 
-    - name: Create virtual network
+    - name:Create virtual network
       azure_rm_virtualnetwork:
-        resource_group: Testing
+        resource_group:Testing
         name: testvn001
-        address_prefixes: "10.10.0.0/16"
+        address_prefixes:"10.10.0.0/16"
 
-    - name: Add subnet
+    - name:Add subnet
       azure_rm_subnet:
-        resource_group: Testing
+        resource_group:Testing
         name: subnet001
-        address_prefix: "10.10.0.0/24"
+        address_prefix:"10.10.0.0/24"
         virtual_network: testvn001
 
-    - name: Create public ip
+    - name:Create public ip
       azure_rm_publicipaddress:
-        resource_group: Testing
-        allocation_method: Static
+        resource_group:Testing
+        allocation_method:Static
         name: publicip001
 
-    - name: Create security group that allows SSH
+    - name:Create security group that allows SSH
       azure_rm_securitygroup:
-        resource_group: Testing
+        resource_group:Testing
         name: secgroup001
         rules:
-          - name: SSH
-            protocol: Tcp
-            destination_port_range: 22
-            access: Allow
-            priority: 101
-            direction: Inbound
+          - name:SSH
+            protocol:Tcp
+            destination_port_range:22
+            access:Allow
+            priority:101
+            direction:Inbound
 
-    - name: Create NIC
+    - name:Create NIC
       azure_rm_networkinterface:
-        resource_group: Testing
+        resource_group:Testing
         name: testnic001
         virtual_network: testvn001
         subnet: subnet001
         public_ip_name: publicip001
         security_group: secgroup001
 
-    - name: Create virtual machine
+    - name:Create virtual machine
       azure_rm_virtualmachine:
-        resource_group: Testing
+        resource_group:Testing
         name: testvm001
-        vm_size: Standard_D1
+        vm_size:Standard_D1
         storage_account: testaccount001
         storage_container: testvm001
         storage_blob: testvm001.vhd
         admin_username: admin
-        admin_password: Password!
+        admin_password:Password!
         network_interfaces: testnic001
         image:
-          offer: CentOS
-          publisher: OpenLogic
-          sku: '7.1'
+          offer:CentOS
+          publisher:OpenLogic
+          sku:'7.1'
           version: latest
 
-Each of the Azure modules offers a variety of parameter options. Not all options are demonstrated in the above example.
-See each individual module for further details and examples.
+各 Azure モジュールは、さまざまなパラメーターオプションを提供します。上記の例で、すべてのオプションが示されているわけではありません。
+詳細およびサンプルは、各モジュールを参照してください。
 
 
-Creating a Virtual Machine with Default Options
+デフォルトオプションを使用した仮想マシンの作成
 ...............................................
 
-If you simply want to create a virtual machine without specifying all the details, you can do that as well. The only
-caveat is that you will need a virtual network with one subnet already in your resource group. Assuming you have a
-virtual network already with an existing subnet, you can run the following to create a VM:
+すべての詳細を指定せずに仮想マシンを作成する場合は、これも実行できます。唯一の注意点は、
+リソースグループに既に 1 つのサブネットがある仮想ネットワークが必要になることです。既存のサブネットを持つ仮想ネットワークがすでにあると想定すると、
+次のコマンドを実行して仮想マシンを作成できます。
 
 .. code-block:: yaml
 
     azure_rm_virtualmachine:
-      resource_group: Testing
+      resource_group:Testing
       name: testvm10
-      vm_size: Standard_D1
+      vm_size:Standard_D1
       admin_username: chouseknecht
       ssh_password_enabled: false
       ssh_public_keys: "{{ ssh_keys }}"
       image:
-        offer: CentOS
-        publisher: OpenLogic
-        sku: '7.1'
+        offer:CentOS
+        publisher:OpenLogic
+        sku:'7.1'
         version: latest
 
 
-Dynamic Inventory Script
+動的インベントリースクリプト
 ------------------------
 
-If you are not familiar with Ansible's dynamic inventory scripts, check out :ref:`Intro to Dynamic Inventory <intro_dynamic_inventory>`.
+Ansible の動的インベントリースクリプトに精通していない場合は、「:ref:`ダイナミックインベントリーの概要 <intro_dynamic_inventory>`」を参照してください。
 
-The Azure Resource Manager inventory script is called  `azure_rm.py  <https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/azure_rm.py>`_. It authenticates with the Azure API exactly the same as the
-Azure modules, which means you will either define the same environment variables described above in `Using Environment Variables`_,
-create a ``$HOME/.azure/credentials`` file (also described above in `Storing in a File`_), or pass command line parameters. To see available command
-line options execute the following:
+Azure Resource Manager インベントリースクリプトは、`azure_rm.py  <https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/azure_rm.py>`_ と呼ばれます。これは、Azure API で Azure モジュールとまったく同じように認証されます。
+つまり、上記の「`環境変数の使用`_」で説明したのと同じ環境変数を定義することになります。
+または、``$HOME/.azure/credentials`` ファイル (上記の「`ファイルへの保存`_」で説明) 作成するか、またはコマンドラインパラメーターを渡します。利用可能なコマンドラインオプションを表示するには、
+以下のコマンドを実行します。
 
 .. code-block:: bash
 
     $ ./ansible/contrib/inventory/azure_rm.py --help
 
-As with all dynamic inventory scripts, the script can be executed directly, passed as a parameter to the ansible command,
-or passed directly to ansible-playbook using the -i option. No matter how it is executed the script produces JSON representing
-all of the hosts found in your Azure subscription. You can narrow this down to just hosts found in a specific set of
-Azure resource groups, or even down to a specific host.
+すべての動的インベントリースクリプトと同様に、スクリプトを直接実行でき、パラメーターとして ansible コマンドに渡すか、
+-i オプションを使用して ansible-playbook に直接渡します。どのように実行されても、
+スクリプトは Azure サブスクリプションで見つかったすべてのホストを表す JSON を生成します。これを、特定の Azure リソースグループのセットにあるホストだけに絞り込むことも、
+特定のホストに絞り込むこともできます。
 
-For a given host, the inventory script provides the following host variables:
+インベントリースクリプトは、指定のホストに対して以下のホスト変数を提供します。
 
 .. code-block:: JSON
 
     {
-      "ansible_host": "XXX.XXX.XXX.XXX",
+      "ansible_host":"XXX.XXX.XXX.XXX",
       "computer_name": "computer_name2",
       "fqdn": null,
       "id": "/subscriptions/subscription-id/resourceGroups/galaxy-production/providers/Microsoft.Compute/virtualMachines/object-name",
       "image": {
-        "offer": "CentOS",
-        "publisher": "OpenLogic",
-        "sku": "7.1",
+        "offer":"CentOS",
+        "publisher":"OpenLogic",
+        "sku":"7.1",
         "version": "latest"
       },
       "location": "westus",
-      "mac_address": "00-00-5E-00-53-FE",
+      "mac_address":"00-00-5E-00-53-FE",
       "name": "object-name",
       "network_interface": "interface-name",
       "network_interface_id": "/subscriptions/subscription-id/resourceGroups/galaxy-production/providers/Microsoft.Network/networkInterfaces/object-name1",
@@ -298,15 +298,15 @@ For a given host, the inventory script provides the following host variables:
       "network_security_group_id": null,
       "os_disk": {
         "name": "object-name",
-        "operating_system_type": "Linux"
+        "operating_system_type":"Linux"
       },
       "plan": null,
       "powerstate": "running",
-      "private_ip": "172.26.3.6",
-      "private_ip_alloc_method": "Static",
-      "provisioning_state": "Succeeded",
-      "public_ip": "XXX.XXX.XXX.XXX",
-      "public_ip_alloc_method": "Static",
+      "private_ip":"172.26.3.6",
+      "private_ip_alloc_method":"Static",
+      "provisioning_state":"Succeeded",
+      "public_ip":"XXX.XXX.XXX.XXX",
+      "public_ip_alloc_method":"Static",
       "public_ip_id": "/subscriptions/subscription-id/resourceGroups/galaxy-production/providers/Microsoft.Network/publicIPAddresses/object-name",
       "public_ip_name": "object-name",
       "resource_group": "galaxy-production",
@@ -315,16 +315,16 @@ For a given host, the inventory script provides the following host variables:
       "tags": {
         "db": "mysql"
       },
-      "type": "Microsoft.Compute/virtualMachines",
-      "virtual_machine_size": "Standard_DS4"
+      "type":"Microsoft.Compute/virtualMachines",
+      "virtual_machine_size":"Standard_DS4"
     }
 
-Host Groups
+ホストグループ
 ...........
 
-By default hosts are grouped by:
+デフォルトでは、ホストは以下のようにグループ化されます。
 
-* azure (all hosts)
+* azure (全ホスト)
 * location name
 * resource group name
 * security group name
@@ -332,16 +332,16 @@ By default hosts are grouped by:
 * tag key_value
 * os_disk operating_system_type (Windows/Linux)
 
-You can control host groupings and host selection by either defining environment variables or creating an
-azure_rm.ini file in your current working directory.
+環境変数を定義するか、現在の作業ディレクトリーに azure_rm.ini ファイルを作成することにより、
+ホストのグループ化とホストの選択を制御できます。
 
-NOTE: An .ini file will take precedence over environment variables.
+注記: .ini ファイルは環境変数よりも優先されます。
 
-NOTE: The name of the .ini file is the basename of the inventory script (i.e. 'azure_rm') with a '.ini'
-extension. This allows you to copy, rename and customize the inventory script and have matching .ini files all in
-the same directory.
+注記: .ini ファイルの名前は、インベントリースクリプトのベース名 (つまり「azure_rm」) で、
+これには「.ini」拡張子が含まれます。これにより、インベントリースクリプトをコピーし、名前を変更して、
+同じディレクトリーで .ini ファイルをすべて一致させることができます。
 
-Control grouping using the following variables defined in the environment:
+環境で定義された以下の変数を使用してグループ化を制御します。
 
 * AZURE_GROUP_BY_RESOURCE_GROUP=yes
 * AZURE_GROUP_BY_LOCATION=yes
@@ -349,100 +349,100 @@ Control grouping using the following variables defined in the environment:
 * AZURE_GROUP_BY_TAG=yes
 * AZURE_GROUP_BY_OS_FAMILY=yes
 
-Select hosts within specific resource groups by assigning a comma separated list to:
+コンマ区切りリストを以下に割り当てて、特定のリソースグループ内のホストを選択します。
 
 * AZURE_RESOURCE_GROUPS=resource_group_a,resource_group_b
 
-Select hosts for specific tag key by assigning a comma separated list of tag keys to:
+タグキーのコンマ区切りリストを以下に割り当てて、特定のタグキーのホストを選択します。
 
 * AZURE_TAGS=key1,key2,key3
 
-Select hosts for specific locations by assigning a comma separated list of locations to:
+場所のコンマ区切りリストを割り当てて、特定の場所のホストを選択します。
 
 * AZURE_LOCATIONS=eastus,eastus2,westus
 
-Or, select hosts for specific tag key:value pairs by assigning a comma separated list key:value pairs to:
+または、コンマ区切りリストの key:value ペアを以下に割り当てることで、特定のタグ key:value ペアのホストを選択します。
 
 * AZURE_TAGS=key1:value1,key2:value2
 
-If you don't need the powerstate, you can improve performance by turning off powerstate fetching:
+電力状態が必要ない場合は、powerstate 取得をオフにすることでパフォーマンスを向上させることができます。
 
 * AZURE_INCLUDE_POWERSTATE=no
 
-A sample azure_rm.ini file is included along with the inventory script in contrib/inventory. An .ini
-file will contain the following:
+zure_rm.ini ファイルのサンプルは、contrib/inventory のインベントリースクリプトに含まれています。.ini ファイルは、
+以下が含まれます。
 
 .. code-block:: ini
 
     [azure]
     # Control which resource groups are included. By default all resources groups are included.
-    # Set resource_groups to a comma separated list of resource groups names.
-    #resource_groups=
+# Set resource_groups to a comma separated list of resource groups names.
+#resource_groups=
 
-    # Control which tags are included. Set tags to a comma separated list of keys or key:value pairs
-    #tags=
+# Control which tags are included. Set tags to a comma separated list of keys or key:value pairs
+#tags=
 
-    # Control which locations are included. Set locations to a comma separated list of locations.
-    #locations=
+# Control which locations are included. Set locations to a comma separated list of locations.
+#locations=
 
-    # Include powerstate. If you don't need powerstate information, turning it off improves runtime performance.
-    # Valid values: yes, no, true, false, True, False, 0, 1.
-    include_powerstate=yes
+# Include powerstate. If you don't need powerstate information, turning it off improves runtime performance.
+# Valid values: yes, no, true, false, True, False, 0, 1.
+include_powerstate=yes
 
-    # Control grouping with the following boolean flags. Valid values: yes, no, true, false, True, False, 0, 1.
-    group_by_resource_group=yes
-    group_by_location=yes
-    group_by_security_group=yes
-    group_by_tag=yes
-    group_by_os_family=yes
+# Control grouping with the following boolean flags. Valid values: yes, no, true, false, True, False, 0, 1.
+group_by_resource_group=yes
+group_by_location=yes
+group_by_security_group=yes
+group_by_tag=yes
+group_by_os_family=yes
 
-Examples
+例
 ........
 
-Here are some examples using the inventory script:
+以下は、インベントリースクリプトの使用例です。
 
 .. code-block:: bash
 
     # Execute /bin/uname on all instances in the Testing resource group
-    $ ansible -i azure_rm.py Testing -m shell -a "/bin/uname -a"
+$ ansible -i azure_rm.py Testing -m shell -a "/bin/uname -a"
 
-    # Execute win_ping on all Windows instances
-    $ ansible -i azure_rm.py windows -m win_ping
+# Execute win_ping on all Windows instances
+$ ansible -i azure_rm.py windows -m win_ping
 
-    # Execute win_ping on all Windows instances
-    $ ansible -i azure_rm.py winux -m ping
+# Execute win_ping on all Windows instances
+$ ansible -i azure_rm.py winux -m ping
 
-    # Use the inventory script to print instance specific information
-    $ ./ansible/contrib/inventory/azure_rm.py --host my_instance_host_name --resource-groups=Testing --pretty
+# Use the inventory script to print instance specific information
+$ ./ansible/contrib/inventory/azure_rm.py --host my_instance_host_name --resource-groups=Testing --pretty
 
-    # Use the inventory script with ansible-playbook
-    $ ansible-playbook -i ./ansible/contrib/inventory/azure_rm.py test_playbook.yml
+# Use the inventory script with ansible-playbook
+$ ansible-playbook -i ./ansible/contrib/inventory/azure_rm.py test_playbook.yml
 
-Here is a simple playbook to exercise the Azure inventory script:
+以下は、Azure インベントリースクリプトを実行するための単純な Playbook です。
 
 .. code-block:: yaml
 
-    - name: Test the inventory script
+    - name:Test the inventory script
       hosts: azure
       connection: local
       gather_facts: no
       tasks:
         - debug: msg="{{ inventory_hostname }} has powerstate {{ powerstate }}"
 
-You can execute the playbook with something like:
+Playbook は以下のような方法で実行できます。
 
 .. code-block:: bash
 
     $ ansible-playbook -i ./ansible/contrib/inventory/azure_rm.py test_azure_inventory.yml
 
 
-Disabling certificate validation on Azure endpoints
+Azure エンドポイントでの証明書検証の無効化
 ...................................................
 
-When an HTTPS proxy is present, or when using Azure Stack, it may be necessary to disable certificate validation for
-Azure endpoints in the Azure modules. This is not a recommended security practice, but may be necessary when the system
-CA store cannot be altered to include the necessary CA certificate. Certificate validation can be controlled by setting
-the "cert_validation_mode" value in a credential profile, via the "AZURE_CERT_VALIDATION_MODE" environment variable, or
-by passing the "cert_validation_mode" argument to any Azure module. The default value is "validate"; setting the value
-to "ignore" will prevent all certificate validation. The module argument takes precedence over a credential profile value,
-which takes precedence over the environment value.
+HTTPS プロキシープロキシが存在する場合、または Azure Stack を使用する場合は、
+Azure モジュールで Azure エンドポイントの証明書検証を無効にする必要がある場合があります。これは推奨されるセキュリティー対策ではありませんが、
+必要な CA 証明書を含めるようにシステムの CA ストアを変更できない場合に必要になることがあります。証明書の検証は、
+認証情報プロファイルの「cert_validation_mode」値を設定するか、「AZURE_CERT_VALIDATION_MODE」環境変数を使用するか、
+「cert_validation_mode」引数を Azure モジュールに渡すことで制御できます。デフォルト値は「validate」です。
+値を「ignore」に設定すると、すべての証明書の検証が回避されます。module 引数は、認証情報プロファイルの値よりも優先されます。
+これは、環境値よりも優先されます。

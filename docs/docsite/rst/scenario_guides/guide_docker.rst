@@ -1,329 +1,329 @@
-Docker Guide
+Docker ガイド
 ============
 
-Ansible offers the following modules for orchestrating Docker containers:
+Ansible は、Docker コンテナーのオーケストレーションを行う以下のモジュールを提供します。
 
     docker_compose
-        Use your existing Docker compose files to orchestrate containers on a single Docker daemon or on
-        Swarm. Supports compose versions 1 and 2.
+        既存の Docker compose ファイルを使用して、
+        1 つの Docker デーモンまたは Swarm でコンテナーのオーケストレーションを行います。Compose のバージョン 1 および 2 をサポートします。
 
     docker_container
-        Manages the container lifecycle by providing the ability to create, update, stop, start and destroy a
-        container.
+        コンテナーを作成、更新、停止、開始、および破棄する機能を提供することにより、
+        コンテナーのライフサイクルを管理します。
 
     docker_image
-        Provides full control over images, including: build, pull, push, tag and remove.
+        構築、プル、プッシュ、タグ付け、削除など、イメージへの完全な制御を提供します。
 
     docker_image_info
-        Inspects one or more images in the Docker host's image cache, providing the information for making
-        decision or assertions in a playbook.
+        Docker ホストのイメージキャッシュ内の 1 つまたは複数のイメージを検査し、
+        Playbook で決定またはアサーションを行うための情報を提供します。
 
     docker_login
-        Authenticates with Docker Hub or any Docker registry and updates the Docker Engine config file, which
-        in turn provides password-free pushing and pulling of images to and from the registry.
+        Docker Hub または Docker レジストリーで認証し、Docker Engine 設定ファイルを更新します。
+        次に、レジストリーとの間でイメージをパスワードなしでプッシュおよびプルします。
 
-    docker (dynamic inventory)
-        Dynamically builds an inventory of all the available containers from a set of one or more Docker hosts.
+    Docker (動的インベントリー)
+        1 つ以上の Docker ホストセットから利用可能なすべてのコンテナーのインベントリーを動的に構築します。
 
 
-Ansible 2.1.0 includes major updates to the Docker modules, marking the start of a project to create a complete and
-integrated set of tools for orchestrating containers. In addition to the above modules, we are also working on the
-following:
+Ansible 2.1.0 には Docker モジュールへのメジャーアップデートが含まれており、プロジェクトの開始をマークして、
+コンテナーをオーケストレーションするための完全で統合されたツールセットを作成します。上記のモジュールに加えて、
+次の作業も行っています。
 
-Still using Dockerfile to build images? Check out `ansible-bender <https://github.com/ansible-community/ansible-bender>`_,
-and start building images from your Ansible playbooks.
+イメージの構築に Dockerfile を使用していますか。`ansible-bender <https://github.com/ansible-community/ansible-bender>`_ を確認し、
+Ansible Playbook からイメージのビルドを開始します。
 
-Use `Ansible Operator <https://learn.openshift.com/ansibleop/ansible-operator-overview/>`_
-to launch your docker-compose file on `OpenShift <https://www.okd.io/>`_. Go from an app on your laptop to a fully
-scalable app in the cloud with Kubernetes in just a few moments.
+`Ansible Operator <https://learn.openshift.com/ansibleop/ansible-operator-overview/>`_ を使用して、
+`OpenShift <https://www.okd.io/>`_ で docker-compose ファイルを起動します。Kubernetes を使用すれば、ノートパソコンのアプリから、クラウドの完全にスケーラブルなアプリに、
+ほんの数秒で移動できます。
 
-There's more planned. See the latest ideas and thinking at the `Ansible proposal repo <https://github.com/ansible/proposals/tree/master/docker>`_.
+計画は他にもあります。最新のアイディアや考え方は、「`Ansible の提案リポジトリー <https://github.com/ansible/proposals/tree/master/docker>`_」を参照してください。
 
-Requirements
+要件
 ------------
 
-Using the docker modules requires having the `Docker SDK for Python <https://docker-py.readthedocs.io/en/stable/>`_
-installed on the host running Ansible. You will need to have >= 1.7.0 installed. For Python 2.7 or
-Python 3, you can install it as follows:
+Docker モジュールを使用するには、`Python 用の Docker SDK <https://docker-py.readthedocs.io/en/stable/>`_ を、
+Ansible を実行しているホストにインストールする必要があります。1.7.0 以降がインストールされている必要があります。Python 2.7 または Python 3 では、
+以下の方法でインストールできます。
 
 .. code-block:: bash
 
     $ pip install docker
 
-For Python 2.6, you need a version before 2.0. For these versions, the SDK was called ``docker-py``,
-so you need to install it as follows:
+Python 2.6 では、2.0 より前のバージョンが必要です。SDK は、このバージョンでは ``docker-py`` と呼ばれていて、
+以下のようにインストールする必要があります。
 
 .. code-block:: bash
 
     $ pip install 'docker-py>=1.7.0'
 
-Please note that only one of ``docker`` and ``docker-py`` must be installed. Installing both will result in
-a broken installation. If this happens, Ansible will detect it and inform you about it::
+``docker`` または ``docker-py`` のいずれか 1 つのみがインストールされている必要があることに注意してください。両方をインストールすると、
+インストールは破損します。これが発生すると、Ansible はこれを検出し、これについて通知します::
 
-    Cannot have both the docker-py and docker python modules installed together as they use the same
-    namespace and cause a corrupt installation. Please uninstall both packages, and re-install only
-    the docker-py or docker python module. It is recommended to install the docker module if no support
-    for Python 2.6 is required. Please note that simply uninstalling one of the modules can leave the
-    other module in a broken state.
+    docker-py モジュールと docker python モジュールは、同じ名前空間を使用するため、
+    両方インストールすると、インストールが破損します。両方のパッケージをアンインストールし、
+    docker-py または docker python モジュールのいずれかを再インストールしてください。Python 2.6 のサポートが必要ない場合は、
+    docker モジュールをインストールすることが推奨されます。いずれかのモジュールをアンインストールするだけでは、
+    もう一方のモジュールが壊れた状態になる可能性があることに注意してください。
 
-The docker_compose module also requires `docker-compose <https://github.com/docker/compose>`_
+docker_compose モジュールには `docker-compose <https://github.com/docker/compose>`_も必要になります。
 
 .. code-block:: bash
 
    $ pip install 'docker-compose>=1.7.0'
 
 
-Connecting to the Docker API
+Docker API への接続
 ----------------------------
 
-You can connect to a local or remote API using parameters passed to each task or by setting environment variables.
-The order of precedence is command line parameters and then environment variables. If neither a command line
-option or an environment variable is found, a default value will be used. The default values are provided under
-`Parameters`_
+各タスクに渡されるパラメーターを使用するか、または環境変数を設定して、ローカルまたはリモートの API に接続できます。
+優先順位は、コマンドラインパラメーター、次に環境変数です。コマンドラインオプションも環境変数も見つからない場合は、
+デフォルト値が使用されます。デフォルト値は、
+`Parameters`_ にあります。
 
 
 Parameters
 ..........
 
-Control how modules connect to the Docker API by passing the following parameters:
+以下のパラメーターを渡すことで、モジュールが Docker API に接続する方法を制御します。
 
     docker_host
-        The URL or Unix socket path used to connect to the Docker API. Defaults to ``unix://var/run/docker.sock``.
-        To connect to a remote host, provide the TCP connection string. For example: ``tcp://192.0.2.23:2376``. If
-        TLS is used to encrypt the connection to the API, then the module will automatically replace 'tcp' in the
-        connection URL with 'https'.
+        Docker API への接続に使用される URL または Unix ソケットパス。デフォルトは ``unix://var/run/docker.sock`` です。
+        リモートホストに接続するには、TCP 接続文字列を指定します。たとえば、``tcp://192.0.2.23:2376`` です。API への接続を暗号化するために TLS を使用すると、
+        モジュールは、
+        「https」を使用した接続 URL の「tcp」を自動的に置き換えます。
 
     api_version
-        The version of the Docker API running on the Docker Host. Defaults to the latest version of the API supported
-        by docker-py.
+        Docker ホストで実行している Docker API のバージョン。デフォルトは、
+        docker-py にサポートされる最新バージョンの API です。
 
     timeout
-        The maximum amount of time in seconds to wait on a response from the API. Defaults to 60 seconds.
+        API からの応答で待機する最大時間 (秒単位)。デフォルトは 60 秒です。
 
     tls
-        Secure the connection to the API by using TLS without verifying the authenticity of the Docker host server.
-        Defaults to False.
+        Docker ホストサーバーの信頼性を検証せずに TLS を使用して API への接続を保護します。
+        デフォルトは False です。
 
     tls_verify
-        Secure the connection to the API by using TLS and verifying the authenticity of the Docker host server.
-        Default is False.
+        TLS を使用し、Docker ホストサーバーの信頼性を検証して、API への接続を保護します。
+        デフォルトは False です。
 
     cacert_path
-        Use a CA certificate when performing server verification by providing the path to a CA certificate file.
+        CA 証明書ファイルへのパスを指定してサーバーの検証を実行する際に CA 証明書を使用します。
 
     cert_path
-        Path to the client's TLS certificate file.
+        クライアントの TLS 証明書ファイルへのパスです。
 
     key_path
-        Path to the client's TLS key file.
+        クライアントの TLS キーファイルへのパスです。
 
     tls_hostname
-        When verifying the authenticity of the Docker Host server, provide the expected name of the server. Defaults
-        to 'localhost'.
+        Docker ホストサーバーの信頼性を検証する際に、予想されるサーバー名を指定します。デフォルトは、
+        「localhost」です。
 
     ssl_version
-        Provide a valid SSL version number. Default value determined by docker-py, which at the time of this writing
-        was 1.0
+        有効な SSL バージョン番号を指定します。本ガイドの作成時、docker-py により指定されるデフォルト値は、
+        1.0 です。
 
 
-Environment Variables
+環境変数
 .....................
 
-Control how the modules connect to the Docker API by setting the following variables in the environment of the host
-running Ansible:
+Ansible を実行しているホストの環境に以下の変数を設定して、
+モジュールが Docker API に接続する方法を制御します。
 
     DOCKER_HOST
-        The URL or Unix socket path used to connect to the Docker API.
+        Docker API への接続に使用される URL または Unix ソケットパス。
 
     DOCKER_API_VERSION
-        The version of the Docker API running on the Docker Host. Defaults to the latest version of the API supported
-        by docker-py.
+        Docker ホストで実行している Docker API のバージョン。デフォルトは、
+        docker-py で対応している最新バージョンの API です。
 
     DOCKER_TIMEOUT
-        The maximum amount of time in seconds to wait on a response from the API.
+        API からの応答で待機する最大時間 (秒単位)。
 
     DOCKER_CERT_PATH
-        Path to the directory containing the client certificate, client key and CA certificate.
+        クライアント証明書、クライアントキー、および CA 証明書を含むディレクトリーへのパス。
 
     DOCKER_SSL_VERSION
-        Provide a valid SSL version number.
+        有効な SSL バージョン番号を指定します。
 
     DOCKER_TLS
-        Secure the connection to the API by using TLS without verifying the authenticity of the Docker Host.
+        Docker ホストの信頼性を検証せずに TLS を使用して API への接続のセキュリティーを保護します。
 
     DOCKER_TLS_VERIFY
-        Secure the connection to the API by using TLS and verify the authenticity of the Docker Host.
+        TLS を使用して API への接続のセキュリティーを確保し、Docker ホストの信頼性を確認します。
 
 
-Dynamic Inventory Script
+動的インベントリースクリプト
 ------------------------
-The inventory script generates dynamic inventory by making API requests to one or more Docker APIs. It's dynamic
-because the inventory is generated at run-time rather than being read from a static file. The script generates the
-inventory by connecting to one or many Docker APIs and inspecting the containers it finds at each API. Which APIs the
-script contacts can be defined using environment variables or a configuration file.
+インベントリースクリプトは、API 要求を複数の Docker API に指定して動的インベントリーを生成します。これは、
+インベントリーを静的ファイルから読み取るのではなく、ランタイム時に生成されるため動的になります。このスクリプトでは、
+1 つまたは多数の Docker API に接続し、各 API で見つかったコンテナーを検査することで、インベントリーが作成されます。スクリプトがどの API を接続するかは、
+環境変数または設定ファイルを使用して定義できます。
 
-Groups
+グループ
 ......
-The script will create the following host groups:
+このスクリプトは、以下のホストグループを作成します。
 
  - container id
  - container name
  - container short id
- - image_name  (image_<image name>)
+ - image_name (image_<image name>)
  - docker_host
  - running
  - stopped
 
-Examples
+例
 ........
 
-You can run the script interactively from the command line or pass it as the inventory to a playbook. Here are few
-examples to get you started:
+コマンドラインからスクリプトをインタラクティブに実行したり、これをインベントリーとして Playbook に渡すことができます。以下に、
+開始するための例をいくつか示します。
 
 .. code-block:: bash
 
     # Connect to the Docker API on localhost port 4243 and format the JSON output
-    DOCKER_HOST=tcp://localhost:4243 ./docker.py --pretty
+DOCKER_HOST=tcp://localhost:4243 ./docker.py --pretty
 
-    # Any container's ssh port exposed on 0.0.0.0 will be mapped to
-    # another IP address (where Ansible will attempt to connect via SSH)
-    DOCKER_DEFAULT_IP=192.0.2.5 ./docker.py --pretty
+# Any container's ssh port exposed on 0.0.0.0 will be mapped to
+# another IP address (where Ansible will attempt to connect via SSH)
+DOCKER_DEFAULT_IP=192.0.2.5 ./docker.py --pretty
 
-    # Run as input to a playbook:
-    ansible-playbook -i ~/projects/ansible/contrib/inventory/docker.py docker_inventory_test.yml
+# Run as input to a playbook:
+ansible-playbook -i ~/projects/ansible/contrib/inventory/docker.py docker_inventory_test.yml
 
-    # Simple playbook to invoke with the above example:
+# Simple playbook to invoke with the above example:
 
-        - name: Test docker_inventory, this will not connect to any hosts
-          hosts: all
-          gather_facts: no
-          tasks:
-            - debug: msg="Container - {{ inventory_hostname }}"
+    - name: Test docker_inventory, this will not connect to any hosts
+      hosts: all
+      gather_facts: no
+      tasks:
+        - debug: msg="Container - {{ inventory_hostname }}"
 
-Configuration
+構成
 .............
-You can control the behavior of the inventory script by defining environment variables, or
-creating a docker.yml file (sample provided in ansible/contrib/inventory). The order of precedence is the docker.yml
-file and then environment variables.
+環境変数を定義するか、docker.yml ファイル (ansible/contrib/inventory で提供されるサンプル) を作成して、
+インベントリースクリプトの動作を制御できます。優先順位は、docker.yml ファイル、
+次に環境変数 です。
 
 
-Environment Variables
+環境変数
 ;;;;;;;;;;;;;;;;;;;;;;
 
-To connect to a single Docker API the following variables can be defined in the environment to control the connection
-options. These are the same environment variables used by the Docker modules.
+1 つの Docker API に接続するには、以下の変数を環境内で定義して、
+接続オプションを制御できます。これは、Docker モジュールが使用するのと同じ環境変数です。
 
     DOCKER_HOST
-        The URL or Unix socket path used to connect to the Docker API. Defaults to unix://var/run/docker.sock.
+        Docker API への接続に使用される URL または Unix ソケットパス。デフォルトは、unix://var/run/docker.sock です。
 
     DOCKER_API_VERSION:
-        The version of the Docker API running on the Docker Host. Defaults to the latest version of the API supported
-        by docker-py.
+        Docker ホストで実行している Docker API のバージョン。デフォルトは、
+        docker-py で対応している最新バージョンの API です。
 
     DOCKER_TIMEOUT:
-        The maximum amount of time in seconds to wait on a response from the API. Defaults to 60 seconds.
+        API からの応答で待機する最大時間 (秒単位)。デフォルトは 60 秒です。
 
     DOCKER_TLS:
-        Secure the connection to the API by using TLS without verifying the authenticity of the Docker host server.
-        Defaults to False.
+        Docker ホストサーバーの信頼性を検証せずに TLS を使用して API への接続を保護します。
+        デフォルトは False です。
 
     DOCKER_TLS_VERIFY:
-        Secure the connection to the API by using TLS and verifying the authenticity of the Docker host server.
-        Default is False
+        TLS を使用し、Docker ホストサーバーの信頼性を検証して、API への接続を保護します。
+        デフォルトは False です。
 
     DOCKER_TLS_HOSTNAME:
-        When verifying the authenticity of the Docker Host server, provide the expected name of the server. Defaults
-        to localhost.
+        Docker ホストサーバーの信頼性を検証する際に、予想されるサーバー名を指定します。デフォルトは、
+        localhost です。
 
     DOCKER_CERT_PATH:
-        Path to the directory containing the client certificate, client key and CA certificate.
+        クライアント証明書、クライアントキー、および CA 証明書を含むディレクトリーへのパス。
 
     DOCKER_SSL_VERSION:
-        Provide a valid SSL version number. Default value determined by docker-py, which at the time of this writing
-        was 1.0
+        有効な SSL バージョン番号を指定します。本ガイドの作成時、docker-py により指定されるデフォルト値は、
+        1.0 です。
 
-In addition to the connection variables there are a couple variables used to control the execution and output of the
-script:
+接続変数に加えて、
+スクリプトの実行と出力を制御するために使用される変数がいくつかあります。
 
     DOCKER_CONFIG_FILE
-        Path to the configuration file. Defaults to ./docker.yml.
+        設定ファイルへのパス。デフォルトは ./docker.yml です。
 
     DOCKER_PRIVATE_SSH_PORT:
-        The private port (container port) on which SSH is listening for connections. Defaults to 22.
+        SSH が接続をリッスンしているプライベートポート (コンテナーポート)。デフォルトは 22 です。
 
     DOCKER_DEFAULT_IP:
-        The IP address to assign to ansible_host when the container's SSH port is mapped to interface '0.0.0.0'.
+        コンテナーの SSH ポートがインターフェース「0.0.0.0」にマッピングされる場合に ansible_host に割り当てる IP アドレス。
 
 
-Configuration File
+設定ファイル
 ;;;;;;;;;;;;;;;;;;
 
-Using a configuration file provides a means for defining a set of Docker APIs from which to build an inventory.
+設定ファイルを使用すると、インベントリーを構築する Docker API のセットを定義する手段が提供されます。
 
-The default name of the file is derived from the name of the inventory script. By default the script will look for
-basename of the script (i.e. docker) with an extension of '.yml'.
+ファイルのデフォルト名は、インベントリースクリプトの名前から取得します。デフォルトでは、
+スクリプトは拡張子が「.yml」のスクリプト (つまり、docker) のベース名を検索します。
 
-You can also override the default name of the script by defining DOCKER_CONFIG_FILE in the environment.
+環境に DOCKER_CONFIG_FILE を定義することで、スクリプトのデフォルト名を上書きすることもできます。
 
-Here's what you can define in docker_inventory.yml:
+docker_inventory.yml で定義できるものは、以下のとおりです。
 
     defaults
-        Defines a default connection. Defaults will be taken from this and applied to any values not provided
-        for a host defined in the hosts list.
+        デフォルト接続を定義します。デフォルトはこれから取得して、
+        hosts リストで定義されたホストに提供されていない値に適用されます。
 
     hosts
-        If you wish to get inventory from more than one Docker host, define a hosts list.
+        複数の Docker ホストからインベントリーを取得する必要がある場合は、hosts 一覧を定義します。
 
-For the default host and each host in the hosts list define the following attributes:
+デフォルトのホスト、および hosts リストの各ホストに以下の属性を定義します。
 
 .. code-block:: yaml
 
   host:
-      description: The URL or Unix socket path used to connect to the Docker API.
+      description:The URL or Unix socket path used to connect to the Docker API.
       required: yes
 
   tls:
-     description: Connect using TLS without verifying the authenticity of the Docker host server.
+     description:Connect using TLS without verifying the authenticity of the Docker host server.
      default: false
      required: false
 
   tls_verify:
-     description: Connect using TLS without verifying the authenticity of the Docker host server.
+     description:Connect using TLS without verifying the authenticity of the Docker host server.
      default: false
      required: false
 
   cert_path:
-     description: Path to the client's TLS certificate file.
+     description:Path to the client's TLS certificate file.
      default: null
      required: false
 
   cacert_path:
-     description: Use a CA certificate when performing server verification by providing the path to a CA certificate file.
+     description:Use a CA certificate when performing server verification by providing the path to a CA certificate file.
      default: null
      required: false
 
   key_path:
-     description: Path to the client's TLS key file.
+     description:Path to the client's TLS key file.
      default: null
      required: false
 
   version:
-     description: The Docker API version.
+     description:The Docker API version.
      required: false
      default: will be supplied by the docker-py module.
 
   timeout:
-     description: The amount of time in seconds to wait on an API response.
+     description:The amount of time in seconds to wait on an API response.
      required: false
-     default: 60
+     default:60
 
   default_ip:
-     description: The IP address to assign to ansible_host when the container's SSH port is mapped to interface
+     description:The IP address to assign to ansible_host when the container's SSH port is mapped to interface
      '0.0.0.0'.
      required: false
-     default: 127.0.0.1
+     default:127.0.0.1
 
   private_ssh_port:
-     description: The port containers use for SSH
+     description:The port containers use for SSH
      required: false
-     default: 22
+     default:22

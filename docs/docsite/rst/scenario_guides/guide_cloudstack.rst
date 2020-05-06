@@ -1,73 +1,73 @@
-CloudStack Cloud Guide
+CloudStack Cloud ガイド
 ======================
 
 .. _cloudstack_introduction:
 
-Introduction
+はじめに
 ````````````
-The purpose of this section is to explain how to put Ansible modules together to use Ansible in a CloudStack context. You will find more usage examples in the details section of each module.
+本セクションの目的は、Ansible モジュールを 1 つにまとめて CloudStack コンテキストで Ansible を使用する方法を説明します。その他の使用例は、各モジュールの詳細セクションに記載されています。
 
-Ansible contains a number of extra modules for interacting with CloudStack based clouds. All modules support check mode, are designed to be idempotent, have been created and tested, and are maintained by the community.
+Ansible には、CloudStack ベースのクラウドと対話するための追加モジュールが多数含まれています。すべてのモジュールは、チェックモードに対応しており、冪等であるように設計されています。これらは作成およびテストされており、コミュニティーによって維持されます。
 
-.. note:: Some of the modules will require domain admin or root admin privileges.
+.. note:: 一部のモジュールには、ドメイン管理または root 管理者権限が必要です。
 
-Prerequisites
+要件
 `````````````
-Prerequisites for using the CloudStack modules are minimal. In addition to Ansible itself, all of the modules require the python library ``cs`` https://pypi.org/project/cs/
+CloudStack モジュールを使用する前提条件は最小限です。Ansible 自体に加えて、すべてのモジュールには python ライブラリー ``cs`` https://pypi.org/project/cs/ が必要です。
 
-You'll need this Python module installed on the execution host, usually your workstation.
+この Python モジュールは、実行ホスト (通常はワークステーション) にインストールする必要があります。
 
 .. code-block:: bash
 
     $ pip install cs
 
-Or alternatively starting with Debian 9 and Ubuntu 16.04:
+もしくは、Debian 9 および Ubuntu 16.04 から始まります。
 
 .. code-block:: bash
 
     $ sudo apt install python-cs
 
-.. note:: cs also includes a command line interface for ad-hoc interaction with the CloudStack API e.g. ``$ cs listVirtualMachines state=Running``.
+.. note:: cs には、CloudStack API などの、アドホックの対話用のコマンドラインインターフェースも含まれています (``$ cs listVirtualMachines state=Running``)。
 
-Limitations and Known Issues
+制限および既知の問題
 ````````````````````````````
-VPC support has been improved since Ansible 2.3 but is still not yet fully implemented. The community is working on the VPC integration.
+VPC のサポートは Ansible 2.3 以降で改善されましたが、まだ完全に実装されていません。コミュニティーは VPC 統合で機能しています。
 
-Credentials File
+認証情報ファイル
 ````````````````
-You can pass credentials and the endpoint of your cloud as module arguments, however in most cases it is a far less work to store your credentials in the cloudstack.ini file.
+認証情報とクラウドのエンドポイントをモジュール引数として渡すことができますが、ほとんどの場合、認証情報を cloudstack.ini ファイルに保存する作業ははるかに少なくなります。
 
-The python library cs looks for the credentials file in the following order (last one wins):
+Python ライブラリー cs は、以下の順番で認証情報ファイルを検索します (最後のコピーが優先されます)。
 
-* A ``.cloudstack.ini`` (note the dot) file in the home directory.
-* A ``CLOUDSTACK_CONFIG`` environment variable pointing to an .ini file.
-* A ``cloudstack.ini`` (without the dot) file in the current working directory, same directory as your playbooks are located.
+* ホームディレクトリーの ``.cloudstack.ini`` (ドットは必須)。
+* .ini ファイルを参照する ``CLOUDSTACK_CONFIG`` 環境変数。
+* 現在の作業ディレクトリーにある ``cloudstack.ini`` (ドットなし) ファイル (Playbook と同じディレクトリー)
 
-The structure of the ini file must look like this:
+ini ファイルの構造は以下のようになります。
 
 .. code-block:: bash
 
     $ cat $HOME/.cloudstack.ini
-    [cloudstack]
+[cloudstack]
     endpoint = https://cloud.example.com/client/api
     key = api key
     secret = api secret
     timeout = 30
-
-.. Note:: The section ``[cloudstack]`` is the default section. ``CLOUDSTACK_REGION`` environment variable can be used to define the default section.
+    
+.. Note:: セクション ``[cloudstack]`` はデフォルトのセクションです。``CLOUDSTACK_REGION`` 環境変数を使用してデフォルトのセクションを定義できます。
 
 .. versionadded:: 2.4
 
-The ENV variables support ``CLOUDSTACK_*`` as written in the documentation of the library ``cs``,  like e.g ``CLOUDSTACK_TIMEOUT``, ``CLOUDSTACK_METHOD``, etc. has been implemented into Ansible. It is even possible to have some incomplete config in your cloudstack.ini:
+ENV 変数は、ライブラリー ``cs`` のドキュメントに記載されている ``CLOUDSTACK_*`` に対応します。たとえば、``CLOUDSTACK_TIMEOUT``、``CLOUDSTACK_METHOD`` などが Ansible に実装されています。cloudstack.ini に不完全な設定を設定することも可能です。
 
 .. code-block:: bash
 
     $ cat $HOME/.cloudstack.ini
-    [cloudstack]
+[cloudstack]
     endpoint = https://cloud.example.com/client/api
     timeout = 30
-
-and fulfill the missing data by either setting ENV variables or tasks params:
+    
+ENV 変数または task パラメーターを設定して、不足しているデータに対応します。
 
 .. code-block:: yaml
 
@@ -82,31 +82,31 @@ and fulfill the missing data by either setting ENV variables or tasks params:
             api_secret: your api secret
             ...
 
-Regions
+リージョン
 ```````
-If you use more than one CloudStack region, you can define as many sections as you want and name them as you like, e.g.:
+複数の CloudStack リージョンを使用する場合は、必要な数だけセクションを定義し、任意の名前を付けることができます。以下に例を示します。
 
 .. code-block:: bash
 
     $ cat $HOME/.cloudstack.ini
-    [exoscale]
+[exoscale]
     endpoint = https://api.exoscale.ch/compute
     key = api key
     secret = api secret
-
-    [example_cloud_one]
+    
+[example_cloud_one]
     endpoint = https://cloud-one.example.com/client/api
     key = api key
     secret = api secret
-
-    [example_cloud_two]
+    
+[example_cloud_two]
     endpoint = https://cloud-two.example.com/client/api
     key = api key
     secret = api secret
+    
+.. Hint:: セクションは、異なるアカウントを使用して同じリージョンにログインするためにも使用できます。
 
-.. Hint:: Sections can also be used to for login into the same region using different accounts.
-
-By passing the argument ``api_region`` with the CloudStack modules, the region wanted will be selected.
+引数 ``api_region`` を CloudStack モジュールに渡すと、必要なリージョンが選択されます。
 
 .. code-block:: yaml
 
@@ -117,7 +117,7 @@ By passing the argument ``api_region`` with the CloudStack modules, the region w
         api_region: exoscale
       delegate_to: localhost
 
-Or by looping over a regions list if you want to do the task in every region:
+または、すべてのリージョンでタスクを実行する場合は、リージョンリストをループします。
 
 .. code-block:: yaml
 
@@ -125,19 +125,19 @@ Or by looping over a regions list if you want to do the task in every region:
       local_action: cs_sshkeypair
         name: my-ssh-key
         public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-        api_region: "{{ item }}"
+    api_region: "{{ item }}"
         loop:
           - exoscale
           - example_cloud_one
           - example_cloud_two
-
-Environment Variables
+    
+環境変数
 `````````````````````
 .. versionadded:: 2.3
 
-Since Ansible 2.3 it is possible to use environment variables for domain (``CLOUDSTACK_DOMAIN``), account (``CLOUDSTACK_ACCOUNT``), project (``CLOUDSTACK_PROJECT``), VPC (``CLOUDSTACK_VPC``) and zone (``CLOUDSTACK_ZONE``). This simplifies the tasks by not repeating the arguments for every tasks.
+Ansible 2.3 以降、ドメイン (``CLOUDSTACK_DOMAIN``)、アカウント (``CLOUDSTACK_ACCOUNT``)、プロジェクト (``CLOUDSTACK_PROJECT``)、VPC (``CLOUDSTACK_VPC``)、およびゾーン (``CLOUDSTACK_ZONE``) に環境変数を使用できます。これにより、すべてのタスクの引数が繰り返し実行されず、タスクが簡素化されます。
 
-Below you see an example how it can be used in combination with Ansible's block feature:
+以下は、Ansible のブロック機能と組み合わせて使用する方法の例を示しています。
 
 .. code-block:: yaml
 
@@ -149,33 +149,33 @@ Below you see an example how it can be used in combination with Ansible's block 
                 name: my-ssh-key
                 public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
-            - name: ensure my ssh public key
-              cs_instance:
-                  display_name: "{{ inventory_hostname_short }}"
-                  template: Linux Debian 7 64-bit 20GB Disk
-                  service_offering: "{{ cs_offering }}"
-                  ssh_key: my-ssh-key
+        - name: ensure my ssh public key
+          cs_instance:
+              display_name: "{{ inventory_hostname_short }}"
+              template: Linux Debian 7 64-bit 20GB Disk
+              service_offering: "{{ cs_offering }}"
+              ssh_key: my-ssh-key
                   state: running
-
+    
           delegate_to: localhost
           environment:
             CLOUDSTACK_DOMAIN: root/customers
             CLOUDSTACK_PROJECT: web-app
             CLOUDSTACK_ZONE: sf-1
 
-.. Note:: You are still able overwrite the environment variables using the module arguments, e.g. ``zone: sf-2``
+.. Note:: モジュール引数 (例: ``zone: sf-2``) を使用して環境変数を上書きすることは可能です。
 
-.. Note:: Unlike ``CLOUDSTACK_REGION`` these additional environment variables are ignored in the CLI ``cs``.
+.. Note:: ``CLOUDSTACK_REGION`` とは異なり、この追加の環境変数は CLI ``cs`` では無視されます。
 
-Use Cases
+ユースケース
 `````````
-The following should give you some ideas how to use the modules to provision VMs to the cloud. As always, there isn't only one way to do it. But as always: keep it simple for the beginning is always a good start.
+以下は、モジュールを使用して仮想マシンをクラウドにプロビジョニングする方法を示すものです。通常と同様に、これを行う方法は 1 つだけではありません。しかし、いつものように、最初はシンプルに保つことは、常に良いスタートです。
 
-Use Case: Provisioning in a Advanced Networking CloudStack setup
+ユースケース: Advanced Networking CloudStack 設定のプロビジョニング
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Our CloudStack cloud has an advanced networking setup, we would like to provision web servers, which get a static NAT and open firewall ports 80 and 443. Further we provision database servers, to which we do not give any access to. For accessing the VMs by SSH we use a SSH jump host.
+CloudStack クラウドには高度なネットワーク設定があり、静的な NAT を取得し、ファイアウォールポート 80 および 443 を開く Web サーバーをプロビジョニングを行います。さらに、アクセスを提供しないデータベースサーバーをプロビジョニングします。SSH で仮想マシンにアクセスするには、SSH ジャンプホストを使用します。
 
-This is how our inventory looks like:
+インベントリーは以下のようになります。
 
 .. code-block:: none
 
@@ -195,94 +195,94 @@ This is how our inventory looks like:
     [jumphost]
     jump.example.com  public_ip=198.51.100.22
 
-As you can see, the public IPs for our web servers and jumphost has been assigned as variable ``public_ip`` directly in the inventory.
+ご覧のとおり、Web サーバーおよびジャンプホストのパブリック IP は、インベントリーで直接変数 ``public_ip`` として割り当てられます。
 
-The configure the jumphost, web servers and database servers, we use ``group_vars``. The ``group_vars`` directory contains 4 files for configuration of the groups: cloud-vm, jumphost, webserver and db-server. The cloud-vm is there for specifying the defaults of our cloud infrastructure.
+ジャンプホスト、Web サーバー、およびデータベースサーバーを設定し、``group_vars`` を使用します。``group_vars`` ディレクトリーには、cloud-vm、jumphost、webserver、db-server の 4 つのファイルが含まれています。クラウドインフラストラクチャーのデフォルトを指定する cloud-vm があります。
 
 .. code-block:: yaml
 
     # file: group_vars/cloud-vm
-    ---
-    cs_offering: Small
-    cs_firewall: []
-
-Our database servers should get more CPU and RAM, so we define to use a ``Large`` offering for them.
+---
+cs_offering: Small
+cs_firewall: []
+    
+データベースサーバーはより多くの CPU および RAM を取得する必要があるため、``Large`` オファリングを使用するように定義します。
 
 .. code-block:: yaml
 
     # file: group_vars/db-server
-    ---
-    cs_offering: Large
+---
+cs_offering: Large
 
-The web servers should get a ``Small`` offering as we would scale them horizontally, which is also our default offering. We also ensure the known web ports are opened for the world.
+Web サーバーは、水平的にスケーリングするのと同様に、``Small`` オファリングを取得します。これはデフォルトのオファリングです。また、既知の Web ポートがグローバルに開いていることを確認します。
 
 .. code-block:: yaml
 
     # file: group_vars/webserver
-    ---
-    cs_firewall:
-      - { port: 80 }
-      - { port: 443 }
+---
+cs_firewall:
+  - { port: 80 }
+  - { port: 443 }
 
-Further we provision a jump host which has only port 22 opened for accessing the VMs from our office IPv4 network.
+さらに、オフィス IPv4 ネットワークから仮想マシンにアクセスするためにポート 22 のみを開くジャンプホストをプロビジョニングします。
 
 .. code-block:: yaml
 
     # file: group_vars/jumphost
-    ---
-    cs_firewall:
-      - { port: 22, cidr: "17.17.17.0/24" }
+---
+cs_firewall:
+  - { port: 22, cidr: "17.17.17.0/24" }
 
-Now to the fun part. We create a playbook to create our infrastructure we call it ``infra.yml``:
+ここからが重要です。Playbook を作成して、``infra.yml`` を呼び出すインフラストラクチャーを作成します。
 
 .. code-block:: yaml
 
     # file: infra.yaml
-    ---
-    - name: provision our VMs
-      hosts: cloud-vm
-      tasks:
-        - name: run all enclosed tasks from localhost
-          delegate_to: localhost
-          block:
-            - name: ensure VMs are created and running
-              cs_instance:
-                name: "{{ inventory_hostname_short }}"
-                template: Linux Debian 7 64-bit 20GB Disk
-                service_offering: "{{ cs_offering }}"
-                state: running
+---
+- name: provision our VMs
+  hosts: cloud-vm
+  tasks:
+    - name: run all enclosed tasks from localhost
+      delegate_to: localhost
+      block:
+        - name: ensure VMs are created and running
+          cs_instance:
+            name: "{{ inventory_hostname_short }}"
+            template: Linux Debian 7 64-bit 20GB Disk
+            service_offering: "{{ cs_offering }}"
+            state: running
 
-            - name: ensure firewall ports opened
-              cs_firewall:
-                ip_address: "{{ public_ip }}"
-                port: "{{ item.port }}"
-                cidr: "{{ item.cidr | default('0.0.0.0/0') }}"
-              loop: "{{ cs_firewall }}"
-              when: public_ip is defined
+        - name: ensure firewall ports opened
+          cs_firewall:
+            ip_address: "{{ public_ip }}"
+            port: "{{ item.port }}"
+            cidr: "{{ item.cidr | default('0.0.0.0/0') }}"
+          loop: "{{ cs_firewall }}"
+          when: public_ip is defined
 
-            - name: ensure static NATs
-              cs_staticnat: vm="{{ inventory_hostname_short }}" ip_address="{{ public_ip }}"
-              when: public_ip is defined
+        - name: ensure static NATs
+          cs_staticnat: vm="{{ inventory_hostname_short }}" ip_address="{{ public_ip }}"
+          when: public_ip is defined
 
-In the above play we defined 3 tasks and use the group ``cloud-vm`` as target to handle all VMs in the cloud but instead SSH to these VMs, we use ``delegate_to: localhost`` to execute the API calls locally from our workstation.
+上記のプレイでは、3 つのタスクを定義し、グループの ``cloud-vm`` をターゲットとして使用し、クラウド内の仮想マシンをすべて処理しますが、代わりにこれらの仮想マシンに SSH を使用するため、``delegate_to: localhost`` を使用してワークステーションからローカルに API 呼び出しを実行します。
 
-In the first task, we ensure we have a running VM created with the Debian template. If the VM is already created but stopped, it would just start it. If you like to change the offering on an existing VM, you must add ``force: yes`` to the task, which would stop the VM, change the offering and start the VM again.
+最初のタスクでは、実行中の仮想マシンが Debian テンプレートを使用して作成されていることを確認します。仮想マシンがすでに作成されており、停止している場合は、これを起動します。既存の仮想マシンでオファリングを変更する場合は、タスクに ``force: yes`` を追加する必要があります。これにより、仮想マシンが停止し、オファリングを変更して仮想マシンを再度起動します。
 
-In the second task we ensure the ports are opened if we give a public IP to the VM.
+次のタスクでは、仮想マシンにパブリック IP を付与した場合にポートを開くようにします。
 
-In the third task we add static NAT to the VMs having a public IP defined.
+3 番目のタスクでは、パブリック IP が定義されている仮想マシンに静的 NAT を追加します。
 
 
-.. Note:: The public IP addresses must have been acquired in advance, also see ``cs_ip_address``
+.. Note:: パブリック IP アドレスは事前に取得している必要があります。``cs_ip_address`` も参照してください。
 
-.. Note:: For some modules, e.g. ``cs_sshkeypair`` you usually want this to be executed only once, not for every VM. Therefore you would make a separate play for it targeting localhost. You find an example in the use cases below.
+.. Note:: 一部のモジュール (``cs_sshkeypair`` など）の場合、これはすべての仮想マシンに対してではなく、通常 1 回のみ実行するようにします。そのため、ローカルホストをターゲットとする別のプレイを作成します。以下のユースケースの例があります。
 
-Use Case: Provisioning on a Basic Networking CloudStack setup
+ユースケース: Basic Networking CloudStack 設定へのプロビジョニング
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-A basic networking CloudStack setup is slightly different: Every VM gets a public IP directly assigned and security groups are used for access restriction policy.
+基本的なネットワーク CloudStack 設定は若干異なります。すべての仮想マシンにはパブリック IP が直接割り当てられ、セキュリティーグループはアクセス制限ポリシーに使用されます。
 
-This is how our inventory looks like:
+インベントリーは以下のようになります。
 
 .. code-block:: none
 
@@ -293,85 +293,85 @@ This is how our inventory looks like:
     web-01.example.com
     web-02.example.com
 
-The default for your VMs looks like this:
+仮想マシンのデフォルトは以下のようになります。
 
 .. code-block:: yaml
 
     # file: group_vars/cloud-vm
-    ---
-    cs_offering: Small
-    cs_securitygroups: [ 'default']
-
-Our webserver will also be in security group ``web``:
+---
+cs_offering: Small
+cs_securitygroups: [ 'default']
+    
+また、Web サーバーはセキュリティーグループ ``Web`` にも存在します。
 
 .. code-block:: yaml
 
     # file: group_vars/webserver
-    ---
-    cs_securitygroups: [ 'default', 'web' ]
-
-The playbook looks like the following:
+---
+cs_securitygroups: [ 'default', 'web' ]
+    
+Playbook は以下のようになります。
 
 .. code-block:: yaml
 
     # file: infra.yaml
-    ---
-    - name: cloud base setup
-      hosts: localhost
-      tasks:
-      - name: upload ssh public key
-        cs_sshkeypair:
-          name: defaultkey
-          public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+---
+- name: cloud base setup
+  hosts: localhost
+  tasks:
+  - name: upload ssh public key
+    cs_sshkeypair:
+      name: defaultkey
+      public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
-      - name: ensure security groups exist
-        cs_securitygroup:
-          name: "{{ item }}"
-        loop:
-          - default
-          - web
+  - name: ensure security groups exist
+    cs_securitygroup:
+      name: "{{ item }}"
+    loop:
+      - default
+      - web
 
-      - name: add inbound SSH to security group default
-        cs_securitygroup_rule:
-          security_group: default
-          start_port: "{{ item }}"
-          end_port: "{{ item }}"
-        loop:
-          - 22
+  - name: add inbound SSH to security group default
+    cs_securitygroup_rule:
+      security_group: default
+      start_port: "{{ item }}"
+      end_port: "{{ item }}"
+    loop:
+      - 22
 
-      - name: add inbound TCP rules to security group web
-        cs_securitygroup_rule:
-          security_group: web
-          start_port: "{{ item }}"
-          end_port: "{{ item }}"
-        loop:
-          - 80
-          - 443
+  - name: add inbound TCP rules to security group web
+    cs_securitygroup_rule:
+      security_group: web
+      start_port: "{{ item }}"
+      end_port: "{{ item }}"
+    loop:
+      - 80
+      - 443
 
-    - name: install VMs in the cloud
-      hosts: cloud-vm
-      tasks:
-      - delegate_to: localhost
-        block:
-        - name: create and run VMs on CloudStack
-          cs_instance:
-            name: "{{ inventory_hostname_short }}"
-            template: Linux Debian 7 64-bit 20GB Disk
-            service_offering: "{{ cs_offering }}"
-            security_groups: "{{ cs_securitygroups }}"
-            ssh_key: defaultkey
-            state: Running
-          register: vm
+- name: install VMs in the cloud
+  hosts: cloud-vm
+  tasks:
+  - delegate_to: localhost
+    block:
+    - name: create and run VMs on CloudStack
+      cs_instance:
+        name: "{{ inventory_hostname_short }}"
+        template: Linux Debian 7 64-bit 20GB Disk
+        service_offering: "{{ cs_offering }}"
+        security_groups: "{{ cs_securitygroups }}"
+        ssh_key: defaultkey
+        state: Running
+      register: vm
 
-        - name: show VM IP
-          debug: msg="VM {{ inventory_hostname }} {{ vm.default_ip }}"
+    - name: show VM IP
+      debug: msg="VM {{ inventory_hostname }} {{ vm.default_ip }}"
 
-        - name: assign IP to the inventory
-          set_fact: ansible_ssh_host={{ vm.default_ip }}
+    - name: assign IP to the inventory
+      set_fact: ansible_ssh_host={{ vm.default_ip }}
 
-        - name: waiting for SSH to come up
-          wait_for: port=22 host={{ vm.default_ip }} delay=5
+    - name: waiting for SSH to come up
+      wait_for: port=22 host={{ vm.default_ip }} delay=5
 
-In the first play we setup the security groups, in the second play the VMs will created be assigned to these groups. Further you see, that we assign the public IP returned from the modules to the host inventory. This is needed as we do not know the IPs we will get in advance. In a next step you would configure the DNS servers with these IPs for accessing the VMs with their DNS name.
+最初のプレイでは、セキュリティーグループを設定し、次のプレイで、作成される仮想マシンがこれらのグループに割り当てられます。さらに、モジュールから返されたパブリック IP をホストインベントリーに割り当てることが確認できます。これは、事前に取得している IP が分からないため必要になります。次の手順では、この IP を使用して DNS サーバーを設定し、DNS 名を使用して仮想マシンにアクセスします。
 
-In the last task we wait for SSH to be accessible, so any later play would be able to access the VM by SSH without failure.
+最後のタスクでは、SSH がアクセス可能になるのを待ちます。したがって、後でプレイしても、SSH で仮想マシンにアクセスする際に失敗せずに実行できます。

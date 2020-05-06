@@ -1,82 +1,82 @@
 .. _aci_guide:
 
-Cisco ACI Guide
+Cisco ACI ガイド
 ===============
 
 
 .. _aci_guide_intro:
 
-What is Cisco ACI ?
+Cisco ACI とは
 -------------------
 
 Application Centric Infrastructure (ACI)
 ........................................
-The Cisco Application Centric Infrastructure (ACI) allows application requirements to define the network. This architecture simplifies, optimizes, and accelerates the entire application deployment life cycle.
+ACI (Cisco Application Centric Infrastructure) を使用すると、アプリケーション要件でネットワークを定義できます。このアーキテクチャーは、アプリケーションのデプロイメントライフサイクル全体を単純化し、最適化し、加速化します。
 
 
 Application Policy Infrastructure Controller (APIC)
 ...................................................
-The APIC manages the scalable ACI multi-tenant fabric. The APIC provides a unified point of automation and management, policy programming, application deployment, and health monitoring for the fabric. The APIC, which is implemented as a replicated synchronized clustered controller, optimizes performance, supports any application anywhere, and provides unified operation of the physical and virtual infrastructure.
+APIC は、スケーラブルな ACI マルチテナントファブリックを管理します。APIC は、ファブリックの自動化と管理、ポリシープログラミング、アプリケーションのデプロイメント、ヘルスモニタリングの統合ポイントを提供します。複製された同期クラスターコントローラーとして実装される APIC は、パフォーマンスを最適化し、任意のアプリケーションをどこでもサポートし、物理インフラストラクチャーおよび仮想インフラストラクチャーの統一された操作を提供します。
 
-The APIC enables network administrators to easily define the optimal network for applications. Data center operators can clearly see how applications consume network resources, easily isolate and troubleshoot application and infrastructure problems, and monitor and profile resource usage patterns.
+APIC により、ネットワーク管理者はアプリケーションに最適なネットワークを簡単に定義できます。データセンターオペレーターは、アプリケーションがネットワークリソースをどのように消費するか、アプリケーションとインフラストラクチャーの問題を簡単に分離してトラブルシューティングし、リソース使用状況パターンを監視およびプロファイルできます。
 
-The Cisco Application Policy Infrastructure Controller (APIC) API enables applications to directly connect with a secure, shared, high-performance resource pool that includes network, compute, and storage capabilities.
+APIC (Cisco Application Policy Infrastructure Controller) API を使用すると、アプリケーションと、ネットワーク、コンピュート、およびストレージの機能を含む、安全で共有されている高性能リソースプールを直接接続できます。
 
 
 ACI Fabric
 ..........
-The Cisco Application Centric Infrastructure (ACI) Fabric includes Cisco Nexus 9000 Series switches with the APIC to run in the leaf/spine ACI fabric mode. These switches form a "fat-tree" network by connecting each leaf node to each spine node; all other devices connect to the leaf nodes. The APIC manages the ACI fabric.
+ACI (Cisco Application Centric Infrastructure) Fabric には、Cisco Nexus 9000 シリーズスイッチと、リーフ/スパインの ACI fabric モードで実行する APIC が含まれます。これらのスイッチは、各リーフノードを各スパインノードに接続し、その他のデバイスはリーフノードに接続することで「fat-tree」ネットワークを形成します。APIC は ACI ファブリックを管理します。
 
-The ACI fabric provides consistent low-latency forwarding across high-bandwidth links (40 Gbps, with a 100-Gbps future capability). Traffic with the source and destination on the same leaf switch is handled locally, and all other traffic travels from the ingress leaf to the egress leaf through a spine switch. Although this architecture appears as two hops from a physical perspective, it is actually a single Layer 3 hop because the fabric operates as a single Layer 3 switch.
+ACI ファブリックは、高帯域幅のリンクで一貫した低レイテンシー転送を提供します (40 Gbps、100-Gbps の将来の能力)。送信元および宛先が同じリーフスイッチにあるトラフィックはローカルで処理され、他のすべてのトラフィックはスパインスイッチを介して 入力リーフから出力リーフに送信されます。このアーキテクチャーは、物理的には 2 つのホップとして表示されますが、このファブリックが単一のレイヤー 3 スイッチとして機能するため、実際には単一のレイヤー 3 ホップとなります。
 
-The ACI fabric object-oriented operating system (OS) runs on each Cisco Nexus 9000 Series node. It enables programming of objects for each configurable element of the system. The ACI fabric OS renders policies from the APIC into a concrete model that runs in the physical infrastructure. The concrete model is analogous to compiled software; it is the form of the model that the switch operating system can execute.
+ACI ファブリックオブジェクト指向のオペレーティングシステム (OS) は、それぞれの Cisco Nexus 9000 シリーズノードで実行されます。システムの設定可能な各要素のオブジェクトのプログラミングを有効にします。ACI ファブリック OS は、APIC からのポリシーを物理インフラストラクチャーで実行される具体的なモデルにレンダリングします。具体的なモデルは、コンパイルされたソフトウェアに似ています。これは、スイッチオペレーティングシステムを実行できるモデルの形式です。
 
-All the switch nodes contain a complete copy of the concrete model. When an administrator creates a policy in the APIC that represents a configuration, the APIC updates the logical model. The APIC then performs the intermediate step of creating a fully elaborated policy that it pushes into all the switch nodes where the concrete model is updated.
+すべてのスイッチノードには、具体的なモデルの完全なコピーが含まれます。管理者が設定を表す APIC にポリシーを作成すると、APIC は論理モデルを更新します。その後、APIC は、具体的なモデルが更新されるすべてのスイッチノードにプッシュされる完全に改良されたポリシーを作成する中間ステップを実行します。
 
-The APIC is responsible for fabric activation, switch firmware management, network policy configuration, and instantiation. While the APIC acts as the centralized policy and network management engine for the fabric, it is completely removed from the data path, including the forwarding topology. Therefore, the fabric can still forward traffic even when communication with the APIC is lost.
+APIC は、ファブリックのアクティブ化、ファームウェア管理の切り替え、ネットワークポリシーの設定、およびインスタンス化を行います。APIC はそのファブリックの集中管理ポリシーおよびネットワーク管理エンジンとして機能しますが、転送トポロジーを含むデータパスから完全に削除されます。したがって、ファブリックは APIC との通信が失われてもトラフィックを転送できます。
 
 
-More information
+詳細情報
 ................
-Various resources exist to start learning ACI, here is a list of interesting articles from the community.
+ACI の学習を開始するためのさまざまなリソースが存在します。ここでは、コミュニティーからの興味のある記事の一覧を記載しています。
 
-- `Adam Raffe: Learning ACI <https://adamraffe.com/learning-aci/>`_
-- `Luca Relandini: ACI for dummies <https://lucarelandini.blogspot.be/2015/03/aci-for-dummies.html>`_
+- `Adam Raffe:Learning ACI <https://adamraffe.com/learning-aci/>`_
+- `Luca Relandini:ACI for dummies <https://lucarelandini.blogspot.be/2015/03/aci-for-dummies.html>`_
 - `Cisco DevNet Learning Labs about ACI <https://learninglabs.cisco.com/labs/tags/ACI>`_
 
 
 .. _aci_guide_modules:
 
-Using the ACI modules
+ACI モジュールの使用
 ---------------------
-The Ansible ACI modules provide a user-friendly interface to managing your ACI environment using Ansible playbooks.
+Ansible ACI モジュールは、Ansible Playbook を使用して ACI 環境を管理するユーザーフレンドリーなインターフェースを提供します。
 
-For instance ensuring that a specific tenant exists, is done using the following Ansible task using module :ref:`aci_tenant <aci_tenant_module>`:
+たとえば、特定のテナントが存在することを確認するには、モジュール :ref:`aci_tenant <aci_tenant_module>` を使用して以下の Ansible タスクを使用します。
 
 .. code-block:: yaml
 
-    - name: Ensure tenant customer-xyz exists
+    - name:Ensure tenant customer-xyz exists
       aci_tenant:
         host: my-apic-1
         username: admin
         password: my-password
     
         tenant: customer-xyz
-        description: Customer XYZ
+        description:Customer XYZ
         state: present
 
-A complete list of existing ACI modules is available for the latest stable release on the :ref:`list of network modules <network_modules>`. You can also view the `current development version <https://docs.ansible.com/ansible/devel/modules/list_of_network_modules.html#aci>`_.
+既存の ACI モジュールの完全な一覧は、:ref:`ネットワークモジュール一覧<network_modules>` にある最新の安定したリリースで利用できます。`現在の開発バージョン <https://docs.ansible.com/ansible/devel/modules/list_of_network_modules.html#aci>`_ を表示することもできます。
 
-If you want to learn how to write your own ACI modules to contribute, look at the :ref:`Developing Cisco ACI modules <aci_dev_guide>` section.
+独自の ACI モジュールを作成して貢献する方法を学ぶ場合は、「:ref:`Cisco ACI モジュールの開発 <aci_dev_guide>`」セクションを参照してください。
 
-Querying ACI configuration
+ACI 設定のクエリー
 ..........................
 
-A module can also be used to query a specific object.
+モジュールは、特定のオブジェクトのクエリーにも使用できます。
 
 .. code-block:: yaml
 
-    - name: Query tenant customer-xyz
+    - name:Query tenant customer-xyz
       aci_tenant:
         host: my-apic-1
         username: admin
@@ -86,11 +86,11 @@ A module can also be used to query a specific object.
         state: query
       register: my_tenant
 
-Or query all objects.
+または、すべてのオブジェクトをクエリーします。
 
 .. code-block:: yaml
 
-    - name: Query all tenants
+    - name:Query all tenants
       aci_tenant:
         host: my-apic-1
         username: admin
@@ -99,37 +99,37 @@ Or query all objects.
         state: query
       register: all_tenants
 
-After registering the return values of the :ref:`aci_tenant <aci_tenant_module>` task as shown above, you can access all tenant information from variable ``all_tenants``.
+上記のように :ref:`aci_tenant <aci_tenant_module>` タスクの戻り値を登録した後、変数 ``all_tenants`` からすべてのテナント情報にアクセスできます。
 
 
-Running on the controller locally
+コントローラーでローカルに実行
 .................................
-As originally designed, Ansible modules are shipped to and run on the remote target(s), however the ACI modules (like most network-related modules) do not run on the network devices or controller (in this case the APIC), but they talk directly to the APIC's REST interface.
+最初に設計されたように、Ansible モジュールはリモートターゲットに同梱され、実行されますが、ACI モジュール (ほとんどのネットワーク関連モジュールなど) はネットワークデバイスやコントローラー (この場合は APIC) では動作しませんが、APIC の REST インターフェースと直接対話します。
 
-For this very reason, the modules need to run on the local Ansible controller (or are delegated to another system that *can* connect to the APIC).
+このため、モジュールはローカルの Ansible コントローラーで実行する必要があります (または、APIC に *接続できる* 別のシステムに委譲されます)。
 
 
-Gathering facts
+ファクトの収集
 ```````````````
-Because we run the modules on the Ansible controller gathering facts will not work. That is why when using these ACI modules it is mandatory to disable facts gathering. You can do this globally in your ``ansible.cfg`` or by adding ``gather_facts: no`` to every play.
+Ansible コントローラーでモジュールを実行するため、収集ファクトは機能しません。そのため、これらの ACI モジュールを使用する場合はファクトの収集を無効にする必要があります。これは、``ansible.cfg`` でグローバルに行うことも、すべてのプレイに ``gather_facts: no`` を追加して実行することもできます。
 
 .. code-block:: yaml
-   :emphasize-lines: 3
+   :emphasize-lines:3
 
-    - name: Another play in my playbook
+    - name:Another play in my playbook
       hosts: my-apic-1
       gather_facts: no
       tasks:
-      - name: Create a tenant
+      - name:Create a tenant
         aci_tenant:
           ...
 
 Delegating to localhost
 ```````````````````````
-So let us assume we have our target configured in the inventory using the FQDN name as the ``ansible_host`` value, as shown below.
+そのため、以下に示すように、FQDN 名を ``ansible_host`` 値として使用し、ターゲットをインベントリーに設定したと仮定します。
 
 .. code-block:: yaml
-   :emphasize-lines: 3
+   :emphasize-lines:3
 
     apics:
       my-apic-1:
@@ -137,32 +137,32 @@ So let us assume we have our target configured in the inventory using the FQDN n
         ansible_user: admin
         ansible_password: my-password
 
-One way to set this up is to add to every task the directive: ``delegate_to: localhost``.
+これを設定する方法は、ディレクティブのすべてのタスク (``delegate_to: localhost``) に追加することです。
 
 .. code-block:: yaml
-   :emphasize-lines: 8
+   :emphasize-lines:8
 
-    - name: Query all tenants
+    - name:Query all tenants
       aci_tenant:
         host: '{{ ansible_host }}'
-        username: '{{ ansible_user }}'
-        password: '{{ ansible_password }}'
+    username: '{{ ansible_user }}'
+    password: '{{ ansible_password }}'
     
         state: query
       delegate_to: localhost
       register: all_tenants
+    
+このディレクティブの追加を忘れると、Ansible は SSH を使用して APIC への接続を試み、モジュールのコピーとリモート実行を試行します。これはクリアエラーで失敗しますが、一部の混乱が生じる可能性があります。
 
-If one would forget to add this directive, Ansible will attempt to connect to the APIC using SSH and attempt to copy the module and run it remotely. This will fail with a clear error, yet may be confusing to some.
 
-
-Using the local connection method
+ローカル接続方法の使用
 `````````````````````````````````
-Another option frequently used, is to tie the ``local`` connection method to this target so that every subsequent task for this target will use the local connection method (hence run it locally, rather than use SSH).
+よく使用される別のオプションは、``ローカル`` 接続方法をこのターゲットに結び付けることです。これにより、このターゲットの後続のすべてのタスクでローカル接続方法が使用されます (したがって、SSH を使用するのではなくローカルで実行します)。
 
-In this case the inventory may look like this:
+この場合、インベントリーは以下のようになります。
 
 .. code-block:: yaml
-   :emphasize-lines: 6
+   :emphasize-lines:6
 
     apics:
       my-apic-1:
@@ -171,183 +171,183 @@ In this case the inventory may look like this:
         ansible_password: my-password
         ansible_connection: local
 
-But used tasks do not need anything special added.
+ただし、使用したタスクには特別な追加は必要ありません。
 
 .. code-block:: yaml
 
-    - name: Query all tenants
+    - name:Query all tenants
       aci_tenant:
         host: '{{ ansible_host }}'
-        username: '{{ ansible_user }}'
-        password: '{{ ansible_password }}'
+    username: '{{ ansible_user }}'
+    password: '{{ ansible_password }}'
     
         state: query
       register: all_tenants
+    
+.. hint:: 分かりやすくするために、モジュールドキュメントのすべての例に ``delegate_to: localhost`` を追加しました。これにより、初回のユーザーが簡単に一部をコピーして、最低限の努力で作業できるようになります。
 
-.. hint:: For clarity we have added ``delegate_to: localhost`` to all the examples in the module documentation. This helps to ensure first-time users can easily copy&paste parts and make them work with a minimum of effort.
 
-
-Common parameters
+一般的なパラメーター
 .................
-Every Ansible ACI module accepts the following parameters that influence the module's communication with the APIC REST API:
+すべての Ansible ACI モジュールは、APIC REST API を使用したモジュールの通信に影響を与える以下のパラメーターを受け入れます。
 
     host
-        Hostname or IP address of the APIC.
+        APIC のホスト名または IP アドレス。
 
     port
-        Port to use for communication. (Defaults to ``443`` for HTTPS, and ``80`` for HTTP)
+        通信に使用するポート。(デフォルトは、HTTPS の場合は ``443`、HTTP の場合は ``80``)
 
     username
-        User name used to log on to the APIC. (Defaults to ``admin``)
+        APIC にログインするのに使用されるユーザー名。(デフォルトは ``admin``)
 
     password
-        Password for ``username`` to log on to the APIC, using password-based authentication.
+        パスワードベースの認証を使用して APIC にログインする ``username`` のパスワード。
 
     private_key
-        Private key for ``username`` to log on to APIC, using signature-based authentication.
-        This could either be the raw private key content (include header/footer) or a file that stores the key content.
-        *New in version 2.5*
+        署名ベースの認証を使用して APIC にログインする ``username`` の秘密鍵。
+        これは、(ヘッダー/フットプリントを含む) 生の秘密鍵コンテンツ、または鍵コンテンツを格納するファイルのいずれかになります。
+        *バージョン 2.5 の新機能*
 
     certificate_name
-        Name of the certificate in the ACI Web GUI.
-        This defaults to either the ``username`` value or the ``private_key`` file base name).
-        *New in version 2.5*
+        ACI Web GUI での証明書の名前。
+        デフォルトは ``username`` の値または ``private_key`` ファイルベース名のいずれかになります。
+        *バージョン 2.5 の新機能*
 
     timeout
-        Timeout value for socket-level communication.
+        ソケットレベルの通信のタイムアウト値。
 
     use_proxy
-        Use system proxy settings. (Defaults to ``yes``)
+        システムプロキシー設定を使用します。(``yes`` にデフォルト設定)
 
     use_ssl
-        Use HTTPS or HTTP for APIC REST communication. (Defaults to ``yes``)
+        APIC REST 通信には HTTPS または HTTP を使用します。(``yes`` にデフォルト設定)
 
     validate_certs
-        Validate certificate when using HTTPS communication. (Defaults to ``yes``)
+        HTTPS 通信を使用する場合に証明書を検証します。(``yes`` にデフォルト設定)
 
     output_level
-        Influence the level of detail ACI modules return to the user. (One of ``normal``, ``info`` or ``debug``) *New in version 2.5*
+        詳細な ACI モジュールがユーザーに返るレベルに影響します。( ``normal``、``info``、``debug`` のいずれか) *バージョン 2.5 での新機能*
 
 
-Proxy support
+プロキシーのサポート
 .............
-By default, if an environment variable ``<protocol>_proxy`` is set on the target host, requests will be sent through that proxy. This behaviour can be overridden by setting a variable for this task (see :ref:`playbooks_environment`), or by using the ``use_proxy`` module parameter.
+デフォルトでは、環境変数 ``<protocol>_proxy`` がターゲットホストに設定されていると、要求はそのプロキシー経由で送信されます。この動作は、このタスクに変数を設定して上書きするか (:ref:`playbooks_environment` を参照)、``use_proxy`` モジュールパラメーターを使用して上書きできます。
 
-HTTP redirects can redirect from HTTP to HTTPS so ensure that the proxy environment for both protocols is correctly configured.
+HTTP リダイレクトは HTTP から HTTPS へリダイレクトできるため、両方のプロトコルのプロキシー環境が正しく設定されていることを確認します。
 
-If proxy support is not needed, but the system may have it configured nevertheless, use the parameter ``use_proxy: no`` to avoid accidental system proxy usage.
+プロキシーサポートが必要なくても、システムがそれを設定する可能性がある場合は、``use_proxy: no`` パラメーターを使用して、誤ったシステムプロキシーの使用を回避します。
 
-.. hint:: Selective proxy support using the ``no_proxy`` environment variable is also supported.
+.. hint:: ``no_proxy`` 環境変数を使用した選択的プロキシーサポートにも対応しています。
 
 
-Return values
+戻り値
 .............
 
 .. versionadded:: 2.5
 
-The following values are always returned:
+以下の値が常に返されます。
 
     current
-        The resulting state of the managed object, or results of your query.
+        管理オブジェクトの結果の状態、またはクエリーの結果。
 
-The following values are returned when ``output_level: info``:
+``output_level: info`` の場合に以下の値が返されます。
 
     previous
-        The original state of the managed object (before any change was made).
+        管理オブジェクトの元の状態 (変更を行う前)。
 
     proposed
-        The proposed config payload, based on user-supplied values.
+        ユーザーが指定した値に基づく、提案された設定ペイロード。
 
     sent
-        The sent config payload, based on user-supplied values and the existing configuration.
+        ユーザーが指定した値、および既存の設定に基づく、送信された設定ペイロード。
 
-The following values are returned when ``output_level: debug`` or ``ANSIBLE_DEBUG=1``:
+``output_level: debug`` または ``ANSIBLE_DEBUG=1`` の場合に、以下の値が返されます。
 
     filter_string
-        The filter used for specific APIC queries.
+        特定の APIC クエリーに使用されるフィルター。
 
     method
-        The HTTP method used for the sent payload. (Either ``GET`` for queries, ``DELETE`` or ``POST`` for changes)
+        送信されたペイロードに使用される HTTP メソッド。(クエリーの場合は ``GET``、変更の場合は ``DELETE`` または ``POST``)
 
     response
-        The HTTP response from the APIC.
+        APIC からの HTTP 応答。
 
     status
-        The HTTP status code for the request.
+        要求の HTTP ステータスコード。
 
     url
-        The url used for the request.
+        要求に使用される URL。
 
-.. note:: The module return values are documented in detail as part of each module's documentation.
+.. note:: モジュールの戻り値は、各モジュールのドキュメントで詳細に説明されています。
 
 
-More information
+詳細情報
 ................
-Various resources exist to start learn more about ACI programmability, we recommend the following links:
+ACI プログラミングの詳細を学ぶために、さまざまなリソースがあります。以下のリンクが推奨されます。
 
-- :ref:`Developing Cisco ACI modules <aci_dev_guide>`
-- `Jacob McGill: Automating Cisco ACI with Ansible <https://blogs.cisco.com/developer/automating-cisco-aci-with-ansible-eliminates-repetitive-day-to-day-tasks>`_
+- :ref:`Cisco ACI モジュールの開発 <aci_dev_guide>`
+- `Jacob McGill:Automating Cisco ACI with Ansible <https://blogs.cisco.com/developer/automating-cisco-aci-with-ansible-eliminates-repetitive-day-to-day-tasks>`_
 - `Cisco DevNet Learning Labs about ACI and Ansible <https://learninglabs.cisco.com/labs/tags/ACI,Ansible>`_
 
 
 .. _aci_guide_auth:
 
-ACI authentication
+ACI 認証
 ------------------
 
-Password-based authentication
+パスワードベースの認証
 .............................
-If you want to log on using a username and password, you can use the following parameters with your ACI modules:
+ユーザー名とパスワードを使用してログインする場合は、ACI モジュールで以下のパラメーターを使用できます。
 
 .. code-block:: yaml
 
     username: admin
     password: my-password
 
-Password-based authentication is very simple to work with, but it is not the most efficient form of authentication from ACI's point-of-view as it requires a separate login-request and an open session to work. To avoid having your session time-out and requiring another login, you can use the more efficient Signature-based authentication.
+パスワードベースの認証は非常に簡単に機能しますが、別のログイン要求とオープンセッションが機能する必要があるため、ACI の観点から最も効率的な認証形式ではありません。セッションのタイムアウトや別のログインを必要としないように、より効率的な署名ベースの認証を使用できます。
 
-.. note:: Password-based authentication also may trigger anti-DoS measures in ACI v3.1+ that causes session throttling and results in HTTP 503 errors and login failures.
+.. note:: パスワードベースの認証では、ACI v3.1 以降の DoS 対策がトリガーとなり、セッションスロットルが発生し、HTTP 503 エラーとなり、ログインが失敗する可能性があります。
 
-.. warning:: Never store passwords in plain text.
+.. warning:: プレーンテキストにパスワードを保存しないでください。
 
-The "Vault" feature of Ansible allows you to keep sensitive data such as passwords or keys in encrypted files, rather than as plain text in your playbooks or roles. These vault files can then be distributed or placed in source control. See :ref:`playbooks_vault` for more information.
+Ansible の「Vault」機能を使用すると、パスワードやキーなどの機密データを、Playbook やロールのプレーンテキストとしてではなく、暗号化されたファイルに保存できます。この vault ファイルは、ソース制御に配布または配置することができます。詳細は「:ref:`playbooks_vault`」を参照してください。
 
 
-Signature-based authentication using certificates
+証明書を使用した署名ベースの認証
 .................................................
 
 .. versionadded:: 2.5
 
-Using signature-based authentication is more efficient and more reliable than password-based authentication.
+署名ベースの認証の使用は、パスワードベースの認証よりも効率的で、信頼性が高くなります。
 
-Generate certificate and private key
+証明書と秘密鍵の生成
 ````````````````````````````````````
-Signature-based authentication requires a (self-signed) X.509 certificate with private key, and a configuration step for your AAA user in ACI. To generate a working X.509 certificate and private key, use the following procedure:
+署名ベースの認証では、秘密鍵を持つ (自己署名) X.509 証明書と、ACI の AAA ユーザーの設定手順が必要になります。稼働中の X.509 証明書と秘密鍵を生成するには、以下の手順に従います。
 
 .. code-block:: bash
 
     $ openssl req -new -newkey rsa:1024 -days 36500 -nodes -x509 -keyout admin.key -out admin.crt -subj '/CN=Admin/O=Your Company/C=US'
 
-Configure your local user
+ローカルユーザーの設定
 `````````````````````````
-Perform the following steps:
+以下の手順を実行します。
 
-- Add the X.509 certificate to your ACI AAA local user at :guilabel:`ADMIN` » :guilabel:`AAA`
-- Click :guilabel:`AAA Authentication`
-- Check that in the :guilabel:`Authentication` field the :guilabel:`Realm` field displays :guilabel:`Local`
-- Expand :guilabel:`Security Management` » :guilabel:`Local Users`
-- Click the name of the user you want to add a certificate to, in the :guilabel:`User Certificates` area
-- Click the :guilabel:`+` sign and in the :guilabel:`Create X509 Certificate` enter a certificate name in the :guilabel:`Name` field
+- :guilabel:`ADMIN` » :guilabel:`AAA` で ACI AAA ローカルユーザーに X.509 証明書を追加します。
+- :guilabel:`AAA Authentication` をクリックします。
+- :guilabel:`Authentication` フィールドの :guilabel:`Realm` フィールドに :guilabel:`Local` が表示されることを確認します。
+- :guilabel:`Security Management` » :guilabel:`Local Users` を展開します。
+- :guilabel:`User Certificates` エリアで、証明書を追加するユーザー名をクリックします。
+- :guilabel:`+` 記号をクリックし、:guilabel:`Create X509 Certificate` の :guilabel:`Name` フィールドに証明書名を入力します。
 
-  * If you use the basename of your private key here, you don't need to enter ``certificate_name`` in Ansible
+  * ここで秘密鍵の basename を使用する場合は、Ansible で ``certificate_name`` を入力する必要はありません。
 
-- Copy and paste your X.509 certificate in the :guilabel:`Data` field.
+- :guilabel:`Data` フィールドに X.509 証明書をコピーして貼り付けます。
 
-You can automate this by using the following Ansible task:
+これは、以下の Ansible タスクを使用して自動化できます。
 
 .. code-block:: yaml
 
-    - name: Ensure we have a certificate installed
+    - name:Ensure we have a certificate installed
       aci_aaa_user_certificate:
         host: my-apic-1
         username: admin
@@ -357,24 +357,24 @@ You can automate this by using the following Ansible task:
         certificate_name: admin
         certificate: "{{ lookup('file', 'pki/admin.crt') }}"  # This will read the certificate data from a local file
 
-.. note:: Signature-based authentication only works with local users.
+.. note:: 署名ベースの認証は、ローカルユーザーでのみ機能します。
 
 
-Use signature-based authentication with Ansible
+Ansible での署名ベースの認証の使用
 ```````````````````````````````````````````````
-You need the following parameters with your ACI module(s) for it to work:
+これを有効にするには、ACI モジュールで以下のパラメーターが必要です。
 
 .. code-block:: yaml
-   :emphasize-lines: 2,3
+   :emphasize-lines:2,3
 
     username: admin
     private_key: pki/admin.key
     certificate_name: admin  # This could be left out !
 
-or you can use the private key content:
+または、秘密鍵のコンテンツを使用できます。
 
 .. code-block:: yaml
-   :emphasize-lines: 2,3
+   :emphasize-lines:2,3
 
     username: admin
     private_key: |
@@ -384,20 +384,20 @@ or you can use the private key content:
     certificate_name: admin  # This could be left out !
 
 
-.. hint:: If you use a certificate name in ACI that matches the private key's basename, you can leave out the ``certificate_name`` parameter like the example above.
+.. hint:: 秘密鍵の basename に一致する ACI で証明書名を使用する場合は、上記の例のような ``certificate_name`` パラメーターを省略できます。
 
 
-Using Ansible Vault to encrypt the private key
+Ansible Vault を使用した秘密鍵の暗号化
 ``````````````````````````````````````````````
 .. versionadded:: 2.8
 
-To start, encrypt the private key and give it a strong password.
+まず、秘密鍵を暗号化して強固なパスワードを付与します。
 
 .. code-block:: bash
 
     ansible-vault encrypt admin.key
 
-Use a text editor to open the private-key. You should have an encrypted cert now.
+テキストエディターを使用して、private-key を開きます。これで、暗号化された証明書が存在するはずです。
 
 .. code-block:: bash
 
@@ -406,7 +406,7 @@ Use a text editor to open the private-key. You should have an encrypted cert now
     45641818198456456489479874513215489484843614848456466655432455488484654848489498
     ....
 
-Copy and paste the new encrypted cert into your playbook as a new variable. 
+新しい暗号化された証明書を新規の変数として Playbook にコピーアンドペーストします。 
 
 .. code-block:: yaml
 
@@ -416,7 +416,7 @@ Copy and paste the new encrypted cert into your playbook as a new variable.
           45641818198456456489479874513215489484843614848456466655432455488484654848489498
           ....
 
-Use the new variable for the private_key:
+private_key の新しい変数を使用します。
 
 .. code-block:: yaml
 
@@ -424,42 +424,42 @@ Use the new variable for the private_key:
     private_key: "{{ private_key }}"
     certificate_name: admin  # This could be left out !
 
-When running the playbook, use "--ask-vault-pass" to decrypt the private key.
+Playbook の実行時に、「--ask-vault-pass」を使用して秘密鍵を復号します。
 
 .. code-block:: bash
 
     ansible-playbook site.yaml --ask-vault-pass
 
 
-More information
+詳細情報
 ````````````````
-- Detailed information about Signature-based Authentication is available from `Cisco APIC Signature-Based Transactions <https://www.cisco.com/c/en/us/td/docs/switches/datacenter/aci/apic/sw/kb/b_KB_Signature_Based_Transactions.html>`_.
-- More information on Ansible Vault can be found on the :ref:`Ansible Vault <vault>` page.
+- 署名ベースの認証に関する詳細情報は、「`Cisco APIC Signature-Based Transactions` <https://www.cisco.com/c/en/us/td/docs/switches/datacenter/aci/apic/sw/kb/b_KB_Signature_Based_Transactions.html>_」を参照してください。
+- Ansible Vault の詳細は、「:ref:`Ansible Vault <vault>`」ページを参照してください。
 
 
 .. _aci_guide_rest:
 
-Using ACI REST with Ansible
+Ansible での ACI REST の使用
 ---------------------------
-While already a lot of ACI modules exists in the Ansible distribution, and the most common actions can be performed with these existing modules, there's always something that may not be possible with off-the-shelf modules.
+すでに多くの ACI モジュールが Ansible ディストリビューションに存在し、最も一般的なアクションはこれらの既存のモジュールで実行できますが、既製のモジュールでは不可能なことは常にあります。
 
-The :ref:`aci_rest <aci_rest_module>` module provides you with direct access to the APIC REST API and enables you to perform any task not already covered by the existing modules. This may seem like a complex undertaking, but you can generate the needed REST payload for any action performed in the ACI web interface effortlessly.
+:ref:`aci_rest <aci_rest_module>` モジュールを使用すると、APIC REST API に直接アクセスでき、既存のモジュールで対応していないタスクを実行できます。これは複雑な作業のように思えるかもしれませんが、ACI Web インターフェースで実行されるアクションに必要な REST ペイロードを簡単に生成できます。
 
 
-Built-in idempotency
+組み込みの冪等性
 ....................
-Because the APIC REST API is intrinsically idempotent and can report whether a change was made, the :ref:`aci_rest <aci_rest_module>` module automatically inherits both capabilities and is a first-class solution for automating your ACI infrastructure. As a result, users that require more powerful low-level access to their ACI infrastructure don't have to give up on idempotency and don't have to guess whether a change was performed when using the :ref:`aci_rest <aci_rest_module>` module.
+APIC REST API は冪等であり、変更がなされたかどうかを報告することができるため、:ref:`aci_rest <aci_rest_module>` モジュールは両方の機能を自動的に継承し、ACI インフラストラクチャーを自動化するファーストクラスソリューションとなります。その結果、ACI インフラストラクチャーへのより強力な低レベルアクセスを必要とするユーザーは、冪等性をあきらめる必要がなく、:ref:`aci_rest <aci_rest_module>` モジュールの使用時に変更が行われたかどうかを推測する必要もありません。
 
 
-Using the aci_rest module
+aci_rest モジュールの使用
 .........................
-The :ref:`aci_rest <aci_rest_module>` module accepts the native XML and JSON payloads, but additionally accepts inline YAML payload (structured like JSON). The XML payload requires you to use a path ending with ``.xml`` whereas JSON or YAML require the path to end with ``.json``.
+:ref:`aci_rest <aci_rest_module>` モジュールはネイティブの XML ペイロードおよび JSON ペイロードを受け入れますが、(JSON などの) インライン YAML ペイロードも追加で受け入れます。XML ペイロードでは、``.xml`` で終わるパスを使用する必要がありますが、JSON または YAML には ``.json`` で終わるパスが必要です。
 
-When you're making modifications, you can use the POST or DELETE methods, whereas doing just queries require the GET method.
+変更を行う場合は、POST メソッドまたは DELETE メソッドを使用できますが、クエリーのみを実行するには GET メソッドが必要です。
 
-For instance, if you would like to ensure a specific tenant exists on ACI, these below four examples are functionally identical:
+たとえば、特定のテナントが ACI に存在することを確認する場合は、以下の 4 つの例が機能的に同じです。
 
-**XML** (Native ACI REST)
+**XML** (ネイティブの ACI REST)
 
 .. code-block:: yaml
 
@@ -472,7 +472,7 @@ For instance, if you would like to ensure a specific tenant exists on ACI, these
         content: |
           <fvTenant name="customer-xyz" descr="Customer XYZ"/>
 
-**JSON** (Native ACI REST)
+**JSON** (ネイティブの ACI REST)
 
 .. code-block:: yaml
 
@@ -487,12 +487,12 @@ For instance, if you would like to ensure a specific tenant exists on ACI, these
             "fvTenant": {
               "attributes": {
                 "name": "customer-xyz",
-                "descr": "Customer XYZ"
+                "descr":"Customer XYZ"
               }
             }
           }
 
-**YAML** (Ansible-style REST)
+**YAML** (Ansible スタイルの REST)
 
 .. code-block:: yaml
 
@@ -506,9 +506,9 @@ For instance, if you would like to ensure a specific tenant exists on ACI, these
           fvTenant:
             attributes:
               name: customer-xyz
-              descr: Customer XYZ
+              descr:Customer XYZ
 
-**Ansible task** (Dedicated module)
+**Ansible タスク** (専用モジュール)
 
 .. code-block:: yaml
 
@@ -517,39 +517,39 @@ For instance, if you would like to ensure a specific tenant exists on ACI, these
         private_key: pki/admin.key
     
         tenant: customer-xyz
-        description: Customer XYZ
+        description:Customer XYZ
         state: present
 
 
-.. hint:: The XML format is more practical when there is a need to template the REST payload (inline), but the YAML format is more convenient for maintaining your infrastructure-as-code and feels more naturally integrated with Ansible playbooks. The dedicated modules offer a more simple, abstracted, but also a more limited experience. Use what feels best for your use-case.
+.. hint:: XML 形式は、REST ペイロード (インライン) のテンプレートが必要な場合にはより実用的なものですが、YAML 形式は infrastructure-as-code を維持し、Ansible Playbook とより正確に統合されます。専用モジュールは、よりシンプルで抽象化されたモジュールを提供しますが、より限定的なエクスペリエンスも提供します。ユースケースに最適なものを使用してください。
 
 
-More information
+詳細情報
 ................
-Plenty of resources exist to learn about ACI's APIC REST interface, we recommend the links below:
+ACI の APIC REST インターフェースを学ぶためのリソースは多数あります。以下のリンクが推奨されます。
 
-- :ref:`The aci_rest module documentation <aci_rest_module>`
-- `APIC REST API Configuration Guide <https://www.cisco.com/c/en/us/td/docs/switches/datacenter/aci/apic/sw/2-x/rest_cfg/2_1_x/b_Cisco_APIC_REST_API_Configuration_Guide.html>`_ -- Detailed guide on how the APIC REST API is designed and used, incl. many examples
-- `APIC Management Information Model reference <https://developer.cisco.com/docs/apic-mim-ref/>`_ -- Complete reference of the APIC object model
-- `Cisco DevNet Learning Labs about ACI and REST <https://learninglabs.cisco.com/labs/tags/ACI,REST>`_
+- :ref:`aci_rest モジュールのドキュメント <aci_rest_module>`
+- `APIC REST API Configuration Guide <https://www.cisco.com/c/en/us/td/docs/switches/datacenter/aci/apic/sw/2-x/rest_cfg/2_1_x/b_Cisco_APIC_REST_API_Configuration_Guide.html>`_ -- APIC REST API の設計方法と使用方法に関する詳細ガイド (多数のサンプルを含む)
+- `APIC Management Information Model reference <https://developer.cisco.com/docs/apic-mim-ref/>`_ -- APIC オブジェクトモデルの完全リファレンス
+- `ACI および REST の Cisco DevNet ラーニングラボ <https://learninglabs.cisco.com/labs/tags/ACI,REST>`_
 
 
 .. _aci_guide_ops:
 
-Operational examples
+運用例
 --------------------
-Here is a small overview of useful operational tasks to reuse in your playbooks.
+以下は、Playbook で再利用するのに役立つ運用タスクの概要です。
 
-Feel free to contribute more useful snippets.
+より有用なスニペットを自由に投稿してください。
 
 
-Waiting for all controllers to be ready
+すべてのコントローラーの準備が整うまで待機
 .......................................
-You can use the below task after you started to build your APICs and configured the cluster to wait until all the APICs have come online. It will wait until the number of controllers equals the number listed in the ``apic`` inventory group.
+APIC の構築を開始し、すべての APIC がオンラインになるまで待機するようにクラスターを設定したら、以下のタスクを使用できます。これは、コントローラーの数が ``apic`` インベントリーに挙げられている数と等しくなるまで待機します。
 
 .. code-block:: yaml
 
-    - name: Waiting for all controllers to be ready
+    - name:Waiting for all controllers to be ready
       aci_rest:
         host: my-apic-1
         private_key: pki/admin.key
@@ -557,17 +557,17 @@ You can use the below task after you started to build your APICs and configured 
         path: /api/node/class/topSystem.json?query-target-filter=eq(topSystem.role,"controller")
       register: topsystem
       until: topsystem|success and topsystem.totalCount|int >= groups['apic']|count >= 3
-      retries: 20
-      delay: 30
+      retries:20
+      delay:30
 
 
-Waiting for cluster to be fully-fit
+クラスターが完全に適合するまで待機
 ...................................
-The below example waits until the cluster is fully-fit. In this example you know the number of APICs in the cluster and you verify each APIC reports a 'fully-fit' status.
+以下の例では、クラスターが完全に調整されるまで待機します。この例では、クラスター内の APIC の数を把握し、各 APIC が「完全に適切な」ステータスを報告することを確認します。
 
 .. code-block:: yaml
 
-    - name: Waiting for cluster to be fully-fit
+    - name:Waiting for cluster to be fully-fit
       aci_rest:
         host: my-apic-1
         private_key: pki/admin.key
@@ -580,82 +580,81 @@ The below example waits until the cluster is fully-fit. In this example you know
         infrawinode.imdata[0].infraWiNode.attributes.health == 'fully-fit' and
         infrawinode.imdata[1].infraWiNode.attributes.health == 'fully-fit' and
         infrawinode.imdata[2].infraWiNode.attributes.health == 'fully-fit'
-      retries: 30
-      delay: 30
+      retries:30
+      delay:30
 
 
 .. _aci_guide_errors:
 
-APIC error messages
+APIC エラーメッセージ
 -------------------
-The following error messages may occur and this section can help you understand what exactly is going on and how to fix/avoid them.
+以下のエラーメッセージが発生する場合があります。本セクションは、正確な状況と、その修正方法や回避方法を理解するのに役立ちます。
 
     APIC Error 122: unknown managed object class 'polUni'
-        In case you receive this error while you are certain your :ref:`aci_rest <aci_rest_module>` payload and object classes are seemingly correct, the issue might be that your payload is not in fact correct JSON (e.g. the sent payload is using single quotes, rather than double quotes), and as a result the APIC is not correctly parsing your object classes from the payload. One way to avoid this is by using a YAML or an XML formatted payload, which are easier to construct correctly and modify later.
+        :ref:`aci_rest <aci_rest_module>` ペイロードとオブジェクトクラスが一見正しそうに見える場合にこのエラーが発生する場合は、ペイロードの JSON に誤りがあり (たとえば、送信されたペイロードが二重引用符ではなく一重引用符を使用している) 、その結果 APIC がペイロードからオブジェクトクラスを正しく解析していない可能性があります。これを回避する 1 つの方法は、YAML 形式または XML 形式のペイロードを使用することです。これにより、正しく構築して後で変更するのが簡単になります。
 
 
-    APIC Error 400: invalid data at line '1'. Attributes are missing, tag 'attributes' must be specified first, before any other tag
-        Although the JSON specification allows unordered elements, the APIC REST API requires that the JSON ``attributes`` element precede the ``children`` array or other elements. So you need to ensure that your payload conforms to this requirement. Sorting your dictionary keys will do the trick just fine. If you don't have any attributes, it may be necessary to add: ``attributes: {}`` as the APIC does expect the entry to precede any ``children``.
+    APIC Error 400: invalid data at line '1'.Attributes are missing, tag 'attributes' must be specified first, before any other tag
+        JSON 仕様は順序付けされていない要素を許可しますが、APIC REST API では、JSON の ``attributes`` 要素が ``children`` アレイまたは他の要素の前になければなりません。したがって、ペイロードがこの要件に準拠していることを確認する必要があります。辞書キーを並び替えれば、問題なく終了します。属性がない場合は、``attributes: {}`` を追加する必要があります。APIC がそのエントリーを ``children`` の前に付ける必要があるためです。
 
 
     APIC Error 801: property descr of uni/tn-TENANT/ap-AP failed validation for value 'A "legacy" network'
-        Some values in the APIC have strict format-rules to comply to, and the internal APIC validation check for the provided value failed. In the above case, the ``description`` parameter (internally known as ``descr``) only accepts values conforming to `Regex: [a-zA-Z0-9\\!#$%()*,-./:;@ _{|}~?&+]+ <https://pubhub-prod.s3.amazonaws.com/media/apic-mim-ref/docs/MO-fvAp.html#descr>`_, in general it must not include quotes or square brackets.
-
+        APIC 内の一部の値には準拠が必要な厳格な format-rules があり、提供される値に対する内部 APIC 検証チェックに失敗しました。上記の例では、``description`` パラメーター (内部では ``descr`` と呼ばれる) は、`Regex: [a-zA-Z0-9\\!#$%()*,-./:;@ _{|}~?&+]+ <https://pubhub-prod.s3.amazonaws.com/media/apic-mim-ref/docs/MO-fvAp.html」に準拠する値のみを受け付けます。#descr>`_ に準拠した値のみを受け取ります。一般的に、これには引用符または角括弧は含みません。
 
 .. _aci_guide_known_issues:
 
-Known issues
+既知の問題
 ------------
-The :ref:`aci_rest <aci_rest_module>` module is a wrapper around the APIC REST API. As a result any issues related to the APIC will be reflected in the use of this module.
+:ref:`aci_rest <aci_rest_module>` モジュールは、APIC REST API のラッパーです。これにより、APIC に関連する問題がこのモジュールの使用に反映されます。
 
-All below issues either have been reported to the vendor, and most can simply be avoided.
+以下の問題はすべてベンダーに報告され、ほとんどの場合は回避できます。
 
-    Too many consecutive API calls may result in connection throttling
-        Starting with ACI v3.1 the APIC will actively throttle password-based authenticated connection rates over a specific threshold. This is as part of an anti-DDOS measure but can act up when using Ansible with ACI using password-based authentication. Currently, one solution is to increase this threshold within the nginx configuration, but using signature-based authentication is recommended.
+    連続する API 呼び出しが多くなりすぎると、接続のスロットルが発生する可能性があります。
+        ACI v3.1 以降、APIC は特定のしきい値で、パスワードベースの認証接続のレートをアクティブにスロットルします。これは、DDoS 対策の一部として実行されますが、パスワードベースの認証を使用して ACI で Ansible を使用するときに機能する可能性があります。現在、これは nginx 設定内でこのしきい値を増やすことですが、署名ベースの認証の使用が推奨されます。
 
-        **NOTE:** It is advisable to use signature-based authentication with ACI as it not only prevents connection-throttling, but also improves general performance when using the ACI modules.
-
-
-    Specific requests may not reflect changes correctly (`#35401 <https://github.com/ansible/ansible/issues/35041>`_)
-        There is a known issue where specific requests to the APIC do not properly reflect changed in the resulting output, even when we request those changes explicitly from the APIC. In one instance using the path ``api/node/mo/uni/infra.xml`` fails, where ``api/node/mo/uni/infra/.xml`` does work correctly.
-
-        **NOTE:** A workaround is to register the task return values (e.g. ``register: this``) and influence when the task should report a change by adding: ``changed_when: this.imdata != []``.
+        **注記:** 接続スロットルを回避するだけでなく、ACI モジュールを使用する場合の全般的なパフォーマンスを向上させるため、ACI で署名ベースの認証を使用することが推奨されます。
 
 
-    Specific requests are known to not be idempotent (`#35050 <https://github.com/ansible/ansible/issues/35050>`_)
-        The behaviour of the APIC is inconsistent to the use of ``status="created"`` and ``status="deleted"``. The result is that when you use ``status="created"`` in your payload the resulting tasks are not idempotent and creation will fail when the object was already created. However this is not the case with ``status="deleted"`` where such call to an non-existing object does not cause any failure whatsoever.
+    特定の要求には、変更が正しく反映されない場合があります (`#35401 <https://github.com/ansible/ansible/issues/35041>`_)。
+    APIC への特定のリクエストが、APIC から明示的に変更をリクエストした場合でも、結果の出力に変更が正しく反映されないという既知の問題があります。ある例では、``api/node/mo/uni/infra.xml`` のパスの使用は失敗しますが、``api/node/mo/uni/infra/.xml`` は正しく動作します。
 
-        **NOTE:** A workaround is to avoid using ``status="created"`` and instead use ``status="modified"`` when idempotency is essential to your workflow..
+    **注記:** 回避策としては、タスクの戻り値を登録 (例: ``register: this``) し、``changed_when: this.imdata != []`` を追加することで、タスクが変更を報告するタイミングに影響を与えることができます。
+    
+
+    特定のリクエストはべき等でないことが知られています (`#35050 <https://github.com/ansible/ansible/issues/35050>`_)。
+    APIC の挙動は、``status="created"`` と ``status="deleted"`` の使用に矛盾しています。したがって、``status="created`` をペイロードに使用した場合は、オブジェクトが既に作成されている場合に結果として生じるタスクは冪等ではなく、作成に失敗します。ただし、``status="deleted"`` の場合は異なり、存在しないオブジェクトを呼び出しても何の問題もありません。
+
+**注記:** 回避策としては、冪等がワークフローに必要な場合は、``status="created"`` を使用せずに、代わりに ``status="modified"`` を使うことです。
 
 
-    Setting user password is not idempotent (`#35544 <https://github.com/ansible/ansible/issues/35544>`_)
-        Due to an inconsistency in the APIC REST API, a task that sets the password of a locally-authenticated user is not idempotent. The APIC will complain with message ``Password history check: user dag should not use previous 5 passwords``.
+ユーザーパスワードの設定は冪等ではありません (`#35544 <https://github.com/ansible/ansible/issues/35544>`_)。
+    APIC REST API の不整合により、ローカルで認証されたユーザのパスワードを設定するタスクが冪等ではありません。APIC は ``Password history check: user dag should not use previous 5 passwords`` というメッセージを出力します。
 
-        **NOTE:** There is no workaround for this issue.
+    **注記:** この問題の回避策はありません。
 
 
 .. _aci_guide_community:
 
-ACI Ansible community
+ACI Ansible コミュニティー
 ---------------------
-If you have specific issues with the ACI modules, or a feature request, or you like to contribute to the ACI project by proposing changes or documentation updates, look at the Ansible Community wiki ACI page at: https://github.com/ansible/community/wiki/Network:-ACI
+ACI モジュールまたは機能要求に特定の問題が発生した場合や、変更やドキュメントの更新を提案して ACI プロジェクトに貢献する場合は、https://github.com/ansible/community/wiki/Network:-ACI の Ansible Community wiki ACI ページを参照してください。
 
-You will find our roadmap, an overview of open ACI issues and pull-requests, and more information about who we are. If you have an interest in using ACI with Ansible, feel free to join! We occasionally meet online to track progress and prepare for new Ansible releases.
+ロードマップ、オープンな ACI の問題およびプル要求の概要、およびこのコミュニティーに関する詳細情報を確認できます。ACI を Ansible で使用することを検討している場合は、お気軽にご参加ください。進捗状況を追跡し、新しい Ansible リリースの準備をするために、オンラインミーティングを行う場合もがあります。
 
 
 .. seealso::
 
-   :ref:`List of ACI modules <aci_network_modules>`
-       A complete list of supported ACI modules.
-   :ref:`Developing Cisco ACI modules <aci_dev_guide>`
-       A walkthough on how to develop new Cisco ACI modules to contribute back.
-   `ACI community <https://github.com/ansible/community/wiki/Network:-ACI>`_
-       The Ansible ACI community wiki page, includes roadmap, ideas and development documentation.
+   :ref:`ACI モジュールの一覧 <aci_network_modules>`
+       対応している ACI モジュールの完全リスト
+   :ref:`Cisco ACI モジュールの開発 <aci_dev_guide>`
+       新しい Cisco ACI モジュールを開発して貢献する方法に関するウォークスルー
+   `ACI コミュニティー <https://github.com/ansible/community/wiki/Network:-ACI>`_
+       Ansible ACI コミュニティーの wiki ページ。ロードマップ、概念、および開発ドキュメントが含まれます。
    :ref:`network_guide`
-       A detailed guide on how to use Ansible for automating network infrastructure.
-   `Network Working Group <https://github.com/ansible/community/tree/master/group-network>`_
-       The Ansible Network community page, includes contact information and meeting information.
+       ネットワークインフラストラクチャーの自動化に Ansible を使用する方法に関する詳細なガイドです。
+   `ネットワークワーキンググループ <https://github.com/ansible/community/tree/master/group-network>`_
+       Ansible Network コミュニティーページ。連絡先情報およびミーティング情報が含まれます。
    `#ansible-network <https://webchat.freenode.net/?channels=ansible-network>`_
-       The #ansible-network IRC chat channel on Freenode.net.
-   `User Mailing List <https://groups.google.com/group/ansible-project>`_
-       Have a question?  Stop by the google group!
+       #ansible-network IRC chat channel on Freenode.net.
+`ユーザーメーリングリスト <https://groups.google.com/group/ansible-project>`_
+   ご質問はございますか。 Google Group をご覧ください。

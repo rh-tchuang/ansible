@@ -3,51 +3,51 @@
 .. _scenario_template:
 
 *************************************
-Sample scenario for Ansible platforms
+Ansible プラットフォームのサンプルシナリオ
 *************************************
 
-*Use this ``rst`` file as a starting point to create a scenario guide for your platform. The sections below are suggestions on what should be in a scenario guide.*
+*この ``rst`` ファイルを出発点として使用して、プラットフォームのシナリオガイドを作成します。以下のセクションでは、シナリオガイドの内容を提案しています。*
 
-Introductory paragraph.
+概要
 
 .. contents::
    :local:
 
-Prerequisites
+要件
 =============
 
-Describe the requirements and assumptions for this scenario. This should include applicable subsections for hardware, software, and any other caveats to using the scenarios in this guide.
+このシナリオの要件と前提条件を説明します。これには、本ガイドのシナリオで使用するハードウェア、ソフトウェア、およびその他の注意事項に該当するサブセクションが含まれます。
 
-Credentials and authenticating
+認証情報および認証
 ==============================
 
-Describe credential requirements and how to authenticate to this platform.
+認証情報の要件と、このプラットフォームへの認証方法を説明します。
 
-Using dynamic inventory
+動的インベントリーの使用
 =========================
 
-If applicable, describe how to use a dynamic inventory plugin for this platform.
+該当する場合は、このプラットフォームの動的インベントリープラグインの使用方法を説明します。
 
 
-Example description
+例の説明
 ===================
 
-Description and code here.  Change the section header to something descriptive about this example, such as "Renaming a virtual machine".  The goal is that this is the text someone would search for to find your example.
+ここには、説明とコードが含まれます。 セクションヘッダーを、「Renaming a virtual machine (仮想マシンの名前変更)」など、このサンプルを説明するものに変更します。 これは、作成したサンプルを他の誰かが検索するのに使用するテキストになります。
 
 
-Example output
+出力例
 --------------
 
-What the user should expect to see.
+期待される結果。
 
 
-Troubleshooting
+トラブルシューティング
 ---------------
 
-What to look for if it breaks.
+壊れているかどうかを確認します。
 
 
-Conclusion and where to go next
+結論および次のステップ
 ===============================
 
-Recap of important points. For more information please see: links.
+重要なポイントの要約。詳細は、リンクを参照してください。

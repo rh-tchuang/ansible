@@ -1,41 +1,41 @@
-Vagrant Guide
+Vagrant ガイド
 =============
 
 .. _vagrant_intro:
 
-Introduction
+はじめに
 ````````````
 
-`Vagrant <https://www.vagrantup.com/>`_ is a tool to manage virtual machine
-environments, and allows you to configure and use reproducible work
-environments on top of various virtualization and cloud platforms.
-It also has integration with Ansible as a provisioner for these virtual
-machines, and the two tools work together well.
+`Vagrant <https://www.vagrantup.com/>`_ は、仮想マシン環境を管理するためのツールであり、
+これにより、さまざまな仮想化プラットフォームおよびクラウドプラットフォームで、
+再現可能な作業環境を構成および使用できます。
+また、この仮想マシンのプロビジョナーとして Ansible と統合されており、
+2 つのツールは連携して機能します。
 
-This guide will describe how to use Vagrant 1.7+ and Ansible together.
+本ガイドでは、Vagrant 1.7 以降および Ansible を一緒に使用する方法を説明します。
 
-If you're not familiar with Vagrant, you should visit `the documentation
-<https://www.vagrantup.com/docs/>`_.
+Vagrant に精通していない場合は、`ドキュメント
+<https://www.vagrantup.com/docs/>`_ を参照してください。
 
-This guide assumes that you already have Ansible installed and working.
-Running from a Git checkout is fine. Follow the :ref:`installation_guide`
-guide for more information.
+本ガイドでは、Ansible がすでにインストールされ、動作していることを前提としています。
+Git ロールアウトから実行しても問題ありません。詳細は、「:ref:`installation_guide`」
+を参照してください。
 
 .. _vagrant_setup:
 
-Vagrant Setup
+Vagrant 設定
 `````````````
 
-The first step once you've installed Vagrant is to create a ``Vagrantfile``
-and customize it to suit your needs. This is covered in detail in the Vagrant
-documentation, but here is a quick example that includes a section to use the
-Ansible provisioner to manage a single machine:
+Vagrant をインストールしたら、最初に ``Vagrantfile`` を作成し、
+ニーズに合わせてカスタマイズします。これは、Vagrantのドキュメントで詳細に説明されていますが、
+ここでは、
+Ansible プロビジョナーを使用して 1 台のマシンを管理するセクションを含む簡単な例を示します。
 
 .. code-block:: ruby
 
   # This guide is optimized for Vagrant 1.8 and above.
-  # Older versions of Vagrant put less info in the inventory they generate.
-  Vagrant.require_version ">= 1.8.0"
+# Older versions of Vagrant put less info in the inventory they generate.
+Vagrant.require_version ">= 1.8.0"
 
   Vagrant.configure(2) do |config|
 
@@ -47,90 +47,90 @@ Ansible provisioner to manage a single machine:
     end
   end
 
-Notice the ``config.vm.provision`` section that refers to an Ansible playbook
-called ``playbook.yml`` in the same directory as the ``Vagrantfile``. Vagrant
-runs the provisioner once the virtual machine has booted and is ready for SSH
-access.
+``Vagrantfile`` と同じディレクトリーに、
+``playbook.yml`` と呼ばれる Ansible Playbook を参照する ``config.vm.provision`` セクションに注目してください。Vagrant は、
+仮想マシンが起動し、SSH アクセスの準備が整ったら、
+プロビジョナーを実行します。
 
-There are a lot of Ansible options you can configure in your ``Vagrantfile``.
-Visit the `Ansible Provisioner documentation
-<https://www.vagrantup.com/docs/provisioning/ansible.html>`_ for more
-information.
+``Vagrantfile`` に設定できる Ansible オプションは多数あります。
+詳細は `Ansible プロビジョナーのドキュメント
+<https://www.vagrantup.com/docs/provisioning/ansible.html>` を
+参照してください。
 
 .. code-block:: bash
 
     $ vagrant up
 
-This will start the VM, and run the provisioning playbook (on the first VM
-startup).
+これにより、仮想マシンが起動し、
+(最初の仮想マシンの起動時に) プロビジョニングの Playbook が実行します。
 
 
-To re-run a playbook on an existing VM, just run:
+既存の仮想マシンで Playbook を再実行するには、以下を実行します。
 
 .. code-block:: bash
 
     $ vagrant provision
 
-This will re-run the playbook against the existing VM.
+これにより、Playbook が既存の仮想マシンに対して再実行されます。
 
-Note that having the ``ansible.verbose`` option enabled will instruct Vagrant
-to show the full ``ansible-playbook`` command used behind the scene, as
-illustrated by this example:
+``ansible.verbose`` オプションを有効にすると、次の例に示すように、
+バックグラウンドで使用される完全な ``ansible-playbook`` コマンドを
+表示するように Vagrant に指示することに注意してください。
 
 .. code-block:: bash
 
       $ PYTHONUNBUFFERED=1 ANSIBLE_FORCE_COLOR=true ANSIBLE_HOST_KEY_CHECKING=false ANSIBLE_SSH_ARGS='-o UserKnownHostsFile=/dev/null -o IdentitiesOnly=yes -o ControlMaster=auto -o ControlPersist=60s' ansible-playbook --connection=ssh --timeout=30 --limit="default" --inventory-file=/home/someone/coding-in-a-project/.vagrant/provisioners/ansible/inventory -v playbook.yml
 
-This information can be quite useful to debug integration issues and can also
-be used to manually execute Ansible from a shell, as explained in the next
-section.
+この情報は、統合の問題をデバッグするのに非常に役立ち、
+次のセクションで説明するように、
+シェルから Ansible を手動で実行するのにも使用できます。
 
 .. _running_ansible:
 
-Running Ansible Manually
+Ansible の手動実行
 ````````````````````````
 
-Sometimes you may want to run Ansible manually against the machines. This is
-faster than kicking ``vagrant provision`` and pretty easy to do.
+マシンに対して Ansible を手動で実行する場合があります。これは、
+``vagrant provision`` を実行するよりも速く、かなり簡単です。
 
-With our ``Vagrantfile`` example, Vagrant automatically creates an Ansible
-inventory file in ``.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory``.
-This inventory is configured according to the SSH tunnel that Vagrant
-automatically creates. A typical automatically-created inventory file for a
-single machine environment may look something like this:
+``Vagrantfile`` の例では、
+Vagrant が ``.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory`` に Ansible インベントリーファイルを自動的に作成します。
+このインベントリーは、
+Vagrant が自動的に作成する SSH トンネルに従って設定されます。1 台のマシン環境用に自動的に作成される一般的なインベントリーファイルは、
+次のようになります。
 
 .. code-block:: none
 
     # Generated by Vagrant
 
-    default ansible_host=127.0.0.1 ansible_port=2222 ansible_user='vagrant' ansible_ssh_private_key_file='/home/someone/coding-in-a-project/.vagrant/machines/default/virtualbox/private_key'
+default ansible_host=127.0.0.1 ansible_port=2222 ansible_user='vagrant' ansible_ssh_private_key_file='/home/someone/coding-in-a-project/.vagrant/machines/default/virtualbox/private_key'
 
-If you want to run Ansible manually, you will want to make sure to pass
-``ansible`` or ``ansible-playbook`` commands the correct arguments, at least
-for the *inventory*.
+Ansible を手動で実行する場合は、
+少なくとも *inventory* に対して、``ansible`` コマンドまたは ``ansible-playbook`` コマンドに、
+正しい引数を渡すようにしてください。
 
 .. code-block:: bash
 
     $ ansible-playbook -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory playbook.yml
 
-Advanced Usages
+高度な使用方法
 ```````````````
 
-The "Tips and Tricks" chapter of the `Ansible Provisioner documentation
-<https://www.vagrantup.com/docs/provisioning/ansible.html>`_ provides detailed information about more advanced Ansible features like:
+`Ansible Provisioner ドキュメント
+<https://www.vagrantup.com/docs/provisioning/ansible.html>`_ の「Tips and Tricks」は、以下のような Ansible の高度な機能に関する詳細情報を説明します。
 
-  - how to execute a playbook in parallel within a multi-machine environment
-  - how to integrate a local ``ansible.cfg`` configuration file
+  - マルチマシン環境内で Playbook を並行して実行する方法
+  - ローカルの ``ansible.cfg`` 設定ファイルを統合する方法
 
 .. seealso::
 
     `Vagrant Home <https://www.vagrantup.com/>`_
-        The Vagrant homepage with downloads
+        ダウンロードを含む Vagrant ホームページ
     `Vagrant Documentation <https://www.vagrantup.com/docs/>`_
-        Vagrant Documentation
+        Vagrant ドキュメント
     `Ansible Provisioner <https://www.vagrantup.com/docs/provisioning/ansible.html>`_
-        The Vagrant documentation for the Ansible provisioner
+        Ansible プロビジョナーの Vagrant ドキュメント
     `Vagrant Issue Tracker <https://github.com/hashicorp/vagrant/issues?q=is%3Aopen+is%3Aissue+label%3Aprovisioners%2Fansible>`_
-        The open issues for the Ansible provisioner in the Vagrant project
+        Vagrant プロジェクトでの Ansible プロビジョナーに関する未解決な問題
     :ref:`working_with_playbooks`
-        An introduction to playbooks
+        Playbook の概要
