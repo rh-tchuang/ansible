@@ -15,7 +15,7 @@ AWS モジュールの要件は最小限です。
 
 従来、ansible はホストループ内のタスクを複数のリモートマシンに対して実行しますが、ほとんどのクラウド制御手順は、制御するリージョンを参照するローカルマシンで実行されます。
 
-Playbook の手順では、通常、プロビジョニング手順に以下のパターンを使用します。
+Playbook の手順では、通常、プロビジョニング手順に以下のパターンを使用します::
 
     - hosts: localhost
       gather_facts:False
@@ -45,7 +45,7 @@ vars_file に保存するには、ansible-vault で暗号化することが理�
 
     - ec2
       aws_access_key: "{{ec2_access_key}}"
-  aws_secret_key: "{{ec2_secret_key}}"
+      aws_secret_key: "{{ec2_secret_key}}"
       image: "..."
     
 .. _aws_provisioning:
@@ -55,7 +55,7 @@ vars_file に保存するには、ansible-vault で暗号化することが理�
 
 ec2 モジュールは、EC2 内でインスタンスのプロビジョニングおよびプロビジョニング解除を行います。  
 
-EC2 で「Demo」とタグ付けされたインスタンスが 5 つしか存在しないことを確認する例を以下に示します。  
+EC2 で「Demo」とタグ付けされたインスタンスが 5 個になるようにする例を以下に示します。  
 
 以下の例では、インスタンスの「exact_count」は 5 に設定されます。 これは、インスタンスがない場合は、
 新規インスタンスが 5 個作成されることを示しています。 インスタンスが 2 個ある場合には、3 個作成され、インスタンスが 8 個ある場合には、
@@ -66,24 +66,24 @@ EC2 で「Demo」とタグ付けされたインスタンスが 5 つしか存在
 
     # demo_setup.yml
 
-- hosts: localhost
-  gather_facts: False
+    - hosts: localhost
+      gather_facts: False
 
-  tasks:
+      tasks:
 
-    - name: Provision a set of instances
-      ec2: 
-         key_name: my_key
-         group: test
-         instance_type: t2.micro
-         image: "{{ ami_id }}"
-         wait: true 
-         exact_count: 5
-         count_tag:
-            Name: Demo
-         instance_tags:
-            Name: Demo
-      register: ec2
+        - name: Provision a set of instances
+          ec2: 
+             key_name: my_key
+             group: test
+             instance_type: t2.micro
+             image: "{{ ami_id }}"
+             wait: true 
+             exact_count: 5
+             count_tag:
+                Name: Demo
+             instance_tags:
+                Name: Demo
+          register: ec2
 
 作成されるインスタンスに関するデータは、「ec2」という変数の「register」キーワードによって保存されます。
 
@@ -91,46 +91,46 @@ EC2 で「Demo」とタグ付けされたインスタンスが 5 つしか存在
 
     # demo_setup.yml
 
-- hosts: localhost
-  gather_facts: False
+    - hosts: localhost
+      gather_facts: False
 
-  tasks:
+      tasks:
 
-    - name: Provision a set of instances
-      ec2: 
-         key_name: my_key
-         group: test
-         instance_type: t2.micro
-         image: "{{ ami_id }}"
-         wait: true 
-         exact_count: 5
-         count_tag:
-            Name: Demo
-         instance_tags:
-            Name: Demo
-      register: ec2
+        - name: Provision a set of instances
+          ec2: 
+             key_name: my_key
+             group: test
+             instance_type: t2.micro
+             image: "{{ ami_id }}"
+             wait: true 
+             exact_count: 5
+             count_tag:
+                Name: Demo
+             instance_tags:
+                Name: Demo
+          register: ec2
+    
+       - name: Add all instance public IPs to host group
+         add_host: hostname={{ item.public_ip }} groups=ec2hosts
+         loop: "{{ ec2.instances }}"
 
-   - name: Add all instance public IPs to host group
-     add_host: hostname={{ item.public_ip }} groups=ec2hosts
-     loop: "{{ ec2.instances }}"
-
-これでホストグループが作成されましたが、同じプロビジョニング用 Playbook ファイルの下部に、いくつかの構成手順が指定されている 2 番目のプレイが追加されている可能性があります。
+これでホストグループが作成されましたが、同じプロビジョニング用 Playbook ファイルの下部に、いくつかの構成手順が指定されている 2 番目のプレイが追加されている可能性があります::
 
     # demo_setup.yml
 
-- name: Provision a set of instances
-  hosts: localhost
-  # ... AS ABOVE ...
+    - name: Provision a set of instances
+      hosts: localhost
+      # ... AS ABOVE ...
 
-- hosts: ec2hosts
-  name: configuration play
-  user: ec2-user
-  gather_facts: true
+    - hosts: ec2hosts
+      name: configuration play
+      user: ec2-user
+      gather_facts: true
 
-  tasks:
+      tasks:
 
-     - name: Check NTP service
-       service: name=ntpd state=started
+         - name: Check NTP service
+           service: name=ntpd state=started
 
 .. _aws_security_groups:
 
@@ -138,7 +138,7 @@ EC2 で「Demo」とタグ付けされたインスタンスが 5 つしか存在
 ```````````````
 
 AWS のセキュリティーグループはステートフルです。インスタンスからの要求の応答は、受信セキュリティーグループルールやその逆に関係なくフローできます。
-AWS S3 サービスを使用するトラフィックのみを許可する場合には、あるリージョンに対して AWS S3 の現在の IP 範囲を取得し、それを egress ルールとして適用する必要があります。
+AWS S3 サービスを使用するトラフィックのみを許可する場合には、あるリージョンに対して AWS S3 の現在の IP 範囲を取得し、それを egress ルールとして適用する必要があります::
 
     - name: fetch raw ip ranges for aws s3
       set_fact:
@@ -209,9 +209,9 @@ Amazon Autoscaling 機能は、負荷に応じて容量を自動的に増減し�
 これには、必要な ansible-pull 呼び出しが含まれる事前のマシンイメージが必要です。 Ansible-pull は、git サーバーから Playbook を取得し、ローカルで実行するコマンドラインツールです。  
 
 このアプローチの課題の 1 つとして、pull コマンドの結果に関するデータを自動スケーリングコンテキストに保存する集中的な方法が必要になります。
-このため、次のセクションで提供される自動スケーリングソリューションの方が適切な方法です。
+このため、次のセクションで提供される自動スケーリングソリューションの方が適切です。
 
-pull モードの Playbook の詳細は、:ref:`ansible-pull` を参照してください。
+pull モードの Playbook の詳細は、「:ref:`ansible-pull`」を参照してください。
 
 .. _aws_autoscale:
 

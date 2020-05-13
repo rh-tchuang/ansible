@@ -42,7 +42,7 @@ Azure Resource Manager モジュールを使用するには、Azure API で認�
 
 チュートリアルを実行すると、以下が可能になります。
 
-* Azure ポータルのアプリケーションの「設定」ページの「クライアント ID」ボックスにあるクライアント ID
+* Azure ポータルのアプリケーションの「設定」ページの「クライアント ID」ボックスにあるクライアント ID。
 * シークレットキーは、アプリケーションの作成時に生成されます。作成後にキーを表示することはできません。
   キーが失われた場合は、アプリケーションの「設定」ページで新しいキーを作成する必要があります。
 * 最後にテナント ID。これは、
@@ -138,7 +138,7 @@ Azure モジュールへの認証情報の提供
 * tenant
 * adfs_authority_url
 
-"adfs_authority_url" は任意です。これは、https://yourdomain.com/adfs といった独自の認証機関がある場合にのみ必要です。
+「adfs_authority_url」は任意です。これは、https://yourdomain.com/adfs といった独自の認証機関がある場合にのみ必要です。
 
 
 その他のクラウド環境
@@ -242,16 +242,16 @@ Azure モジュールは、ストレージアカウント、仮想ネットワ�
 .. code-block:: yaml
 
     azure_rm_virtualmachine:
-      resource_group:Testing
+      resource_group: Testing
       name: testvm10
-      vm_size:Standard_D1
+      vm_size: Standard_D1
       admin_username: chouseknecht
       ssh_password_enabled: false
       ssh_public_keys: "{{ ssh_keys }}"
       image:
-        offer:CentOS
-        publisher:OpenLogic
-        sku:'7.1'
+        offer: CentOS
+        publisher: OpenLogic
+        sku: '7.1'
         version: latest
 
 
@@ -279,18 +279,18 @@ Azure Resource Manager インベントリースクリプトは、`azure_rm.py  <
 .. code-block:: JSON
 
     {
-      "ansible_host":"XXX.XXX.XXX.XXX",
+      "ansible_host": "XXX.XXX.XXX.XXX",
       "computer_name": "computer_name2",
       "fqdn": null,
       "id": "/subscriptions/subscription-id/resourceGroups/galaxy-production/providers/Microsoft.Compute/virtualMachines/object-name",
       "image": {
-        "offer":"CentOS",
-        "publisher":"OpenLogic",
-        "sku":"7.1",
+        "offer": "CentOS",
+        "publisher": "OpenLogic",
+        "sku": "7.1",
         "version": "latest"
       },
       "location": "westus",
-      "mac_address":"00-00-5E-00-53-FE",
+      "mac_address": "00-00-5E-00-53-FE",
       "name": "object-name",
       "network_interface": "interface-name",
       "network_interface_id": "/subscriptions/subscription-id/resourceGroups/galaxy-production/providers/Microsoft.Network/networkInterfaces/object-name1",
@@ -298,15 +298,15 @@ Azure Resource Manager インベントリースクリプトは、`azure_rm.py  <
       "network_security_group_id": null,
       "os_disk": {
         "name": "object-name",
-        "operating_system_type":"Linux"
+        "operating_system_type": "Linux"
       },
       "plan": null,
       "powerstate": "running",
-      "private_ip":"172.26.3.6",
-      "private_ip_alloc_method":"Static",
-      "provisioning_state":"Succeeded",
-      "public_ip":"XXX.XXX.XXX.XXX",
-      "public_ip_alloc_method":"Static",
+      "private_ip": "172.26.3.6",
+      "private_ip_alloc_method": "Static",
+      "provisioning_state": "Succeeded",
+      "public_ip": "XXX.XXX.XXX.XXX",
+      "public_ip_alloc_method": "Static",
       "public_ip_id": "/subscriptions/subscription-id/resourceGroups/galaxy-production/providers/Microsoft.Network/publicIPAddresses/object-name",
       "public_ip_name": "object-name",
       "resource_group": "galaxy-production",
@@ -315,8 +315,8 @@ Azure Resource Manager インベントリースクリプトは、`azure_rm.py  <
       "tags": {
         "db": "mysql"
       },
-      "type":"Microsoft.Compute/virtualMachines",
-      "virtual_machine_size":"Standard_DS4"
+      "type": "Microsoft.Compute/virtualMachines",
+      "virtual_machine_size": "Standard_DS4"
     }
 
 ホストグループ
@@ -376,25 +376,25 @@ zure_rm.ini ファイルのサンプルは、contrib/inventory のインベン�
 
     [azure]
     # Control which resource groups are included. By default all resources groups are included.
-# Set resource_groups to a comma separated list of resource groups names.
-#resource_groups=
+    # Set resource_groups to a comma separated list of resource groups names.
+    #resource_groups=
 
-# Control which tags are included. Set tags to a comma separated list of keys or key:value pairs
-#tags=
+    # Control which tags are included. Set tags to a comma separated list of keys or key:value pairs
+    #tags=
 
-# Control which locations are included. Set locations to a comma separated list of locations.
-#locations=
+    # Control which locations are included. Set locations to a comma separated list of locations.
+    #locations=
 
-# Include powerstate. If you don't need powerstate information, turning it off improves runtime performance.
-# Valid values: yes, no, true, false, True, False, 0, 1.
-include_powerstate=yes
+    # Include powerstate. If you don't need powerstate information, turning it off improves runtime performance.
+    # Valid values: yes, no, true, false, True, False, 0, 1.
+    include_powerstate=yes
 
-# Control grouping with the following boolean flags. Valid values: yes, no, true, false, True, False, 0, 1.
-group_by_resource_group=yes
-group_by_location=yes
-group_by_security_group=yes
-group_by_tag=yes
-group_by_os_family=yes
+    # Control grouping with the following boolean flags. Valid values: yes, no, true, false, True, False, 0, 1.
+    group_by_resource_group=yes
+    group_by_location=yes
+    group_by_security_group=yes
+    group_by_tag=yes
+    group_by_os_family=yes
 
 例
 ........
@@ -404,25 +404,25 @@ group_by_os_family=yes
 .. code-block:: bash
 
     # Execute /bin/uname on all instances in the Testing resource group
-$ ansible -i azure_rm.py Testing -m shell -a "/bin/uname -a"
+    $ ansible -i azure_rm.py Testing -m shell -a "/bin/uname -a"
 
-# Execute win_ping on all Windows instances
-$ ansible -i azure_rm.py windows -m win_ping
+    # Execute win_ping on all Windows instances
+    $ ansible -i azure_rm.py windows -m win_ping
 
-# Execute win_ping on all Windows instances
-$ ansible -i azure_rm.py winux -m ping
+    # Execute win_ping on all Windows instances
+    $ ansible -i azure_rm.py winux -m ping
 
-# Use the inventory script to print instance specific information
-$ ./ansible/contrib/inventory/azure_rm.py --host my_instance_host_name --resource-groups=Testing --pretty
+    # Use the inventory script to print instance specific information
+    $ ./ansible/contrib/inventory/azure_rm.py --host my_instance_host_name --resource-groups=Testing --pretty
 
-# Use the inventory script with ansible-playbook
-$ ansible-playbook -i ./ansible/contrib/inventory/azure_rm.py test_playbook.yml
+    # Use the inventory script with ansible-playbook
+    $ ansible-playbook -i ./ansible/contrib/inventory/azure_rm.py test_playbook.yml
 
 以下は、Azure インベントリースクリプトを実行するための単純な Playbook です。
 
 .. code-block:: yaml
 
-    - name:Test the inventory script
+    - name: Test the inventory script
       hosts: azure
       connection: local
       gather_facts: no
@@ -440,7 +440,7 @@ Azure エンドポイントでの証明書検証の無効化
 ...................................................
 
 HTTPS プロキシープロキシが存在する場合、または Azure Stack を使用する場合は、
-Azure モジュールで Azure エンドポイントの証明書検証を無効にする必要がある場合があります。これは推奨されるセキュリティー対策ではありませんが、
+Azure モジュールで Azure エンドポイントの証明書検証を無効にすることが必要になる場合があります。これは推奨されるセキュリティー対策ではありませんが、
 必要な CA 証明書を含めるようにシステムの CA ストアを変更できない場合に必要になることがあります。証明書の検証は、
 認証情報プロファイルの「cert_validation_mode」値を設定するか、「AZURE_CERT_VALIDATION_MODE」環境変数を使用するか、
 「cert_validation_mode」引数を Azure モジュールに渡すことで制御できます。デフォルト値は「validate」です。

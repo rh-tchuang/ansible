@@ -56,21 +56,21 @@ AIP キーを所有していない場合は、`Vultr <https://www.vultr.com>`_ �
 .. code-block:: console
 
   #> VULTR_API_KEY=XXX ansible -m vultr_account_info localhost
-localhost | SUCCESS => {
-"changed": false,
-"vultr_account_info": {
-"balance": -8.9,
-"last_payment_amount": -10.0,
-"last_payment_date": "2018-07-21 11:34:46",
-"pending_charges": 6.0
-},
-"vultr_api": {
-"api_account": "default",
-"api_endpoint": "https://api.vultr.com",
-"api_retries": 5,
-"api_timeout": 60
-}
-}
+  localhost | SUCCESS => {
+    "changed": false,
+    "vultr_account_info": {
+        "balance": -8.9,
+        "last_payment_amount": -10.0,
+        "last_payment_date": "2018-07-21 11:34:46",
+        "pending_charges": 6.0
+    },
+    "vultr_api": {
+        "api_account": "default",
+        "api_endpoint": "https://api.vultr.com",
+        "api_retries": 5,
+        "api_timeout": 60
+    }
+  }
 
 
 同様の出力が表示され、すべての設定が適切に行われた場合は、適切な ``VULTR_API_KEY`` が正しく指定されており、Vultr > Account > API ページのアクセス制御が正確であることを確認してください。
@@ -86,11 +86,11 @@ localhost | SUCCESS => {
   ---
   - hosts: localhost
     tasks:
-      - name:Create a 10G volume
+      - name: Create a 10G volume
         vultr_block_storage:
           name: my_disk
-          size:10
-          region:New Jersey
+          size: 10
+          region: New Jersey
 
 
 これ以降は、ユーザーの創造性が限界となります。`利用可能なモジュール <https://docs.ansible.com/ansible/latest/modules/list_of_cloud_modules.html#vultr>`_ のドキュメントを参照してください。
@@ -128,11 +128,11 @@ Ansible は、`Vultr <https://www.vultr.com>`_ の動的インベントリープ
 .. code-block:: yaml
 
   ---
-  - hosts:Amsterdam
+  - hosts: Amsterdam
     tasks:
-      - name:Rebooting the machine
+      - name: Rebooting the machine
         shell: reboot
-        become:True
+        become: True
 
 
 統合テスト
@@ -147,15 +147,15 @@ Ansible には、すべての Vultr モジュールの統合テストが含ま�
 .. code-block:: shell
 
   $ cd ansible # location the ansible source is
-$ source ./hacking/env-setup
+  $ source ./hacking/env-setup
 
 Vultr API キーを設定します。
 
 .. code-block:: shell
 
   $ cd test/integration
-$ cp cloud-config-vultr.ini.template cloud-config-vultr.ini
-$ vi cloud-config-vultr.ini
+  $ cp cloud-config-vultr.ini.template cloud-config-vultr.ini
+  $ vi cloud-config-vultr.ini
 
 すべての Vultr テストを実行します。
 

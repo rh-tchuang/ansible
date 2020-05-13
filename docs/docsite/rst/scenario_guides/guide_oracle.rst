@@ -17,7 +17,7 @@ OCI Ansible モジュールを使用するには、Ansible Playbook を実行す
 
 2. それらのコンパートメント内のリソースを操作するために必要なパーミッションを付与するポリシーを持つセキュリティグループで、そのアカウントで作成されたユーザー。詳細は「`ポリシーの仕組み <https://docs.cloud.oracle.com/iaas/Content/Identity/Concepts/policies.htm>`_」を参照してください。
 
-3. 必要な認証情報と OCID 情報。
+3. 必要な認証情報と OCID 情報
 
 ************
 インストール
@@ -84,8 +84,8 @@ Autonomous Data Warehouse の作成および管理
 ============================================
 この `sample warehouse playbook <https://github.com/oracle/oci-ansible-modules/tree/master/samples/database/autonomous_data_warehouse>`_ は、Autonomous Data Warehouse (自立型データウェアハウス) を作成して、そのライフサイクルを管理します。このサンプルは、以下を実行する方法を示しています。
 
-- Autonomous Data Warehouse. を設定します。
-- 表示名で対象を絞った、コンパートメントで利用可能な Autonomous Data Warehouse を一覧表示します。
+- Autonomous Data Warehouse を設定します。
+- 表示名で対象を絞った、コンパートメントで利用可能な Autonomous Data Warehouse の一覧を表示します。
 - 指定された Autonomous Data Warehouse の「ファクト」を取得します。
 - Autonomous Data Warehouse インスタンスを停止して開始します。
 - Autonomous Data Warehouse インスタンスを削除します。
@@ -96,8 +96,8 @@ Autonomous Transaction Processing の作成と管理
 Autonomous Transaction Processing (自律型トランザクション処理) データベースを作成し、そのライフサイクルを管理します。このサンプルは、以下を実行する方法を示しています。
 
 - Autonomous Transaction Processing データベースインスタンスを設定します。
-- 表示名で対象を絞った、コンパートメントで利用可能な Autonomous Transaction Processing を一覧表示します。
+- 表示名で対象を絞った、コンパートメントで利用可能な Autonomous Transaction Processing の一覧を表示します。
 - 指定された Autonomous Transaction Processing インスタンスの「ファクト」を取得します。
 - Autonomous Transaction Processing データベースインスタンスを削除します。
 
-詳細: `Ansible Playbook のサンプル <https://docs.cloud.oracle.com/iaas/Content/API/SDKDocs/ansiblesamples.htm>`_.
+詳細は、「`Ansible Playbook のサンプル <https://docs.cloud.oracle.com/iaas/Content/API/SDKDocs/ansiblesamples.htm>`_」を参照してください。

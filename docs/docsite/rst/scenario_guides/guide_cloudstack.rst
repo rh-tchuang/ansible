@@ -41,14 +41,14 @@ Python ライブラリー cs は、以下の順番で認証情報ファイルを
 
 * ホームディレクトリーの ``.cloudstack.ini`` (ドットは必須)。
 * .ini ファイルを参照する ``CLOUDSTACK_CONFIG`` 環境変数。
-* 現在の作業ディレクトリーにある ``cloudstack.ini`` (ドットなし) ファイル (Playbook と同じディレクトリー)
+* 現在の作業ディレクトリーにある ``cloudstack.ini`` (ドットなし) ファイル (Playbook と同じディレクトリー)。
 
 ini ファイルの構造は以下のようになります。
 
 .. code-block:: bash
 
     $ cat $HOME/.cloudstack.ini
-[cloudstack]
+    [cloudstack]
     endpoint = https://cloud.example.com/client/api
     key = api key
     secret = api secret
@@ -56,14 +56,14 @@ ini ファイルの構造は以下のようになります。
     
 .. Note:: セクション ``[cloudstack]`` はデフォルトのセクションです。``CLOUDSTACK_REGION`` 環境変数を使用してデフォルトのセクションを定義できます。
 
-.. versionadded:: 2.4
+バージョン 2.4 における新機能
 
 ENV 変数は、ライブラリー ``cs`` のドキュメントに記載されている ``CLOUDSTACK_*`` に対応します。たとえば、``CLOUDSTACK_TIMEOUT``、``CLOUDSTACK_METHOD`` などが Ansible に実装されています。cloudstack.ini に不完全な設定を設定することも可能です。
 
 .. code-block:: bash
 
     $ cat $HOME/.cloudstack.ini
-[cloudstack]
+    [cloudstack]
     endpoint = https://cloud.example.com/client/api
     timeout = 30
     
@@ -89,17 +89,17 @@ ENV 変数または task パラメーターを設定して、不足している�
 .. code-block:: bash
 
     $ cat $HOME/.cloudstack.ini
-[exoscale]
+    [exoscale]
     endpoint = https://api.exoscale.ch/compute
     key = api key
     secret = api secret
-    
-[example_cloud_one]
+
+    [example_cloud_one]
     endpoint = https://cloud-one.example.com/client/api
     key = api key
     secret = api secret
-    
-[example_cloud_two]
+
+    [example_cloud_two]
     endpoint = https://cloud-two.example.com/client/api
     key = api key
     secret = api secret
@@ -125,7 +125,7 @@ ENV 変数または task パラメーターを設定して、不足している�
       local_action: cs_sshkeypair
         name: my-ssh-key
         public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-    api_region: "{{ item }}"
+        api_region: "{{ item }}"
         loop:
           - exoscale
           - example_cloud_one
@@ -133,11 +133,11 @@ ENV 変数または task パラメーターを設定して、不足している�
     
 環境変数
 `````````````````````
-.. versionadded:: 2.3
+バージョン 2.3 における新機能
 
 Ansible 2.3 以降、ドメイン (``CLOUDSTACK_DOMAIN``)、アカウント (``CLOUDSTACK_ACCOUNT``)、プロジェクト (``CLOUDSTACK_PROJECT``)、VPC (``CLOUDSTACK_VPC``)、およびゾーン (``CLOUDSTACK_ZONE``) に環境変数を使用できます。これにより、すべてのタスクの引数が繰り返し実行されず、タスクが簡素化されます。
 
-以下は、Ansible のブロック機能と組み合わせて使用する方法の例を示しています。
+以下は、Ansible のブロック機能と組み合わせて使用する例を示しています。
 
 .. code-block:: yaml
 
@@ -149,14 +149,14 @@ Ansible 2.3 以降、ドメイン (``CLOUDSTACK_DOMAIN``)、アカウント (``C
                 name: my-ssh-key
                 public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
-        - name: ensure my ssh public key
-          cs_instance:
-              display_name: "{{ inventory_hostname_short }}"
-              template: Linux Debian 7 64-bit 20GB Disk
-              service_offering: "{{ cs_offering }}"
-              ssh_key: my-ssh-key
+            - name: ensure my ssh public key
+              cs_instance:
+                  display_name: "{{ inventory_hostname_short }}"
+                  template: Linux Debian 7 64-bit 20GB Disk
+                  service_offering: "{{ cs_offering }}"
+                  ssh_key: my-ssh-key
                   state: running
-    
+
           delegate_to: localhost
           environment:
             CLOUDSTACK_DOMAIN: root/customers
@@ -202,67 +202,67 @@ CloudStack クラウドには高度なネットワーク設定があり、静的
 .. code-block:: yaml
 
     # file: group_vars/cloud-vm
----
-cs_offering: Small
-cs_firewall: []
+    ---
+    cs_offering: Small
+    cs_firewall: []
     
 データベースサーバーはより多くの CPU および RAM を取得する必要があるため、``Large`` オファリングを使用するように定義します。
 
 .. code-block:: yaml
 
     # file: group_vars/db-server
----
-cs_offering: Large
+    ---
+    cs_offering: Large
 
 Web サーバーは、水平的にスケーリングするのと同様に、``Small`` オファリングを取得します。これはデフォルトのオファリングです。また、既知の Web ポートがグローバルに開いていることを確認します。
 
 .. code-block:: yaml
 
     # file: group_vars/webserver
----
-cs_firewall:
-  - { port: 80 }
-  - { port: 443 }
+    ---
+    cs_firewall:
+      - { port: 80 }
+      - { port: 443 }
 
 さらに、オフィス IPv4 ネットワークから仮想マシンにアクセスするためにポート 22 のみを開くジャンプホストをプロビジョニングします。
 
 .. code-block:: yaml
 
     # file: group_vars/jumphost
----
-cs_firewall:
-  - { port: 22, cidr: "17.17.17.0/24" }
+    ---
+    cs_firewall:
+      - { port: 22, cidr: "17.17.17.0/24" }
 
 ここからが重要です。Playbook を作成して、``infra.yml`` を呼び出すインフラストラクチャーを作成します。
 
 .. code-block:: yaml
 
     # file: infra.yaml
----
-- name: provision our VMs
-  hosts: cloud-vm
-  tasks:
-    - name: run all enclosed tasks from localhost
-      delegate_to: localhost
-      block:
-        - name: ensure VMs are created and running
-          cs_instance:
-            name: "{{ inventory_hostname_short }}"
-            template: Linux Debian 7 64-bit 20GB Disk
-            service_offering: "{{ cs_offering }}"
-            state: running
+    ---
+    - name: provision our VMs
+      hosts: cloud-vm
+      tasks:
+        - name: run all enclosed tasks from localhost
+          delegate_to: localhost
+          block:
+            - name: ensure VMs are created and running
+              cs_instance:
+                name: "{{ inventory_hostname_short }}"
+                template: Linux Debian 7 64-bit 20GB Disk
+                service_offering: "{{ cs_offering }}"
+                state: running
 
-        - name: ensure firewall ports opened
-          cs_firewall:
-            ip_address: "{{ public_ip }}"
-            port: "{{ item.port }}"
-            cidr: "{{ item.cidr | default('0.0.0.0/0') }}"
-          loop: "{{ cs_firewall }}"
-          when: public_ip is defined
+            - name: ensure firewall ports opened
+              cs_firewall:
+                ip_address: "{{ public_ip }}"
+                port: "{{ item.port }}"
+                cidr: "{{ item.cidr | default('0.0.0.0/0') }}"
+              loop: "{{ cs_firewall }}"
+              when: public_ip is defined
 
-        - name: ensure static NATs
-          cs_staticnat: vm="{{ inventory_hostname_short }}" ip_address="{{ public_ip }}"
-          when: public_ip is defined
+            - name: ensure static NATs
+              cs_staticnat: vm="{{ inventory_hostname_short }}" ip_address="{{ public_ip }}"
+              when: public_ip is defined
 
 上記のプレイでは、3 つのタスクを定義し、グループの ``cloud-vm`` をターゲットとして使用し、クラウド内の仮想マシンをすべて処理しますが、代わりにこれらの仮想マシンに SSH を使用するため、``delegate_to: localhost`` を使用してワークステーションからローカルに API 呼び出しを実行します。
 
@@ -298,79 +298,79 @@ cs_firewall:
 .. code-block:: yaml
 
     # file: group_vars/cloud-vm
----
-cs_offering: Small
-cs_securitygroups: [ 'default']
+    ---
+    cs_offering: Small
+    cs_securitygroups: [ 'default']
     
 また、Web サーバーはセキュリティーグループ ``Web`` にも存在します。
 
 .. code-block:: yaml
 
     # file: group_vars/webserver
----
-cs_securitygroups: [ 'default', 'web' ]
+    ---
+    cs_securitygroups: [ 'default', 'web' ]
     
 Playbook は以下のようになります。
 
 .. code-block:: yaml
 
     # file: infra.yaml
----
-- name: cloud base setup
-  hosts: localhost
-  tasks:
-  - name: upload ssh public key
-    cs_sshkeypair:
-      name: defaultkey
-      public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    ---
+    - name: cloud base setup
+      hosts: localhost
+      tasks:
+      - name: upload ssh public key
+        cs_sshkeypair:
+          name: defaultkey
+          public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
-  - name: ensure security groups exist
-    cs_securitygroup:
-      name: "{{ item }}"
-    loop:
-      - default
-      - web
+      - name: ensure security groups exist
+        cs_securitygroup:
+          name: "{{ item }}"
+        loop:
+          - default
+          - web
 
-  - name: add inbound SSH to security group default
-    cs_securitygroup_rule:
-      security_group: default
-      start_port: "{{ item }}"
-      end_port: "{{ item }}"
-    loop:
-      - 22
+      - name: add inbound SSH to security group default
+        cs_securitygroup_rule:
+          security_group: default
+          start_port: "{{ item }}"
+          end_port: "{{ item }}"
+        loop:
+          - 22
 
-  - name: add inbound TCP rules to security group web
-    cs_securitygroup_rule:
-      security_group: web
-      start_port: "{{ item }}"
-      end_port: "{{ item }}"
-    loop:
-      - 80
-      - 443
+      - name: add inbound TCP rules to security group web
+        cs_securitygroup_rule:
+          security_group: web
+          start_port: "{{ item }}"
+          end_port: "{{ item }}"
+        loop:
+          - 80
+          - 443
 
-- name: install VMs in the cloud
-  hosts: cloud-vm
-  tasks:
-  - delegate_to: localhost
-    block:
-    - name: create and run VMs on CloudStack
-      cs_instance:
-        name: "{{ inventory_hostname_short }}"
-        template: Linux Debian 7 64-bit 20GB Disk
-        service_offering: "{{ cs_offering }}"
-        security_groups: "{{ cs_securitygroups }}"
-        ssh_key: defaultkey
-        state: Running
-      register: vm
+    - name: install VMs in the cloud
+      hosts: cloud-vm
+      tasks:
+      - delegate_to: localhost
+        block:
+        - name: create and run VMs on CloudStack
+          cs_instance:
+            name: "{{ inventory_hostname_short }}"
+            template: Linux Debian 7 64-bit 20GB Disk
+            service_offering: "{{ cs_offering }}"
+            security_groups: "{{ cs_securitygroups }}"
+            ssh_key: defaultkey
+            state: Running
+          register: vm
 
-    - name: show VM IP
-      debug: msg="VM {{ inventory_hostname }} {{ vm.default_ip }}"
+        - name: show VM IP
+          debug: msg="VM {{ inventory_hostname }} {{ vm.default_ip }}"
 
-    - name: assign IP to the inventory
-      set_fact: ansible_ssh_host={{ vm.default_ip }}
+        - name: assign IP to the inventory
+          set_fact: ansible_ssh_host={{ vm.default_ip }}
 
-    - name: waiting for SSH to come up
-      wait_for: port=22 host={{ vm.default_ip }} delay=5
+        - name: waiting for SSH to come up
+          wait_for: port=22 host={{ vm.default_ip }} delay=5
 
 最初のプレイでは、セキュリティーグループを設定し、次のプレイで、作成される仮想マシンがこれらのグループに割り当てられます。さらに、モジュールから返されたパブリック IP をホストインベントリーに割り当てることが確認できます。これは、事前に取得している IP が分からないため必要になります。次の手順では、この IP を使用して DNS サーバーを設定し、DNS 名を使用して仮想マシンにアクセスします。
 

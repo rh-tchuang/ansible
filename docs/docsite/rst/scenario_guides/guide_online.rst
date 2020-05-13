@@ -35,7 +35,7 @@ Ansible には、リソースを一覧表示できる動的インベントリー
 .. code-block:: console
 
     $ ansible all -i online_inventory.yml -m ping
-sd-96735 | SUCCESS => {
-    "changed": false,
-    "ping": "pong"
-}
+    sd-96735 | SUCCESS => {
+        "changed": false,
+        "ping": "pong"
+    }

@@ -76,7 +76,7 @@ ACI 設定のクエリー
 
 .. code-block:: yaml
 
-    - name:Query tenant customer-xyz
+    - name: Query tenant customer-xyz
       aci_tenant:
         host: my-apic-1
         username: admin
@@ -90,7 +90,7 @@ ACI 設定のクエリー
 
 .. code-block:: yaml
 
-    - name:Query all tenants
+    - name: Query all tenants
       aci_tenant:
         host: my-apic-1
         username: admin
@@ -114,22 +114,22 @@ ACI 設定のクエリー
 Ansible コントローラーでモジュールを実行するため、収集ファクトは機能しません。そのため、これらの ACI モジュールを使用する場合はファクトの収集を無効にする必要があります。これは、``ansible.cfg`` でグローバルに行うことも、すべてのプレイに ``gather_facts: no`` を追加して実行することもできます。
 
 .. code-block:: yaml
-   :emphasize-lines:3
+   :emphasize-lines: 3
 
-    - name:Another play in my playbook
+    - name: Another play in my playbook
       hosts: my-apic-1
       gather_facts: no
       tasks:
-      - name:Create a tenant
+      - name: Create a tenant
         aci_tenant:
           ...
 
-Delegating to localhost
+ローカルホストへの委譲
 ```````````````````````
 そのため、以下に示すように、FQDN 名を ``ansible_host`` 値として使用し、ターゲットをインベントリーに設定したと仮定します。
 
 .. code-block:: yaml
-   :emphasize-lines:3
+   :emphasize-lines: 3
 
     apics:
       my-apic-1:
@@ -140,13 +140,13 @@ Delegating to localhost
 これを設定する方法は、ディレクティブのすべてのタスク (``delegate_to: localhost``) に追加することです。
 
 .. code-block:: yaml
-   :emphasize-lines:8
+   :emphasize-lines: 8
 
-    - name:Query all tenants
+    - name: Query all tenants
       aci_tenant:
         host: '{{ ansible_host }}'
-    username: '{{ ansible_user }}'
-    password: '{{ ansible_password }}'
+        username: '{{ ansible_user }}'
+        password: '{{ ansible_password }}'
     
         state: query
       delegate_to: localhost
@@ -175,11 +175,11 @@ Delegating to localhost
 
 .. code-block:: yaml
 
-    - name:Query all tenants
+    - name: Query all tenants
       aci_tenant:
         host: '{{ ansible_host }}'
-    username: '{{ ansible_user }}'
-    password: '{{ ansible_password }}'
+        username: '{{ ansible_user }}'
+        password: '{{ ansible_password }}'
     
         state: query
       register: all_tenants
@@ -206,12 +206,12 @@ Delegating to localhost
     private_key
         署名ベースの認証を使用して APIC にログインする ``username`` の秘密鍵。
         これは、(ヘッダー/フットプリントを含む) 生の秘密鍵コンテンツ、または鍵コンテンツを格納するファイルのいずれかになります。
-        *バージョン 2.5 の新機能*
+        *バージョン 2.5 の新機能* です。
 
     certificate_name
         ACI Web GUI での証明書の名前。
         デフォルトは ``username`` の値または ``private_key`` ファイルベース名のいずれかになります。
-        *バージョン 2.5 の新機能*
+        *バージョン 2.5 の新機能* です。
 
     timeout
         ソケットレベルの通信のタイムアウト値。
@@ -226,7 +226,7 @@ Delegating to localhost
         HTTPS 通信を使用する場合に証明書を検証します。(``yes`` にデフォルト設定)
 
     output_level
-        詳細な ACI モジュールがユーザーに返るレベルに影響します。( ``normal``、``info``、``debug`` のいずれか) *バージョン 2.5 での新機能*
+        詳細な ACI モジュールがユーザーに返るレベルに影響します。( ``normal``、``info``、``debug`` のいずれか) *バージョン 2.5 での新機能* です。
 
 
 プロキシーのサポート
@@ -243,7 +243,7 @@ HTTP リダイレクトは HTTP から HTTPS へリダイレクトできるた�
 戻り値
 .............
 
-.. versionadded:: 2.5
+バージョン 2.5 における新機能
 
 以下の値が常に返されます。
 
@@ -316,7 +316,7 @@ Ansible の「Vault」機能を使用すると、パスワードやキーなど�
 証明書を使用した署名ベースの認証
 .................................................
 
-.. versionadded:: 2.5
+バージョン 2.5 における新機能
 
 署名ベースの認証の使用は、パスワードベースの認証よりも効率的で、信頼性が高くなります。
 
@@ -335,7 +335,7 @@ Ansible の「Vault」機能を使用すると、パスワードやキーなど�
 - :guilabel:`ADMIN` » :guilabel:`AAA` で ACI AAA ローカルユーザーに X.509 証明書を追加します。
 - :guilabel:`AAA Authentication` をクリックします。
 - :guilabel:`Authentication` フィールドの :guilabel:`Realm` フィールドに :guilabel:`Local` が表示されることを確認します。
-- :guilabel:`Security Management` » :guilabel:`Local Users` を展開します。
+- :guilabel:`Security Management`、:guilabel:`Local Users` の順に展開します。
 - :guilabel:`User Certificates` エリアで、証明書を追加するユーザー名をクリックします。
 - :guilabel:`+` 記号をクリックし、:guilabel:`Create X509 Certificate` の :guilabel:`Name` フィールドに証明書名を入力します。
 
@@ -347,7 +347,7 @@ Ansible の「Vault」機能を使用すると、パスワードやキーなど�
 
 .. code-block:: yaml
 
-    - name:Ensure we have a certificate installed
+    - name: Ensure we have a certificate installed
       aci_aaa_user_certificate:
         host: my-apic-1
         username: admin
@@ -374,7 +374,7 @@ Ansible での署名ベースの認証の使用
 または、秘密鍵のコンテンツを使用できます。
 
 .. code-block:: yaml
-   :emphasize-lines:2,3
+   :emphasize-lines: 2,3
 
     username: admin
     private_key: |
@@ -389,7 +389,7 @@ Ansible での署名ベースの認証の使用
 
 Ansible Vault を使用した秘密鍵の暗号化
 ``````````````````````````````````````````````
-.. versionadded:: 2.8
+バージョン 2.8 における新機能
 
 まず、秘密鍵を暗号化して強固なパスワードを付与します。
 
@@ -448,7 +448,7 @@ Ansible での ACI REST の使用
 
 組み込みの冪等性
 ....................
-APIC REST API は冪等であり、変更がなされたかどうかを報告することができるため、:ref:`aci_rest <aci_rest_module>` モジュールは両方の機能を自動的に継承し、ACI インフラストラクチャーを自動化するファーストクラスソリューションとなります。その結果、ACI インフラストラクチャーへのより強力な低レベルアクセスを必要とするユーザーは、冪等性をあきらめる必要がなく、:ref:`aci_rest <aci_rest_module>` モジュールの使用時に変更が行われたかどうかを推測する必要もありません。
+APIC REST API は冪等であり、変更されたかどうかを報告することができるため、:ref:`aci_rest <aci_rest_module>` モジュールは両方の機能を自動的に継承し、ACI インフラストラクチャーを自動化するファーストクラスソリューションとなります。その結果、ACI インフラストラクチャーへのより強力な低レベルアクセスを必要とするユーザーは、冪等性をあきらめる必要がなく、:ref:`aci_rest <aci_rest_module>` モジュールの使用時に変更が行われたかどうかを推測する必要もありません。
 
 
 aci_rest モジュールの使用
@@ -487,7 +487,7 @@ aci_rest モジュールの使用
             "fvTenant": {
               "attributes": {
                 "name": "customer-xyz",
-                "descr":"Customer XYZ"
+                "descr": "Customer XYZ"
               }
             }
           }
@@ -529,8 +529,8 @@ aci_rest モジュールの使用
 ACI の APIC REST インターフェースを学ぶためのリソースは多数あります。以下のリンクが推奨されます。
 
 - :ref:`aci_rest モジュールのドキュメント <aci_rest_module>`
-- `APIC REST API Configuration Guide <https://www.cisco.com/c/en/us/td/docs/switches/datacenter/aci/apic/sw/2-x/rest_cfg/2_1_x/b_Cisco_APIC_REST_API_Configuration_Guide.html>`_ -- APIC REST API の設計方法と使用方法に関する詳細ガイド (多数のサンプルを含む)
-- `APIC Management Information Model reference <https://developer.cisco.com/docs/apic-mim-ref/>`_ -- APIC オブジェクトモデルの完全リファレンス
+- `APIC REST API Configuration Guide <https://www.cisco.com/c/en/us/td/docs/switches/datacenter/aci/apic/sw/2-x/rest_cfg/2_1_x/b_Cisco_APIC_REST_API_Configuration_Guide.html>`_ - APIC REST API の設計方法と使用方法に関する詳細ガイド (多数のサンプルを含む)
+- `APIC Management Information Model reference <https://developer.cisco.com/docs/apic-mim-ref/>`_ - APIC オブジェクトモデルの完全リファレンス
 - `ACI および REST の Cisco DevNet ラーニングラボ <https://learninglabs.cisco.com/labs/tags/ACI,REST>`_
 
 
@@ -599,7 +599,7 @@ APIC エラーメッセージ
 
 
     APIC Error 801: property descr of uni/tn-TENANT/ap-AP failed validation for value 'A "legacy" network'
-        APIC 内の一部の値には準拠が必要な厳格な format-rules があり、提供される値に対する内部 APIC 検証チェックに失敗しました。上記の例では、``description`` パラメーター (内部では ``descr`` と呼ばれる) は、`Regex: [a-zA-Z0-9\\!#$%()*,-./:;@ _{|}~?&+]+ <https://pubhub-prod.s3.amazonaws.com/media/apic-mim-ref/docs/MO-fvAp.html」に準拠する値のみを受け付けます。#descr>`_ に準拠した値のみを受け取ります。一般的に、これには引用符または角括弧は含みません。
+        APIC 内の一部の値には準拠が必要な厳格な format-rules があり、提供される値に対する内部 APIC 検証チェックに失敗しました。上記の例では、``description`` パラメーター (内部では ``descr`` と呼ばれる) は、`Regex: [a-zA-Z0-9!#$%()*,-./:;@ _{|}~?&+]+ <https://pubhub-prod.s3.amazonaws.com/media/apic-mim-ref/docs/MO-fvAp.html」に準拠する値のみを受け付けます。#descr>`_ に準拠した値のみを受け取ります。一般的に、これには引用符または角括弧は含みません。
 
 .. _aci_guide_known_issues:
 
@@ -607,7 +607,7 @@ APIC エラーメッセージ
 ------------
 :ref:`aci_rest <aci_rest_module>` モジュールは、APIC REST API のラッパーです。これにより、APIC に関連する問題がこのモジュールの使用に反映されます。
 
-以下の問題はすべてベンダーに報告され、ほとんどの場合は回避できます。
+以下の問題はすべてベンダー企業に報告されており、ほとんどの場合は回避できます。
 
     連続する API 呼び出しが多くなりすぎると、接続のスロットルが発生する可能性があります。
         ACI v3.1 以降、APIC は特定のしきい値で、パスワードベースの認証接続のレートをアクティブにスロットルします。これは、DDoS 対策の一部として実行されますが、パスワードベースの認証を使用して ACI で Ansible を使用するときに機能する可能性があります。現在、これは nginx 設定内でこのしきい値を増やすことですが、署名ベースの認証の使用が推奨されます。
@@ -616,21 +616,21 @@ APIC エラーメッセージ
 
 
     特定の要求には、変更が正しく反映されない場合があります (`#35401 <https://github.com/ansible/ansible/issues/35041>`_)。
-    APIC への特定のリクエストが、APIC から明示的に変更をリクエストした場合でも、結果の出力に変更が正しく反映されないという既知の問題があります。ある例では、``api/node/mo/uni/infra.xml`` のパスの使用は失敗しますが、``api/node/mo/uni/infra/.xml`` は正しく動作します。
+        APIC への特定のリクエストが、APIC から明示的に変更をリクエストした場合でも、結果の出力に変更が正しく反映されないという既知の問題があります。ある例では、``api/node/mo/uni/infra.xml`` のパスの使用は失敗しますが、``api/node/mo/uni/infra/.xml`` は正しく動作します。
 
-    **注記:** 回避策としては、タスクの戻り値を登録 (例: ``register: this``) し、``changed_when: this.imdata != []`` を追加することで、タスクが変更を報告するタイミングに影響を与えることができます。
+        **注記:** 回避策としては、タスクの戻り値を登録 (例: ``register: this``) し、``changed_when: this.imdata != []`` を追加することで、タスクが変更を報告するタイミングに影響を与えることができます。
     
 
-    特定のリクエストはべき等でないことが知られています (`#35050 <https://github.com/ansible/ansible/issues/35050>`_)。
-    APIC の挙動は、``status="created"`` と ``status="deleted"`` の使用に矛盾しています。したがって、``status="created`` をペイロードに使用した場合は、オブジェクトが既に作成されている場合に結果として生じるタスクは冪等ではなく、作成に失敗します。ただし、``status="deleted"`` の場合は異なり、存在しないオブジェクトを呼び出しても何の問題もありません。
+    特定のリクエストは冪等でないことが知られています (`#35050 <https://github.com/ansible/ansible/issues/35050>`_)。
+        APIC の挙動は、``status="created"`` と ``status="deleted"`` の使用に矛盾しています。したがって、``status="created`` をペイロードに使用した場合は、オブジェクトが既に作成されている場合に結果として生じるタスクは冪等ではなく、作成に失敗します。ただし、``status="deleted"`` の場合は異なり、存在しないオブジェクトを呼び出しても何の問題もありません。
 
-**注記:** 回避策としては、冪等がワークフローに必要な場合は、``status="created"`` を使用せずに、代わりに ``status="modified"`` を使うことです。
+        **注記:** 回避策としては、冪等がワークフローに必要な場合は、``status="created"`` を使用せずに、代わりに ``status="modified"`` を使うことです。
 
 
-ユーザーパスワードの設定は冪等ではありません (`#35544 <https://github.com/ansible/ansible/issues/35544>`_)。
-    APIC REST API の不整合により、ローカルで認証されたユーザのパスワードを設定するタスクが冪等ではありません。APIC は ``Password history check: user dag should not use previous 5 passwords`` というメッセージを出力します。
+    ユーザーパスワードの設定は冪等ではありません (`#35544 <https://github.com/ansible/ansible/issues/35544>`_)。
+        APIC REST API の不整合により、ローカルで認証されたユーザのパスワードを設定するタスクが冪等ではありません。APIC は ``Password history check: user dag should not use previous 5 passwords`` というメッセージを出力します。
 
-    **注記:** この問題の回避策はありません。
+        **注記:** この問題の回避策はありません。
 
 
 .. _aci_guide_community:

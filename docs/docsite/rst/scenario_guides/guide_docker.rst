@@ -62,7 +62,7 @@ Python 2.6 では、2.0 より前のバージョンが必要です。SDK は、�
 
     docker-py モジュールと docker python モジュールは、同じ名前空間を使用するため、
     両方インストールすると、インストールが破損します。両方のパッケージをアンインストールし、
-    docker-py または docker python モジュールのいずれかを再インストールしてください。Python 2.6 のサポートが必要ない場合は、
+    docker-py または docker python モジュールのいずれかを再インストールしてください。Python 2.6 のサポートが必要でない場合は、
     docker モジュールをインストールすることが推奨されます。いずれかのモジュールをアンインストールするだけでは、
     もう一方のモジュールが壊れた状態になる可能性があることに注意してください。
 
@@ -183,22 +183,22 @@ Ansible を実行しているホストの環境に以下の変数を設定して
 .. code-block:: bash
 
     # Connect to the Docker API on localhost port 4243 and format the JSON output
-DOCKER_HOST=tcp://localhost:4243 ./docker.py --pretty
+    DOCKER_HOST=tcp://localhost:4243 ./docker.py --pretty
 
-# Any container's ssh port exposed on 0.0.0.0 will be mapped to
-# another IP address (where Ansible will attempt to connect via SSH)
-DOCKER_DEFAULT_IP=192.0.2.5 ./docker.py --pretty
+    # Any container's ssh port exposed on 0.0.0.0 will be mapped to
+    # another IP address (where Ansible will attempt to connect via SSH)
+    DOCKER_DEFAULT_IP=192.0.2.5 ./docker.py --pretty
 
-# Run as input to a playbook:
-ansible-playbook -i ~/projects/ansible/contrib/inventory/docker.py docker_inventory_test.yml
+    # Run as input to a playbook:
+    ansible-playbook -i ~/projects/ansible/contrib/inventory/docker.py docker_inventory_test.yml
 
-# Simple playbook to invoke with the above example:
+    # Simple playbook to invoke with the above example:
 
-    - name: Test docker_inventory, this will not connect to any hosts
-      hosts: all
-      gather_facts: no
-      tasks:
-        - debug: msg="Container - {{ inventory_hostname }}"
+        - name: Test docker_inventory, this will not connect to any hosts
+          hosts: all
+          gather_facts: no
+          tasks:
+            - debug: msg="Container - {{ inventory_hostname }}"
 
 構成
 .............

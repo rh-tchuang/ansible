@@ -5,7 +5,7 @@ Packet.net ガイド
 はじめに
 ============
 
-`Packet.net <https://packet.net>`_ は、動的インベントリースクリプトと 2 つのクラウドモジュールを介して Ansible (>=2.3) が対応するベアメタルインフラストラクチャーホストです。2 つのモジュールは、以下の通りです。
+`Packet.net <https://packet.net>`_ は、動的インベントリースクリプトと 2 つのクラウドモジュールを介して Ansible (2.3 以降) が対応するベアメタルインフラストラクチャーホストです。2 つのモジュールは、以下の通りです。
 
 - packet_sshkey - ファイルまたは値から Packet インフラストラクチャーに公開 SSH キーを追加します。今後作成されるすべてのデバイスには、この公開鍵が .ssh/authorized_keys にインストールされています。
 - packet_device - Packet 上のサーバーを管理します。このモジュールを使用して、デバイスの作成、再起動、および削除を行うことができます。
@@ -23,7 +23,7 @@ Packet モジュールおよびインベントリースクリプトは、packet-
 
 Packet で Ansible が作成したデバイスの状態を確認するには、`Packet CLI クライアント <https://www.packet.net/developers/integrations/>`_ のいずれかをインストールすることが推奨されます。そうでない場合は、`Packet ポータル <https://app.packet.net/portal>`_ で確認できます。
 
-モジュールおよびインベントリースクリプトを使用するには、Packet API トークンが必要です。`こちら <https://app.packet.net/portal#/api-keys>`_ で Packet ポータルから API トークンを生成できます。自身を認証する最も簡単な方法は、環境変数に Packet API トークンを設定することです。
+モジュールおよびインベントリースクリプトを使用するには、Packet API トークンが必要です。`こちら <https://app.packet.net/portal#/api-keys>`__ で Packet ポータルから API トークンを生成できます。自身を認証する最も簡単な方法は、環境変数に Packet API トークンを設定することです。
 
 .. code-block:: bash
 
@@ -52,24 +52,24 @@ Packet では、デバイスと予約された IP アドレスは `プロジェ�
 
     # playbook_create.yml
 
-- name: create ubuntu device
-  hosts: localhost
-  tasks:
+    - name: create ubuntu device
+      hosts: localhost
+      tasks:
 
-  - packet_sshkey:
-      key_file: ./id_rsa.pub
-      label: tutorial key
+      - packet_sshkey:
+          key_file: ./id_rsa.pub
+          label: tutorial key
 
-  - packet_device:
-      project_id: <your_project_id>
-      hostnames: myserver
-      operating_system: ubuntu_16_04
-      plan: baremetal_0
-      facility: sjc1
+      - packet_device:
+          project_id: <your_project_id>
+          hostnames: myserver
+          operating_system: ubuntu_16_04
+          plan: baremetal_0
+          facility: sjc1
 
-``ansible-playbook playbook_create.yml`` の実行後に、サーバーが Packet でプロビジョニングされている必要があります。CLI または`Packet ポータル <https://app.packet.net/portal#/projects/list/table>`_ で検証できます。
+``ansible-playbook playbook_create.yml`` の実行後に、サーバーが Packet でプロビジョニングされている必要があります。CLI または`Packet ポータル <https://app.packet.net/portal#/projects/list/table>`__ で検証できます。
 
-エラーが発生し、"failed to set machine state present, error:Error 404:Not Found" メッセージが表示されたら、プロジェクト UUID を確認します。
+エラーが発生し、「failed to set machine state present, error:Error 404:Not Found」メッセージが表示されたら、プロジェクト UUID を確認します。
 
 
 デバイスの更新
@@ -95,14 +95,14 @@ Playbook が既存の Packet デバイスで動作する場合は、「hostname�
 
     # playbook_reboot.yml
 
-- name: reboot myserver
-  hosts: localhost
-  tasks:
+    - name: reboot myserver
+      hosts: localhost
+      tasks:
 
-  - packet_device:
-      project_id: <your_project_id>
-      hostnames: myserver
-      state: rebooted
+      - packet_device:
+          project_id: <your_project_id>
+          hostnames: myserver
+          state: rebooted
 
 「device_ids」パラメーターで特定の Packet デバイスを識別することもできます。デバイスの UUID は、`Packet ポータル <https://app.packet.net/portal>`_ または `CLI <https://www.packet.net/developers/integrations/>`_ を使用して確認できます。以下の Playbook は、「device_ids」フィールドを使用して Packet デバイスを削除します。
 
@@ -110,14 +110,14 @@ Playbook が既存の Packet デバイスで動作する場合は、「hostname�
 
     # playbook_remove.yml
 
-- name: remove a device
-  hosts: localhost
-  tasks:
+    - name: remove a device
+      hosts: localhost
+      tasks:
 
-  - packet_device:
-      project_id: <your_project_id>
-      device_ids: <myserver_device_id>
-      state: absent
+      - packet_device:
+          project_id: <your_project_id>
+          device_ids: <myserver_device_id>
+          state: absent
 
 
 より複雑な Playbook
@@ -138,47 +138,47 @@ CoreOS クラスターは、クラスター内の他のサーバーの検出に 
 
     # playbook_coreos.yml
 
-- name: Start 3 CoreOS nodes in Packet and wait until SSH is ready
-  hosts: localhost
-  tasks:
+    - name: Start 3 CoreOS nodes in Packet and wait until SSH is ready
+      hosts: localhost
+      tasks:
 
-  - packet_sshkey:
-      key_file: ./id_rsa.pub
-      label: new
+      - packet_sshkey:
+          key_file: ./id_rsa.pub
+          label: new
 
-  - packet_device:
-      hostnames: [coreos-one, coreos-two, coreos-three]
-      operating_system: coreos_beta
+      - packet_device:
+          hostnames: [coreos-one, coreos-two, coreos-three]
+          operating_system: coreos_beta
           plan: baremetal_0
           facility: ewr1
           project_id: <your_project_id>
-      wait_for_public_IPv:4
+          wait_for_public_IPv: 4
           user_data: |
             #cloud-config
-        coreos:
-          etcd2:
-            discovery: https://discovery.etcd.io/<token>
-            advertise-client-urls: http://$private_ipv4:2379,http://$private_ipv4:4001
-            initial-advertise-peer-urls: http://$private_ipv4:2380
-            listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
-            listen-peer-urls: http://$private_ipv4:2380
-          fleet:
-            public-ip: $private_ipv4
-          units:
-            - name: etcd2.service
-              command: start
-            - name: fleet.service
-              command: start
-    register: newhosts
+            coreos:
+              etcd2:
+                discovery: https://discovery.etcd.io/<token>
+                advertise-client-urls: http://$private_ipv4:2379,http://$private_ipv4:4001
+                initial-advertise-peer-urls: http://$private_ipv4:2380
+                listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
+                listen-peer-urls: http://$private_ipv4:2380
+              fleet:
+                public-ip: $private_ipv4
+              units:
+                - name: etcd2.service
+                  command: start
+                - name: fleet.service
+                  command: start
+        register: newhosts
 
-  - name: wait for ssh
-    wait_for:
-      delay: 1
-      host: "{{ item.public_ipv4 }}"
-      port: 22
-      state: started
-      timeout: 500
-    loop: "{{ newhosts.results[0].devices }}"
+      - name: wait for ssh
+        wait_for:
+          delay: 1
+          host: "{{ item.public_ipv4 }}"
+          port: 22
+          state: started
+          timeout: 500
+        loop: "{{ newhosts.results[0].devices }}"
     
 
 ほとんどの Ansible モジュールと同様に、Packet モジュールのデフォルト状態は冪等です。つまり、プロジェクトのリソースは Playbook の再実行後も同じになります。したがって、Playbook で ``packet_sshkey`` モジュール呼び出しを保持できます。公開鍵がすでに Packet アカウントにある場合、呼び出しは機能しません。
@@ -198,7 +198,7 @@ Playbook が終了すると、SSH 経由で新しいデバイスに到達でき�
 .. code-block:: bash
 
     tomk@work $ ssh -i id_rsa core@$one_of_the_servers_ip
-core@coreos-one ~ $ etcdctl cluster-health
+    core@coreos-one ~ $ etcdctl cluster-health
 
 いくつかのデバイスを作成したら、動的インベントリースクリプトを利用できます。
 
@@ -217,8 +217,8 @@ core@coreos-one ~ $ etcdctl cluster-health
 .. code-block:: bash
 
     $ wget https://github.com/ansible/ansible/raw/devel/contrib/inventory/packet_net.py
-$ chmod +x packet_net.py
-$ wget https://github.com/ansible/ansible/raw/devel/contrib/inventory/packet_net.ini
+    $ chmod +x packet_net.py
+    $ wget https://github.com/ansible/ansible/raw/devel/contrib/inventory/packet_net.ini
 
 インベントリースクリプトが Ansible に与える影響を理解するために、次を実行できます。
 
@@ -235,7 +235,7 @@ $ wget https://github.com/ansible/ansible/raw/devel/contrib/inventory/packet_net
         "hostvars": {
           "147.75.64.169": {
             "packet_billing_cycle": "hourly",
-            "packet_created_at":"2017-02-09T17:11:26Z",
+            "packet_created_at": "2017-02-09T17:11:26Z",
             "packet_facility": "ewr1",
             "packet_hostname": "coreos-two",
             "packet_href": "/devices/d0ab8972-54a8-4bff-832b-28549d1bec96",
@@ -244,44 +244,44 @@ $ wget https://github.com/ansible/ansible/raw/devel/contrib/inventory/packet_net
             "packet_operating_system": "coreos_beta",
             "packet_plan": "baremetal_0",
             "packet_state": "active",
-            "packet_updated_at":"2017-02-09T17:16:35Z",
+            "packet_updated_at": "2017-02-09T17:16:35Z",
             "packet_user": "core",
             "packet_userdata": "#cloud-config\ncoreos:\n  etcd2:\n    discovery: https://discovery.etcd.io/e0c8a4a9b8fe61acd51ec599e2a4f68e\n    advertise-client-urls: http://$private_ipv4:2379,http://$private_ipv4:4001\n    initial-advertise-peer-urls: http://$private_ipv4:2380\n    listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001\n    listen-peer-urls: http://$private_ipv4:2380\n  fleet:\n    public-ip: $private_ipv4\n  units:\n    - name: etcd2.service\n      command: start\n    - name: fleet.service\n      command: start"
-      }
-    }
-  },
-  "baremetal_0": [
-    "147.75.202.255",
-    "147.75.202.251",
-    "147.75.202.249",
-    "147.75.64.129",
-    "147.75.192.51",
-    "147.75.64.169"
-  ],
+          }
+        }
+      },
+      "baremetal_0": [
+        "147.75.202.255",
+        "147.75.202.251",
+        "147.75.202.249",
+        "147.75.64.129",
+        "147.75.192.51",
+        "147.75.64.169"
+      ],
       "coreos_beta": [
-    "147.75.202.255",
-    "147.75.202.251",
-    "147.75.202.249",
-    "147.75.64.129",
-    "147.75.192.51",
-    "147.75.64.169"
-  ],
+        "147.75.202.255",
+        "147.75.202.251",
+        "147.75.202.249",
+        "147.75.64.129",
+        "147.75.192.51",
+        "147.75.64.169"
+      ],
       "ewr1": [
-    "147.75.64.129",
-    "147.75.192.51",
-    "147.75.64.169"
-  ],
+        "147.75.64.129",
+        "147.75.192.51",
+        "147.75.64.169"
+      ],
       "sjc1": [
-    "147.75.202.255",
-    "147.75.202.251",
-    "147.75.202.249"
-  ],
+        "147.75.202.255",
+        "147.75.202.251",
+        "147.75.202.249"
+      ],
       "coreos-two": [
-    "147.75.64.169"
-  ],
+        "147.75.64.169"
+      ],
       "d0ab8972-54a8-4bff-832b-28549d1bec96": [
-    "147.75.64.169"
-  ]
+        "147.75.64.169"
+      ]
     }
     
 ``['_meta']['hostvars']`` キーには、デバイスの一覧 (特にパブリック IPv4 アドレスで識別されるもの) とそのパラメーターがあります。``['_meta']`` 以下のその他のキーは、一部のパラメーターでグループ分けされたデバイスの一覧です。これはタイプ (すべてのデバイスの種類は baremetal_0)、オペレーティングシステム、およびファシリティー (ewr1 および sjc1) です。
@@ -294,10 +294,10 @@ Playbook でグループを対象にすることができるようになりま�
 
     # playbook_bootstrap.yml
 
-- hosts: coreos_beta
-  gather_facts: false
-  roles:
-    - defunctzombie.coreos-boostrap
+    - hosts: coreos_beta
+      gather_facts: false
+      roles:
+        - defunctzombie.coreos-boostrap
 
 ``-i`` 引数に動的インベントリーを指定することを忘れないでください。
 

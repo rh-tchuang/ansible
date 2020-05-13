@@ -1,4 +1,4 @@
-Kubernetes および OpenShift ガイド
+Kubernetes および OpenShift のガイド
 ==============================
 
 Kubernetes (K8s) および OpenShift API と対話するためのモジュールは開発中であり、プレビューモードで使用できます。このモジュールを使用するには、要件を確認し、インストールを行い、その他の手順に従います。
@@ -8,7 +8,7 @@ Kubernetes (K8s) および OpenShift API と対話するためのモジュール
 
 モジュールを使用するには、以下が必要になります。
 
-- ソースから Ansible を実行します。手順は、「`ソースからの実行 <./intro_installation.html/#running-from-source>`_」を参照してください。
+- ソースから Ansible を実行します。手順は、「`ソースからの実行 <./intro_installation.html#running-from-source>`_」を参照してください。
 - モジュールを実行するホストに `OpenShift Rest Client` <https://github.com/openshift/openshift-restclient-python>_ がインストールされています。
 
 

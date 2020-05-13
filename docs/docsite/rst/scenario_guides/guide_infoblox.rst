@@ -108,59 +108,59 @@ Ansible には、NIOS 用に以下の lookup プラグインが含まれます�
 
     $ ansible-playbook get_host_record.yml
 
-PLAY [localhost] ***************************************************************************************
+    PLAY [localhost] ***************************************************************************************
 
     TASK [fetch host leaf01] ******************************************************************************
-ok:[localhost]
-    
+    ok: [localhost]
+
     TASK [check the leaf01 return variable] *************************************************************
-ok: [localhost] => {
+    ok: [localhost] => {
     < ...output shortened...>
         "host": {
             "ipv4addrs": [
-            {
-                "configure_for_dhcp": false,
-                "host": "leaf01.ansible.com",
-            }
-        ],
+                {
+                    "configure_for_dhcp": false,
+                    "host": "leaf01.ansible.com",
+                }
+            ],
             "name": "leaf01.ansible.com",
             "view": "default"
         }
     }
-    
+
     TASK [debug specific variable (ipv4 address)] ******************************************************
     ok: [localhost] => {
-        "host.ipv4addrs[0].ipv4addr":"192.168.1.11"
+        "host.ipv4addrs[0].ipv4addr": "192.168.1.11"
     }
-    
+
     TASK [fetch host leaf02] ******************************************************************************
-ok:[localhost]
-    
+    ok: [localhost]
+
     TASK [check the leaf02 return variable] *************************************************************
     ok: [localhost] => {
     < ...output shortened...>
-    "host": {
+        "host": {
             "ipv4addrs": [
-            {
-                "configure_for_dhcp": false,
-                "host": "leaf02.example.com",
-                "ipv4addr": "192.168.1.12"
-            }
-        ],
+                {
+                    "configure_for_dhcp": false,
+                    "host": "leaf02.example.com",
+                    "ipv4addr": "192.168.1.12"
+                }
+            ],
         }
-}
-    
+    }
+
     PLAY RECAP ******************************************************************************************
     localhost                  : ok=5    changed=0    unreachable=0    failed=0
     
-上記の出力は、``nios`` lookup プラグインによって取得した ``leaf01.ansible.com`` および ``leaf02.ansible.com`` のホストレコードを示しています。この Playbook は、他の Playbook で使用できる変数に情報を保存します。これにより、Infoblox を単一のソースとして使用し、動的に変更する情報を収集して使用できます。Ansible 変数の使用方法の詳細は、:ref:`playbooks_variables` を参照してください。取得できるその他のデータオプションは、:ref:`nios <nios_lookup>` の例を参照してください。
+上記の出力は、``nios`` lookup プラグインによって取得した ``leaf01.ansible.com`` および ``leaf02.ansible.com`` のホストレコードを示しています。この Playbook は、他の Playbook で使用できる変数に情報を保存します。これにより、Infoblox を単一のソースとして使用し、動的に変更する情報を収集して使用できます。Ansible 変数の使用方法の詳細は、「:ref:`playbooks_variables`」を参照してください。取得できるその他のデータオプションは、「:ref:`nios <nios_lookup>`」の例を参照してください。
 
 この Playbook には、`Infoblox lookup playbooks <https://github.com/network-automation/infoblox_ansible/tree/master/lookup_playbooks>`_ でアクセスできます。
 
 モジュールとのユースケース
 ======================
 
-``nios`` モジュールをタスク内で使用して、共通の Infoblox ワークフローを簡素化できます。これらの例に従う前に、:ref:`NIOS 認証情報<nios_credentials>` を必ず設定してください。
+``nios`` モジュールをタスク内で使用して、共通の Infoblox ワークフローを簡素化できます。以下の例を使用する前に、:ref:`NIOS 認証情報<nios_credentials>` を必ず設定してください。
 
 IPv4 ネットワークの設定
 ---------------------------
@@ -250,7 +250,7 @@ Infoblox 動的インベントリースクリプトを使用して、Infoblox NI
 
 - `infoblox.yaml <https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/infoblox.yaml>`_ - NIOS プロバイダーの引数とオプションフィルターを指定するファイル。
 
-- `infoblox.py <https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/infoblox.py>`_ - NIOS インベントリーを取得する python スクリプトです。
+- `infoblox.py <https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/infoblox.py>`_ - NIOS インベントリーを取得する python スクリプト。
 
 Infoblox 動的インベントリースクリプトを使用するには、以下を実行します。
 
@@ -258,9 +258,10 @@ Infoblox 動的インベントリースクリプトを使用するには、以�
 
 NIOS 認証情報が含まれる #. Modify the ``infoblox.yaml`` ファイル
 
-#. Download the ``infoblox.py`` ファイルを ``/etc/ansible/hosts`` ディレクトリーに保存します。
+#. ``infoblox.py`` ファイルをダウンロードして、``/etc/ansible/hosts`` ディレクトリーに保存します。
 
-実行可能にする #. Change the permissions on the ``infoblox.py`` ファイル
+実行可能にする 
+#. ``infoblox.py`` ファイルのパーミッションを変更して、ファイルを実行ファイルにします。
 
 .. code-block:: bash
 
@@ -279,9 +280,9 @@ Infoblox 動的インベントリースクリプトをインベントリーデ�
   `Infoblox Web サイト <https://www.infoblox.com//>`_
       Infoblox の Web サイト
   `Infoblox および Ansible デプロイメントガイド <https://www.infoblox.com/resources/deployment-guides/infoblox-and-ansible-integration>`_
-      Infoblox が提供する Ansible 統合のデプロイメントガイド。
+      Infoblox が提供する Ansible 統合のデプロイメントガイド
   `Ansible 2.5 での Infoblox 統合 <https://www.ansible.com/blog/infoblox-integration-in-ansible-2.5>`_
-      Infoblox に関する Ansible ブログ投稿。
+      Infoblox に関する Ansible ブログ投稿
   :ref:`Ansible NIOS モジュール <nios_net tools_modules>`
       対応している NIOS モジュールの一覧 (サンプル例あり)
   `Infoblox Ansible のサンプル <https://github.com/network-automation/infoblox_ansible>`_

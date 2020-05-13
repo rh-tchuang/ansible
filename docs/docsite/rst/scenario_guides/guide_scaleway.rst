@@ -25,9 +25,9 @@ Scaleway ガイド
 要件
 ============
 
-Scaleway モジュールおよびインベントリースクリプトは、`Scaleway REST API <https://developer.scaleway.com>`_を使用して Scaleway API に接続します。
+Scaleway モジュールおよびインベントリースクリプトは、「`Scaleway REST API <https://developer.scaleway.com>`_」を使用して Scaleway API に接続します。
 モジュールおよびインベントリースクリプトを使用するには、Scaleway API トークンが必要です。
-API トークンは、`こちら <https://cloud.scaleway.com/#/credentials>`_ にある Scaleway コンソールを使用して生成できます。
+API トークンは、「`こちら <https://cloud.scaleway.com/#/credentials>`_」にある Scaleway コンソールを使用して生成できます。
 自身を認証する最も簡単な方法は、環境変数に Scaleway API トークンを設定することです。
 
 .. code-block:: bash
@@ -58,7 +58,7 @@ Scaleway コンピュートリソースを設定する最初の手順は、少�
 
 .. code-block:: yaml
 
-    - name:"Add SSH key"
+    - name: "Add SSH key"
       scaleway_sshkey:
         ssh_pub_key: "ssh-rsa AAAA..."
         state: "present"
@@ -70,22 +70,22 @@ Scaleway コンピュートリソースを設定する最初の手順は、少�
 
     # SCW_API_KEY='XXX' ansible-playbook ./test/legacy/scaleway_ssh_playbook.yml
 
-- name: Test SSH key lifecycle on a Scaleway account
-  hosts: localhost
-  gather_facts: no
-  environment:
-    SCW_API_KEY: ""
+    - name: Test SSH key lifecycle on a Scaleway account
+      hosts: localhost
+      gather_facts: no
+      environment:
+        SCW_API_KEY: ""
 
-  tasks:
+      tasks:
 
-    - scaleway_sshkey:
-        ssh_pub_key: "ssh-rsa AAAAB...424242 developer@example.com"
-        state: present
-      register: result
+        - scaleway_sshkey:
+            ssh_pub_key: "ssh-rsa AAAAB...424242 developer@example.com"
+            state: present
+          register: result
 
-    - assert:
-        that:
-          - result is success and result is changed
+        - assert:
+            that:
+              - result is success and result is changed
 
 .. _scaleway_create_instance:
 
@@ -97,14 +97,14 @@ Scaleway コンピュートリソースを設定する最初の手順は、少�
 
 .. code-block:: yaml
 
-    - name:Create a server
+    - name: Create a server
       scaleway_compute:
         name: foobar
         state: present
-        image:00000000-1111-2222-3333-444444444444
-        organization:00000000-1111-2222-3333-444444444444
+        image: 00000000-1111-2222-3333-444444444444
+        organization: 00000000-1111-2222-3333-444444444444
         region: ams1
-        commercial_type:START1-S
+        commercial_type: START1-S
 
 以下は、上述のパラメーターの詳細です。
 
@@ -122,51 +122,51 @@ Scaleway コンピュートリソースを設定する最初の手順は、少�
 
     # SCW_TOKEN='XXX' ansible-playbook ./test/legacy/scaleway_compute.yml
 
-- name: Test compute instance lifecycle on a Scaleway account
-  hosts: localhost
-  gather_facts: no
-  environment:
-    SCW_API_KEY: ""
+    - name: Test compute instance lifecycle on a Scaleway account
+      hosts: localhost
+      gather_facts: no
+      environment:
+        SCW_API_KEY: ""
 
-  tasks:
+      tasks:
 
-    - name: Create a server
-      register: server_creation_task
-      scaleway_compute:
-        name: foobar
-        state: present
-        image: 00000000-1111-2222-3333-444444444444
-        organization: 00000000-1111-2222-3333-444444444444
-        region: ams1
-        commercial_type: START1-S
-        wait: true
+        - name: Create a server
+          register: server_creation_task
+          scaleway_compute:
+            name: foobar
+            state: present
+            image: 00000000-1111-2222-3333-444444444444
+            organization: 00000000-1111-2222-3333-444444444444
+            region: ams1
+            commercial_type: START1-S
+            wait: true
 
-    - debug: var=server_creation_task
+        - debug: var=server_creation_task
 
-    - assert:
-        that:
-          - server_creation_task is success
-          - server_creation_task is changed
+        - assert:
+            that:
+              - server_creation_task is success
+              - server_creation_task is changed
 
-    - name: Run it
-      scaleway_compute:
-        name: foobar
-        state: running
-        image: 00000000-1111-2222-3333-444444444444
-        organization: 00000000-1111-2222-3333-444444444444
-        region: ams1
-        commercial_type: START1-S
-        wait: true
-        tags:
-          - web_server
-      register: server_run_task
+        - name: Run it
+          scaleway_compute:
+            name: foobar
+            state: running
+            image: 00000000-1111-2222-3333-444444444444
+            organization: 00000000-1111-2222-3333-444444444444
+            region: ams1
+            commercial_type: START1-S
+            wait: true
+            tags:
+              - web_server
+          register: server_run_task
 
-    - debug: var=server_run_task
+        - debug: var=server_run_task
 
-    - assert:
-        that:
-          - server_run_task is success
-          - server_run_task is changed
+        - assert:
+            that:
+              - server_run_task is success
+              - server_run_task is changed
 
 .. _scaleway_dynamic_inventory_tutorial:
 
@@ -190,7 +190,7 @@ Ansible には :ref:`scaleway_inventory` が同梱されています。
     tags:
       - web_server
 
-このインベントリーは、ゾーン ``ams1`` および ``par1`` にタグ ``web_server`` のあるホストをすべて必要とすることを意味します。
+このインベントリーは、ゾーン ``ams1`` および ``par1`` にタグ ``web_server`` があるホストがすべて必要であることを意味します。
 このファイルを設定したら、以下のコマンドを使用して情報を取得できます。
 
 .. code-block:: bash
@@ -205,38 +205,38 @@ Ansible には :ref:`scaleway_inventory` が同梱されています。
         "_meta": {
             "hostvars": {
                 "dd8e3ae9-0c7c-459e-bc7b-aba8bfa1bb8d": {
-                    "ansible_verbosity":6,
+                    "ansible_verbosity": 6,
                     "arch": "x86_64",
-                    "commercial_type":"START1-S",
+                    "commercial_type": "START1-S",
                     "hostname": "foobar",
-                    "ipv4":"192.0.2.1",
-                    "organization":"00000000-1111-2222-3333-444444444444",
+                    "ipv4": "192.0.2.1",
+                    "organization": "00000000-1111-2222-3333-444444444444",
                     "state": "running",
                     "tags": [
-                    "web_server"
-                ]
+                        "web_server"
+                    ]
                 }
             }
         },
         "all": {
             "children": [
-            "ams1",
-            "par1",
-            "ungrouped",
-            "web_server"
-        ]
+                "ams1",
+                "par1",
+                "ungrouped",
+                "web_server"
+            ]
         },
         "ams1": {},
         "par1": {
             "hosts": [
-            "dd8e3ae9-0c7c-459e-bc7b-aba8bfa1bb8d"
-        ]
+                "dd8e3ae9-0c7c-459e-bc7b-aba8bfa1bb8d"
+            ]
         },
         "ungrouped": {},
         "web_server": {
             "hosts": [
-            "dd8e3ae9-0c7c-459e-bc7b-aba8bfa1bb8d"
-        ]
+                "dd8e3ae9-0c7c-459e-bc7b-aba8bfa1bb8d"
+            ]
         }
     }
     
@@ -263,35 +263,35 @@ Scaleway API は S3 と互換性があるため、Ansible は、:ref:`s3_bucket_
         s3_url: https://s3.nl-ams.scw.cloud
       environment:
         # AWS_ACCESS_KEY matches your scaleway organization id available at https://cloud.scaleway.com/#/account
-    AWS_ACCESS_KEY: 00000000-1111-2222-3333-444444444444
-    # AWS_SECRET_KEY matches a secret token that you can retrieve at https://cloud.scaleway.com/#/credentials
-    AWS_SECRET_KEY: aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
-  module_defaults:
-    group/aws:
-      s3_url: '{{ s3_url }}'
-      region: '{{ scaleway_region }}'
-  tasks:
-   # use a fact instead of a variable, otherwise template is evaluate each time variable is used
-    - set_fact:
-        bucket_name: "{{ 99999999 | random | to_uuid }}"
+        AWS_ACCESS_KEY: 00000000-1111-2222-3333-444444444444
+        # AWS_SECRET_KEY matches a secret token that you can retrieve at https://cloud.scaleway.com/#/credentials
+        AWS_SECRET_KEY: aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
+      module_defaults:
+        group/aws:
+          s3_url: '{{ s3_url }}'
+          region: '{{ scaleway_region }}'
+      tasks:
+       # use a fact instead of a variable, otherwise template is evaluate each time variable is used
+        - set_fact:
+            bucket_name: "{{ 99999999 | random | to_uuid }}"
 
-    # "requester_pays:" is mandatory because Scaleway doesn't implement related API
-    # another way is to use aws_s3 and "mode: create" !
-    - s3_bucket:
-        name: '{{ bucket_name }}'
-        requester_pays:
+        # "requester_pays:" is mandatory because Scaleway doesn't implement related API
+        # another way is to use aws_s3 and "mode: create" !
+        - s3_bucket:
+            name: '{{ bucket_name }}'
+            requester_pays:
 
-    - name: Another way to create the bucket
-      aws_s3:
-        bucket: '{{ bucket_name }}'
-        mode: create
-        encrypt: false
-      register: bucket_creation_check
+        - name: Another way to create the bucket
+          aws_s3:
+            bucket: '{{ bucket_name }}'
+            mode: create
+            encrypt: false
+          register: bucket_creation_check
 
-    - name: add something in the bucket
-      aws_s3:
-        mode: put
-        bucket: '{{ bucket_name }}'
-        src: /tmp/test.txt  #  needs to be created before
-        object: test.txt
-        encrypt: false  # server side encryption must be disabled
+        - name: add something in the bucket
+          aws_s3:
+            mode: put
+            bucket: '{{ bucket_name }}'
+            src: /tmp/test.txt  #  needs to be created before
+            object: test.txt
+            encrypt: false  # server side encryption must be disabled

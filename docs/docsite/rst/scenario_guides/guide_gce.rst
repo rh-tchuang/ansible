@@ -24,7 +24,7 @@ gcp_target_proxy および gcp_url_map はレガシーモジュールです。�
 
 この命名規則に準拠していないその他の GCP モジュールのコレクションが
 表示される場合があります。これは、
-主に Ansible コミュニティーで開発されたオリジナルモジュールです「gce」モジュール、
+主に Ansible コミュニティーで開発されたオリジナルモジュールです。「gce」モジュール、
 新しい「gcp_compute_instance」モジュールなど、重複する機能があります。どちらも使用できますが、
 一緒に使用しようとすると問題が発生する場合があります。
 
@@ -52,11 +52,11 @@ RHEL/CentOS では、
 
 認証情報
 -----------
-Ansible の認証情報を使用して GCP アカウントを作成するのは簡単です。認証情報を取得するはオプションは複数ありますが、
+Ansible の認証情報を使用して GCP アカウントを作成するのは簡単です。認証情報を取得するオプションは複数ありますが、
 最も一般的なオプションは次の 2 つです。
 
-* サービスアカウント (推奨): 特定のパーミッションを持つ JSON サービスアカウントを使用します。
-* マシンアカウント: Ansible を使用する GCP インスタンスに関連付けられたパーミッションを使用します。
+* サービスアカウント (推奨) - 特定のパーミッションを持つ JSON サービスアカウントを使用します。
+* マシンアカウント - Ansible を使用する GCP インスタンスに関連付けられたパーミッションを使用します。
 
 以下の例では、サービスアカウントの認証情報を使用します。
 
@@ -76,18 +76,18 @@ GCP モジュールを使用するには、
 
 GCE モジュールでは、認証情報を引数として指定できます。
 
-* ``auth_kind``: 使用される認証のタイプ (選択肢: machineaccount、serviceaccount、application)
-* ``service_account_email``: プロジェクトに関連付けられたメール
-* ``service_account_file``: JSON 認証情報ファイルへのパス
-* ``project``: プロジェクトの id
-* ``scopes``: アクションで使用する特定のスコープ
+* ``auth_kind`` - 使用される認証のタイプ (選択肢は machineaccount、serviceaccount、application です)
+* ``service_account_email`` - プロジェクトに関連付けられたメール
+* ``service_account_file`` - JSON 認証情報ファイルへのパス
+* ``project`` - プロジェクトの id
+* ``scopes`` - アクションで使用する特定のスコープ
 
 たとえば、``gcp_compute_address`` モジュールを使用して新規 IP アドレスを作成するには、以下を実行します。
 以下の設定を使用できます。
 
 .. code-block:: yaml
 
-   - name:Create IP address
+   - name: Create IP address
      hosts: localhost
      gather_facts: no
 
@@ -100,15 +100,15 @@ GCE モジュールでは、認証情報を引数として指定できます。
 
      tasks:
 
-      - name:Allocate an IP Address
+      - name: Allocate an IP Address
         gcp_compute_address:
             state: present
             name: 'test-address1'
             region: 'us-west1'
             project: "{{ project }}"
-auth_kind: "{{ auth_kind }}"
-service_account_file: "{{ service_account_file }}"
-scopes: "{{ scopes }}"
+            auth_kind: "{{ auth_kind }}"
+            service_account_file: "{{ service_account_file }}"
+            scopes: "{{ scopes }}"
 
 認証情報を環境変数として指定
 ``````````````````````````````````````````````
@@ -166,7 +166,7 @@ GCP ネットワークとディスクに依存しています。ディスクと�
 
 .. code-block:: yaml
 
-   - name:Create an instance
+   - name: Create an instance
      hosts: localhost
      gather_facts: no
      vars:
@@ -180,71 +180,71 @@ GCP ネットワークとディスクに依存しています。ディスクと�
       - name: create a disk
         gcp_compute_disk:
             name: 'disk-instance'
-            size_gb:50
+            size_gb: 50
             source_image: 'projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts'
             zone: "{{ zone }}"
-project: "{{ gcp_project }}"
-auth_kind: "{{ gcp_cred_kind }}"
-service_account_file: "{{ gcp_cred_file }}"
-scopes:
-- https://www.googleapis.com/auth/compute
-state: present
-register: disk
-- name: create a network
-gcp_compute_network:
-name: 'network-instance'
-project: "{{ gcp_project }}"
-auth_kind: "{{ gcp_cred_kind }}"
-service_account_file: "{{ gcp_cred_file }}"
-scopes:
-- https://www.googleapis.com/auth/compute
-state: present
-register: network
-- name: create a address
-gcp_compute_address:
-name: 'address-instance'
-region: "{{ region }}"
-project: "{{ gcp_project }}"
-auth_kind: "{{ gcp_cred_kind }}"
-service_account_file: "{{ gcp_cred_file }}"
-scopes:
-- https://www.googleapis.com/auth/compute
-state: present
-register: address
-- name: create a instance
-gcp_compute_instance:
-state: present
-name: test-vm
-machine_type: n1-standard-1
-disks:
-- auto_delete: true
-boot: true
-source: "{{ disk }}"
-network_interfaces:
-- network: "{{ network }}"
-access_configs:
-- name: 'External NAT'
-nat_ip: "{{ address }}"
-type: 'ONE_TO_ONE_NAT'
-zone: "{{ zone }}"
-project: "{{ gcp_project }}"
-auth_kind: "{{ gcp_cred_kind }}"
-service_account_file: "{{ gcp_cred_file }}"
+            project: "{{ gcp_project }}"
+            auth_kind: "{{ gcp_cred_kind }}"
+            service_account_file: "{{ gcp_cred_file }}"
             scopes:
-            - https://www.googleapis.com/auth/compute
-            register: instance
+              - https://www.googleapis.com/auth/compute
+            state: present
+        register: disk
+      - name: create a network
+        gcp_compute_network:
+            name: 'network-instance'
+            project: "{{ gcp_project }}"
+            auth_kind: "{{ gcp_cred_kind }}"
+            service_account_file: "{{ gcp_cred_file }}"
+            scopes:
+              - https://www.googleapis.com/auth/compute
+            state: present
+        register: network
+      - name: create a address
+        gcp_compute_address:
+            name: 'address-instance'
+            region: "{{ region }}"
+            project: "{{ gcp_project }}"
+            auth_kind: "{{ gcp_cred_kind }}"
+            service_account_file: "{{ gcp_cred_file }}"
+            scopes:
+              - https://www.googleapis.com/auth/compute
+            state: present
+        register: address
+      - name: create a instance
+        gcp_compute_instance:
+            state: present
+            name: test-vm
+            machine_type: n1-standard-1
+            disks:
+              - auto_delete: true
+                boot: true
+                source: "{{ disk }}"
+            network_interfaces:
+                - network: "{{ network }}"
+                  access_configs:
+                    - name: 'External NAT'
+                      nat_ip: "{{ address }}"
+                      type: 'ONE_TO_ONE_NAT'
+            zone: "{{ zone }}"
+            project: "{{ gcp_project }}"
+            auth_kind: "{{ gcp_cred_kind }}"
+            service_account_file: "{{ gcp_cred_file }}"
+            scopes:
+              - https://www.googleapis.com/auth/compute
+        register: instance
 
-       - name:Wait for SSH to come up
+       - name: Wait for SSH to come up
          wait_for: host={{ address.address }} port=22 delay=10 timeout=60
 
-       - name:Add host to groupname
+       - name: Add host to groupname
          add_host: hostname={{ address.address }} groupname=new_instances
 
 
-   - name:Manage new instances
+   - name: Manage new instances
      hosts: new_instances
      connection: ssh
-     sudo:True
+     sudo: True
      roles:
        - base_configuration
        - production_server
@@ -265,8 +265,8 @@ Ansible 2.8 からは、すべてのユーザーに、``gce`` モジュールか
 GCP の認証システムへの対応がより適切になります。
 
 ``gcp_compute_instance`` モジュールは、``gce`` モジュール (およびその他) 
-のすべての機能に対応します、以下は、``gce`` フィールドの、
-``gcp_compute_instance`` フィールドへのマッピングがあります。
+のすべての機能に対応します、以下は、``gce`` フィールドから、
+``gcp_compute_instance`` フィールドへのマッピングとなります。
 
 ============================  ==========================================  ======================
  gce.py                        gcp_compute_instance.py                     注記
@@ -282,7 +282,7 @@ GCP の認証システムへの対応がより適切になります。
  credentials_file             service_account_file
  project_id                   project
  name                         name                                        このフィールドでは名前の配列を使用できません。ループを使用して複数のインスタンスを作成します。
- num_instances                Use a loop                                  柔軟性を最大にするために、モジュールではなく、Ansible の機能を使用して複数のインスタンスを作成することが推奨されます。
+ num_instances                ループを使用します。                                  柔軟性を最大にするために、モジュールではなく、Ansible の機能を使用して複数のインスタンスを作成することが推奨されます。
  network                      network_interfaces[].network
  subnetwork                   network_interfaces[].subnetwork
  persistent_boot_disk         disks[].type = 'PERSISTENT'
@@ -302,11 +302,11 @@ Playbook の例を以下に示します。
       name: "{{ item }}"
       machine_type: n1-standard-1
       ... # any other settings
-zone: us-central1-a
-project: "my-project"
-auth_kind: "service_account_file"
-service_account_file: "~/my_account.json"
-state: present
-with_items:
-- instance-1
-- instance-2
+      zone: us-central1-a
+      project: "my-project"
+      auth_kind: "service_account_file"
+      service_account_file: "~/my_account.json"
+      state: present
+  with_items:
+    - instance-1
+    - instance-2
