@@ -1,39 +1,39 @@
 .. _windows_winrm:
 
-Windows Remote Management
+Windows リモート管理
 =========================
-Unlike Linux/Unix hosts, which use SSH by default, Windows hosts are
-configured with WinRM. This topic covers how to configure and use WinRM with Ansible.
+デフォルトで SSH を使用する Linux/Unix ホストとは異なり、
+Windows ホストは WinRM で構成されます。このトピックでは、Ansible で WinRM を設定し、使用する方法を説明します。
 
-.. contents:: Topics
+.. contents:: トピック
    :local:
 
-What is WinRM?
+WinRM とは
 ``````````````
-WinRM is a management protocol used by Windows to remotely communicate with
-another server. It is a SOAP-based protocol that communicates over HTTP/HTTPS, and is
-included in all recent Windows operating systems. Since Windows
-Server 2012, WinRM has been enabled by default, but in most cases extra
-configuration is required to use WinRM with Ansible.
+WinRM は、
+Windows が別のサーバーとリモート通信するために使用する管理プロトコルです。HTTP/HTTPS を介して通信する SOAP ベースのプロトコルであり、
+最近の全 Windows オペレーティングシステムに含まれています。Windows Server 2012 以降、
+WinRM はデフォルトで有効になっていますが、
+ほとんどの場合、Ansible で WinRM を使用するには追加の構成が必要です。
 
-Ansible uses the `pywinrm <https://github.com/diyan/pywinrm>`_ package to
-communicate with Windows servers over WinRM. It is not installed by default
-with the Ansible package, but can be installed by running the following:
+Ansible は、`pywinrm <https://github.com/diyan/pywinrm>`_ パッケージを使用して、
+WinRM 経由で Windows サーバーと通信します。Ansible パッケージではデフォルトではインストールされませんが、
+次のコマンドを実行してインストールできます。
 
 .. code-block:: shell
 
    pip install "pywinrm>=0.3.0"
 
-.. Note:: on distributions with multiple python versions, use pip2 or pip2.x,
-    where x matches the python minor version Ansible is running under.
+.. Note:: 複数の python バージョンがあるディストリビューションでは、pip2 または pip2.x を使用します。
+    x は、Ansible が実行している python のマイナーバージョンになります。
 
-Authentication Options
+認証オプション
 ``````````````````````
-When connecting to a Windows host, there are several different options that can be used
-when authenticating with an account. The authentication type may be set on inventory
-hosts or groups with the ``ansible_winrm_transport`` variable.
+Windows ホストに接続する際に、
+アカウントで認証するときに使用できるいくつかの異なるオプションがあります。認証タイプは、
+``ansible_winrm_transport`` 変数を使用してインベントリーホストまたはグループに設定できます。
 
-The following matrix is a high level overview of the options:
+以下のマトリックスは、オプションの概要を示しています。
 
 +-------------+----------------+---------------------------+-----------------------+-----------------+
 | Option      | Local Accounts | Active Directory Accounts | Credential Delegation | HTTP Encryption |
@@ -49,33 +49,33 @@ The following matrix is a high level overview of the options:
 | CredSSP     | Yes            | Yes                       | Yes                   | Yes             |
 +-------------+----------------+---------------------------+-----------------------+-----------------+
 
-Basic
+基本
 -----
-Basic authentication is one of the simplest authentication options to use, but is
-also the most insecure. This is because the username and password are simply
-base64 encoded, and if a secure channel is not in use (eg, HTTPS) then it can be
-decoded by anyone. Basic authentication can only be used for local accounts (not domain accounts).
+基本認証は、認証オプションの中で最も簡単な認証オプションの 1 つですが、
+最も安全が低いものでもあります。これは、ユーザー名とパスワードが単に base64 でエンコードされており、
+安全なチャンネルが使用されていない場合 (HTTPS など) に、
+誰でもデコードできるためです。基本認証は、ローカルアカウント (ドメインアカウントではない) のみに使用できます。
 
-The following example shows host vars configured for basic authentication:
+以下の例は、基本認証に設定されているホスト変数を示しています。
 
 .. code-block:: yaml+jinja
 
-    ansible_user: LocalUsername
-    ansible_password: Password
+    ansible_user:LocalUsername
+    ansible_password:Password
     ansible_connection: winrm
     ansible_winrm_transport: basic
 
-Basic authentication is not enabled by default on a Windows host but can be
-enabled by running the following in PowerShell::
+基本認証は、Windows ホストではデフォルトで有効ではありませんが、
+PowerShell で以下を実行して有効にします。
 
     Set-Item -Path WSMan:\localhost\Service\Auth\Basic -Value $true
 
-Certificate
+証明書
 -----------
-Certificate authentication uses certificates as keys similar to SSH key
-pairs, but the file format and key generation process is different.
+証明書認証では、SSH キーペアに似たキーとして証明書を使用しますが、
+ファイルフォーマットとキー生成プロセスでは異なります。
 
-The following example shows host vars configured for certificate authentication:
+以下の例では、証明書認証に設定されたホスト変数を示しています。
 
 .. code-block:: yaml+jinja
 
@@ -84,34 +84,34 @@ The following example shows host vars configured for certificate authentication:
     ansible_winrm_cert_key_pem: /path/to/certificate/private/key.pem
     ansible_winrm_transport: certificate
 
-Certificate authentication is not enabled by default on a Windows host but can
-be enabled by running the following in PowerShell::
+証明書認証は、Windows ホストではデフォルトでは有効になっていませんが、
+PowerShell で次を実行することで有効にできます。
 
     Set-Item -Path WSMan:\localhost\Service\Auth\Certificate -Value $true
 
-.. Note:: Encrypted private keys cannot be used as the urllib3 library that
-    is used by Ansible for WinRM does not support this functionality.
+.. Note:: WinRM 向けに Ansible が使用する urllib3 ライブラリーはこの機能に対応していないため、
+    暗号化された秘密鍵は使用できません。
 
-Generate a Certificate
+証明書の生成
 ++++++++++++++++++++++
-A certificate must be generated before it can be mapped to a local user.
-This can be done using one of the following methods:
+証明書は、ローカルユーザーにマッピングする前に生成する必要があります。
+これは、以下のいずれかの方法で実行できます。
 
 * OpenSSL
-* PowerShell, using the ``New-SelfSignedCertificate`` cmdlet
-* Active Directory Certificate Services
+* PowerShell (``New-SelfSignedCertificate`` コマンドレットを使用)
+* Active Directory 証明書サービス
 
-Active Directory Certificate Services is beyond of scope in this documentation but may be
-the best option to use when running in a domain environment. For more information,
-see the `Active Directory Certificate Services documentation <https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc732625(v=ws.11)>`_.
+Active Directory 証明書サービスはこのドキュメントの範囲外ですが、
+ドメイン環境で実行する場合に使用する最適なオプションである可能性があります。詳細情報は、
+「`Active Directory Certificate Services documentation <https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc732625(v=ws.11)>`_」を参照してください。
 
-.. Note:: Using the PowerShell cmdlet ``New-SelfSignedCertificate`` to generate
-    a certificate for authentication only works when being generated from a
-    Windows 10 or Windows Server 2012 R2 host or later. OpenSSL is still required to
-    extract the private key from the PFX certificate to a PEM file for Ansible
-    to use.
+.. Note:: PowerShell のコマンドレッドである ``New-SelfSignedCertificate`` を使用した認証用の証明書の生成は、
+    Windows 10 または Windows Server 2012 R2 
+    以降のホストから生成された場合に限り機能します。Ansible を使用するために、
+    PFX 証明書から PEM ファイルに秘密キーを抽出するには、
+    OpenSSL が引き続き必要です。
 
-To generate a certificate with ``OpenSSL``:
+``OpenSSL`` で証明書を生成するには、以下を行います。
 
 .. code-block:: shell
 
@@ -129,9 +129,9 @@ To generate a certificate with ``OpenSSL``:
     export OPENSSL_CONF=openssl.conf
     openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out cert.pem -outform PEM -keyout cert_key.pem -subj "/CN=$USERNAME" -extensions v3_req_client
     rm openssl.conf
+    
 
-
-To generate a certificate with ``New-SelfSignedCertificate``:
+``New-SelfSignedCertificate`` で証明書を生成するには、以下を行います。
 
 .. code-block:: powershell
 
@@ -157,21 +157,21 @@ To generate a certificate with ``New-SelfSignedCertificate``:
 
     # Export the private key in a PFX file
     [System.IO.File]::WriteAllBytes("$output_path\cert.pfx", $cert.Export("Pfx"))
+    
 
-
-.. Note:: To convert the PFX file to a private key that pywinrm can use, run
-    the following command with OpenSSL
+.. Note:: PFX ファイルを pywinrm が使用できる秘密鍵に変換するには、
+    OpenSSL で次のコマンドを実行します
     ``openssl pkcs12 -in cert.pfx -nocerts -nodes -out cert_key.pem -passin pass: -passout pass:``
 
-Import a Certificate to the Certificate Store
+証明書ストアへの証明書のインポート
 +++++++++++++++++++++++++++++++++++++++++++++
-Once a certificate has been generated, the issuing certificate needs to be
-imported into the ``Trusted Root Certificate Authorities`` of the
-``LocalMachine`` store, and the client certificate public key must be present
-in the ``Trusted People`` folder of the ``LocalMachine`` store. For this example,
-both the issuing certificate and public key are the same.
+証明書が生成されたら、
+発行証明書を ``LocalMachine`` ストアの ``信頼されたルート証明機関`` にインポートする必要があり、
+クライアント証明書の公開鍵は、
+``LocalMachine`` ストアの ``Trusted People`` ディレクトリーに保存する必要があります。この例では、
+発行した証明書と公開鍵は同じになります。
 
-Following example shows how to import the issuing certificate:
+以下の例では、発行した証明書をインポートする方法を示します。
 
 .. code-block:: powershell
 
@@ -186,10 +186,10 @@ Following example shows how to import the issuing certificate:
     $store.Close()
 
 
-.. Note:: If using ADCS to generate the certificate, then the issuing
-    certificate will already be imported and this step can be skipped.
+.. Note:: ADCSを使用して証明書を生成する場合、
+    発行する証明書は既にインポートされているため、この手順は省略できます。
 
-The code to import the client certificate public key is:
+クライアント証明書の公開鍵をインポートするコードは以下のとおりです。
 
 .. code-block:: powershell
 
@@ -204,9 +204,9 @@ The code to import the client certificate public key is:
     $store.Close()
 
 
-Mapping a Certificate to an Account
+証明書のアカウントへのマッピング
 +++++++++++++++++++++++++++++++++++
-Once the certificate has been imported, map it to the local user account::
+証明書をインポートしたら、これをローカルユーザーアカウントにマッピングします。
 
     $username = "username"
     $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
@@ -225,62 +225,62 @@ Once the certificate has been imported, map it to the local user account::
         -Force
 
 
-Once this is complete, the hostvar ``ansible_winrm_cert_pem`` should be set to
-the path of the public key and the ``ansible_winrm_cert_key_pem`` variable should be set to
-the path of the private key.
+これが完了すると、hostvar ``ansible_winrm_cert_pem`` を公開鍵のパスに設定し、
+``ansible_winrm_cert_key_pem`` 
+変数を秘密鍵のパスに設定します。
 
 NTLM
 ----
-NTLM is an older authentication mechanism used by Microsoft that can support
-both local and domain accounts. NTLM is enabled by default on the WinRM
-service, so no setup is required before using it.
+NTLM は、ローカルアカウントとドメインアカウントの両方を対応できる、
+Microsoft 社が使用する古い認証メカニズムです。NTLM は、
+デフォルトで WinRM サービスで有効になっていて、サービスを使用する前にセットアップは必要ありません。
 
-NTLM is the easiest authentication protocol to use and is more secure than
-``Basic`` authentication. If running in a domain environment, ``Kerberos`` should be used
-instead of NTLM.
+NTLM は最も簡単に使用できる認証プロトコルであり、
+``基本`` 認証よりも安全です。ドメイン環境で実行している場合は、NTLM の代わりに ``Kerberos`` 
+を使用する必要があります。
 
-Kerberos has several advantages over using NTLM:
+Kerberos は NTLM の使用と比較して、以下のような利点があります。
 
-* NTLM is an older protocol and does not support newer encryption
-  protocols.
-* NTLM is slower to authenticate because it requires more round trips to the host in
-  the authentication stage.
-* Unlike Kerberos, NTLM does not allow credential delegation.
+* NTLM は古いプロトコルで、
+  新しい暗号プロトコルに対応しません。
+* NTLM は、
+  認証段階でホストへのラウンドトリップをより多く必要とするため、認証に時間がかかります。
+* Kerberos とは異なり、NTLM は認証情報の委譲を許可していません。
 
-This example shows host variables configured to use NTLM authentication:
+以下の例では、NTLM 認証を使用するように設定されているホスト変数を示しています。
 
 .. code-block:: yaml+jinja
 
-    ansible_user: LocalUsername
-    ansible_password: Password
+    ansible_user:LocalUsername
+    ansible_password:Password
     ansible_connection: winrm
     ansible_winrm_transport: ntlm
 
 Kerberos
 --------
-Kerberos is the recommended authentication option to use when running in a
-domain environment. Kerberos supports features like credential delegation and
-message encryption over HTTP and is one of the more secure options that
-is available through WinRM.
+Kerberos は、
+ドメイン環境に実行する際に使用する推奨認証オプションです。Kerberos は、
+HTTP を介した認証情報の委譲やメッセージ暗号化などの機能に対応し、
+WinRM を介して利用できるより安全なオプションの 1 つです。
 
-Kerberos requires some additional setup work on the Ansible host before it can be
-used properly.
+Kerberos を適切に使用するには、
+Ansible ホストでの追加のセットアップ作業が必要です。
 
-The following example shows host vars configured for Kerberos authentication:
+以下の例は、Kerberos 認証に設定されたホスト変数を示しています。
 
 .. code-block:: yaml+jinja
 
     ansible_user: username@MY.DOMAIN.COM
-    ansible_password: Password
+    ansible_password:Password
     ansible_connection: winrm
     ansible_winrm_transport: kerberos
 
-As of Ansible version 2.3, the Kerberos ticket will be created based on
-``ansible_user`` and ``ansible_password``. If running on an older version of
-Ansible or when ``ansible_winrm_kinit_mode`` is ``manual``, a Kerberos
-ticket must already be obtained. See below for more details.
+Ansible バージョン 2.3 以降では、
+Kerberos チケットは、``ansible_user`` および ``ansible_password`` に基づいて作成されます。古いバージョンの Ansible で実行している場合、
+または ``ansible_winrm_kinit_mode`` が ``manual`` の場合は、
+Kerberos チケットを取得しておく必要があります。詳細は、以下を参照してください。
 
-There are some extra host variables that can be set::
+設定可能な追加のホスト変数があります。
 
     ansible_winrm_kinit_mode: managed/manual (manual means Ansible will not obtain a ticket)
     ansible_winrm_kinit_cmd: the kinit binary to use to obtain a Kerberos ticket (default to kinit)
@@ -288,9 +288,9 @@ There are some extra host variables that can be set::
     ansible_winrm_kerberos_delegation: allows the credentials to traverse multiple hops
     ansible_winrm_kerberos_hostname_override: the hostname to be used for the kerberos exchange
 
-Installing the Kerberos Library
+Kerberos ライブラリーのインストール
 +++++++++++++++++++++++++++++++
-Some system dependencies that must be installed prior to using Kerberos. The script below lists the dependencies based on the distro:
+Kerberos を使用する前にインストールする必要があるシステム依存関係があります。以下のスクリプトは、ディストリビューションに基づく依存関係を一覧表示します。
 
 .. code-block:: shell
 
@@ -316,29 +316,29 @@ Some system dependencies that must be installed prior to using Kerberos. The scr
     pacman -S krb5
 
 
-Once the dependencies have been installed, the ``python-kerberos`` wrapper can
-be install using ``pip``:
+依存関係がインストールされると、
+``pip`` を使用して ``python-kerberos`` ラッパーをインストールできます。
 
 .. code-block:: shell
 
     pip install pywinrm[kerberos]
 
 
-Configuring Host Kerberos
+ホスト Kerberos の設定
 +++++++++++++++++++++++++
-Once the dependencies have been installed, Kerberos needs to be configured so
-that it can communicate with a domain. This configuration is done through the
-``/etc/krb5.conf`` file, which is installed with the packages in the script above.
+依存関係がインストールされたら、
+ドメインと通信できるように Kerberosを 構成する必要があります。この構成は、
+上記のスクリプトのパッケージとともにインストールされる ``/etc/krb5.conf`` ファイルを介して行われます。
 
-To configure Kerberos, in the section that starts with:
+Kerberos を設定するには、以下で始まるセクションで行います。
 
 .. code-block:: ini
 
     [realms]
 
-Add the full domain name and the fully qualified domain names of the primary
-and secondary Active Directory domain controllers. It should look something
-like this:
+プライマリーおよびセカンダリーの Active Directory ドメインコントローラーの完全ドメイン名と、
+完全修飾ドメイン名を追加します。これは、
+次のようになります。
 
 .. code-block:: ini
 
@@ -348,162 +348,162 @@ like this:
             kdc = domain-controller2.my.domain.com
         }
 
-In the section that starts with:
+以下で始まるセクションで、
 
 .. code-block:: ini
 
     [domain_realm]
 
-Add a line like the following for each domain that Ansible needs access for:
+Ansible がアクセスする必要のある各ドメインに以下のような行を追加します。
 
 .. code-block:: ini
 
     [domain_realm]
         .my.domain.com = MY.DOMAIN.COM
 
-You can configure other settings in this file such as the default domain. See
+このファイルの他の設定 (デフォルトドメインなど) を設定できます。詳細は、
 `krb5.conf <https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html>`_
-for more details.
+を参照してください。
 
-Automatic Kerberos Ticket Management
+Kerberos チケットの自動管理
 ++++++++++++++++++++++++++++++++++++
-Ansible version 2.3 and later defaults to automatically managing Kerberos tickets
-when both ``ansible_user`` and ``ansible_password`` are specified for a host. In
-this process, a new ticket is created in a temporary credential cache for each
-host. This is done before each task executes to minimize the chance of ticket
-expiration. The temporary credential caches are deleted after each task
-completes and will not interfere with the default credential cache.
+Ansible バージョン 2.3 以降では、
+``ansible_user`` および ``ansible_password`` の両方がホストに指定されている場合は、デフォルトで Kerberos チケットが自動的に管理されます。このプロセスでは、
+各ホストの一時的な認証情報キャッシュに、
+新しいチケットが作成されます。これは、チケットが期限切れになる可能性を最小限に抑えるために、
+各タスクが実行される前に行われます。一時的な認証情報キャッシュは、各タスクの完了後に削除され、
+デフォルトの認証情報キャッシュに干渉しません。
 
-To disable automatic ticket management, set ``ansible_winrm_kinit_mode=manual``
-via the inventory.
+自動チケット管理を無効にするには、
+インベントリーから、``ansible_winrm_kinit_mode=manual`` を設定します。
 
-Automatic ticket management requires a standard ``kinit`` binary on the control
-host system path. To specify a different location or binary name, set the
-``ansible_winrm_kinit_cmd`` hostvar to the fully qualified path to a MIT krbv5
-``kinit``-compatible binary.
+自動チケット管理には、
+コントロールホストシステムパス上に標準の ``kinit`` バイナリーが必要です。別の場所またはバイナリー名を指定するには、
+``ansible_winrm_kinit_cmd`` hostvar を MIT krbv5 の、
+``kinit`` と互換性のあるバイナリーへの完全修飾パスに設定します。
 
-Manual Kerberos Ticket Management
+Kerberos チケットの手動管理
 +++++++++++++++++++++++++++++++++
-To manually manage Kerberos tickets, the ``kinit`` binary is used. To
-obtain a new ticket the following command is used:
+Kerberos チケットを手動で管理するには、``kinit`` バイナリーを使用します。新しいチケットを取得するには、
+次のコマンドを使用します。
 
 .. code-block:: shell
 
     kinit username@MY.DOMAIN.COM
 
-.. Note:: The domain must match the configured Kerberos realm exactly, and must be in upper case.
+.. Note:: ドメインは設定された Kerberos レルムに完全に一致し、大文字である必要があります。
 
-To see what tickets (if any) have been acquired, use the following command:
+取得したチケット (存在する場合) を確認するには、以下のコマンドを使用します。
 
 .. code-block:: shell
 
     klist
 
-To destroy all the tickets that have been acquired, use the following command:
+取得したすべてのチケットを破棄するには、以下のコマンドを使用します。
 
 .. code-block:: shell
 
     kdestroy
 
-Troubleshooting Kerberos
+Kerberos のトラブルシューティング
 ++++++++++++++++++++++++
-Kerberos is reliant on a properly-configured environment to
-work. To troubleshoot Kerberos issues, ensure that:
+Kerberos は、
+正しく機能するように構成された環境に依存しています。Kerberos の問題のトラブルシューティングを行うには、
 
-* The hostname set for the Windows host is the FQDN and not an IP address.
+* Windows ホストのホスト名には、IP アドレスではなく FQDN であることを確認します。
 
-* The forward and reverse DNS lookups are working properly in the domain. To
-  test this, ping the windows host by name and then use the ip address returned
-  with ``nslookup``. The same name should be returned when using ``nslookup``
-  on the IP address.
+* 正引きおよび逆引きの DNS ルックアップがドメインで適切に機能しています。新しいチケットを取得するには、
+  Windows ホストを名前で ping し、
+  ``nslookup`` で返された IP アドレスを使用します。IP アドレスで ``nslookup`` を使用すると、
+  同じ名前が返されます。
 
-* The Ansible host's clock is synchronized with the domain controller. Kerberos
-  is time sensitive, and a little clock drift can cause the ticket generation
-  process to fail.
+* Ansible ホストのクロックはドメインコントローラーと同期します。Kerberos は時間に敏感であり、
+  わずかなクロックドリフトにより、
+  チケット生成プロセスが失敗する可能性があります。
 
-* Ensure that the fully qualified domain name for the domain is configured in
-  the ``krb5.conf`` file. To check this, run::
+* ドメインの完全修飾ドメイン名が、
+  ``krb5.conf`` ファイルで構成されていることを確認します。これを確認するには、以下を実行します。
 
     kinit -C username@MY.DOMAIN.COM
     klist
 
-  If the domain name returned by ``klist`` is different from the one requested,
-  an alias is being used. The ``krb5.conf`` file needs to be updated so that
-  the fully qualified domain name is used and not an alias.
+  ``klist`` によって返されるドメイン名が要求されたドメイン名とは異なる場合は、
+  エイリアスが使用されています。別名ではなく完全修飾ドメイン名が使用されるように、
+  ``krb5.conf`` ファイルを更新する必要があります。
 
-* If the default kerberos tooling has been replaced or modified (some IdM solutions may do this), this may cause issues when installing or upgrading the Python Kerberos library. As of the time of this writing, this library is called ``pykerberos`` and is known to work with both MIT and Heimdal Kerberos libraries. To resolve ``pykerberos`` installation issues, ensure the system dependencies for Kerberos have been met (see: `Installing the Kerberos Library`_), remove any custom Kerberos tooling paths from the PATH environment variable, and retry the installation of Python Kerberos library package.
+* デフォルトの kerberos ツールが置き換えられるか、または変更されている場合 (一部の IdM ソリューションでこれを行う場合があります) は、Python Kerberos ライブラリーのインストールまたはアップグレード時に問題が発生する可能性があります。本書の執筆時点では、このライブラリーは ``pykerberos`` と呼ばれ、MIT ライブラリーと、Heimdal Kerberos ライブラリーの両方と連携していることが知られています。``pykerberos`` のインストールの問題を解決するには、Kerberos のシステム依存関係が満たされていることを確認し (`Installing the Kerberos Library`_ を参照)、PATH 環境変数からカスタム Kerberos ツーリングパスをすべて削除し、Python Kerberos ライブラリーパッケージのインストールを再試行します。
 
 CredSSP
 -------
-CredSSP authentication is a newer authentication protocol that allows
-credential delegation. This is achieved by encrypting the username and password
-after authentication has succeeded and sending that to the server using the
-CredSSP protocol.
+CredSSP 認証は、
+認証情報の委譲を許可する新しい認証プロトコルです。これは、
+認証が成功した後にユーザー名とパスワードを暗号化し、
+それを CredSSP プロトコルを使用してサーバーに送信することにより実現されます。
 
-Because the username and password are sent to the server to be used for double
-hop authentication, ensure that the hosts that the Windows host communicates with are
-not compromised and are trusted.
+ユーザー名とパスワードはダブルホップ認証に使用されるサーバーに送信されるため、
+Windows ホストが通信するホストが危険にさらされておらず、
+信頼されていることを確認してください。
 
-CredSSP can be used for both local and domain accounts and also supports
-message encryption over HTTP.
+CredSSP は、ローカルアカウントとドメインアカウントの両方に使用でき、
+HTTP を介したメッセージ暗号化もサポートしています。
 
-To use CredSSP authentication, the host vars are configured like so:
+CredSSP 認証を使用するには、以下のようにホスト変数を設定します。
 
 .. code-block:: yaml+jinja
 
-    ansible_user: Username
-    ansible_password: Password
+    ansible_user:Username
+    ansible_password:Password
     ansible_connection: winrm
     ansible_winrm_transport: credssp
 
-There are some extra host variables that can be set as shown below::
+以下のように設定できる追加のホスト変数があります。
 
     ansible_winrm_credssp_disable_tlsv1_2: when true, will not use TLS 1.2 in the CredSSP auth process
 
-CredSSP authentication is not enabled by default on a Windows host, but can
-be enabled by running the following in PowerShell:
+CredSSP 認証は、Windows ホストではデフォルトで有効になっていませんが、
+PowerShell で次を実行することで有効にできます。
 
 .. code-block:: powershell
 
     Enable-WSManCredSSP -Role Server -Force
 
-Installing CredSSP Library
+CredSSP ライブラリーのインストール
 ++++++++++++++++++++++++++
 
-The ``requests-credssp`` wrapper can be installed using ``pip``:
+``requests-credssp`` ラッパーは、``pip`` を使用してインストールできます。
 
 .. code-block:: bash
 
     pip install pywinrm[credssp]
 
-CredSSP and TLS 1.2
+CredSSP および TLS 1.2
 +++++++++++++++++++
-By default the ``requests-credssp`` library is configured to authenticate over
-the TLS 1.2 protocol. TLS 1.2 is installed and enabled by default for Windows Server 2012
-and Windows 8 and more recent releases.
+デフォルトでは、``requests-credssp`` ライブラリーは、
+TLS 1.2 プロトコルを介して認証するように構成されています。TLS 1.2 は、
+Windows Server 2012 および Windows 8 以降のリリースではデフォルトでインストールおよび有効化されます。
 
-There are two ways that older hosts can be used with CredSSP:
+古いホストを CredSSP で使用できる方法は 2 つあります。
 
-* Install and enable a hotfix to enable TLS 1.2 support (recommended
-  for Server 2008 R2 and Windows 7).
+* ホットフィックスをインストールして有効にし、
+  TLS 1.2 サポートを有効にします (Server 2008 R2およびWindows 7に推奨)。
 
-* Set ``ansible_winrm_credssp_disable_tlsv1_2=True`` in the inventory to run
-  over TLS 1.0. This is the only option when connecting to Windows Server 2008, which
-  has no way of supporting TLS 1.2
+* インベントリーで ``ansible_winrm_credssp_disable_tlsv1_2=True`` を設定して、
+  TLS 1.0 で実行します。これは、
+  TLS 1.2 に対応する方法がない Windows Server 2008 に接続する場合の唯一のオプションです
 
-See :ref:`winrm_tls12` for more information on how to enable TLS 1.2 on the
-Windows host.
+Windows ホストで TLS 1.2 を有効にする方法の詳細は、
+「:ref:`winrm_tls12`」を参照してください。
 
-Set CredSSP Certificate
+CredSSP 証明書の設定
 +++++++++++++++++++++++
-CredSSP works by encrypting the credentials through the TLS protocol and uses a self-signed certificate by default. The ``CertificateThumbprint`` option under the WinRM service configuration can be used to specify the thumbprint of
-another certificate.
+CredSSP は TLS プロトコルを介して認証情報を暗号化することで機能し、デフォルトで自己署名証明書を使用します。WinRM サービス設定下の ``CertificateThumbprint`` オプションを使用して、
+別の証明書の拇印を指定できます。
 
-.. Note:: This certificate configuration is independent of the WinRM listener
-    certificate. With CredSSP, message transport still occurs over the WinRM listener,
-    but the TLS-encrypted messages inside the channel use the service-level certificate.
+.. Note:: この証明書設定は、
+    WinRM リスナーの証明書とは独立しています。CredSSP では、メッセージトランスポートは WinRM リスナー上で引き続き発生しますが、
+    チャンネル内の TLS 暗号化メッセージはサービスレベルの証明書を使用します。
 
-To explicitly set the certificate to use for CredSSP::
+CredSSP に使用する証明書を明示的に設定するには、以下を実行します。
 
     # Note the value $certificate_thumbprint will be different in each
     # situation, this needs to be set based on the cert that is used.
@@ -512,62 +512,62 @@ To explicitly set the certificate to use for CredSSP::
     # Set the thumbprint value
     Set-Item -Path WSMan:\localhost\Service\CertificateThumbprint -Value $certificate_thumbprint
 
-Non-Administrator Accounts
+管理者以外のアカウント
 ``````````````````````````
-WinRM is configured by default to only allow connections from accounts in the local
-``Administrators`` group. This can be changed by running:
+WinRM は、デフォルトで、
+ローカルの ``Administrators`` グループのアカウントからの接続のみを許可するように構成されています。これは以下を実行することで変更できます。
 
 .. code-block:: powershell
 
     winrm configSDDL default
 
-This will display an ACL editor, where new users or groups may be added. To run commands
-over WinRM, users and groups must have at least the ``Read`` and ``Execute`` permissions
-enabled.
+これにより ACL エディターが表示され、新規のユーザーまたはグループを追加できます。WinRM を介してコマンドを実行するには、
+ユーザーとグループに、少なくとも ``Read`` および ``Execute`` のパーミッションが
+有効になっている必要があります。
 
-While non-administrative accounts can be used with WinRM, most typical server administration
-tasks require some level of administrative access, so the utility is usually limited.
+非管理アカウントは WinRM で使用できますが、
+ほとんどの一般的なサーバー管理タスクにはある程度の管理アクセスが必要になるため、通常、ユーティリティーは制限されます。
 
-WinRM Encryption
+WinRM 暗号化
 ````````````````
-By default WinRM will fail to work when running over an unencrypted channel.
-The WinRM protocol considers the channel to be encrypted if using TLS over HTTP
-(HTTPS) or using message level encryption. Using WinRM with TLS is the
-recommended option as it works with all authentication options, but requires
-a certificate to be created and used on the WinRM listener.
+デフォルトでは、暗号化されていないチャンネルで実行すると WinRM は機能しません。
+WinRM プロトコルは、TLS over HTTP (HTTPS) またはメッセージレベルの暗号化を使用している場合は、
+チャンネルが暗号化されていると見なします。TLS での WinRM の使用は、
+すべての認証オプションで機能するため推奨されるオプションですが、
+WinRM リスナーで証明書を作成して使用する必要があります。
 
-The ``ConfigureRemotingForAnsible.ps1`` creates a self-signed certificate and
-creates the listener with that certificate. If in a domain environment, ADCS
-can also create a certificate for the host that is issued by the domain itself.
+``ConfigureRemotingForAnsible.ps1`` は自己署名証明書を作成し、
+その証明書を使用してリスナーを作成します。ドメイン環境の場合、
+ADCS はドメイン自体が発行するホストの証明書も作成できます。
 
-If using HTTPS is not an option, then HTTP can be used when the authentication
-option is ``NTLM``, ``Kerberos`` or ``CredSSP``. These protocols will encrypt
-the WinRM payload with their own encryption method before sending it to the
-server. The message-level encryption is not used when running over HTTPS because the
-encryption uses the more secure TLS protocol instead. If both transport and
-message encryption is required, set ``ansible_winrm_message_encryption=always``
-in the host vars.
+HTTPS の使用がオプションではない場合、
+認証オプションが ``NTLM``、``Kerberos``、または ``CredSSP`` の場合は HTTP を使用できます。これらのプロトコルは、
+サーバーに送信する前に、
+独自の暗号化方法で WinRM ペイロードを暗号化します。暗号化は、代わりにより安全な TLS プロトコルを使用するため、
+HTTPS で実行する場合、メッセージレベルの暗号化は使用されません。トランスポートとメッセージの両方の暗号化が必要な場合は、
+ホスト変数の ``ansible_winrm_message_encryption=always`` 
+を設定します。
 
-A last resort is to disable the encryption requirement on the Windows host. This
-should only be used for development and debugging purposes, as anything sent
-from Ansible can be viewed, manipulated and also the remote session can completely
-be taken over by anyone on the same network. To disable the encryption
-requirement::
+最後の手段は、Windows ホストの暗号化要件を無効にすることです。```` は POSIX システムでエスケープ文字として使用されることが多いため、
+操作でき、
+リモートセッションは同じネットワーク上の誰でも完全に引き継ぐことができるため、
+これは開発およびデバッグの目的でのみ使用する必要があります。暗号化要件を無効にするには、
+以下を使用します::
 
     Set-Item -Path WSMan:\localhost\Service\AllowUnencrypted -Value $true
 
-.. Note:: Do not disable the encryption check unless it is
-    absolutely required. Doing so could allow sensitive information like
-    credentials and files to be intercepted by others on the network.
+.. Note:: 絶対に必要でない限り、
+    暗号化チェックを無効にしないでください。これにより、
+    認証情報やファイルなどの機密情報がネットワーク上の他のユーザーに傍受される可能性があります。
 
-Inventory Options
+インベントリーオプション
 `````````````````
-Ansible's Windows support relies on a few standard variables to indicate the
-username, password, and connection type of the remote hosts. These variables
-are most easily set up in the inventory, but can be set on the ``host_vars``/
-``group_vars`` level.
+Ansible の Windows サポートは、
+いくつかの標準変数に依存して、リモートホストのユーザー名、パスワード、接続タイプを示します。これらの変数は、インベントリーで最も簡単に設定できますが、
+インベントリー最も簡単に設定できますが、``host_vars``/
+レベルまたは ``group_vars`` レベルで設定します。
 
-When setting up the inventory, the following variables are required:
+インベントリーを設定する際に、以下の変数が必要になります。
 
 .. code-block:: yaml+jinja
 
@@ -582,90 +582,90 @@ When setting up the inventory, the following variables are required:
     ansible_password: SecretPasswordGoesHere
 
 
-Using the variables above, Ansible will connect to the Windows host with Basic
-authentication through HTTPS. If ``ansible_user`` has a UPN value like
-``username@MY.DOMAIN.COM`` then the authentication option will automatically attempt
-to use Kerberos unless ``ansible_winrm_transport`` has been set to something other than
-``kerberos``.
+上記の変数を使用して、
+Ansible は HTTPS 経由の基本認証で Windows ホストに接続します。``ansible_user`` に ``username@MY.DOMAIN.COM`` のような UPN 値がある場合は、
+``ansible_winrm_transport`` が、
+``kerberos`` 以外に設定されていない限り、
+認証オプションは自動的に Kerberos を使用しようとします。
 
-The following custom inventory variables are also supported
-for additional configuration of WinRM connections:
+WinRM 接続の追加構成では、
+次のカスタムインベントリー変数も対応しています。
 
-* ``ansible_port``: The port WinRM will run over, HTTPS is ``5986`` which is
-  the default while HTTP is ``5985``
+* ``ansible_port``: WinRM が実行するポートは、HTTPS が ``5986`` で、これがデフォルトとなります。
+  HTTP は ``5985`` です。
 
-* ``ansible_winrm_scheme``: Specify the connection scheme (``http`` or
-  ``https``) to use for the WinRM connection. Ansible uses ``https`` by default
-  unless ``ansible_port`` is ``5985``
+* ``ansible_winrm_scheme``: WinRM 接続に使用する接続スキーム 
+  (``http`` または ``https``) を指定します。Ansible は、``ansible_port`` が ``5985`` でない限り、
+  デフォルトで ``https`` を使用します。
 
-* ``ansible_winrm_path``: Specify an alternate path to the WinRM endpoint,
-  Ansible uses ``/wsman`` by default
+* ``ansible_winrm_path``:WinRM エンドポイントへの代替パスを指定します。
+  Ansible はデフォルトで ``/wsman`` を使用します。
 
-* ``ansible_winrm_realm``: Specify the realm to use for Kerberos
-  authentication. If ``ansible_user`` contains ``@``, Ansible will use the part
-  of the username after ``@`` by default
+* ``ansible_winrm_realm``: Kerberos 
+  認証に使用するレルムを指定します。``ansible_user`` に ``@`` が含まれている場合、
+  Ansible は、
 
-* ``ansible_winrm_transport``: Specify one or more authentication transport
-  options as a comma-separated list. By default, Ansible will use ``kerberos,
-  basic`` if the ``kerberos`` module is installed and a realm is defined,
-  otherwise it will be ``plaintext``
+* デフォルトで ``ansible_winrm_transport`` の ``@`` に続くユーザー名の部分を使用します。1 つ以上の認証トランスポートオプションを
+  コンマ区切りリストとして指定します。デフォルトでは、Ansible は、
+  ``kerberos`` モジュールがインストールされていてレルムが定義されている場合は、``kerberos, basic`` を使用しますが、
+それ以外の場合は ``plaintext`` になります。
 
-* ``ansible_winrm_server_cert_validation``: Specify the server certificate
-  validation mode (``ignore`` or ``validate``). Ansible defaults to
-  ``validate`` on Python 2.7.9 and higher, which will result in certificate
-  validation errors against the Windows self-signed certificates. Unless
-  verifiable certificates have been configured on the WinRM listeners, this
-  should be set to ``ignore``
+* ``ansible_winrm_server_cert_validation``: サーバー証明書の検証モードを指定します 
+  (``ignore`` または ``validate``) です。Ansible は、
+  Python 2.7.9 以降では ``validate`` がデフォルトになります。
+  Windows 自己署名証明書に対して証明書検証エラーが発生します。WinRM リスナーで検証可能な証明書が構成されていない限り、
+  これは、
+  ``ignore`` に設定する必要があります。
 
-* ``ansible_winrm_operation_timeout_sec``: Increase the default timeout for
-  WinRM operations, Ansible uses ``20`` by default
+* ``ansible_winrm_operation_timeout_sec``: WinRM 操作のデフォルトのタイムアウトを増やします。
+  Ansible は、デフォルトで ``20`` を使用します。
 
-* ``ansible_winrm_read_timeout_sec``: Increase the WinRM read timeout, Ansible
-  uses ``30`` by default. Useful if there are intermittent network issues and
-  read timeout errors keep occurring
+* ``ansible_winrm_read_timeout_sec``: WinRM 読み取りタイムアウトを増やすと、
+  Ansible は、デフォルトで ``30`` を使用します。断続的なネットワークの問題があり、
+  読み取りタイムアウトエラーが引き続き発生する場合に役立ちます。
 
-* ``ansible_winrm_message_encryption``: Specify the message encryption
-  operation (``auto``, ``always``, ``never``) to use, Ansible uses ``auto`` by
-  default. ``auto`` means message encryption is only used when
-  ``ansible_winrm_scheme`` is ``http`` and ``ansible_winrm_transport`` supports
-  message encryption. ``always`` means message encryption will always be used
-  and ``never`` means message encryption will never be used
+* ``ansible_winrm_message_encryption``: 使用するメッセージ暗号化操作 (``auto``、``always``、``never``) をしています。
+  Ansible は、デフォルトで ``auto`` を使用します。
+  ``auto`` は、
+  ``ansible_winrm_scheme`` が ``http`` であり、``ansible_winrm_transport`` がメッセージの暗号化をサポートしている場合にのみ、メッセージの暗号化が使用されることを意味します。
+  ``always`` は、メッセージの暗号化が使用されることを意味します。
+  ``never`` は、メッセージ暗号化が使用されないことを意味します。
 
-* ``ansible_winrm_ca_trust_path``: Used to specify a different cacert container
-  than the one used in the ``certifi`` module. See the HTTPS Certificate
-  Validation section for more details.
+* ``ansible_winrm_ca_trust_path``:``certifi`` モジュールで使用されるものとは異なる 
+  cacert コンテナーを指定するために使用されます。HTTPS 証明書を参照してください。
+  詳細は、「検証」セクションを参照してください。
 
-* ``ansible_winrm_send_cbt``: When using ``ntlm`` or ``kerberos`` over HTTPS,
-  the authentication library will try to send channel binding tokens to
-  mitigate against man in the middle attacks. This flag controls whether these
-  bindings will be sent or not (default: ``yes``).
+* ``ansible_winrm_send_cbt``: HTTPS を介して ``ntlm`` または ``kerberos`` を使用すると、
+  認証ライブラリーは、中間者攻撃を軽減するために、
+  チャンネルバインディングトークンを送信しようとします。このフラグは、このようなバインディングが送信されるかどうかを制御します 
+  (デフォルト: ``yes``)。
 
-* ``ansible_winrm_*``: Any additional keyword arguments supported by
-  ``winrm.Protocol`` may be provided in place of ``*``
+* ``ansible_winrm_*``: ``*`` の代わりに、
+  ``winrm.Protocol`` でサポートされる追加のキーワード引数が提供されます。
 
-In addition, there are also specific variables that need to be set
-for each authentication option. See the section on authentication above for more information.
+さらに、
+認証オプションごとに設定する必要がある特定の変数もあります。詳細は、上記の認証のセクションを参照してください。
 
-.. Note:: Ansible 2.0 has deprecated the "ssh" from ``ansible_ssh_user``,
-    ``ansible_ssh_pass``, ``ansible_ssh_host``, and ``ansible_ssh_port`` to
-    become ``ansible_user``, ``ansible_password``, ``ansible_host``, and
-    ``ansible_port``. If using a version of Ansible prior to 2.0, the older
-    style (``ansible_ssh_*``) should be used instead. The shorter variables
-    are ignored, without warning, in older versions of Ansible.
+.. Note:: Ansible 2.0 で、``ansible_ssh_user``、
+    ``ansible_ssh_pass``、``ansible_ssh_host``、および ``ansible_ssh_port`` が廃止され、
+    ``ansible_user``、``ansible_password``、``ansible_host``、
+    および ``ansible_port`` になりました。2.0 より前のバージョンの Ansible を使用している場合は、
+    古いスタイル (``ansible_ssh_*``) を代わりに使用する必要があります。Ansible の古いバージョンでは、
+    短い変数は警告なしに無視されます。
 
-.. Note:: ``ansible_winrm_message_encryption`` is different from transport
-    encryption done over TLS. The WinRM payload is still encrypted with TLS
-    when run over HTTPS, even if ``ansible_winrm_message_encryption=never``.
+.. Note:: ``ansible_winrm_message_encryption`` は、
+    TLS を介して行われるトランスポートの暗号化とは異なります。WinRM ペイロードは、
+    たとえ ``ansible_winrm_message_encryption=never`` であっても、HTTPS で実行された場合でも TLS で暗号化されます。
 
-IPv6 Addresses
+IPv6 アドレス
 ``````````````
-IPv6 addresses can be used instead of IPv4 addresses or hostnames. This option
-is normally set in an inventory. Ansible will attempt to parse the address
-using the `ipaddress <https://docs.python.org/3/library/ipaddress.html>`_
-package and pass to pywinrm correctly.
+IPv6 アドレスは、IPv4 アドレスまたはホスト名の代わりに使用できます。このオプションは、
+通常、インベントリーに設定されます。Ansible は、
+`ipaddress <https://docs.python.org/3/library/ipaddress.html>`_ パッケージを使用してアドレスを解析し、
+pywinrm に正しく渡そうとします。
 
-When defining a host using an IPv6 address, just add the IPv6 address as you
-would an IPv4 address or hostname:
+IPv6 アドレスを使用してホストを定義する場合は、
+IPv4 アドレスまたはホスト名と同じように IPv6 アドレスを追加するだけです。
 
 .. code-block:: ini
 
@@ -678,76 +678,76 @@ would an IPv4 address or hostname:
     ansible_connection=winrm
 
 
-.. Note:: The ipaddress library is only included by default in Python 3.x. To
-    use IPv6 addresses in Python 2.7, make sure to run ``pip install ipaddress`` which installs
-    a backported package.
+.. Note:: ipaddress ライブラリーは、デフォルトで Python 3.x にのみ含まれています。Python 2.7 で IPv6 アドレスを使用するには、
+    バックポートされたパッケージをインストールする ``pip install ipaddress`` 
+    を実行してください。
 
-HTTPS Certificate Validation
+HTTPS 証明書の検証
 ````````````````````````````
-As part of the TLS protocol, the certificate is validated to ensure the host
-matches the subject and the client trusts the issuer of the server certificate.
-When using a self-signed certificate or setting
-``ansible_winrm_server_cert_validation: ignore`` these security mechanisms are
-bypassed. While self signed certificates will always need the ``ignore`` flag,
-certificates that have been issued from a certificate authority can still be
-validated.
+TLS プロトコルの一部として、証明書が検証され、ホストがサブジェクトと一致し、
+クライアントがサーバー証明書の発行者を信頼していることを確認します。
+自己署名証明書、
+または ``ansible_winrm_server_cert_validation: ignore`` 設定を使用する場合は、
+これらのセキュリティーメカニズムを無視します。自己署名証明書は常に ``ignore`` フラグが必要ですが、
+認証局から発行された証明書は
+引き続き検証できます。
 
-One of the more common ways of setting up a HTTPS listener in a domain
-environment is to use Active Directory Certificate Service (AD CS). AD CS is
-used to generate signed certificates from a Certificate Signing Request (CSR).
-If the WinRM HTTPS listener is using a certificate that has been signed by
-another authority, like AD CS, then Ansible can be set up to trust that
-issuer as part of the TLS handshake.
+ドメイン環境で HTTPS リスナーを設定するより一般的な方法の 1 つは、
+Active Directory 証明書サービス (AD CS) を使用することです。AD CS は、
+証明書署名要求 (CSR) から署名付き証明書を生成するために使用されます。
+WinRM HTTPS リスナーが AD CS などの別の機関によって署名された証明書を使用している場合は、
+TLS ハンドシェイクの一部としてその発行者を信頼するように 
+Ansible を設定できます。
 
-To get Ansible to trust a Certificate Authority (CA) like AD CS, the issuer
-certificate of the CA can be exported as a PEM encoded certificate. This
-certificate can then be copied locally to the Ansible controller and used as a
-source of certificate validation, otherwise known as a CA chain.
+Ansible が AD CS のような認証局 (CA) を信頼できるようにするには、
+CA の発行者証明書を PEM エンコードされた証明書としてエクスポートできます。```` は POSIX システムでエスケープ文字として使用されることが多いため、
+証明書検証のソースとして使用できます。
+これは、CA チェーンとも呼ばれます。
 
-The CA chain can contain a single or multiple issuer certificates and each
-entry is contained on a new line. To then use the custom CA chain as part of
-the validation process, set ``ansible_winrm_ca_trust_path`` to the path of the
-file. If this variable is not set, the default CA chain is used instead which
-is located in the install path of the Python package
-`certifi <https://github.com/certifi/python-certifi>`_.
+CA チェーンには、1 つまたは複数の発行者証明書を含めることができ、
+各エントリーは新しい行に含まれます。次に、検証プロセスの一部としてカスタム CA チェーンを使用するには、
+``ansible_winrm_ca_trust_path`` 
+をファイルのパスに設定します。この変数が設定されていない場合は、
+Python パッケージ 
+`certifi <https://github.com/certifi/python-certifi>`_ のインストールパスにあるデフォルトの CA チェーンが代わりに使用されます。
 
-.. Note:: Each HTTP call is done by the Python requests library which does not
-    use the systems built-in certificate store as a trust authority.
-    Certificate validation will fail if the server's certificate issuer is
-    only added to the system's truststore.
+.. Note:: 各 HTTP 呼び出しは、
+    システムに組み込まれた証明書ストアを信頼機関として使用しない Python 要求ライブラリーによって実行されます。
+    サーバーの証明書発行者がシステムのトラストストアにのみ追加されている場合、
+    証明書の検証は失敗します。
 
 .. _winrm_tls12:
 
-TLS 1.2 Support
+TLS 1.2 のサポート
 ```````````````
-As WinRM runs over the HTTP protocol, using HTTPS means that the TLS protocol
-is used to encrypt the WinRM messages. TLS will automatically attempt to
-negotiate the best protocol and cipher suite that is available to both the
-client and the server. If a match cannot be found then Ansible will error out
-with a message similar to::
+WinRM は HTTP プロトコルで実行されるため、
+HTTPS を使用すると、TLS プロトコルが WinRM メッセージの暗号化に使用されます。TLS は、
+クライアントとサーバーの両方で、
+利用可能な最適なプロトコルと暗号スイートを自動的にネゴシエートしようとします。一致が見つからない場合、
+Ansible は次のようなメッセージでエラーを出力します。
 
-    HTTPSConnectionPool(host='server', port=5986): Max retries exceeded with url: /wsman (Caused by SSLError(SSLError(1, '[SSL: UNSUPPORTED_PROTOCOL] unsupported protocol (_ssl.c:1056)')))
+    HTTPSConnectionPool(host='server', port=5986):Max retries exceeded with url: /wsman (Caused by SSLError(SSLError(1, '[SSL: UNSUPPORTED_PROTOCOL] unsupported protocol (_ssl.c:1056)')))
 
-Commonly this is when the Windows host has not been configured to support
-TLS v1.2 but it could also mean the Ansible controller has an older OpenSSL
-version installed.
+一般的に、
+これは Windows ホストが TLS v1.2 に対応するように構成されていない場合ですが、
+Ansible コントローラーに古い OpenSSL バージョンがインストールされていることを意味する場合もあります。
 
-Windows 8 and Windows Server 2012 come with TLS v1.2 installed and enabled by
-default but older hosts, like Server 2008 R2 and Windows 7, have to be enabled
-manually.
+Windows 8 と Windows Server 2012 には TLS v1.2 がインストールされ、
+デフォルトで有効になっていますが、
+Server 2008 R2 や Windows 7 などの古いホストは手動で有効にする必要があります。
 
-.. Note:: There is a bug with the TLS 1.2 patch for Server 2008 which will stop
-    Ansible from connecting to the Windows host. This means that Server 2008
-    cannot be configured to use TLS 1.2. Server 2008 R2 and Windows 7 are not
-    affected by this issue and can use TLS 1.2.
+.. Note:: Server 2008 の TLS 1.2 パッチには、
+    Ansible が Windows ホストに接続するのを停止するバグがあります。これは、
+    TLS 1.2 を使用するように Server 2008 を構成できないことを意味します。Server 2008 R2 および Windows 7 はこの問題の影響を受けず、
+    TLS 1.2 を使用できます。
 
-To verify what protocol the Windows host supports, you can run the following
-command on the Ansible controller::
+Windows ホストが対応しているプロトコルを確認するには、
+Ansible コントローラーで次のコマンドを実行します::
 
     openssl s_client -connect <hostname>:5986
 
-The output will contain information about the TLS session and the ``Protocol``
-line will display the version that was negotiated::
+出力には TLS セッションに関する情報が含まれ、
+``Protocol`` 行にはネゴシエートされたバージョンが表示されます。
 
     New, TLSv1/SSLv3, Cipher is ECDHE-RSA-AES256-SHA
     Server public key is 2048 bit
@@ -782,9 +782,9 @@ line will display the version that was negotiated::
         Timeout   : 7200 (sec)
         Verify return code: 21 (unable to verify the first certificate)
 
-If the host is returning ``TLSv1`` then it should be configured so that
-TLS v1.2 is enable. You can do this by running the following PowerShell
-script:
+ホストが ``TLSv1`` を返す場合は、
+TLS v1.2 が有効になるように構成する必要があります。これを行うには、
+次の PowerShell スクリプトを実行します。
 
 .. code-block:: powershell
 
@@ -807,7 +807,7 @@ script:
 
     Restart-Computer
 
-The below Ansible tasks can also be used to enable TLS v1.2:
+以下の Ansible タスクを使用して TLS v1.2 を有効にすることもできます。
 
 .. code-block:: yaml+jinja
 
@@ -836,58 +836,58 @@ The below Ansible tasks can also be used to enable TLS v1.2:
     - name: reboot if TLS config was applied
       win_reboot:
       when: enable_tls12 is changed
+    
+Windows ホストが提供する暗号スイートと同様に、
+TLS プロトコルを構成する方法は他にもあります。このような設定を管理する GUI を提供できるツールの 1 つに、
+Nartac Software 社の「`IIS Crypto <https://www.nartac.com/Products/IISCrypto/>`_」
+が
 
-There are other ways to configure the TLS protocols as well as the cipher
-suites that are offered by the Windows host. One tool that can give you a GUI
-to manage these settings is `IIS Crypto <https://www.nartac.com/Products/IISCrypto/>`_
-from Nartac Software.
-
-Limitations
+あります。
 ```````````
-Due to the design of the WinRM protocol , there are a few limitations
-when using WinRM that can cause issues when creating playbooks for Ansible.
-These include:
+WinRM プロトコルの設計により、WinRM を使用するときにいくつかの制限があり、
+Ansible の Playbook を作成するときに問題が発生する可能性があります。
+これには、以下が含まれます。
 
-* Credentials are not delegated for most authentication types, which causes
-  authentication errors when accessing network resources or installing certain
-  programs.
+* 認証情報はほとんどの認証タイプに委譲されないため、
+  ネットワークリソースにアクセスしたり、
+  特定のプログラムをインストールするときに認証エラーが発生します。
 
-* Many calls to the Windows Update API are blocked when running over WinRM.
+* WinRM 経由で実行すると、Windows Update API への多くの呼び出しがブロックされます。
 
-* Some programs fail to install with WinRM due to no credential delegation or
-  because they access forbidden Windows API like WUA over WinRM.
+* 認証情報の委譲がない、または WinRM 経由の WUA などの禁止 Windows API にアクセスするため、
+  一部のプログラムは WinRM でインストールできません。
 
-* Commands under WinRM are done under a non-interactive session, which can prevent
-  certain commands or executables from running.
+* WinRM の下のコマンドは、非対話型セッションで実行されます。
+  これにより、特定のコマンドまたは実行ファイルの実行が妨げられる可能性があります。
 
-* You cannot run a process that interacts with ``DPAPI``, which is used by some
-  installers (like Microsoft SQL Server).
+* 一部のインストーラー (Microsoft SQL Server など) で使用される ``DPAPI`` 
+  と対話するプロセスを実行することはできません。
 
-Some of these limitations can be mitigated by doing one of the following:
+この制限の一部は、以下のいずれかを実行して軽減できます。
 
-* Set ``ansible_winrm_transport`` to ``credssp`` or ``kerberos`` (with
-  ``ansible_winrm_kerberos_delegation=true``) to bypass the double hop issue
-  and access network resources
+* (``ansible_winrm_kerberos_delegation=true`` で) ``ansible_winrm_transport`` を ``credssp`` または ``kerberos`` に設定し、
+  ダブルホップの問題を回避します。
+  ネットワークリソースへアクセスします。
 
-* Use ``become`` to bypass all WinRM restrictions and run a command as it would
-  locally. Unlike using an authentication transport like ``credssp``, this will
-  also remove the non-interactive restriction and API restrictions like WUA and
-  DPAPI
+* すべての WinRM 制限を回避し、ローカルと同じようにコマンドを実行するには、``become`` 
+  を使用します。``credssp`` のような認証トランスポートを使用する場合とは異なり、
+  これは非インタラクティブな制限と、
+  WUA や DPAPI などの API 制限も削除します。
 
-* Use a scheduled task to run a command which can be created with the
-  ``win_scheduled_task`` module. Like ``become``, this bypasses all WinRM
-  restrictions but can only run a command and not modules.
+* スケジュールされたタスクを使用して、
+  ``win_scheduled_task`` モジュールで作成できるコマンドを実行します。``become`` になるように、
+  これはすべての WinRM 制限を回避して、モジュールではなくコマンドのみを実行できます。
 
 
 .. seealso::
 
    :ref:`playbooks_intro`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_best_practices`
-       Best practices advice
-   :ref:`List of Windows Modules <windows_modules>`
-       Windows specific module list, all implemented in PowerShell
-   `User Mailing List <https://groups.google.com/group/ansible-project>`_
-       Have a question?  Stop by the google group!
+       ベストプラクティスのアドバイス
+   :ref:`Windows モジュールリスト <windows_modules>`
+       Windows 固有のモジュールリスト (すべて PowerShell に実装)
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

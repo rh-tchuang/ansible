@@ -2,35 +2,35 @@
 .. _dynamic_inventory:
 
 ******************************
-Working with dynamic inventory
+動的インベントリーの使用
 ******************************
 
 .. contents::
    :local:
 
-If your Ansible inventory fluctuates over time, with hosts spinning up and shutting down in response to business demands, the static inventory solutions described in :ref:`inventory` will not serve your needs. You may need to track hosts from multiple sources: cloud providers, LDAP, `Cobbler <https://cobbler.github.io>`_, and/or enterprise CMDB systems.
+ビジネスニーズに応じてホストを起動またはャットダウンすることで Ansible インベントリーが時間の経過と共に変動する場合は、:ref:`インベントリー` で説明されている静的なインベントリーソリューションではユーザーのニーズに応えることができません。クラウドプロバイダー、LDAP、`Cobbler <https://cobbler.github.io>`_、エンタープライズ CMDB システムなどの複数のソースからホストを追跡することが必要になる場合があります。
 
-Ansible integrates all of these options via a dynamic external inventory system. Ansible supports two ways to connect with external inventory:  :ref:`inventory_plugins` and `inventory scripts <https://github.com/ansible/ansible/tree/devel/contrib/inventory>`_.
+Ansible は、動的な外部インベントリーシステムでこのオプションをすべて統合します。Ansible は、:ref:`inventory_plugins` および `インベントリースクリプト <https://github.com/ansible/ansible/tree/devel/contrib/inventory>`_ の 2 つの方法で外部インベントリーに接続します。
 
-Inventory plugins take advantage of the most recent updates to the Ansible core code. We recommend plugins over scripts for dynamic inventory. You can :ref:`write your own plugin <developing_inventory>` to connect to additional dynamic inventory sources.
+インベントリープラグインは、Ansible コアコードへの最新の更新を利用します。動的インベントリーのスクリプトには、プラグインを使用することが推奨されます。追加の動的インベントリーソースに接続する :ref:`独自のプラグインを記述<developing_inventory>` できます
 
-You can still use inventory scripts if you choose. When we implemented inventory plugins, we ensured backwards compatibility via the script inventory plugin. The examples below illustrate how to use inventory scripts.
+選択した場合には、インベントリースクリプトを使用できます。インベントリープラグインを実装すると、スクリプトインベントリープラグインを介して後方互換性が確保されます。以下の例は、インベントリースクリプトの使用方法を示しています。
 
-If you would like a GUI for handling dynamic inventory, the :ref:`ansible_tower` inventory database syncs with all your dynamic inventory sources, provides web and REST access to the results, and offers a graphical inventory editor. With a database record of all of your hosts, you can correlate past event history and see which hosts have had failures on their last playbook runs.
+動的インベントリーの対応に GUI が必要な場合は、:ref:`ansible_tower` インベントリーデータベースがすべての動的インベントリーソースと同期し、その結果への Web および REST アクセスを提供し、グラフィカルインベントリーエディターを提供します。すべてのホストのデータベースレコードを使用して、過去のイベント履歴を関連付け、最後の Playbook の実行でどのホストに障害が発生したかを確認できます。
 
 .. _cobbler_example:
 
-Inventory script example: Cobbler
+インベントリースクリプトの例:Cobbler
 =================================
 
-Ansible integrates seamlessly with `Cobbler <https://cobbler.github.io>`_, a Linux installation server originally written by Michael DeHaan and now led by James Cammarata, who works for Ansible.
+Ansible は、Linux インストールサーバー `Cobbler <https://cobbler.github.io>`_ (最初に Michael DeHaan が作成し、現在は Ansible に所属する James Cammarata が率いています) とシームレスに統合されます。
 
-While primarily used to kickoff OS installations and manage DHCP and DNS, Cobbler has a generic
-layer that can represent data for multiple configuration management systems (even at the same time) and serve as a 'lightweight CMDB'.
+Cobbler は主に OS のインストールを開始し、DHCP と DNS を管理するために使用されますが、
+複数の構成管理システムのデータを (同時にでも) 表現し、「軽量CMDB」として機能する汎用レイヤーがあります。
 
-To tie your Ansible inventory to Cobbler, copy `this script <https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/cobbler.py>`_ to ``/etc/ansible`` and ``chmod +x`` the file. Run ``cobblerd`` any time you use Ansible and use the ``-i`` command line option (e.g. ``-i /etc/ansible/cobbler.py``) to communicate with Cobbler using Cobbler's XMLRPC API.
+Ansible インベントリーを Cobbler に関連付けるには、`このスクリプト<https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/cobbler.py>`_ を ``/etc/ansible`` および ``chmod +x`` ファイルにコピーします。Ansible を使用する場合はいつでも ``cobblerd`` を実行し、``-i`` コマンドラインオプション (``-i /etc/ansible/cobbler.py`` など) を使用して、Cobbler の XMLRPC API を使用して Cobbler と通信します。
 
-Add a ``cobbler.ini`` file in ``/etc/ansible`` so Ansible knows where the Cobbler server is and some cache improvements can be used. For example:
+Ansible が Cobbler サーバーの場所を認識し、キャッシュが改善されるように ``/etc/ansible`` に ``cobbler.ini`` ファイルを追加します。以下に例を示します。
 
 .. code-block:: text
 
@@ -53,9 +53,9 @@ Add a ``cobbler.ini`` file in ``/etc/ansible`` so Ansible knows where the Cobble
     cache_max_age = 900
 
 
-First test the script by running ``/etc/ansible/cobbler.py`` directly.   You should see some JSON data output, but it may not have anything in it just yet.
+まず ``/etc/ansible/cobbler.py`` を直接実行して、このスクリプトをテストします。  JSON データの出力が表示されますが、まだ何も含まれていない場合もあります。
 
-Let's explore what this does.  In Cobbler, assume a scenario somewhat like the following:
+これが何をするのか見てみましょう。 Cobbler では、以下のようなシナリオを想定しています。
 
 .. code-block:: bash
 
@@ -64,16 +64,16 @@ Let's explore what this does.  In Cobbler, assume a scenario somewhat like the f
     cobbler system edit --name=foo --dns-name="foo.example.com" --mgmt-classes="atlanta" --ksmeta="c=4"
     cobbler system edit --name=bar --dns-name="bar.example.com" --mgmt-classes="atlanta" --ksmeta="c=5"
 
-In the example above, the system 'foo.example.com' are addressable by ansible directly, but are also addressable when using the group names 'webserver' or 'atlanta'.  Since Ansible uses SSH, it contacts system foo over 'foo.example.com', only, never just 'foo'.  Similarly, if you try "ansible foo" it wouldn't find the system... but "ansible 'foo*'" would, because the system DNS name starts with 'foo'.
+上記の例では、「foo.example.com」システムは Ansible で直接アドレスを指定できますが、グループ名「webserver」または「Atlanta」を使用する場合にもアドレスを指定できます。 Ansible は SSH を使用するため、「foo.example.com」(foo ではなく) を介してシステム foo と通信します。 同様に、システムの DNS 名が「foo」で始まるため、「ansible foo」を試してもシステムは見つかりませんが、「ansible 'foo*」にすると見つかります。
 
-The script provides more than host and group info.  In addition, as a bonus, when the 'setup' module is run (which happens automatically when using playbooks), the variables 'a', 'b', and 'c' will all be auto-populated in the templates:
+このスクリプトは、ホストおよびグループの情報よりも多くの情報を提供します。 さらに、(Playbook を使用する際に自動的に実行される)「setup」モジュールが実行すると、変数「a」、「b」、および「c」 はすべてテンプレートに自動入力されるようになります。
 
 .. code-block:: text
 
     # file: /srv/motd.j2
     Welcome, I am templated with a value of a={{ a }}, b={{ b }}, and c={{ c }}
 
-Which could be executed just like this:
+これは以下のように実行できます。
 
 .. code-block:: bash
 
@@ -81,63 +81,63 @@ Which could be executed just like this:
     ansible webserver -m template -a "src=/tmp/motd.j2 dest=/etc/motd"
 
 .. note::
-   The name 'webserver' came from Cobbler, as did the variables for
-   the config file.  You can still pass in your own variables like
-   normal in Ansible, but variables from the external inventory script
-   will override any that have the same name.
+   設定ファイルの変数と同様に、
+   「webserver」は Cobbler のものです。 Ansible では、通常どおりに独自の変数を渡すことはできますが、
+   外部インベントリースクリプトの変数が、
+   同じ名前の変数を上書きします。
 
-So, with the template above (``motd.j2``), this would result in the following data being written to ``/etc/motd`` for system 'foo':
+そのため、上記のテンプレート (``motd.j2``) を使用すると、システムの「foo」用に、以下のデータが ``/etc/motd`` に書き込まれます。
 
 .. code-block:: text
 
     Welcome, I am templated with a value of a=2, b=3, and c=4
 
-And on system 'bar' (bar.example.com):
+システム「bar」 (bar.example.com) は、以下のようになります。
 
 .. code-block:: text
 
     Welcome, I am templated with a value of a=2, b=3, and c=5
 
-And technically, though there is no major good reason to do it, this also works too:
+技術的には、これを行う大きな正当な理由はありませんが、これも機能します。
 
 .. code-block:: bash
 
     ansible webserver -m shell -a "echo {{ a }}"
 
-So in other words, you can use those variables in arguments/actions as well.
+つまり、引数やアクションでこの変数を使用することもできます。
 
 .. _aws_example:
 
-Inventory script example: AWS EC2
+インベントリースクリプトの例:AWS EC2
 =================================
 
-If you use Amazon Web Services EC2, maintaining an inventory file might not be the best approach, because hosts may come and go over time, be managed by external applications, or you might even be using AWS autoscaling. For this reason, you can use the `EC2 external inventory  <https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/ec2.py>`_ script.
+Amazon Web Services EC2 を使用している場合は、時間とともにホストが起動またはシャットダウンして外部アプリケーションにより管理されたり、AWS 自動スケーリングを使用している場合もあるため、インベントリーファイルを維持することが最良の方法ではない可能性があります。このため、`EC2 の外部インベントリー<https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/ec2.py>`_ スクリプトを使用できます。
 
-You can use this script in one of two ways. The easiest is to use Ansible's ``-i`` command line option and specify the path to the script after marking it executable:
+このスクリプトは、以下のいずれかの方法で使用できます。最も簡単な方法は、Ansible の ``-i`` コマンドラインオプションを使用し、スクリプトを実行ファイルとした後、スクリプトへのパスを指定することです。
 
 .. code-block:: bash
 
     ansible -i ec2.py -u ubuntu us-east-1d -m ping
 
-The second option is to copy the script to `/etc/ansible/hosts` and `chmod +x` it. You must also copy the `ec2.ini  <https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/ec2.ini>`_ file to `/etc/ansible/ec2.ini`. Then you can run ansible as you would normally.
+次のオプションとして、スクリプトを `/etc/ansible/hosts` にコピーし `chmod +x` を設定します。`ec2.ini <https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/ec2.ini>`_ ファイルを `/etc/ansible/ec2.ini` にコピーする必要もあります。通常どおりに Ansible を実行できます。
 
-To make a successful API call to AWS, you must configure Boto (the Python interface to AWS). You can do this in `several ways <http://docs.pythonboto.org/en/latest/boto_config_tut.html>`_ available, but the simplest is to export two environment variables:
+AWS への API 呼び出しを正常に行うには、Boto (AWS への Python インターフェース) を設定する必要があります。この `方法いくつか<http://docs.pythonboto.org/en/latest/boto_config_tut.html>`_ ありますが、最も簡単なのは 2 つの環境変数をエクスポートすることです。
 
 .. code-block:: bash
 
     export AWS_ACCESS_KEY_ID='AK123'
     export AWS_SECRET_ACCESS_KEY='abc123'
 
-You can test the script by itself to make sure your config is correct:
+スクリプトを単独でテストして、設定が正しいことを確認できます。
 
 .. code-block:: bash
 
     cd contrib/inventory
     ./ec2.py --list
 
-After a few moments, you should see your entire EC2 inventory across all regions in JSON.
+しばらくすると、JSON のすべてのリージョンに EC2 インベントリー全体が表示されます。
 
-If you use Boto profiles to manage multiple AWS accounts, you can pass ``--profile PROFILE`` name to the ``ec2.py`` script. An example profile might be:
+Boto プロファイルを使用して複数の AWS アカウントを管理する場合は、``--profile PROFILE`` 名を ``ec2.py`` スクリプトに渡すことができます。プロファイルの例は以下のようになります。
 
 .. code-block:: text
 
@@ -149,12 +149,12 @@ If you use Boto profiles to manage multiple AWS accounts, you can pass ``--profi
     aws_access_key_id = <prod access key>
     aws_secret_access_key = <prod secret key>
 
-You can then run ``ec2.py --profile prod`` to get the inventory for the prod account, although this option is not supported by ``ansible-playbook``.
-You can also use the ``AWS_PROFILE`` variable - for example: ``AWS_PROFILE=prod ansible-playbook -i ec2.py myplaybook.yml``
+その後、``ec2.py --profile prod`` を実行して、prod アカウントのインベントリーを取得できますが、このオプションは ``ansible-playbook`` ではサポートされません。
+``AWS_PROFILE`` 変数を使用することもできます。以下に例を示します。``AWS_PROFILE=prod ansible-playbook -i ec2.py myplaybook.yml``
 
-Since each region requires its own API call, if you are only using a small set of regions, you can edit the ``ec2.ini`` file and comment out the regions you are not using.
+各リージョンには独自の API 呼び出しが必要であるため、小規模なリージョンセットのみを使用している場合は、``ec2.ini`` ファイルを編集して、使用していないリージョンをコメントアウトできます。
 
-There are other config options in ``ec2.ini``, including cache control and destination variables. By default, the ``ec2.ini`` file is configured for **all Amazon cloud services**, but you can comment out any features that aren't applicable. For example, if you don't have ``RDS`` or ``elasticache``, you can set them to ``False`` :
+キャッシュ制御や宛先変数など、``ec2.ini`` にはその他の設定オプションがあります。デフォルトでは、``ec2.ini`` ファイルは **すべての Amazon クラウドサービス** に対して設定されますが、適用できない機能はコメントアウトできます。たとえば、``RDS`` または ``elasticache`` がない場合は、その機能を ``False`` に設定できます。
 
 .. code-block:: text
 
@@ -168,48 +168,48 @@ There are other config options in ``ec2.ini``, including cache control and desti
     elasticache = False
     ...
 
-At their heart, inventory files are simply a mapping from some name to a destination address. The default ``ec2.ini`` settings are configured for running Ansible from outside EC2 (from your laptop for example) -- and this is not the most efficient way to manage EC2.
+基本的に、インベントリーファイルは単に名前から宛先アドレスへのマッピングです。デフォルトの ``ec2.ini`` 設定は、EC2 以外 (ノートパソコンなど) で Ansible を実行するように構成されています。これは EC2 を管理する最も効率的な方法ではありません。
 
-If you are running Ansible from within EC2, internal DNS names and IP addresses may make more sense than public DNS names. In this case, you can modify the ``destination_variable`` in ``ec2.ini`` to be the private DNS name of an instance. This is particularly important when running Ansible within a private subnet inside a VPC, where the only way to access an instance is via its private IP address. For VPC instances, `vpc_destination_variable` in ``ec2.ini`` provides a means of using which ever `boto.ec2.instance variable <http://docs.pythonboto.org/en/latest/ref/ec2.html#module-boto.ec2.instance>`_ makes the most sense for your use case.
+EC2 内から Ansible を実行している場合には、内部 DNS 名および IP アドレスの方がパブリック DNS 名よりも推奨されます。この場合は、``ec2.ini`` の ``destination_variable`` をインスタンスのプライベート DNS 名に変更できます。これは、VPC 内のプライベートサブネット内で Ansible を実行する場合に特に重要になります。インスタンスにアクセスする唯一の方法は、プライベート IP アドレスを使用する方法です。VPC インスタンスの場合、``ec2.ini`` の `vpc_destination_variable` は、`boto.ec2.instance variable <http://docs.pythonboto.org/en/latest/ref/ec2.html#module-boto.ec2.instance>`_ を使用してお客様の環境に最も適した方法を提供します。
 
-The EC2 external inventory provides mappings to instances from several groups:
+EC2 外部インベントリーは、複数のグループからインスタンスへのマッピングを提供します。
 
-Global
-  All instances are in group ``ec2``.
+グローバル
+  すべてのインスタンスは、グループ ``ec2`` にあります。
 
-Instance ID
-  These are groups of one since instance IDs are unique.
-  e.g.
+インスタンス ID
+  インスタンス ID は一意であるため、これはインスタンス ID のグループです。
+  (例: 
   ``i-00112233``
-  ``i-a1b1c1d1``
+  ``i-a1b1c1d1``)
 
-Region
-  A group of all instances in an AWS region.
-  e.g.
+リージョン
+  AWS リージョンのすべてのインスタンスのグループです。
+  (例: 
   ``us-east-1``
-  ``us-west-2``
+  ``us-west-2``)
 
-Availability Zone
-  A group of all instances in an availability zone.
-  e.g.
+アベイラビリティーゾーン
+  アベイラビリティーゾーン内のすべてのインスタンスのグループです。
+  (例: 
   ``us-east-1a``
-  ``us-east-1b``
+  ``us-east-1b``)
 
-Security Group
-  Instances belong to one or more security groups. A group is created for each security group, with all characters except alphanumerics, converted to underscores (_). Each group is prefixed by ``security_group_``. Currently, dashes (-) are also converted to underscores (_). You can change using the replace_dash_in_groups setting in ec2.ini (this has changed across several versions so check the ec2.ini for details).
-  e.g.
+セキュリティーグループ
+  インスタンスは複数のセキュリティーグループに属します。セキュリティーグループごとにグループが作成され、英数字以外のすべての文字がアンダースコア (_) に変換されます。各グループの先頭には ``security_group_`` が付けられます。現在、ダッシュ (-) もアンダースコア (_) に変換されます。ec2.ini の replace_dash_in_groups 設定を使用して変更できます (これはいくつかのバージョンで変更されているため、詳細は ec2.ini を確認してください)。
+  (例: 
   ``security_group_default``
   ``security_group_webservers``
-  ``security_group_Pete_s_Fancy_Group``
+  ``security_group_Pete_s_Fancy_Group``)
 
-Tags
-  Each instance can have a variety of key/value pairs associated with it called Tags. The most common tag key is 'Name', though anything is possible. Each key/value pair is its own group of instances, again with special characters converted to underscores, in the format ``tag_KEY_VALUE``
-  e.g.
-  ``tag_Name_Web`` can be used as is
-  ``tag_Name_redis-master-001`` becomes ``tag_Name_redis_master_001``
-  ``tag_aws_cloudformation_logical-id_WebServerGroup`` becomes ``tag_aws_cloudformation_logical_id_WebServerGroup``
+タグ
+  各インスタンスには、タグと呼ばれるさまざまなキーと値のペアを関連付けることができます。最も一般的なタグキーは「Name」ですが、他のタグも使用できます。キーと値の各ペアはインスタンスの独自のグループで、``tag_KEY_VALUE`` の形式でアンダースコアに変換される特殊文字が再度使用されます。
+  (例: 
+  ``tag_Name_redis-master-001`` が ``tag_Name_redis_master_001`` になり、
+  ``tag_aws_cloudformation_logical-id_WebServerGroup`` が ``tag_aws_cloudformation_logical_id_WebServerGroup`` となるように、
+  tag_Name_Web を使用できます。
 
-When the Ansible is interacting with a specific server, the EC2 inventory script is called again with the ``--host HOST`` option. This looks up the HOST in the index cache to get the instance ID, and then makes an API call to AWS to get information about that specific instance. It then makes information about that instance available as variables to your playbooks. Each variable is prefixed by ``ec2_``. Here are some of the variables available:
+Ansible が特定のサーバーと対話する場合、EC2 インベントリースクリプトは ``--host HOST`` オプションを使用して再度呼び出されます。これは、インデックスキャッシュで HOST を検索してインスタンス ID を取得し、AWS への API 呼び出しを行い、その特定のインスタンスに関する情報を取得します。次に、そのインスタンスに関する情報を変数として Playbook で利用できるようにします。各変数の先頭には ``ec2_`` が付けられます。利用可能な変数の一部は次のとおりです。
 
 - ec2_architecture
 - ec2_description
@@ -246,17 +246,17 @@ When the Ansible is interacting with a specific server, the EC2 inventory script
 - ec2_virtualization_type
 - ec2_vpc_id
 
-Both ``ec2_security_group_ids`` and ``ec2_security_group_names`` are comma-separated lists of all security groups. Each EC2 tag is a variable in the format ``ec2_tag_KEY``.
+``ec2_security_group_ids`` と ``ec2_security_group_names`` は両方とも、すべてのセキュリティーグループをコンマ区切った一覧になります。各 EC2 タグは ``ec2_tag_KEY`` 形式の変数です。
 
-To see the complete list of variables available for an instance, run the script by itself:
+インスタンスで使用可能な変数の完全一覧を表示するには、スクリプトを単独で実行します。
 
 .. code-block:: bash
 
     cd contrib/inventory
     ./ec2.py --host ec2-12-12-12-12.compute-1.amazonaws.com
 
-Note that the AWS inventory script will cache results to avoid repeated API calls, and this cache setting is configurable in ec2.ini.  To
-explicitly clear the cache, you can run the ec2.py script with the ``--refresh-cache`` parameter:
+AWS インベントリースクリプトは、API 呼び出しの繰り返しを回避するために結果をキャッシュし、このキャッシュ設定は ec2.ini で構成できることに注意してください。 キャッシュを明示的に消去するには、
+``--refresh-cache`` パラメーターを使用して ec2.py スクリプトを実行します。
 
 .. code-block:: bash
 
@@ -264,27 +264,27 @@ explicitly clear the cache, you can run the ec2.py script with the ``--refresh-c
 
 .. _openstack_example:
 
-Inventory script example: OpenStack
+インベントリースクリプトの例:OpenStack
 ===================================
 
-If you use an OpenStack-based cloud, instead of manually maintaining your own inventory file, you can use the ``openstack_inventory.py`` dynamic inventory to pull information about your compute instances directly from OpenStack.
+独自のインベントリーファイルを手動で管理する代わりに、OpenStack ベースのクラウドを使用する場合は、動的インベントリー ``openstack_inventory.py`` を使用して、OpenStack から直接コンピュートインスタンスに関する情報を取得できます。
 
-You can download the latest version of the OpenStack inventory script `here <https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/openstack_inventory.py>`_.
+最新バージョンの OpenStack インベントリースクリプトは、`こちら <https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/openstack_inventory.py>`_ からダウンロードできます。
 
-You can use the inventory script explicitly (by passing the `-i openstack_inventory.py` argument to Ansible) or implicitly (by placing the script at `/etc/ansible/hosts`).
+(`-i openstack_inventory.py` 引数を Ansible に渡すことで) インベントリースクリプトを明示的に使用するか、(スクリプトを `/etc/ansible/hosts` において) 暗黙的に使用できます。
 
-Explicit use of OpenStack inventory script
+OpenStack インベントリースクリプトの明示的な使用
 ------------------------------------------
 
-Download the latest version of the OpenStack dynamic inventory script and make it executable::
+最新バージョンの OpenStack の動的インベントリースクリプトをダウンロードし、実行可能にします。
 
     wget https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/openstack_inventory.py
     chmod +x openstack_inventory.py
 
 .. note::
-    Do not name it `openstack.py`. This name will conflict with imports from openstacksdk.
+    `openstack.py` という名前は付けないでください。この名前は、openstacksdk からのインポートと競合します。
 
-Source an OpenStack RC file:
+OpenStack RC ファイルを読み込みます。
 
 .. code-block:: bash
 
@@ -292,30 +292,30 @@ Source an OpenStack RC file:
 
 .. note::
 
-    An OpenStack RC file contains the environment variables required by the client tools to establish a connection with the cloud provider, such as the authentication URL, user name, password and region name. For more information on how to download, create or source an OpenStack RC file, please refer to `Set environment variables using the OpenStack RC file <https://docs.openstack.org/user-guide/common/cli_set_environment_variables_using_openstack_rc.html>`_.
+    OpenStack RC ファイルには、認証 URL、ユーザー名、パスワード、リージョン名など、クラウドプロバイダーとの接続を確立するためにクライアントツールが必要とする環境変数が含まれています。OpenStack RC ファイルのダウンロード、作成、または読み込み (source) の方法は、`OpenStack RC ファイルを使用して環境変数の設定<https://docs.openstack.org/user-guide/common/cli_set_environment_variables_using_openstack_rc.html>`_.を参照してください。
 
-You can confirm the file has been successfully sourced by running a simple command, such as `nova list` and ensuring it return no errors.
+`nova list` などの単純なコマンドを実行してエラーを返さないようにすることで、ファイルが正常に読み込まれたことを確認できます。
 
 .. note::
 
-    The OpenStack command line clients are required to run the `nova list` command. For more information on how to install them, please refer to `Install the OpenStack command-line clients <https://docs.openstack.org/user-guide/common/cli_install_openstack_command_line_clients.html>`_.
+    OpenStack コマンドラインのクライアントは、`nova list` コマンドを実行する必要があります。これらのインストール方法の詳細は、`OpenStack コマンドラインクライアントのインストール <https://docs.openstack.org/user-guide/common/cli_install_openstack_command_line_clients.html>`_ を参照してください。
 
-You can test the OpenStack dynamic inventory script manually to confirm it is working as expected::
+OpenStack の動的インベントリースクリプトを手動でテストして、想定どおりに機能していることを確認します。
 
     ./openstack_inventory.py --list
 
-After a few moments you should see some JSON output with information about your compute instances.
+しばらくすると、コンピュートインスタンスに関する情報が含まれる JSON 出力が表示されます。
 
-Once you confirm the dynamic inventory script is working as expected, you can tell Ansible to use the `openstack_inventory.py` script as an inventory file, as illustrated below:
+動的インベントリースクリプトが想定どおりに機能していることを確認したら、以下のように Ansible が `openstack_inventory.py` スクリプトをインベントリーファイルとして使用するように指定します。
 
 .. code-block:: bash
 
     ansible -i openstack_inventory.py all -m ping
 
-Implicit use of OpenStack inventory script
+OpenStack インベントリースクリプトの暗黙的な使用
 ------------------------------------------
 
-Download the latest version of the OpenStack dynamic inventory script, make it executable and copy it to `/etc/ansible/hosts`:
+最新バージョンの OpenStack 動的インベントリースクリプトをダウンロードし、実行可能にし、これを `/etc/ansible/hosts` にコピーします。
 
 .. code-block:: bash
 
@@ -323,7 +323,7 @@ Download the latest version of the OpenStack dynamic inventory script, make it e
     chmod +x openstack_inventory.py
     sudo cp openstack_inventory.py /etc/ansible/hosts
 
-Download the sample configuration file, modify it to suit your needs and copy it to `/etc/ansible/openstack.yml`:
+サンプル設定ファイルをダウンロードし、必要に応じて変更し、これを `/etc/ansible/openstack.yml` にコピーします。
 
 .. code-block:: bash
 
@@ -331,18 +331,18 @@ Download the sample configuration file, modify it to suit your needs and copy it
     vi openstack.yml
     sudo cp openstack.yml /etc/ansible/
 
-You can test the OpenStack dynamic inventory script manually to confirm it is working as expected:
+OpenStack 動的インベントリースクリプトを手動でテストして、想定どおりに機能していることを確認します。
 
 .. code-block:: bash
 
     /etc/ansible/hosts --list
 
-After a few moments you should see some JSON output with information about your compute instances.
+しばらくすると、コンピュートインスタンスに関する情報が含まれる JSON 出力が表示されます。
 
-Refreshing the cache
+キャッシュの更新
 --------------------
 
-Note that the OpenStack dynamic inventory script will cache results to avoid repeated API calls. To explicitly clear the cache, you can run the openstack_inventory.py (or hosts) script with the ``--refresh`` parameter:
+OpenStack 動的インベントリースクリプトは、API 呼び出しが繰り返し行われるのを防ぐために、結果をキャッシュすることに注意してください。キャッシュを明示的に消去するには、``--refresh`` パラメーターを使用して openstack_inventory.py (または hosts) スクリプトを実行します。
 
 .. code-block:: bash
 
@@ -350,39 +350,39 @@ Note that the OpenStack dynamic inventory script will cache results to avoid rep
 
 .. _other_inventory_scripts:
 
-Other inventory scripts
+その他のインベントリースクリプト
 =======================
 
-You can find all included inventory scripts in the `contrib/inventory directory <https://github.com/ansible/ansible/tree/devel/contrib/inventory>`_. General usage is similar across all inventory scripts. You can also :ref:`write your own inventory script <developing_inventory>`.
+含まれるインベントリースクリプトはすべて `contrib/inventory ディレクトリー <https://github.com/ansible/ansible/tree/devel/contrib/inventory>`_ にあります。一般的な使用法は、すべてのインベントリースクリプトで類似しています。:ref:`独自のインベントリースクリプトを作成<developing_inventory>` することもできます。
 
 .. _using_multiple_sources:
 
-Using inventory directories and multiple inventory sources
+インベントリーディレクトリーおよび複数のインベントリーソースの使用
 ==========================================================
 
-If the location given to ``-i`` in Ansible is a directory (or as so configured in ``ansible.cfg``), Ansible can use multiple inventory sources
-at the same time.  When doing so, it is possible to mix both dynamic and statically managed inventory sources in the same ansible run. Instant
-hybrid cloud!
+Ansible で ``-i`` に指定される場所がディレクトリー (または ``ansible.cfg`` で設定される場所) の場合、
+Ansible は複数のインベントリーソースを同時に使用できます。 これを実行する場合は、同じ Ansible 実行で動的および静的に管理されているインベントリーソースの両方を混在させることができます。インスタント
+ハイブリッドクラウドです。
 
-In an inventory directory, executable files will be treated as dynamic inventory sources and most other files as static sources. Files which end with any of the following will be ignored:
+インベントリーディレクトリーでは、実行ファイルは動的インベントリーソースとして扱われ、その他のほとんどのファイルは静的ソースとして処理されます。以下のいずれかが続いたファイルは無視されます。
 
 .. code-block:: text
 
     ~, .orig, .bak, .ini, .cfg, .retry, .pyc, .pyo
 
-You can replace this list with your own selection by configuring an ``inventory_ignore_extensions`` list in ansible.cfg, or setting the :envvar:`ANSIBLE_INVENTORY_IGNORE` environment variable. The value in either case should be a comma-separated list of patterns, as shown above.
+この一覧を、自分で選択したものに置き換えるには、ansible.cfg に ``inventory_ignore_extensions`` の一覧を設定するか、:envvar:`ANSIBLE_INVENTORY_IGNORE` 環境変数を設定します。いずれの場合でも、値は、上記のように、パターンをコンマで区切った一覧である必要があります。
 
-Any ``group_vars`` and ``host_vars`` subdirectories in an inventory directory will be interpreted as expected, making inventory directories a powerful way to organize different sets of configurations. See :ref:`using_multiple_inventory_sources` for more information.
+インベントリーディレクトリーの ``group_vars`` サブディレクトリーおよび ``host_vars`` サブディレクトリーは想定どおりに解釈されるため、インベントリーディレクトリーはさまざまな構成セットを整理するための強力な方法になります。詳細は :ref:`using_multiple_inventory_sources` を参照してください。
 
 .. _static_groups_of_dynamic:
 
-Static groups of dynamic groups
+動的グループの静的グループ
 ===============================
 
-When defining groups of groups in the static inventory file, the child groups
-must also be defined in the static inventory file, or ansible will return an
-error. If you want to define a static group of dynamic child groups, define
-the dynamic groups as empty in the static inventory file. For example:
+静的インベントリーファイルでグループのグループを定義する場合は、
+子グループも静的インベントリーファイルで定義する必要があります。
+そうでない場合には、Ansible はエラーを返します。動的な子グループの静的グループを定義する場合は、
+静的インベントリーファイルで動的グループを空として定義します。例:
 
 .. code-block:: text
 
@@ -398,8 +398,8 @@ the dynamic groups as empty in the static inventory file. For example:
 .. seealso::
 
    :ref:`intro_inventory`
-       All about static inventory files
-   `Mailing List <https://groups.google.com/group/ansible-project>`_
-       Questions? Help? Ideas?  Stop by the list on Google Groups
+       静的インベントリーファイルの詳細
+   `メーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

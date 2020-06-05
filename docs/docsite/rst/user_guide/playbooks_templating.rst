@@ -1,14 +1,14 @@
 .. _playbooks_templating:
 
-Templating (Jinja2)
+テンプレート作成 (Jinja2)
 ===================
 
-As already referenced in the variables section, Ansible uses Jinja2 templating to enable dynamic expressions and access to variables.
-Ansible greatly expands the number of filters and tests available, as well as adding a new plugin type: lookups.
+変数セクションですでに参照されているように、Ansible は Jinja2 のテンプレート作成を使用して動的な式を有効にし、変数にアクセスします。
+Ansible は利用可能なフィルターおよびテストの数を大幅に拡張し、新しいプラグインタイプ lookup を追加します。
 
-Please note that all templating happens on the Ansible controller before the task is sent and executed on the target machine. This is done to minimize the requirements on the target (jinja2 is only required on the controller) and to be able to pass the minimal information needed for the task, so the target machine does not need a copy of all the data that the controller has access to.
+すべてのテンプレートは、タスクが送信され、対象のマシンで実行する前に、Ansible コントローラーで実行されます。これは、ターゲットの要件を最小限にするために行われます (コントローラーでは jinja2 のみが必要)。また、タスクに必要な最小限の情報を渡すことができるため、ターゲットマシンはコントローラーがアクセスできるすべてのデータのコピーを必要としません。
 
-.. contents:: Topics
+.. contents:: トピック
 
 .. toctree::
    :maxdepth: 2
@@ -20,36 +20,36 @@ Please note that all templating happens on the Ansible controller before the tas
 
 .. _templating_now:
 
-Get the current time
+現在の時間を取得
 ````````````````````
 
 .. versionadded:: 2.8
 
-The ``now()`` Jinja2 function, allows you to retrieve python datetime object or a string representation for the current time.
+Jinja2 関数 ``now()`` は、Python datetime オブジェクトまたは現在の時間を表す文字列を取得します。
 
-The ``now()`` function supports 2 arguments:
+``now()`` 関数は 2 つの引数をサポートします。
 
 utc
-  Specify ``True`` to get the current time in UTC. Defaults to ``False``
+  UTC で現在の時間を取得するには、``True`` を指定します。デフォルトは ``False`` です。
 
 fmt
-  Accepts a `strftime <https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior>`_ string that will be used
-  to return a formatted date time string
+  フォーマット済みの日時文字列を返すために使用される `strftime <https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior>`_ 
+  文字列を受け入れます。
 
 
 .. seealso::
 
    :ref:`playbooks_intro`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_conditionals`
-       Conditional statements in playbooks
+       Playbook の条件付きステートメント
    :ref:`playbooks_loops`
-       Looping in playbooks
+       Playbook でのループ
    :ref:`playbooks_reuse_roles`
-       Playbook organization by roles
+       ロール別の Playbook の組織
    :ref:`playbooks_best_practices`
-       Best practices in playbooks
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Playbook のベストプラクティス
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

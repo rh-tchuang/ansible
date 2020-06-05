@@ -1,39 +1,39 @@
 .. _windows_setup:
 
-Setting up a Windows Host
+Windows ホストのセットアップ
 =========================
-This document discusses the setup that is required before Ansible can communicate with a Microsoft Windows host.
+本書では、Ansible が Microsoft Windows ホストと通信する前に必要なセットアップを説明します。
 
 .. contents::
    :local:
 
-Host Requirements
+ホスト要件
 `````````````````
-For Ansible to communicate to a Windows host and use Windows modules, the
-Windows host must meet these requirements:
+Ansible が Windows ホストと通信して Windows モジュールを使用するには、
+Windows ホストは次の要件を満たしている必要があります。
 
-* Ansible can generally manage Windows versions under current
-  and extended support from Microsoft. Ansible can manage desktop OSs including
-  Windows 7, 8.1, and 10, and server OSs including Windows Server 2008,
-  2008 R2, 2012, 2012 R2, 2016, and 2019.
+* Ansible は通常、
+  Microsoft 社の現行サポートおよび拡張サポートの下で Windows バージョンを管理できます。Ansible は、
+  Windows 7、8.1、10 などのデスクトップ OS と、
+  Windows Server 2008、2008 R2、2012、2012 R2、2016、2019 などのサーバー OS を管理できます
 
-* Ansible requires PowerShell 3.0 or newer and at least .NET 4.0 to be
-  installed on the Windows host.
+* Ansible を使用するには、
+  Windows ホストに PowerShell 3.0 以降および少なくとも .NET 4.0 をインストールする必要があります。
 
-* A WinRM listener should be created and activated. More details for this can be
-  found below.
+* WinRM リスナーを作成し、アクティベートする必要があります。詳細は、
+  以下を参照してください。
 
-.. Note:: While these are the base requirements for Ansible connectivity, some Ansible
-    modules have additional requirements, such as a newer OS or PowerShell
-    version. Please consult the module's documentation page
-    to determine whether a host meets those requirements.
+.. Note:: Ansible 接続のベース要件であるものの、
+    一部の Ansible モジュールには、
+    OS や PowerShell の新しいバージョンなどの追加要件があります。ホストがこれらの要件を満たしているかどうかを判断するには、
+    モジュールのドキュメントページを参照してください。
 
-Upgrading PowerShell and .NET Framework
+PowerShell および .NET Framework のアップグレード
 ---------------------------------------
-Ansible requires PowerShell version 3.0 and .NET Framework 4.0 or newer to function on older operating systems like Server 2008 and Windows 7. The base image does not meet this
-requirement. You can use the `Upgrade-PowerShell.ps1 <https://github.com/jborean93/ansible-windows/blob/master/scripts/Upgrade-PowerShell.ps1>`_ script to update these.
+Ansible では、Server 2008 や Windows 7 などの古いオペレーティングシステムで機能するために、PowerShell バージョン 3.0 および .NET Framework 4.0 以降が必要です。ベースイメージは、
+この要件は満たしていません。`Upgrade-PowerShell.ps1` <https://github.com/jborean93/ansible-windows/blob/master/scripts/Upgrade-PowerShell.ps1>_ スクリプトを使用してこれらを更新できます。
 
-This is an example of how to run this script from PowerShell:
+このスクリプトを PowerShell から実行する例を以下に示します。
 
 .. code-block:: powershell
 
@@ -48,9 +48,9 @@ This is an example of how to run this script from PowerShell:
     # Version can be 3.0, 4.0 or 5.1
     &$file -Version 5.1 -Username $username -Password $password -Verbose
 
-Once completed, you will need to remove auto logon
-and set the execution policy back to the default of ``Restricted``. You can
-do this with the following PowerShell commands:
+完了したら、自動ログオンを削除し、
+実行ポリシーをデフォルトの ``Restricted`` に戻す必要があります。これは、
+次の PowerShell コマンドを使用して実行できます。
 
 .. code-block:: powershell
 
@@ -62,36 +62,36 @@ do this with the following PowerShell commands:
     Remove-ItemProperty -Path $reg_winlogon_path -Name DefaultUserName -ErrorAction SilentlyContinue
     Remove-ItemProperty -Path $reg_winlogon_path -Name DefaultPassword -ErrorAction SilentlyContinue
 
-The script works by checking to see what programs need to be installed
-(such as .NET Framework 4.5.2) and what PowerShell version is required. If a reboot
-is required and the ``username`` and ``password`` parameters are set, the
-script will automatically reboot and logon when it comes back up from the
-reboot. The script will continue until no more actions are required and the
-PowerShell version matches the target version. If the ``username`` and
-``password`` parameters are not set, the script will prompt the user to
-manually reboot and logon when required. When the user is next logged in, the
-script will continue where it left off and the process continues until no more
-actions are required.
+スクリプトは、
+インストールする必要のあるプログラム (.NET Framework 4.5.2 など) および必要な PowerShell バージョンを確認することで機能します。再起動が必要で、
+``username`` パラメーターおよび ``password`` パラメーターが設定されている場合は、
+スクリプトが自動的に再起動し、
+再起動から戻ったときにログオンします。スクリプトは、追加のアクションが不要になり、
+PowerShell バージョンは対象のバージョンと一致します。``username`` パラメーター、
+および ``password`` のパラメーターが設定されていないと、スクリプトにより、
+必要に応じて手動で再起動してログオンするように求められます。ユーザーが次にログインすると、
+スクリプトは中断したところから続行し、
+処理が必要なくなるまでプロセスが続行します。
 
-.. Note:: If running on Server 2008, then SP2 must be installed. If running on
-    Server 2008 R2 or Windows 7, then SP1 must be installed.
+.. Note:: Server 2008 で実行している場合は、SP2 がインストールされている必要があります。Server 2008 R2 または Windows 7 で実行している場合は、
+    SP1 をインストールする必要があります。
 
-.. Note:: Windows Server 2008 can only install PowerShell 3.0; specifying a
-    newer version will result in the script failing.
+.. Note:: Windows Server 2008 は PowerShell 3.0 のみをインストールできます。
+    これよりも新しいバージョンを指定すると、スクリプトが失敗します。
 
-.. Note:: The ``username`` and ``password`` parameters are stored in plain text
-    in the registry. Make sure the cleanup commands are run after the script finishes
-    to ensure no credentials are still stored on the host.
+.. Note:: ``username`` パラメーターおよび ``password`` のパラメーターは、
+    平文でレジストリーに保存されます。スクリプトが終了した後にクリーンアップコマンドを実行して、
+    ホストに認証情報が保存されていないことを確認してください。
 
-WinRM Memory Hotfix
+WinRM メモリーホットフィックス
 -------------------
-When running on PowerShell v3.0, there is a bug with the WinRM service that
-limits the amount of memory available to WinRM. Without this hotfix installed,
-Ansible will fail to execute certain commands on the Windows host. These
-hotfixes should installed as part of the system bootstrapping or
-imaging process. The script `Install-WMF3Hotfix.ps1 <https://github.com/jborean93/ansible-windows/blob/master/scripts/Install-WMF3Hotfix.ps1>`_ can be used to install the hotfix on affected hosts.
+PowerShell v3.0で実行する場合は、
+WinRM で使用可能なメモリーの量を制限する WinRM サービスにバグがあります。このホットフィックスがインストールされていないと、
+Windows ホストで、Ansible が特定のコマンドを実行できません。これらは、
+システムのブートストラップ、
+またはイメージングプロセスの一部としてインストールする必要があります。`Install-WMF3Hotfix.ps1 <https://github.com/jborean93/ansible-windows/blob/master/scripts/Install-WMF3Hotfix.ps1>`_ スクリプトを使用して、影響を受けるホストにホットフィックスをインストールできます。
 
-The following PowerShell command will install the hotfix:
+以下の PowerShell コマンドはホットフィックスをインストールします。
 
 .. code-block:: powershell
 
@@ -101,22 +101,22 @@ The following PowerShell command will install the hotfix:
     (New-Object -TypeName System.Net.WebClient).DownloadFile($url, $file)
     powershell.exe -ExecutionPolicy ByPass -File $file -Verbose
 
-For more details, please refer to the `Hotfix document <https://support.microsoft.com/en-us/help/2842230/out-of-memory-error-on-a-computer-that-has-a-customized-maxmemorypersh>`_ from Microsoft.
+詳細は、Microsoft 社の「`ホットフィックスのドキュメント<https://support.microsoft.com/en-us/help/2842230/out-of-memory-error-on-a-computer-that-has-a-customized-maxmemorypersh>`_」を参照してください。
 
-WinRM Setup
+WinRM の設定
 ```````````
-Once Powershell has been upgraded to at least version 3.0, the final step is for the
-WinRM service to be configured so that Ansible can connect to it. There are two
-main components of the WinRM service that governs how Ansible can interface with
-the Windows host: the ``listener`` and the ``service`` configuration settings.
+Powershell が少なくともバージョン 3.0 にアップグレードされたら、最後のステップは、
+Ansible が接続できるように WinRM サービスを構成することです。Ansible が、
+Windows ホストとインターフェースで接続できるかを制御する WinRM サービスには、
+``listener`` と ``service`` と名前の 2 つの主要コンポーネント (構成設定) があります。
 
-Details about each component can be read below, but the script
-`ConfigureRemotingForAnsible.ps1 <https://github.com/ansible/ansible/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1>`_
-can be used to set up the basics. This script sets up both HTTP and HTTPS
-listeners with a self-signed certificate and enables the ``Basic``
-authentication option on the service.
+各コンポーネントの詳細は以下で確認できますが、
+`ConfigureRemotingForAnsible.ps1 <https://github.com/ansible/ansible/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1>`_ を使用して、
+基本を設定できます。このスクリプトは、
+自己署名証明書を使用して HTTP リスナーと HTTPS リスナーの両方を設定し、
+サービスで ``基本`` 認証オプションを有効にします。
 
-To use this script, run the following in PowerShell:
+このスクリプトを使用するには、以下を PowerShell で実行します。
 
 .. code-block:: powershell
 
@@ -127,28 +127,28 @@ To use this script, run the following in PowerShell:
 
     powershell.exe -ExecutionPolicy ByPass -File $file
 
-There are different switches and parameters (like ``-EnableCredSSP`` and
-``-ForceNewSSLCert``) that can be set alongside this script. The documentation
-for these options are located at the top of the script itself.
+このスクリプトと一緒に設定できるさまざまなスイッチとパラメーター 
+(``-EnableCredSSP`` や ``-ForceNewSSLCert`` など) があります。これらのオプションのドキュメントは、
+スクリプトそのものの上部にあります。
 
-.. Note:: The ConfigureRemotingForAnsible.ps1 script is intended for training and
-    development purposes only and should not be used in a
-    production environment, since it enables settings (like ``Basic`` authentication)
-    that can be inherently insecure.
+.. Note:: ConfigureRemotingForAnsible.ps1 スクリプトは、
+    トレーニングと開発のみを目的としており、
+    設定 ( ``Basic`` 認証など）が有効になっているため、
+    これは本質的に安全ではない場合があります。実稼働環境出は使用しないようにしてください。
 
-WinRM Listener
+WinRM リスナー
 --------------
-The WinRM services listens for requests on one or more ports. Each of these ports must have a
-listener created and configured.
+WinRM サービスは、1 つまたは複数のポートで要求をリッスンします。これらのポートにはそれぞれ、
+リスナーが作成され、設定されています。
 
-To view the current listeners that are running on the WinRM service, run the
-following command:
+WinRM サービスで実行している現在のリスナーを表示するには、
+次のコマンドを使用します。
 
 .. code-block:: powershell
 
     winrm enumerate winrm/config/Listener
 
-This will output something like::
+これにより、以下のような出力が表示されます。
 
     Listener
         Address = *
@@ -172,47 +172,47 @@ This will output something like::
         ListeningOn = 10.0.2.15, 127.0.0.1, 192.168.56.155, ::1, fe80::5efe:10.0.2.15%6, fe80::5efe:192.168.56.155%8, fe80::
     ffff:ffff:fffe%2, fe80::203d:7d97:c2ed:ec78%3, fe80::e8ea:d765:2c69:7756%7
 
-In the example above there are two listeners activated; one is listening on
-port 5985 over HTTP and the other is listening on port 5986 over HTTPS. Some of
-the key options that are useful to understand are:
+上記の例では、リスナーがアクティベートされています。
+HTTP 経由のポート 5985 でリッスンしているものと、HTTPS 経由のポート 5986 でリッスンしているものがあります。理解するのに役に立つ重要なオプションの一部は
+次のとおりです。
 
-* ``Transport``: Whether the listener is run over HTTP or HTTPS, it is
-  recommended to use a listener over HTTPS as the data is encrypted without
-  any further changes required.
+* ``トランスポート``: リスナーが HTTP または HTTPS のどちらで実行されている場合でも、
+  データをさらに変更する必要なく暗号化されるため、
+  HTTPS 経由でリスナーを使用することが推奨されます。
 
-* ``Port``: The port the listener runs on, by default it is ``5985`` for HTTP
-  and ``5986`` for HTTPS. This port can be changed to whatever is required and
-  corresponds to the host var ``ansible_port``.
+* ``ポート``: リスナーが実行するポート。デフォルトは HTTP が ``5985`` で、
+  HTTPS が ``5986`` です。このポートは必要に応じて変更でき、
+  ホスト変数 ``ansible_port`` に対応します。
 
-* ``URLPrefix``: The URL prefix to listen on, by default it is ``wsman``. If
-  this is changed, the host var ``ansible_winrm_path`` must be set to the same
-  value.
+* ``URLPrefix``: リッスンする URL 接頭辞で、デフォルトは ``wsman`` です。これが変更すると、
+  ホスト変数 ``ansible_winrm_path`` は、
+  同じ値に設定する必要があります。
 
-* ``CertificateThumbprint``: If running over an HTTPS listener, this is the
-  thumbprint of the certificate in the Windows Certificate Store that is used
-  in the connection. To get the details of the certificate itself, run this
-  command with the relevant certificate thumbprint in PowerShell::
+* ``CertificateThumbprint``: HTTPS リスナーを介して実行する場合、
+  これは、
+  接続で使用される Windows 証明書ストア内の証明書の拇印です。証明書自体の詳細を取得するには、
+  PowerShell で関連する証明書の拇印を使用して、次のコマンドを実行します。
 
     $thumbprint = "E6CDAA82EEAF2ECE8546E05DB7F3E01AA47D76CE"
-    Get-ChildItem -Path cert:\LocalMachine\My -Recurse | Where-Object { $_.Thumbprint -eq $thumbprint } | Select-Object *
+    Get-ChildItem -Path cert:\\LocalMachine\\My -Recurse | Where-Object { $_.Thumbprint -eq $thumbprint } | Select-Object *
 
-Setup WinRM Listener
+WinRM リスナーの設定
 ++++++++++++++++++++
-There are three ways to set up a WinRM listener:
+WinRM リスナーを設定するには、3 つの方法があります。
 
-* Using ``winrm quickconfig`` for HTTP or
-  ``winrm quickconfig -transport:https`` for HTTPS. This is the easiest option
-  to use when running outside of a domain environment and a simple listener is
-  required. Unlike the other options, this process also has the added benefit of
-  opening up the Firewall for the ports required and starts the WinRM service.
+* HTTP の場合は ``winrm quickconfig`` を使用し、
+  HTTPS の場合は ``winrm quickconfig -transport:https`` を使用します。これは、
+  ドメイン環境外で実行する場合に使用する最も簡単なオプションであり、
+  単純なリスナーが必要です。その他のオプションとは異なり、このプロセスには、
+  必要なポートに対してファイアウォールを開き、WinRM サービスを開始するという追加の利点もあります。
 
-* Using Group Policy Objects. This is the best way to create a listener when the
-  host is a member of a domain because the configuration is done automatically
-  without any user input. For more information on group policy objects, see the
-  `Group Policy Objects documentation <https://msdn.microsoft.com/en-us/library/aa374162(v=vs.85).aspx>`_.
+* グループポリシーオブジェクトの使用。これは、ホストがドメインのメンバーであるときにリスナーを作成する最良の方法です。
+  これは、
+  ユーザー入力なしで構成が自動的に行われるためです。グループポリシーオブジェクトの詳細は、
+  `Group Policy Objects documentation <https://msdn.microsoft.com/en-us/library/aa374162(v=vs.85).aspx>`_ を参照してください。
 
-* Using PowerShell to create the listener with a specific configuration. This
-  can be done by running the following PowerShell commands:
+* PowerShell を使用して、特定の設定でリスナーを作成します。これにより、
+  以下の PowerShell コマンドで行います。
 
   .. code-block:: powershell
 
@@ -226,16 +226,16 @@ There are three ways to set up a WinRM listener:
 
       New-WSManInstance -ResourceURI "winrm/config/Listener" -SelectorSet $selector_set -ValueSet $value_set
 
-  To see the other options with this PowerShell cmdlet, see
-  `New-WSManInstance <https://docs.microsoft.com/en-us/powershell/module/microsoft.wsman.management/new-wsmaninstance?view=powershell-5.1>`_.
+  この PowerShell cmdlet をともなう他のオプションを表示するには、
+  `New-WSManInstance` <https://docs.microsoft.com/en-us/powershell/module/microsoft.wsman.management/new-wsmaninstance?view=powershell-5.1>_ を参照してください。
 
-.. Note:: When creating an HTTPS listener, an existing certificate needs to be
-    created and stored in the ``LocalMachine\My`` certificate store. Without a
-    certificate being present in this store, most commands will fail.
+.. Note:: HTTPS リスナーを作成する場合は、
+    既存の証明書を作成して ``LocalMachine\My`` 証明書ストアに保存する必要があります。このストアに証明書が存在しない場合、
+    ほとんどのコマンドは失敗します。
 
-Delete WinRM Listener
+WinRM リスナーの削除
 +++++++++++++++++++++
-To remove a WinRM listener::
+WinRM リスナーを削除するには、以下を実行します。
 
     # Remove all listeners
     Remove-Item -Path WSMan:\localhost\Listener\* -Recurse -Force
@@ -243,24 +243,24 @@ To remove a WinRM listener::
     # Only remove listeners that are run over HTTPS
     Get-ChildItem -Path WSMan:\localhost\Listener | Where-Object { $_.Keys -contains "Transport=HTTPS" } | Remove-Item -Recurse -Force
 
-.. Note:: The ``Keys`` object is an array of strings, so it can contain different
-    values. By default it contains a key for ``Transport=`` and ``Address=``
-    which correspond to the values from winrm enumerate winrm/config/Listeners.
+.. Note:: ``Keys`` オブジェクトは文字列の配列であるため、
+    異なる値を含めることができます。デフォルトでは、``Transport=`` および ``Address=`` のキーが含まれます。
+    これは、winrm 列挙の winrm/config/Listeners の値に対応します。
 
-WinRM Service Options
+WinRM サービスオプション
 ---------------------
-There are a number of options that can be set to control the behavior of the WinRM service component,
-including authentication options and memory settings.
+認証オプションやメモリー設定など、
+WinRM サービスコンポーネントの動作を制御するために設定できるオプションがいくつかあります。
 
-To get an output of the current service configuration options, run the
-following command:
+現在のサービス設定オプションの出力を取得するには、
+次のコマンドを使用します。
 
 .. code-block:: powershell
 
     winrm get winrm/config/Service
     winrm get winrm/config/Winrs
 
-This will output something like::
+これにより、以下のような出力が表示されます。
 
     Service
         RootSDDL = O:NSG:BAD:P(A;;GA;;;BA)(A;;GR;;;IU)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)
@@ -296,37 +296,37 @@ This will output something like::
         MaxMemoryPerShellMB = 2147483647
         MaxShellsPerUser = 2147483647
 
-While many of these options should rarely be changed, a few can easily impact
-the operations over WinRM and are useful to understand. Some of the important
-options are:
+これらのオプションの多くはめったに変更する必要はありませんが、
+WinRM を介した操作に簡単に影響を与える可能性があるオプションをいくつか理解しておくと役立ちます。重要なオプションのいくつかは
+次のとおりです。
 
-* ``Service\AllowUnencrypted``: This option defines whether WinRM will allow
-  traffic that is run over HTTP without message encryption. Message level
-  encryption is only possible when ``ansible_winrm_transport`` is ``ntlm``,
-  ``kerberos`` or ``credssp``. By default this is ``false`` and should only be
-  set to ``true`` when debugging WinRM messages.
+* ``Service\AllowUnencrypted``:このオプションは、
+  WinRM がメッセージの暗号化なしで HTTP 経由で実行されるトラフィックを許可するかどうかを定義します。メッセージレベルの暗号化は、
+  ``ansible_winrm_transport`` が ``ntlm`` 
+  ``kerberos`` または ``credssp`` の場合に限り可能です。デフォルトではこれは ``false`` であり、
+  WinRM メッセージのデバッグ時にのみ ``true`` に設定する必要があります。
 
-* ``Service\Auth\*``: These flags define what authentication
-  options are allowed with the WinRM service. By default, ``Negotiate (NTLM)``
-  and ``Kerberos`` are enabled.
+* ``Service\Auth*``: これらのフラグは、
+  WinRM サービスで許可される認証オプションを定義します。デフォルトでは、``Negotiate (NTLM)`` および 
+  ``Kerberos`` が有効になっています。
 
-* ``Service\Auth\CbtHardeningLevel``: Specifies whether channel binding tokens are
-  not verified (None), verified but not required (Relaxed), or verified and
-  required (Strict). CBT is only used when connecting with NTLM or Kerberos
-  over HTTPS.
+* ``Service\Auth\CbtHardeningLevel``: チャネルバインディングトークンを検証しない (None)、
+  検証したが必要ではない (Relaxed)、
+  または検証して必要 (Stric) かどうかを指定します。CBT は、
+  HTTPS 経由で、NTLM または Kerberos に接続している場合にのみ使用されます。
 
-* ``Service\CertificateThumbprint``: This is the thumbprint of the certificate
-  used to encrypt the TLS channel used with CredSSP authentication. By default
-  this is empty; a self-signed certificate is generated when the WinRM service
-  starts and is used in the TLS process.
+* ``Service\CertificateThumbprint``: これは、
+  CredSSP 認証で使用される TLS チャンネルの暗号化に使用される証明書の拇印です。デフォルトでは空になります。
+  WinRM サービスの開始時に自己署名証明書が生成され、
+  TLS プロセスで使用されます。
 
-* ``Winrs\MaxShellRunTime``: This is the maximum time, in milliseconds, that a
-  remote command is allowed to execute.
+* ``Winrs\MaxShellRunTime``: これは、
+  リモートコマンドの実行が許可される最大時間 (ミリ秒) です。
 
-* ``Winrs\MaxMemoryPerShellMB``: This is the maximum amount of memory allocated
-  per shell, including the shell's child processes.
+* ``Winrs\MaxMemoryPerShellMB``: これは、シェルの子プロセスを含め、
+  シェルごとに割り当てられるメモリーの最大量です。
 
-To modify a setting under the ``Service`` key in PowerShell::
+PowerShell の ``Service`` キーの下にある設定を変更するには、以下を行います。
 
     # substitute {path} with the path to the option after winrm/config/Service
     Set-Item -Path WSMan:\localhost\Service\{path} -Value "value here"
@@ -334,7 +334,7 @@ To modify a setting under the ``Service`` key in PowerShell::
     # for example, to change Service\Auth\CbtHardeningLevel run
     Set-Item -Path WSMan:\localhost\Service\Auth\CbtHardeningLevel -Value Strict
 
-To modify a setting under the ``Winrs`` key in PowerShell::
+PowerShell の ``Winrs`` キーで設定を変更するには、以下を実行します。
 
     # Substitute {path} with the path to the option after winrm/config/Winrs
     Set-Item -Path WSMan:\localhost\Shell\{path} -Value "value here"
@@ -342,19 +342,19 @@ To modify a setting under the ``Winrs`` key in PowerShell::
     # For example, to change Winrs\MaxShellRunTime run
     Set-Item -Path WSMan:\localhost\Shell\MaxShellRunTime -Value 2147483647
 
-.. Note:: If running in a domain environment, some of these options are set by
-    GPO and cannot be changed on the host itself. When a key has been
-    configured with GPO, it contains the text ``[Source="GPO"]`` next to the value.
+.. Note:: ドメイン環境で実行している場合、これらのオプションの一部は GPO によって設定され、
+    ホスト自体を変更することはできません。鍵が GPO で設定され、
+    値の横にテキスト ``[Source="GPO"]`` が含まれます。
 
-Common WinRM Issues
+一般的な WinRM の問題
 -------------------
-Because WinRM has a wide range of configuration options, it can be difficult
-to setup and configure. Because of this complexity, issues that are shown by Ansible
-could in fact be issues with the host setup instead.
+WinRM にはさまざまな設定オプションがあるため、
+セットアップおよび構成を行うのが困難になる可能性があります。この複雑さのため、Ansible によって示される問題は、
+実際にはホストのセットアップの問題である可能性があります。
 
-One easy way to determine whether a problem is a host issue is to
-run the following command from another Windows host to connect to the
-target Windows host::
+問題がホストの問題かどうかを判断する簡単な方法の 1 つに、
+別の Windows ホストから次のコマンドを実行して、
+対象となる Windows ホストに接続することです。
 
     # Test out HTTP
     winrs -r:http://server:5985/wsman -u:Username -p:Password ipconfig
@@ -370,94 +370,94 @@ target Windows host::
     $session_option = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
     Invoke-Command -ComputerName server -UseSSL -ScriptBlock { ipconfig } -Credential $cred -SessionOption $session_option
 
-If this fails, the issue is probably related to the WinRM setup. If it works, the issue may not be related to the WinRM setup; please continue reading for more troubleshooting suggestions.
+これに失敗する場合は、問題が WinRM 設定に関連している可能性があります。成功した場合は、WinRM 設定には関連していない可能性があります。引き続きトラブルシューティングの提案を読みください。
 
-HTTP 401/Credentials Rejected
+HTTP 401/認証情報の拒否
 +++++++++++++++++++++++++++++
-A HTTP 401 error indicates the authentication process failed during the initial
-connection. Some things to check for this are:
+HTTP 401 エラーは、
+認証プロセスが初期接続に失敗したことを示します。これを確認するには、次のような事項があります。
 
-* Verify that the credentials are correct and set properly in your inventory with
-  ``ansible_user`` and ``ansible_password``
+* 認証情報が正しいことを確認して、
+  ``ansible_user`` および ``ansible_password`` を使用してインベントリーで適切に設定されていることを確認します。
 
-* Ensure that the user is a member of the local Administrators group or has been explicitly
-  granted access (a connection test with the ``winrs`` command can be used to
-  rule this out).
+* ユーザーがローカルの Administrators グループのメンバーであるか、
+  アクセスが明示的に許可されていることを確認します 
+  (``winrs`` コマンドを使用した接続テストを使用してこれを除外できます)。
 
-* Make sure that the authentication option set by ``ansible_winrm_transport`` is enabled under
-  ``Service\Auth\*``
+* ``ansible_winrm_transport`` で設定した認証オプションが、
+  ``Service\Auth*`` の下で有効になっていることを確認します。
 
-* If running over HTTP and not HTTPS, use ``ntlm``, ``kerberos`` or ``credssp``
-  with ``ansible_winrm_message_encryption: auto`` to enable message encryption.
-  If using another authentication option or if the installed pywinrm version cannot be
-  upgraded, the ``Service\AllowUnencrypted`` can be set to ``true`` but this is
-  only recommended for troubleshooting
+* HTTPS ではなく HTTP で実行している場合は、``ntlm``、``kerberos``、または ``credssp`` 
+  と ``ansible_winrm_message_encryption: auto`` を使用して、メッセージ暗号化を有効にします。
+  別の認証オプションを使用している場合、またはインストールされている pywinrm バージョンをアップグレードできない場合は、
+  ``Service\AllowUnencrypted`` を ``true`` に設定できますが、
+  これはトラブルシューティングにのみ推奨されます。
 
-* Ensure the downstream packages ``pywinrm``, ``requests-ntlm``,
-  ``requests-kerberos``, and/or ``requests-credssp`` are up to date using ``pip``.
+* ダウンストリームパッケージである ``pywinrm``、``requests-ntlm``、
+  ``requests-kerberos``、または ``requests-credssp``、もしくはそのうちの複数のものが、``pip`` を使用して最新の状態になります。
 
-* If using Kerberos authentication, ensure that ``Service\Auth\CbtHardeningLevel`` is
-  not set to ``Strict``.
+* Kerberos 認証を使用する場合は、``Service\Auth\CbtHardeningLevel`` が 
+  ``Strict`` に設定されていないことを確認してください。
 
-* When using Basic or Certificate authentication, make sure that the user is a local account and
-  not a domain account. Domain accounts do not work with Basic and Certificate
-  authentication.
+* 基本認証または証明書認証を使用する場合は、
+  ユーザーがドメインアカウントではなくローカルアカウントであることを確認してください。ドメインアカウントが、
+  基本認証およびおよび認証情報で動作しません。
 
 HTTP 500 Error
 ++++++++++++++
-These indicate an error has occurred with the WinRM service. Some things
-to check for include:
+これは WinRM サービスでエラーが発生したことを示します。以下の事項を
+確認してください。
 
-* Verify that the number of current open shells has not exceeded either
-  ``WinRsMaxShellsPerUser`` or any of the other Winrs quotas haven't been
-  exceeded.
+* 現在のオープンシェルの数が、
+  ``WinRsMaxShellsPerUser`` 
+  または他の Winrs クォーターを超過していないことを確認します。
 
-Timeout Errors
+タイムアウトエラー
 +++++++++++++++
-These usually indicate an error with the network connection where
-Ansible is unable to reach the host. Some things to check for include:
+これらは通常、Ansible がホストに到達できないネットワーク接続のエラーを示しています。
+Ansible がホストに到達できません。確認すべき事項には以下が含まれます。
 
-* Make sure the firewall is not set to block the configured WinRM listener ports
-* Ensure that a WinRM listener is enabled on the port and path set by the host vars
-* Ensure that the ``winrm`` service is running on the Windows host and configured for
-  automatic start
+* ファイアウォールが、設定された WinRM リスナーポートをブロックするように設定されていないことを確認します。
+* WinRM リスナーが、ホストの変数によって設定されたポートおよびパスで有効になっていることを確認します。
+* ``winrm`` サービスが Windows ホスト上で実行され、
+  自動起動に設定されていることを確認します。
 
-Connection Refused Errors
+接続拒否エラー
 +++++++++++++++++++++++++
-These usually indicate an error when trying to communicate with the
-WinRM service on the host. Some things to check for:
+これらは通常、
+ホスト上の WinRM サービスと通信しようとしたときのエラーを示しています。以下の点を確認します。
 
-* Ensure that the WinRM service is up and running on the host. Use
-  ``(Get-Service -Name winrm).Status`` to get the status of the service.
-* Check that the host firewall is allowing traffic over the WinRM port. By default
-  this is ``5985`` for HTTP and ``5986`` for HTTPS.
+* WinRM サービスがホストで稼働していることを確認します。``(Get-Service -Name winrm).Status`` を使用して、
+  サービスのステータスを取得します。
+* ホストのファイアウォールが WinRM ポートでのトラフィックを許可していることを確認します。デフォルトでは空になります。
+  HTTP の場合は ``5985``、HTTPS の場合は ``5986`` です。
 
-Sometimes an installer may restart the WinRM or HTTP service and cause this error. The
-best way to deal with this is to use ``win_psexec`` from another
-Windows host.
+インストーラーが WinRM サービスまたは HTTP サービスを再起動して、このエラーが発生することがあります。文字列が、
+別の Windows ホストから 
+``win_psexec`` を使用することです。
 
-Windows SSH Setup
+Windows SSH の設定
 `````````````````
-Ansible 2.8 has added an experimental SSH connection for Windows managed nodes.
+Ansible 2.8 では、Windows 管理ノードの実験的な SSH 接続が追加されました。
 
 .. warning::
-    Use this feature at your own risk!
-    Using SSH with Windows is experimental, the implementation may make
-    backwards incompatible changes in feature releases. The server side
-    components can be unreliable depending on the version that is installed.
+    この機能は自己責任で使用してください。
+    Windows でのSSH の使用は実験的なものであり、
+    実装は機能リリースで後方互換性のない変更を行う場合があります。サーバーのコンポーネントは、
+    インストールされているバージョンによっては信頼できない場合があります。
 
-Installing Win32-OpenSSH
+Win32-OpenSSH のインストール
 ------------------------
-The first step to using SSH with Windows is to install the `Win32-OpenSSH <https://github.com/PowerShell/Win32-OpenSSH>`_
-service on the Windows host. Microsoft offers a way to install ``Win32-OpenSSH`` through a Windows
-capability but currently the version that is installed through this process is
-too old to work with Ansible. To install ``Win32-OpenSSH`` for use with
-Ansible, select one of these three installation options:
+Windows で SSH を使用する最初の手順は、Windows ホストにサービス `Win32-OpenSSH <https://github.com/PowerShell/Win32-OpenSSH>`_ 
+をインストールすることです。Microsoft 社は、Windows 機能を通じて ``Win32-OpenSSH`` をインストールする方法を提供していますが、
+現在、
+このプロセスを通じてインストールされるバージョンは古すぎて、Ansible では動作しません。Ansible で使用する ``Win32-OpenSSH`` をインストールするには、
+次の 3 つのインストールオプションのいずれかを選択します。
 
-* Manually install the service, following the `install instructions <https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH>`_
-  from Microsoft.
+* Microsoft 社が提供する `インストール手順 <https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH>`_ に従い、
+  サービスを手動でインストールします。
 
-* Use ``win_chocolatey`` to install the service::
+* ``win_chocolatey`` を使用してサービスをインストールします。
 
     - name: install the Win32-OpenSSH service
       win_chocolatey:
@@ -465,7 +465,7 @@ Ansible, select one of these three installation options:
         package_params: /SSHServerFeature
         state: present
 
-* Use an existing Ansible Galaxy role like `jborean93.win_openssh <https://galaxy.ansible.com/jborean93/win_openssh>`_::
+* `jborean93.win_openssh <https://galaxy.ansible.com/jborean93/win_openssh>`_ などの既存の Ansible Galaxy ロールを使用します::
 
     # Make sure the role has been downloaded first
     ansible-galaxy install jborean93.win_openssh
@@ -476,24 +476,24 @@ Ansible, select one of these three installation options:
       gather_facts: no
       roles:
       - role: jborean93.win_openssh
-        opt_openssh_setup_service: True
+        opt_openssh_setup_service:True
 
-.. note:: ``Win32-OpenSSH`` is still a beta product and is constantly
-    being updated to include new features and bugfixes. If you are using SSH as
-    a connection option for Windows, it is highly recommend you install the
-    latest release from one of the 3 methods above.
+.. note:: ``Win32-OpenSSH`` は現在もベータ製品であり、
+    新機能とバグ修正を含むように常に更新されています。Windows の接続オプションとして SSH を使用している場合は、
+    上記の 3 つの方法のいずれかから、
+    最新リリースをインストールすることが強く推奨されます。
 
-Configuring the Win32-OpenSSH shell
+Win32-OpenSSH シェルの設定
 -----------------------------------
 
-By default ``Win32-OpenSSH`` will use ``cmd.exe`` as a shell. To configure a
-different shell, use an Ansible task to define the registry setting::
+デフォルトでは、``Win32-OpenSSH`` は ``cmd.exe`` をシェルとして使用します。別のシェルを構成するには、
+Ansible タスクを使用してレジストリー設定を定義します。
 
     - name: set the default shell to PowerShell
       win_regedit:
-        path: HKLM:\SOFTWARE\OpenSSH
-        name: DefaultShell
-        data: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        path:HKLM:\SOFTWARE\OpenSSH
+        name:DefaultShell
+        data:C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
         type: string
         state: present
 
@@ -504,52 +504,52 @@ different shell, use an Ansible task to define the registry setting::
         name: DefaultShell
         state: absent
 
-Win32-OpenSSH Authentication
+Win32-OpenSSH 認証
 ----------------------------
-Win32-OpenSSH authentication with Windows is similar to SSH
-authentication on Unix/Linux hosts. You can use a plaintext password or
-SSH public key authentication, add public keys to an ``authorized_key`` file
-in the ``.ssh`` folder of the user's profile directory, and configure the
-service using the ``sshd_config`` file used by the SSH service as you would on
-a Unix/Linux host.
+Windows での Win32-OpenSSH 認証は、
+Unix/Linux ホストでの SSH 認証に似ています。平文のパスワードまたは SSH 公開鍵認証を使用し、
+公開鍵を、
+ユーザーのプロファイルディレクトリーの ``.ssh`` ディレクトリーにある ``authorized_key`` ファイルに追加し、
+SSH サービスが使用する ``sshd_config`` ファイルを使用して、
+Unix/Linux ホストで行うのと同じようにサービスを設定することができます。
 
-When using SSH key authentication with Ansible, the remote session won't have access to the
-user's credentials and will fail when attempting to access a network resource.
-This is also known as the double-hop or credential delegation issue. There are
-two ways to work around this issue:
+Ansible で SSH キー認証を使用する場合、リモートセッションはユーザーの認証情報にアクセスできず、
+ネットワークリソースにアクセスしようとすると失敗します。
+これは、ダブルホップまたは認証情報の委任の問題としても知られています。この問題を回避するには、
+2 つの方法があります。
 
-* Use plaintext password auth by setting ``ansible_password``
-* Use ``become`` on the task with the credentials of the user that needs access to the remote resource
+* ``ansible_password`` を設定して平文テキストのパスワード認証を使用する
+* リモートリソースへのアクセスを必要とするユーザーの認証情報を使用して、タスクで ``become`` を使用する
 
-Configuring Ansible for SSH on Windows
+Windows で SSH 用に Ansible の設定
 --------------------------------------
-To configure Ansible to use SSH for Windows hosts, you must set two connection variables:
+Ansible が Windows ホストに SSH を使用するように設定するには、接続変数を 2 つ設定する必要があります。
 
-* set ``ansible_connection`` to ``ssh``
-* set ``ansible_shell_type`` to ``cmd`` or ``powershell``
+* ``ansible_connection`` を ``ssh``に設定します。
+* ``ansible_shell_type`` を ``cmd`` または ``powershell`` に設定します。
 
-The ``ansible_shell_type`` variable should reflect the ``DefaultShell``
-configured on the Windows host. Set to ``cmd`` for the default shell or set to
-``powershell`` if the ``DefaultShell`` has been changed to PowerShell.
+``ansible_shell_type`` 変数は、Windows ホストで構成された ``DefaultShell`` を反映する必要があります。
+Windows ホストで設定します。``DefaultShell`` を PowerShell に変更すると、
+デフォルトシェルの場合は ``cmd`` に設定するか、または ``powershell`` に設定されます。
 
-Known issues with SSH on Windows
+Windows での SSH に関する既知の問題
 --------------------------------
-Using SSH with Windows is experimental, and we expect to uncover more issues.
-Here are the known ones:
+Windows で SSH を使用することは実験的なものであり、さらに多くの問題が明らかになることが予想されます。
+既知のものは以下のとおりです。
 
-* Win32-OpenSSH versions older than ``v7.9.0.0p1-Beta`` do not work when ``powershell`` is the shell type
-* While SCP should work, SFTP is the recommended SSH file transfer mechanism to use when copying or fetching a file
+* ``powershell`` がシェルタイプの場合は、``v7.9.0.0p1-Beta`` よりも古い Win32-OpenSSH バージョンは機能しません。
+* SCP は機能するはずですが、SFTP は、ファイルのコピーまたは取得時に使用する、推奨される SSH ファイル転送メカニズムです。
 
 
 .. seealso::
 
    :ref:`about_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_best_practices`
-       Best practices advice
-   :ref:`List of Windows Modules <windows_modules>`
-       Windows specific module list, all implemented in PowerShell
-   `User Mailing List <https://groups.google.com/group/ansible-project>`_
-       Have a question?  Stop by the google group!
+       ベストプラクティスのアドバイス
+   :ref:`Windows モジュールリスト <windows_modules>`
+       Windows 固有のモジュールリスト (すべて PowerShell に実装)
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

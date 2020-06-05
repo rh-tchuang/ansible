@@ -1,107 +1,107 @@
 .. _intro_adhoc:
 
 *******************************
-Introduction to ad-hoc commands
+アドホックコマンドの概要
 *******************************
 
-An Ansible ad-hoc command uses the `/usr/bin/ansible` command-line tool to automate a single task on one or more managed nodes. Ad-hoc commands are quick and easy, but they are not reusable. So why learn about ad-hoc commands first? Ad-hoc commands demonstrate the simplicity and power of Ansible. The concepts you learn here will port over directly to the playbook language. Before reading and executing these examples, please read :ref:`intro_inventory`.
+Ansible アドホックコマンドは `/usr/bin/ansible` コマンドラインツールを使用して、1 つのタスクを 1 つ以上の管理ノードで自動化します。アドホックコマンドは迅速かつ簡単ですが、再利用できません。では、なぜアドホックコマンドについて最初に学ぶのでしょうか。アドホックコマンドは、Ansible の単純さおよび能力を示しています。ここで学習する概念は、Playbook 言語に直接移植されます。紹介される例を読んで実行する前に、:ref:`intro_inventory` をお読みください。
 
 .. contents::
    :local:
 
-Why use ad-hoc commands?
+アドホックコマンドを使用する理由
 ========================
 
-Ad-hoc commands are great for tasks you repeat rarely. For example, if you want to power off all the machines in your lab for Christmas vacation, you could execute a quick one-liner in Ansible without writing a playbook. An ad-hoc command looks like this:
+アドホックコマンドは、めったに繰り返さないタスクに最適です。たとえば、クリスマス休暇中にラボのマシンの電源をすべてオフにする場合は、Playbook を作成しないで、Ansible で 1 行の簡単なコマンドを実行できます。アドホックコマンドは以下のようになります。
 
 .. code-block:: bash
 
     $ ansible [pattern] -m [module] -a "[module options]"
 
-You can learn more about :ref:`patterns<intro_patterns>` and :ref:`modules<working_with_modules>` on other pages.
+他のページで、:ref:`パターン<intro_patterns>` や :ref:`モジュール<working_with_modules>` の詳細を確認できます。
 
-Use cases for ad-hoc tasks
+アドホックタスクのユースケース
 ==========================
 
-Ad-hoc tasks can be used to reboot servers, copy files, manage packages and users, and much more. You can use any Ansible module in an ad-hoc task. Ad-hoc tasks, like playbooks, use a declarative model,
-calculating and executing the actions required to reach a specified final state. They
-achieve a form of idempotence by checking the current state before they begin and doing nothing unless the current state is different from the specified final state.
+アドホックタスクは、サーバーの再起動、ファイルのコピー、パッケージとユーザーの管理などに使用できます。アドホックタスクでは、Ansible モジュールを使用できます。Playbook などのアドホックタスクは宣言型モデルを使用して、
+指定された最終状態に到達するのに必要なアクションを計算して実行します。アドホックタスクは、
+開始する前に現在の状態を確認し、現在の状態が指定された最終状態と同じ場合は何も実行しない冪等性の形式を実現します。
 
-Rebooting servers
+サーバーの再起動
 -----------------
 
-The default module for the ``ansible`` command-line utility is the :ref:`command module<command_module>`. You can use an ad-hoc task to call the command module and reboot all web servers in Atlanta, 10 at a time. Before Ansible can do this, you must have all servers in Atlanta listed in a a group called [atlanta] in your inventory, and you must have working SSH credentials for each machine in that group. To reboot all the servers in the [atlanta] group:
+``ansible`` コマンドラインユーティリティーのデフォルトモジュールは、:ref:`command モジュール<command_module>` です。アドホックタスクを使用してコマンドモジュールを呼び出し、アトランタにあるすべての Web サーバーを一度に 10 台ずつ再起動できます。Ansible がこれを行うには、アトランタのすべてのサーバーを、インベントリー内の [atlanta] グループにリストし、そのグループの各マシンの SSH 資格情報が有効である必要があります。[atlanta] グループの全サーバーを再起動するには、次のコマンドを実行します。
 
 .. code-block:: bash
 
     $ ansible atlanta -a "/sbin/reboot"
 
-By default Ansible uses only 5 simultaneous processes. If you have more hosts than the value set for the fork count, Ansible will talk to them, but it will take a little longer. To reboot the [atlanta] servers with 10 parallel forks:
+デフォルトでは、Ansible は 5 つの同時プロセスのみを使用します。ホストの数が、フォーク数に設定された値よりも多い場合、Ansible はそのホストと通信しますが、少し時間がかかります。10 個の並列フォークで [atlanta] サーバーを再起動するには、次のコマンドを実行します。
 
 .. code-block:: bash
 
     $ ansible atlanta -a "/sbin/reboot" -f 10
 
-/usr/bin/ansible will default to running from your user account. To connect as a different user:
+/usr/bin/ansible はデフォルトでユーザーアカウントから実行されます。別のユーザーで接続するには、次のコマンドを実行します。
 
 .. code-block:: bash
 
     $ ansible atlanta -a "/sbin/reboot" -f 10 -u username
 
-Rebooting probably requires privilege escalation. You can connect to the server as ``username`` and run the command as the ``root`` user by using the :ref:`become <become>` keyword:
+再起動には、おそらく権限昇格が必要です。``username`` としてサーバーに接続し、:ref:`become <become>` キーワードを使用して ``root`` でそのコマンドを実行します。
 
 .. code-block:: bash
 
     $ ansible atlanta -a "/sbin/reboot" -f 10 -u username --become [--ask-become-pass]
 
-If you add ``--ask-become-pass`` or ``-K``, Ansible prompts you for the password to use for privilege escalation (sudo/su/pfexec/doas/etc).
+``--ask-become-pass`` または ``-K`` を追加します。Ansible により、権限昇格に使用するパスワード (sudo/su/pfexec/doas/etc) の入力が求められます。
 
 .. note::
-   The :ref:`command module <command_module>` does not support extended shell syntax like piping and
-   redirects (although shell variables will always work). If your command requires shell-specific
-   syntax, use the `shell` module instead. Read more about the differences on the
-   :ref:`working_with_modules` page.
+   :ref:`コマンドモジュール <command_module>` は、
+   piping や redirects などの拡張シェル構文に対応していません (ただし、シェル変数は常に機能します)。コマンドにシェル固有の構文が必要な場合は、
+   代わりに `shell` モジュールを使用してください。相違点の詳細は、
+   :ref:`working_with_modules` を参照してください。
 
-So far all our examples have used the default 'command' module. To use a different module, pass ``-m`` for module name. For example, to use the :ref:`shell module <shell_module>`:
+これまでの例ではすべて、デフォルトの「command」モジュールを使用しています。別のモジュールを使用するには、モジュール名に ``-m`` を渡します。たとえば、:ref:`shell モジュール<shell_module>` を使用するには、次のコマンドを実行します。
 
 .. code-block:: bash
 
     $ ansible raleigh -m shell -a 'echo $TERM'
 
-When running any command with the Ansible *ad hoc* CLI (as opposed to
-:ref:`Playbooks <working_with_playbooks>`), pay particular attention to shell quoting rules, so
-the local shell retains the variable and passes it to Ansible.
-For example, using double rather than single quotes in the above example would
-evaluate the variable on the box you were on.
+(:ref:`Playbooks <working_with_playbooks>` ではなく) Ansible アドホック CLI でコマンドを実行する場合は、
+シェル引用ルールに特に注意してください。
+これにより、ローカルシェルは変数を保持し、Ansible に渡します。
+たとえば、上記の例で一重引用符ではなく二重引用符を使用すると、
+指定しているそのボックスの変数が評価されます。
 
 .. _file_transfer:
 
-Managing files
+ファイルの管理
 --------------
 
-An ad-hoc task can harness the power of Ansible and SCP to transfer many files to multiple machines in parallel. To transfer a file directly to all servers in the [atlanta] group:
+アドホックタスクでは、Ansible および SCP の機能を利用して、多くのファイルを複数のマシンに並行して転送できます。[atlanta] グループ内の全サーバーに直接ファイルを転送するには、次のコマンドを実行します。
 
 .. code-block:: bash
 
     $ ansible atlanta -m copy -a "src=/etc/hosts dest=/tmp/hosts"
 
-If you plan to repeat a task like this, use the :ref:`template<template_module>` module in a playbook.
+このようなタスクを繰り返す場合は、Playbook で :ref:`template<template_module>` モジュールを使用します。
 
-The :ref:`file<file_module>` module allows changing ownership and permissions on files. These
-same options can be passed directly to the ``copy`` module as well:
+:ref:`file<file_module>` モジュールにより、ファイルの所有者および権限を変更できます。同じオプションを
+``copy`` モジュールに直接渡すこともできます。
 
 .. code-block:: bash
 
     $ ansible webservers -m file -a "dest=/srv/foo/a.txt mode=600"
     $ ansible webservers -m file -a "dest=/srv/foo/b.txt mode=600 owner=mdehaan group=mdehaan"
 
-The ``file`` module can also create directories, similar to ``mkdir -p``:
+``file`` モジュールは、``mkdir -p`` と同様、ディレクトリーも作成できます。
 
 .. code-block:: bash
 
     $ ansible webservers -m file -a "dest=/path/to/c mode=755 owner=mdehaan group=mdehaan state=directory"
 
-As well as delete directories (recursively) and delete files:
+ディレクトリーを (再帰的に) 削除し、ファイルを削除します。
 
 .. code-block:: bash
 
@@ -109,41 +109,41 @@ As well as delete directories (recursively) and delete files:
 
 .. _managing_packages:
 
-Managing packages
+パッケージの管理
 -----------------
 
-You might also use an ad-hoc task to install, update, or remove packages on managed nodes using a package management module like yum. To ensure a package is installed without updating it:
+アドホックタスクを使用して、yum などのパッケージ管理モジュールを使用して、管理ノードにパッケージをインストール、更新、または削除することもできます。パッケージを更新せずにインストールするには、次のコマンドを実行します。
 
 .. code-block:: bash
 
     $ ansible webservers -m yum -a "name=acme state=present"
 
-To ensure a specific version of a package is installed:
+パッケージの特定バージョンがインストールされていることを確認するには、次のコマンドを実行します。
 
 .. code-block:: bash
 
     $ ansible webservers -m yum -a "name=acme-1.5 state=present"
 
-To ensure a package is at the latest version:
+パッケージが最新バージョンであることを確認するには、次のコマンドを実行します。
 
 .. code-block:: bash
 
     $ ansible webservers -m yum -a "name=acme state=latest"
 
-To ensure a package is not installed:
+パッケージがインストールされていないことを確認するには、次のコマンドを実行します。
 
 .. code-block:: bash
 
     $ ansible webservers -m yum -a "name=acme state=absent"
 
-Ansible has modules for managing packages under many platforms. If there is no module for your package manager, you can install packages using the command module or create a module for your package manager.
+Ansible には、多くのプラットフォームでパッケージを管理するためのモジュールがあります。パッケージマネージャーのモジュールがない場合は、コマンドモジュールを使用してパッケージをインストールするか、パッケージマネージャーのモジュールを作成できます。
 
 .. _users_and_groups:
 
-Managing users and groups
+ユーザーおよびグループの管理
 -------------------------
 
-You can create, manage, and remove user accounts on your managed nodes with ad-hoc tasks:
+アドホックタスクを使用すると、管理ノードでユーザーアカウントを作成、管理、および削除できます。
 
 .. code-block:: bash
 
@@ -151,27 +151,27 @@ You can create, manage, and remove user accounts on your managed nodes with ad-h
 
     $ ansible all -m user -a "name=foo state=absent"
 
-See the :ref:`user <user_module>` module documentation for details on all of the available options, including
-how to manipulate groups and group membership.
+グループやグループメンバーシップの操作方法など、利用可能なすべてのオプションの詳細は、
+:ref:`user <user_module>` モジュールのドキュメントを参照してください。
 
 .. _managing_services:
 
-Managing services
+サービスの管理
 -----------------
 
-Ensure a service is started on all webservers:
+サービスがすべての Web サーバーで起動していることを確認します。
 
 .. code-block:: bash
 
     $ ansible webservers -m service -a "name=httpd state=started"
 
-Alternatively, restart a service on all webservers:
+または、すべての Web サーバーでサービスを再起動します。
 
 .. code-block:: bash
 
     $ ansible webservers -m service -a "name=httpd state=restarted"
 
-Ensure a service is stopped:
+サービスが停止していることを確認します。
 
 .. code-block:: bash
 
@@ -179,28 +179,28 @@ Ensure a service is stopped:
 
 .. _gathering_facts:
 
-Gathering facts
+ファクトの収集
 ---------------
 
-Facts represent discovered variables about a system. You can use facts to implement conditional execution of tasks but also just to get ad-hoc information about your systems. To see all facts:
+ファクトは、検出されたシステムに関する変数を表します。ファクトを使用して、タスクの条件付き実行を実装することもできますが、システムに関するアドホック情報を取得することもできます。すべてのファクトを表示するには、次のコマンドを実行します。
 
 .. code-block:: bash
 
     $ ansible all -m setup
 
-You can also filter this output to display only certain facts, see the :ref:`setup <setup_module>` module documentation for details.
+この出力をフィルターで絞り込んで、特定のファクトのみを表示することもできます。詳細は :ref:`setup <setup_module>` モジュールのドキュメントを参照してください。
 
-Now that you understand the basic elements of Ansible execution, you are ready to learn to automate repetitive tasks using :ref:`Ansible Playbooks <playbooks_intro>`.
+これで、Ansible を実行する基本要素を理解できたので、:ref:`Ansible Playbook<playbooks_intro>` を使用して反復タスクを自動化する方法を学ぶ準備が整いました。
 
 .. seealso::
 
    :ref:`intro_configuration`
-       All about the Ansible config file
+       Ansible 設定ファイルの詳細
    :ref:`all_modules`
-       A list of available modules
+       利用可能なモジュールの一覧
    :ref:`working_with_playbooks`
-       Using Ansible for configuration management & deployment
-   `Mailing List <https://groups.google.com/group/ansible-project>`_
-       Questions? Help? Ideas?  Stop by the list on Google Groups
+       設定管理およびデプロイメントに Ansible の使用
+   `メーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

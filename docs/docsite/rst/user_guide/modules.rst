@@ -1,6 +1,6 @@
 .. _working_with_modules:
 
-Working With Modules
+モジュールの使用
 ====================
 
 .. toctree::
@@ -12,26 +12,26 @@ Working With Modules
    ../modules/modules_by_category
 
 
-Ansible ships with a number of modules (called the 'module library')
-that can be executed directly on remote hosts or through :ref:`Playbooks <working_with_playbooks>`.
+Ansible には、
+リモートホスト上または :ref:`Playbooks <working_with_playbooks>` を介して直接実行できる多数のモジュール　(「モジュールライブラリー」と呼ばれています) が同梱されています。
 
-Users can also write their own modules. These modules can control system resources,
-like services, packages, or files (anything really), or handle executing system commands.
+ユーザーはモジュールを自作することもできます。このようなモジュールは、
+サービス、パッケージ、またはファイルなどのシステムリソースを制御したり、システムコマンドの実行を処理したりできます。
 
 
 .. seealso::
 
    :ref:`intro_adhoc`
-       Examples of using modules in /usr/bin/ansible
+       /usr/bin/ansible におけるモジュールの使用例
    :ref:`playbooks_intro`
-       Introduction to using modules with /usr/bin/ansible-playbook
+       /usr/bin/ansible-playbook におけるモジュール使用の概要
    :ref:`developing_modules_general`
-       How to write your own modules
+       独自のモジュールの作成方法
    :ref:`developing_api`
-       Examples of using modules with the Python API
+       Python API でモジュールを使用する例
    :ref:`interpreter_discovery`
-       Configuring the right Python interpreter on target hosts
-   `Mailing List <https://groups.google.com/group/ansible-project>`_
-       Questions? Help? Ideas?  Stop by the list on Google Groups
+       ターゲットホストでの適切な Python インタープリターの設定
+   `メーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

@@ -1,54 +1,54 @@
 .. _playbooks_async:
 
-Asynchronous Actions and Polling
+非同期アクションおよびポーリング
 ================================
 
-By default tasks in playbooks block, meaning the connections stay open
-until the task is done on each node.  This may not always be desirable, or you may
-be running operations that take longer than the SSH timeout.
+デフォルトでは Playbook ブロックのタスクです。
+つまり、タスクが各ノードで実行されるまで接続は開いたままになります。 これは常に望ましいとは限りません。
+SSH タイムアウトよりも長い操作を実行している可能性もあります。
 
-Time-limited background operations
+時間限定のバックグラウンド操作
 ----------------------------------
 
-You can run long-running operations in the background and check their status later.
-For example, to execute ``long_running_operation``
-asynchronously in the background, with a timeout of 3600 seconds (``-B``),
-and without polling (``-P``)::
+バックグラウンドで長時間実行する操作を実行し、後でステータスを確認できます。
+たとえば、``long_running_operation`` を、
+タイムアウトは 3600 秒 (``-B``) で、
+ポーリングなし (``-P``) でバックグラウンドで非同期に実行するには以下のようになります::
 
     $ ansible all -B 3600 -P 0 -a "/usr/bin/long_running_operation --do-stuff"
 
-If you want to check on the job status later, you can use the
-``async_status`` module, passing it the job ID that was returned when you ran
-the original job in the background::
+後でジョブのステータスを確認する場合は、
+``async_status`` モジュールを使用できます。
+バックグラウンドで元のジョブの実行時に、返されたジョブ ID を渡します。
 
     $ ansible web1.example.com -m async_status -a "jid=488359678239.2844"
 
-To run for 30 minutes and poll for status every 60 seconds::
+30 分間実行し、60 秒ごとにステータスをポーリングするには、以下を実行します。
 
     $ ansible all -B 1800 -P 60 -a "/usr/bin/long_running_operation --do-stuff"
 
-Poll mode is smart so all jobs will be started before polling will begin on any machine.
-Be sure to use a high enough ``--forks`` value if you want to get all of your jobs started
-very quickly. After the time limit (in seconds) runs out (``-B``), the process on
-the remote nodes will be terminated.
+Poll モードはスマートであるため、ポーリングがマシンで開始する前にすべてのジョブが起動します。
+ジョブをすべて迅速に開始する場合は、必ず ``--forks`` の値を
+大きくしてください。時間制限 (秒単位) が経過した後 (``-B``)、
+そのリモートノードのプロセスが終了します。
 
-Typically you'll only be backgrounding long-running
-shell commands or software upgrades.  Backgrounding the copy module does not do a background file transfer. :ref:`Playbooks <working_with_playbooks>` also support polling, and have a simplified syntax for this.
+通常は、
+長時間バックグラウンドで実行しているシェルコマンドまたはソフトウェアのアップグレードのみになります。 コピーモジュールのバックグラウンドでは、バックグラウンドファイルの転送は行われません。:ref:`Playbooks <working_with_playbooks>` は、ポーリングもサポートし、簡単な構文を使用します。
 
-To avoid blocking or timeout issues, you can use asynchronous mode to run all of your tasks at once and then poll until they are done.
+ブロックまたはタイムアウトの問題を回避するには、非同期モードを使用してすべてのタスクを一度に実行し、完了するまでポーリングできます。
 
-The behavior of asynchronous mode depends on the value of `poll`.
+非同期モードの動作は、`poll` の値によって異なります。
 
-Avoid connection timeouts: poll > 0
+接続のタイムアウトの回避 (poll > 0)
 -----------------------------------
 
-When ``poll`` is a positive value, the playbook will *still* block on the task until it either completes, fails or times out.
+``poll`` が正の値の場合、Playbook は完了、失敗、タイムアウトになるまでタスクでブロックされ *続けます*。
 
-In this case, however, `async` explicitly sets the timeout you wish to apply to this task rather than being limited by the connection method timeout.
+この場合、`async` は、接続メソッドのタイムアウトによって制限されるのではなく、このタスクに適用するタイムアウトを明示的に設定します。
 
-To launch a task asynchronously, specify its maximum runtime
-and how frequently you would like to poll for status.  The default
-poll value is set by the ``DEFAULT_POLL_INTERVAL`` setting if you do not specify a value for `poll`::
+タスクを非同期で起動するには、
+最大ランタイムと、ステータスをポーリングする頻度を指定します。 デフォルトの poll 値は、
+`poll` の値を指定しないと、``DEFAULT_POLL_INTERVAL`` 設定により設定されます。
 
     ---
 
@@ -59,34 +59,34 @@ poll value is set by the ``DEFAULT_POLL_INTERVAL`` setting if you do not specify
 
       - name: simulate long running op (15 sec), wait for up to 45 sec, poll every 5 sec
         command: /bin/sleep 15
-        async: 45
-        poll: 5
+        async:45
+        poll:5
 
 .. note::
-   There is no default for the async time limit.  If you leave off the
-   'async' keyword, the task runs synchronously, which is Ansible's
-   default.
+   async 時間制限のデフォルトはありません。 「async」キーワードを省略する場合、
+   このタスクは、同期的に実行されます。
+   これは、Ansible のデフォルトです。
 
 .. note::
-  As of Ansible 2.3, async does not support check mode and will fail the
-  task when run in check mode. See :ref:`check_mode_dry` on how to
-  skip a task in check mode.
+  Ansible 2.3 の時点で、async はチェックモードをサポートしていないため、
+  タスクをチェックモードで実行すると失敗します。チェックモードでタスクを飛ばす方法は、:ref:`check_mode_dry` 
+  を参照してください。
 
 
-Concurrent tasks: poll = 0
+同時タスク: poll = 0
 --------------------------
 
-When ``poll`` is 0, Ansible will start the task and immediately move on to the next one without waiting for a result.
+``poll`` が 0 の場合は、Ansible がタスクを開始し、結果を待たずに次のタスクにすぐに移動します。
 
-From the point of view of sequencing this is asynchronous programming: tasks may now run concurrently.
+シーケンスの観点からは、これは非同期プログラミングになります。タスクを同時に実行できるようになりました。
 
-The playbook run will end without checking back on async tasks.
+Playbook の実行は、非同期タスクを確認し直すことなく終了します。
 
-The async tasks will run until they either complete, fail or timeout according to their `async` value.
+非同期タスクは、`async` 値に応じて完了、失敗、またはタイムアウトが行われるまで実行されます。
 
-If you need a synchronization point with a task, register it to obtain its job ID and use the :ref:`async_status <async_status_module>` module to observe it.
+タスクとの同期ポイントが必要な場合は、これを登録してジョブ ID を取得し、:ref:`async_status <async_status_module>` モジュールを使用してこれを確認します。
 
-You may run a task asynchronously by specifying a poll value of 0::
+ポーリング値を 0 に指定すると、タスクを非同期的に実行できます::
 
     ---
 
@@ -97,20 +97,20 @@ You may run a task asynchronously by specifying a poll value of 0::
 
       - name: simulate long running op, allow to run for 45 sec, fire and forget
         command: /bin/sleep 15
-        async: 45
-        poll: 0
+        async:45
+        poll:0
 
 .. note::
-   You shouldn't attempt run a task asynchronously by specifying a poll value of 0 with operations that require
-   exclusive locks (such as yum transactions) if you expect to run other
-   commands later in the playbook against those same resources.
+   Playbook で、同じリソースに対して別のコマンドを実行することが想定される場合を除いて、
+   (yum トランザクションなどの) 排他的ロックが必要となる操作で、
+   ポーリング値 0 を指定して、タスクを非同期的に実行しないでください。
 
 .. note::
-   Using a higher value for ``--forks`` will result in kicking off asynchronous
-   tasks even faster.  This also increases the efficiency of polling.
+   ``--forks`` に高い値を使用すると、
+   非同期タスクの開始がさらに速くなります。 これにより、ポーリングの効率も高まります。
 
-If you would like to perform a task asynchronously and check on it later you can perform a task similar to the
-following::
+タスクを非同期的に実行し、後で確認する場合は、
+以下のようにタスクを実行できます。
 
       ---
       # Requires ansible 1.8+
@@ -130,12 +130,12 @@ following::
         retries: 30
 
 .. note::
-   If the value of ``async:`` is not high enough, this will cause the
-   "check on it later" task to fail because the temporary status file that
-   the ``async_status:`` is looking for will not have been written or no longer exist
+   これにより、``async:`` の値が十分に高くない場合は、
+   「check on it later」タスクが失敗します。
+   ``async_status:`` が探している一時ステータスファイルが書き込まれていないか、存在しないためです。
 
-If you would like to run multiple asynchronous tasks while limiting the amount
-of tasks running concurrently, you can do it this way::
+同時に実行するタスクの量を制限しながら複数の非同期タスクを実行する場合は、
+次のように実行できます。
 
     #####################
     # main.yml
@@ -177,8 +177,8 @@ of tasks running concurrently, you can do it this way::
 .. seealso::
 
    :ref:`playbooks_intro`
-       An introduction to playbooks
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Playbook の概要
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

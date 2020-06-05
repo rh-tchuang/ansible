@@ -1,5 +1,5 @@
 **********************************************************
-Playbook Example: Continuous Delivery and Rolling Upgrades
+Playbook の例: 継続的デリバリーおよびローリングアップグレード
 **********************************************************
 
 .. contents::
@@ -7,39 +7,39 @@ Playbook Example: Continuous Delivery and Rolling Upgrades
 
 .. _lamp_introduction:
 
-What is continuous delivery?
+継続的デリバリーとは
 ============================
 
-Continuous delivery (CD) means frequently delivering updates to your software application.
+継続的デリバリー (CD) は、ソフトウェアアプリケーションに更新を頻繁に配信することを意味します。
 
-The idea is that by updating more often, you do not have to wait for a specific timed period, and your organization
-gets better at the process of responding to change.
+その概念は、より頻繁に更新することにより、特定の期間を待つ必要がなく、
+組織が変化に対応するプロセスを改善できるということです。
 
-Some Ansible users are deploying updates to their end users on an hourly or even more frequent basis -- sometimes every time
-there is an approved code change.  To achieve this, you need tools to be able to quickly apply those updates in a zero-downtime way.
+1 時間ごと、またはより頻繁に更新をエンドユーザーにデプロイしていている Ansible ユーザーもいます。
+承認されたコード変更があるたびに更新する場合もあります。 そのためには、この更新をゼロダウンタイムで迅速に適用できるツールが必要です。
 
-This document describes in detail how to achieve this goal, using one of Ansible's most complete example
-playbooks as a template: lamp_haproxy. This example uses a lot of Ansible features: roles, templates,
-and group variables, and it also comes with an orchestration playbook that can do zero-downtime
-rolling upgrades of the web application stack.
+このドキュメントでは、Ansible の最も完全な Playbook サンプルの 1 つである lamp_haproxy をテンプレートとして使用して、
+この目標を達成する方法を詳しく説明します。この例では、ロール、テンプレート、グループ変数などの多くの Ansible 機能を使用します。
+また、
+Web アプリケーションスタックのゼロダウンタイムローリングアップグレードを実行できるオーケストレーション Playbook も含まれています。
 
 .. note::
 
-   `Click here for the latest playbooks for this example
-   <https://github.com/ansible/ansible-examples/tree/master/lamp_haproxy>`_.
+   この例における最新の Playbook は、「`こちら
+<https://github.com/ansible/ansible-examples/tree/master/lamp_haproxy>`_」を参照してください。
 
-The playbooks deploy Apache, PHP, MySQL, Nagios, and HAProxy to a CentOS-based set of servers.
+Playbook は Apache、PHP、MySQL、Nagios、および HAProxy を CentOS ベースのサーバーセットにデプロイします。
 
-We're not going to cover how to run these playbooks here. Read the included README in the github project along with the
-example for that information. Instead, we're going to take a close look at every part of the playbook and describe what it does.
+ここでは、この Playbook の実行については説明しません。github プロジェクトに含まれている README と、
+その例を参照してください。代わりに、Playbook の各部分を確認し、その動作を記述します。
 
 .. _lamp_deployment:
 
-Site deployment
+サイトのデプロイメント
 ===============
 
-Let's start with ``site.yml``. This is our site-wide deployment playbook. It can be used to initially deploy the site, as well
-as push updates to all of the servers:
+まず、``site.yml`` から始めましょう。これは、サイト全体のデプロイメントの Playbook です。最初にサイトをデプロイし、
+すべてのサーバーに更新をプッシュするのに使用できます。
 
 .. code-block:: yaml
 
@@ -83,65 +83,65 @@ as push updates to all of the servers:
 
 .. note::
 
-   If you're not familiar with terms like playbooks and plays, you should review :ref:`working_with_playbooks`.
+   Playbook やプレイなどの用語に慣れていない場合は、:ref:`working_with_playbooks` を確認してください。
 
-In this playbook we have 5 plays. The first one targets ``all`` hosts and applies the ``common`` role to all of the hosts.
-This is for site-wide things like yum repository configuration, firewall configuration, and anything else that needs to apply to all of the servers.
+この Playbook では、5 つの Playbook があります。最初のホストは ``すべて`` のホストを対象にし、``共通`` のロールをすべてのホストに適用します。
+これは、yum リポジトリー設定、ファイアウォール設定などのサイト全体で、すべてのサーバーに適用する必要がある設定です。
 
-The next four plays run against specific host groups and apply specific roles to those servers.
-Along with the roles for Nagios monitoring, the database, and the web application, we've implemented a
-``base-apache`` role that installs and configures a basic Apache setup. This is used by both the
-sample web application and the Nagios hosts.
+次の 4 つのプレイは、特定のホストグループに対して実行され、そのサーバーに特定のロールを適用します。
+Nagios 監視、データベース、および Web アプリケーションのロールに加えて、
+基本的な Apache セットアップをインストールおよび構成する ``base-apache`` ロールを実装しました。これは、
+サンプル Web アプリケーションと Nagios ホストの両方で使用されます。
 
 .. _lamp_roles:
 
-Reusable content: roles
+再利用可能なコンテンツ: ロール
 =======================
 
-By now you should have a bit of understanding about roles and how they work in Ansible. Roles are a way to organize
-content: tasks, handlers, templates, and files, into reusable components.
+現時点では、ロールおよび Ansible の仕組みについて理解しておく必要があります。ロールは、
+タスク、ハンドラー、テンプレート、ファイルなどのコンテンツを再利用可能なコンポーネントに整理する方法です。
 
-This example has six roles: ``common``, ``base-apache``, ``db``, ``haproxy``, ``nagios``, and ``web``. How you organize
-your roles is up to you and your application, but most sites will have one or more common roles that are applied to
-all systems, and then a series of application-specific roles that install and configure particular parts of the site.
+この例には、``common``、``base-apache``、``db``、``haproxy``、``nagios``、および ``web`` の 6 つのロールがあります。ロールをどのように整理するかはユーザーとアプリケーション次第ですが、
+ほとんどのサイトには、すべてのシステムに適用される 1 つ以上の共通のロールと、
+サイトの特定部分をインストールおよび構成する一連のアプリケーション固有のロールがあります。
 
-Roles can have variables and dependencies, and you can pass in parameters to roles to modify their behavior.
-You can read more about roles in the :ref:`playbooks_reuse_roles` section.
+ロールは変数と依存関係を持つことができ、パラメーターをロールに渡すことでその動作を変更できます。
+ロールの詳細は、:ref:`playbooks_reuse_roles` セクションをご覧ください。
 
 .. _lamp_group_variables:
 
-Configuration: group variables
+設定: グループ変数
 ==============================
 
-Group variables are variables that are applied to groups of servers. They can be used in templates and in
-playbooks to customize behavior and to provide easily-changed settings and parameters. They are stored in
-a directory called ``group_vars`` in the same location as your inventory.
-Here is lamp_haproxy's ``group_vars/all`` file. As you might expect, these variables are applied to all of the machines in your inventory:
+グループ変数は、サーバーのグループに適用される変数です。テンプレートおよび Playbook で使用して動作をカスタマイズし、
+簡単に変更できる設定とパラメーターを提供できます。この変数は、
+インベントリーと同じ場所にある ``group_vars``ディレクトリーに保存されます。
+以下は、lamp_haproxy の ``group_vars/all`` ファイルです。予想どおりに、この変数はインベントリーのすべてのマシンに適用されます。
 
 .. code-block:: yaml
 
    ---
-   httpd_port: 80
-   ntpserver: 192.0.2.23
+   httpd_port:80
+   ntpserver:192.0.2.23
 
-This is a YAML file, and you can create lists and dictionaries for more complex variable structures.
-In this case, we are just setting two variables, one for the port for the web server, and one for the
-NTP server that our machines should use for time synchronization.
+これは YAML ファイルであり、より複雑な変数構造のリストおよびディクショナリーを作成できます。
+この場合は、2 つの変数を設定しています。1 つは Web サーバーのポート用で、
+もう 1 つはマシンが時刻同期に使用する NTP サーバー用です。
 
-Here's another group variables file. This is ``group_vars/dbservers`` which applies to the hosts in the ``dbservers`` group:
+別のグループ変数ファイルです。これは、``dbservers`` グループのホストに適用される ``group_vars/dbservers`` です。
 
 .. code-block:: yaml
 
    ---
    mysqlservice: mysqld
-   mysql_port: 3306
+   mysql_port:3306
    dbuser: root
    dbname: foodb
    upassword: usersecret
 
-If you look in the example, there are group variables for the ``webservers`` group and the ``lbservers`` group, similarly.
+上記の例を参照すると、同様に ``webservers`` グループと ``lbservers`` グループのグループ変数も存在します。
 
-These variables are used in a variety of places. You can use them in playbooks, like this, in ``roles/db/tasks/main.yml``:
+これらの変数はさまざまな場所で使用されます。これらは、``roles/db/tasks/main.yml`` のように Playbook で使用できます。
 
 .. code-block:: yaml
 
@@ -158,7 +158,7 @@ These variables are used in a variety of places. You can use them in playbooks, 
        host: '%'
        state: present
 
-You can also use these variables in templates, like this, in ``roles/common/templates/ntp.conf.j2``:
+これらの変数は、``roles/common/templates/ntp.conf.j2`` で、テンプレートで使用することもできます。
 
 .. code-block:: text
 
@@ -173,10 +173,10 @@ You can also use these variables in templates, like this, in ``roles/common/temp
 
    keys /etc/ntp/keys
 
-You can see that the variable substitution syntax of {{ and }} is the same for both templates and variables. The syntax
-inside the curly braces is Jinja2, and you can do all sorts of operations and apply different filters to the
-data inside. In templates, you can also use for loops and if statements to handle more complex situations,
-like this, in ``roles/common/templates/iptables.j2``:
+{{ and }} の変数置換構文が、テンプレートと変数の両方で同じであることを確認できます。中括弧内の構文は Jinja2 であり、
+あらゆる種類の操作を実行して、
+内部のデータにさまざまなフィルターを適用できます。テンプレートでは、for ループと if ステートメントを使用して、
+``roles/common/templates/iptables.j2`` で次のようなより複雑な状況を処理することもできます。
 
 .. code-block:: jinja
 
@@ -184,10 +184,10 @@ like this, in ``roles/common/templates/iptables.j2``:
    -A INPUT -p tcp  --dport 3306 -j  ACCEPT
    {% endif %}
 
-This is testing to see if the inventory name of the machine we're currently operating on (``inventory_hostname``)
-exists in the inventory group ``dbservers``. If so, that machine will get an iptables ACCEPT line for port 3306.
+これは、現在操作しているマシンのインベントリー名 (``inventory_hostname``) が、
+インベントリーグループ ``dbservers`` に存在するかどうかを確認するためのテストです。その場合、そのマシンはポート 3306 の iptables ACCEPT 行を取得します。
 
-Here's another example, from the same template:
+以下は、同じテンプレートの別の例です。
 
 .. code-block:: jinja
 
@@ -195,43 +195,43 @@ Here's another example, from the same template:
    -A INPUT -p tcp -s {{ hostvars[host].ansible_default_ipv4.address }} --dport 5666 -j ACCEPT
    {% endfor %}
 
-This loops over all of the hosts in the group called ``monitoring``, and adds an ACCEPT line for
-each monitoring hosts' default IPv4 address to the current machine's iptables configuration, so that Nagios can monitor those hosts.
+これは、``monitoring`` というグループのすべてのホストをループし、
+Nagios がそのホストを監視できるように、各監視ホストのデフォルト IPv4 アドレスの ACCEPT 行を現在のマシンの iptables 構成に追加します。
 
-You can learn a lot more about Jinja2 and its capabilities `here <http://jinja.pocoo.org/docs/>`_, and you
-can read more about Ansible variables in general in the :ref:`playbooks_variables` section.
+Jinja2 およびその機能は、「`こちら <http://jinja.pocoo.org/docs/>`_」で詳しく学ぶことができます。
+また、Ansible 変数全般は、「:ref:`playbooks_variables`」セクションを参照してください。
 
 .. _lamp_rolling_upgrade:
 
-The rolling upgrade
+ローリングアップグレード
 ===================
 
-Now you have a fully-deployed site with web servers, a load balancer, and monitoring. How do you update it? This is where Ansible's
-orchestration features come into play. While some applications use the term 'orchestration' to mean basic ordering or command-blasting, Ansible
-refers to orchestration as 'conducting machines like an orchestra', and has a pretty sophisticated engine for it.
+これで、Web サーバー、ロードバランサー、および監視を備え、完全にデプロイされたサイトができました。これは、どのように更新していきますか。これは、
+Ansible のオーケストレーション機能が作用する場所です。一部のアプリケーションでは、「オーケストレーション」という用語を使用して基本的な順序付けまたはコマンドブラストを意味しますが、
+Ansible は、オーケストレーションを「オーケストラのようにマシンを指揮すること」として扱い、かなり洗練されたエンジンを備えています。
 
-Ansible has the capability to do operations on multi-tier applications in a coordinated way, making it easy to orchestrate a sophisticated zero-downtime rolling upgrade of our web application. This is implemented in a separate playbook, called ``rolling_update.yml``.
+Ansible には、多層アプリケーションで連携して操作を実行する機能があります。そのため、Web アプリケーションの高度なゼロダウンタイムローリングアップグレードを簡単に調整 (オーケストレーション) できます。これは、``rolling_update.yml`` と呼ばれる別の Playbook に実装されます。
 
-Looking at the playbook, you can see it is made up of two plays. The first play is very simple and looks like this:
+Playbook を確認すると、Playbook が 2 つのプレイで構成されていることを確認できます。最初のプレイは非常にシンプルで、以下のようになります。
 
 .. code-block:: yaml
 
    - hosts: monitoring
      tasks: []
 
-What's going on here, and why are there no tasks? You might know that Ansible gathers "facts" from the servers before operating upon them. These facts are useful for all sorts of things: networking information, OS/distribution versions, etc. In our case, we need to know something about all of the monitoring servers in our environment before we perform the update, so this simple play forces a fact-gathering step on our monitoring servers. You will see this pattern sometimes, and it's a useful trick to know.
+ここで何が起こるのか、またタスクがないのはなぜですか。Ansible は、操作を行う前にサーバーから「ファクト」を収集していることを認識している可能性があります。これらのファクトは、ネットワーク情報、OS/ディストリビューションのバージョンなど、あらゆる種類の場合に役に立ちます。この場合は、更新を行う前に、環境内の全監視サーバーについて知っておく必要があります。そのため、この簡単なプレイにより、監視サーバーでファクト収集手順が強制されます。このパターンは時折確認し、覚えておくと便利です。
 
-The next part is the update play. The first part looks like this:
+次の部分は更新のプレイです。最初の部分は以下のようになります。
 
 .. code-block:: yaml
 
    - hosts: webservers
      user: root
-     serial: 1
+     serial:1
 
-This is just a normal play definition, operating on the ``webservers`` group. The ``serial`` keyword tells Ansible how many servers to operate on at once. If it's not specified, Ansible will parallelize these operations up to the default "forks" limit specified in the configuration file. But for a zero-downtime rolling upgrade, you may not want to operate on that many hosts at once. If you had just a handful of webservers, you may want to set ``serial`` to 1, for one host at a time. If you have 100, maybe you could set ``serial`` to 10, for ten at a time.
+これは、通常のプレイ定義で、``webservers`` グループで動作します。``serial`` キーワードは、Ansible に一度に操作するサーバー数を示します。これが指定されていないと、Ansible はこれらの操作を、設定ファイルで指定されているデフォルトの「フォーク」制限まで並列処理します。ただし、ゼロダウンタイムローリングアップグレードでは、多数のホストで一度に操作しない場合があります。Web サーバーの数が少ない場合は、たとえば ``serial`` を 1 に設定します (一度に 1 台のホスト)。100 台ある場合は、たとえば ``serial`` を 10 に設定します (一度に 10 台)。
 
-Here is the next part of the update play:
+以下は更新プレイの次の部分です。
 
 .. code-block:: yaml
 
@@ -250,16 +250,16 @@ Here is the next part of the update play:
      loop: "{{ groups.lbservers }}"
 
 .. note::
-   - The ``serial`` keyword forces the play to be executed in 'batches'. Each batch counts as a full play with a subselection of hosts.
-     This has some consequences on play behavior. For example, if all hosts in a batch fails, the play fails, which in turn fails the entire run. You should consider this when combining with ``max_fail_percentage``.
+   - ``serial`` キーワードにより、プレイを「バッチ」で強制的に実行します。各バッチは、ホストのサブ選択とともに完全なプレイとしてカウントされます。
+     これにより、プレイの動作にいくつかの影響が生じます。たとえば、バッチのすべてのホストが失敗すると、プレイは失敗し、実行全体が失敗します。``max_fail_percentage`` と併用する場合には、これを考慮する必要があります。
 
-The ``pre_tasks`` keyword just lets you list tasks to run before the roles are called. This will make more sense in a minute. If you look at the names of these tasks, you can see that we are disabling Nagios alerts and then removing the webserver that we are currently updating from the HAProxy load balancing pool.
+``pre_tasks`` キーワードを使用すると、ロールが呼び出される前に実行するタスクを一覧表示できます。これにより、1 分でより妥当になります。これらのタスクの名前を見ると、Nagios アラートを無効にしてから、現在更新中の Web サーバーを HAProxy ロードバランシングプールから削除していることがわかります。
 
-The ``delegate_to`` and ``loop`` arguments, used together, cause Ansible to loop over each monitoring server and load balancer, and perform that operation (delegate that operation) on the monitoring or load balancing server, "on behalf" of the webserver. In programming terms, the outer loop is the list of web servers, and the inner loop is the list of monitoring servers.
+``delegate_to`` 引数および ``loop`` 引数を一緒に使用すると、Ansible が各監視サーバーとロードバランサーをループし、Web サーバーに「代わって」監視サーバーまたは負荷分散サーバーでその操作を実行 (操作を委譲) します。プログラミング用語では、外部ループは We bサーバーのリスト、内部ループは監視サーバーのリストになります。
 
-Note that the HAProxy step looks a little complicated.  We're using HAProxy in this example because it's freely available, though if you have (for instance) an F5 or Netscaler in your infrastructure (or maybe you have an AWS Elastic IP setup?), you can use modules included in core Ansible to communicate with them instead.  You might also wish to use other monitoring modules instead of nagios, but this just shows the main goal of the 'pre tasks' section -- take the server out of monitoring, and take it out of rotation.
+HAProxy ステップは少し複雑になることに注意してください。 この例では HAProxy を使用していますが、これは無料で利用できるため、インフラストラクチャーに (たとえば) F5 や Netscaler がある場合 (あるいは AWS Elastic IP を設定している場合) は、代わりにコア Ansible に含まれるモジュールを使用して通信することができます。 Nagios の代わりに他の監視モジュールを使用する場合もありますが、ここでは「事前タスク」セクションの主な目的のみを示しており、サーバーは監視対象外になり、ローテーションがなくなります。
 
-The next step simply re-applies the proper roles to the web servers. This will cause any configuration management declarations in ``web`` and ``base-apache`` roles to be applied to the web servers, including an update of the web application code itself. We don't have to do it this way--we could instead just purely update the web application, but this is a good example of how roles can be used to reuse tasks:
+次の手順では、適切なロールを Web サーバーに再適用します。これにより、``web`` ロールおよび ``base-apache`` ロールの設定管理宣言が Web サーバーに適用されます。これには、Web アプリケーションコード自体の更新も含まれます。この方法で行う必要はありません。代わりに、単に Web アプリケーションを更新することもできますが、これはロールを使用してタスクを再利用する方法の良い例です。
 
 .. code-block:: yaml
 
@@ -268,7 +268,7 @@ The next step simply re-applies the proper roles to the web servers. This will c
    - base-apache
    - web
 
-Finally, in the ``post_tasks`` section, we reverse the changes to the Nagios configuration and put the web server back in the load balancing pool:
+最後に、``post_tasks`` セクションで、Nuppet 設定への変更を元に戻し、Web サーバーを負荷分散プールに戻します。
 
 .. code-block:: yaml
 
@@ -286,39 +286,39 @@ Finally, in the ``post_tasks`` section, we reverse the changes to the Nagios con
      delegate_to: "{{ item }}"
      loop: "{{ groups.monitoring }}"
 
-Again, if you were using a Netscaler or F5 or Elastic Load Balancer, you would just substitute in the appropriate modules instead.
+NetScaler、F5、または Elastic Load Balancer を使用する場合は、代わりに適切なモジュールに置き換えてください。
 
 .. _lamp_end_notes:
 
-Managing other load balancers
+その他のロードバランサーの管理
 =============================
 
-In this example, we use the simple HAProxy load balancer to front-end the web servers. It's easy to configure and easy to manage. As we have mentioned, Ansible has built-in support for a variety of other load balancers like Citrix NetScaler, F5 BigIP, Amazon Elastic Load Balancers, and more. See the :ref:`working_with_modules` documentation for more information.
+この例では、単純な HAProxy ロードバランサーを使用して Web サーバーをフロントエンドします。これは簡単に設定でき、管理が容易です。前述したように、Ansible には、Citrix NetScaler、F5 BigIP、Amazon Elastic Load Balancers などのさまざまなロードバランサーのサポートが組み込まれています。詳細は、:ref:`working_with_modules` ドキュメントを参照してください。
 
-For other load balancers, you may need to send shell commands to them (like we do for HAProxy above), or call an API, if your load balancer exposes one. For the load balancers for which Ansible has modules, you may want to run them as a ``local_action`` if they contact an API. You can read more about local actions in the :ref:`playbooks_delegation` section.  Should you develop anything interesting for some hardware where there is not a core module, it might make for a good module for core inclusion!
+その他のロードバランサーについては、上記の HAProxy の場合と同様にシェルコマンドを送信するか、ロードバランサーが公開している場合は API を呼び出す必要があります。Ansible にモジュールがあるロードバランサーの場合、それが API に連絡する場合は、それらを ``local_action`` として実行できます。ローカルアクションの詳細は、:ref:`playbooks_delegation` セクションをご覧ください。 コアモジュールがないハードウェアで何か面白いものを開発すると、コアを組み込む優れたモジュールになる可能性があります。
 
 .. _lamp_end_to_end:
 
-Continuous delivery end-to-end
+継続的デリバリーのエンドツーエンド
 ==============================
 
-Now that you have an automated way to deploy updates to your application, how do you tie it all together? A lot of organizations use a continuous integration tool like `Jenkins <https://jenkins.io/>`_ or `Atlassian Bamboo <https://www.atlassian.com/software/bamboo>`_ to tie the development, test, release, and deploy steps together. You may also want to use a tool like `Gerrit <https://www.gerritcodereview.com/>`_ to add a code review step to commits to either the application code itself, or to your Ansible playbooks, or both.
+更新プログラムをアプリケーションに自動的にデプロイできるようになりましたが、それをどのように結び付けますか。多くの組織では、`Jenkins <https://jenkins.io/>`_ や `Atlassian Bamboo <https://www.atlassian.com/software/bamboo>`_ のような継続的インテグレーションツールを使用して、開発、テスト、リリース、デプロイのステップを結び付けています。`Gerrit <https://www.gerritcodereview.com/>`_ などのツールを使用して、アプリケーションコード自体または Ansible Playbook、あるいはその両方にコミットするコードレビューステップを追加することもできます。
 
-Depending on your environment, you might be deploying continuously to a test environment, running an integration test battery against that environment, and then deploying automatically into production.  Or you could keep it simple and just use the rolling-update for on-demand deployment into test or production specifically.  This is all up to you.
+環境によっては、テスト環境に継続的にデプロイし、その環境に対して統合テストバッテリーを実行してから、実稼働環境に自動的にデプロイする場合があります。 または、シンプルに保ち、ローリングアップデートを使用して、特にテスト環境または実稼働環境にオンデマンドでデプロイすることもできます。 これはすべてあなた次第です。
 
-For integration with Continuous Integration systems, you can easily trigger playbook runs using the ``ansible-playbook`` command line tool, or, if you're using :ref:`ansible_tower`, the ``tower-cli`` or the built-in REST API.  (The tower-cli command 'joblaunch' will spawn a remote job over the REST API and is pretty slick).
+継続的インテグレーションシステムとの統合では、``ansible-playbook`` コマンドラインツールを使用して、もしくは :ref:`ansible_tower` を使用している場合は ``tower-cli`` または組み込みの REST API を使用して、Playbook の実行を簡単にトリガーできます。 tower-cli コマンド「joblaunch」は、REST API 経由でリモートジョブを生成し、非常に洗練されています。
 
-This should give you a good idea of how to structure a multi-tier application with Ansible, and orchestrate operations upon that app, with the eventual goal of continuous delivery to your customers. You could extend the idea of the rolling upgrade to lots of different parts of the app; maybe add front-end web servers along with application servers, for instance, or replace the SQL database with something like MongoDB or Riak. Ansible gives you the capability to easily manage complicated environments and automate common operations.
+これにより、Ansible を使用して多層アプリケーションを構築し、顧客への継続的な配信を最終的な目標として、そのアプリで操作を調整 (オーケストレート) する方法について良い考えが浮かぶはずです。ローリングアップグレードのアイデアを、アプリのさまざまな部分に拡張できます。たとえば、フロントエンド Web サーバーをアプリケーションサーバーとともに追加するか、SQL データベースを MongoDB や Riak などに置き換えます。Ansible は、複雑な環境を簡単に管理し、一般的な操作を自動化する機能を提供します。
 
 .. seealso::
 
-   `lamp_haproxy example <https://github.com/ansible/ansible-examples/tree/master/lamp_haproxy>`_
-       The lamp_haproxy example discussed here.
+   `lamp_haproxy の例 <https://github.com/ansible/ansible-examples/tree/master/lamp_haproxy>`_
+       ここで説明した lamp_haproxy の例です。
    :ref:`working_with_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_reuse_roles`
-       An introduction to playbook roles
+       Playbook のロールの概要
    :ref:`playbooks_variables`
-       An introduction to Ansible variables
-   `Ansible.com: Continuous Delivery <https://www.ansible.com/use-cases/continuous-delivery>`_
-       An introduction to Continuous Delivery with Ansible
+       Ansible 変数の概要
+   `Ansible.com:継続的デリバリー <https://www.ansible.com/use-cases/continuous-delivery>`_
+       Ansible を使用した継続的デリバリーの概要

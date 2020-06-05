@@ -1,43 +1,43 @@
 .. _playbooks_tests:
 
-Tests
+Test
 -----
 
-.. contents:: Topics
+.. contents:: トピック
 
 
-`Tests <http://jinja.pocoo.org/docs/dev/templates/#tests>`_ in Jinja are a way of evaluating template expressions and returning True or False.
-Jinja ships with many of these. See `builtin tests`_ in the official Jinja template documentation.
+Jinja の `Test <http://jinja.pocoo.org/docs/dev/templates/#tests>`_ は、テンプレート式を評価し、True または False を返す方法です。
+Jinja には、これらの多くが同梱されています。公式の Jinja テンプレートドキュメントの「`builtin tests`_」を参照してください。
 
-The main difference between tests and filters are that Jinja tests are used for comparisons, whereas filters are used for data manipulation, and have different applications in jinja. Tests can also be used in list processing filters, like ``map()`` and ``select()`` to choose items in the list.
+テストとフィルターの主な相違点は、Jinja テストが比較に使用される点です。Jira ではフィルターはデータ操作に使用され、アプリケーションが異なります。テストは、``map()`` や ``select()`` などのリスト処理フィルターで使用して、リスト内の項目を選択することもできます。
 
-Like all templating, tests always execute on the Ansible controller, **not** on the target of a task, as they test local data.
+すべてのテンプレートと同様に、テストは常に、ローカルデータをテストする際にタスクのターゲットでは **なく**、Ansible コントローラーで実行されます。
 
-In addition to those Jinja2 tests, Ansible supplies a few more and users can easily create their own.
+このような Jinja2 テストに加えて、Ansible はより多くのものを提供しており、ユーザーは独自のテストを簡単に作成できます。
 
 .. _test_syntax:
 
-Test syntax
+Test の構文
 ```````````
 
-`Test syntax <http://jinja.pocoo.org/docs/dev/templates/#tests>`_ varies from `filter syntax <http://jinja.pocoo.org/docs/dev/templates/#filters>`_ (``variable | filter``). Historically Ansible has registered tests as both jinja tests and jinja filters, allowing for them to be referenced using filter syntax.
+`Test の構文 <http://jinja.pocoo.org/docs/dev/templates/#tests>`_ は、`フィルター構文 <http://jinja.pocoo.org/docs/dev/templates/#filters>`_ (``variable | filter``) とは異なります。従来の Ansible では、jinja のテストとフィルターの両方がテストとして登録されており、フィルター構文を使用してそれを参照できます。
 
-As of Ansible 2.5, using a jinja test as a filter will generate a warning.
+Ansible 2.5 の時点では、jinja テストをフィルターとして使用すると警告が生成されます。
 
-The syntax for using a jinja test is as follows::
+jinja テストを使用するための構文は、以下のとおりです。
 
     variable is test_name
 
-Such as::
+例::
 
     result is failed
 
 .. _testing_strings:
 
-Testing strings
+文字列のテスト
 ```````````````
 
-To match strings against a substring or a regular expression, use the "match", "search" or "regex" filters::
+サブ文字列または正規表現に対して文字列と一致させるには、フィルターの「match」、「search」、または「regex」を使用します。
 
     vars:
       url: "http://example.com/users/foo/resources/bar"
@@ -59,73 +59,73 @@ To match strings against a substring or a regular expression, use the "match", "
             msg: "matched pattern 4"
           when: url is regex("example.com/\w+/foo")
 
-'match' requires zero or more characters at the beginning of the string, while 'search' only requires matching a subset of the string. By default, 'regex' works like `search`, but `regex` can be configured to perform other tests as well.
+「match」には文字列の先頭にゼロ以上の文字が必要です。「search」には文字列のサブセットの一致のみが必要になります。デフォルトでは、「regex」は `search` のように機能しますが、`regex` 表現は他のテストも実行するように設定できます。
 
 .. _testing_versions:
 
-Version Comparison
+バージョン比較
 ``````````````````
 
 .. versionadded:: 1.6
 
-.. note:: In 2.5 ``version_compare`` was renamed to ``version``
+.. note:: 2.5 では、``version_compare`` の名前が ``version`` に変更されました。
 
-To compare a version number, such as checking if the ``ansible_facts['distribution_version']``
-version is greater than or equal to '12.04', you can use the ``version`` test.
+``ansible_facts['distribution_version']`` バージョンが「12.04」以降であることを確認するなど、
+バージョン番号を比較するには、``version`` テストを使用できます。
 
-The ``version`` test can also be used to evaluate the ``ansible_facts['distribution_version']``::
+``version`` テストを使用して ``ansible_facts['distribution_version']`` を評価することもできます::
 
     {{ ansible_facts['distribution_version'] is version('12.04', '>=') }}
 
-If ``ansible_facts['distribution_version']`` is greater than or equal to 12.04, this test returns True, otherwise False.
+``ansible_facts['distribution_version']`` が 12.04 以上の場合は、このテストで True が返り、それ以外の場合は False が返ります。
 
-The ``version`` test accepts the following operators::
+``version`` テストでは、以下の演算子を受け入れます。
 
     <, lt, <=, le, >, gt, >=, ge, ==, =, eq, !=, <>, ne
 
-This test also accepts a 3rd parameter, ``strict`` which defines if strict version parsing as defined by ``distutils.version.StrictVersion`` should be used.  The default is ``False`` (using ``distutils.version.LooseVersion``), ``True`` enables strict version parsing::
+このテストは、3 番目のパラメーター (``strict``) も受け入れます。これは、``distutils.version.StrictVersion`` で定義されている厳格なバージョン解析を使用すべきかどうかを定義します。 デフォルトは、``False`` (``distutils.version.LooseVersion`` を使用) で、``True`` は厳格なバージョン解析を有効にします::
 
     {{ sample_version_var is version('1.0', operator='lt', strict=True) }}
 
 
 .. _math_tests:
 
-Set theory tests
+セット理論テスト
 ````````````````
 
 .. versionadded:: 2.1
 
-.. note:: In 2.5 ``issubset`` and ``issuperset`` were renamed to ``subset`` and ``superset``
+.. note:: 2.5 では、``issubset`` と ``issuperset`` の名前が、``subset`` および ``superset`` にそれぞれ変更になりました。
 
-To see if a list includes or is included by another list, you can use 'subset' and 'superset'::
+リストに別のリストが含まれているか、またはリストが別のリストに含まれているかを確認するには、「subset」および「superset」を使用します::
 
     vars:
         a: [1,2,3,4,5]
         b: [2,3]
     tasks:
         - debug:
-            msg: "A includes B"
+            msg:"A includes B"
           when: a is superset(b)
 
         - debug:
-            msg: "B is included in A"
+            msg:"B is included in A"
           when: b is subset(a)
 
 .. _contains_test:
 
-Test if a list contains a value
+リストに値が含まれるかどうかのテスト
 ```````````````````````````````
 
 .. versionadded:: 2.8
 
-Ansible includes a ``contains`` test which operates similarly, but in reverse of the Jinja2 provided ``in`` test.
-The ``contains`` test is designed to work with the ``select``, ``reject``, ``selectattr``, and ``rejectattr`` filters::
+Ansible には、同様に動作する ``contains`` テストが含まれますが、``in`` テストで提供される Jinja2 とは逆の動作が含まれています。
+``contains`` テストは、``select`` フィルター、``reject`` フィルター、``selectattr``、および ``rejectattr`` フィルターと連携するように設計されています。
 
     vars:
       lacp_groups:
         - master: lacp0
-          network: 10.65.100.0/24
-          gateway: 10.65.100.1
+          network:10.65.100.0/24
+          gateway:10.65.100.1
           dns4:
             - 10.65.100.10
             - 10.65.100.11
@@ -134,8 +134,8 @@ The ``contains`` test is designed to work with the ``select``, ``reject``, ``sel
             - em2
 
         - master: lacp1
-          network: 10.65.120.0/24
-          gateway: 10.65.120.1
+          network:10.65.120.0/24
+          gateway:10.65.120.1
           dns4:
             - 10.65.100.10
             - 10.65.100.11
@@ -151,7 +151,7 @@ The ``contains`` test is designed to work with the ``select``, ``reject``, ``sel
 
 .. versionadded:: 2.4
 
-You can use `any` and `all` to check if any or all elements in a list are true or not::
+`any` および `all` を使用して、リスト内のいずれかの要素が true かどうかを確認できます。
 
   vars:
     mylist:
@@ -172,12 +172,12 @@ You can use `any` and `all` to check if any or all elements in a list are true o
       when: myotherlist is any
 
 
-Testing paths
+パスのテスト
 `````````````
 
-.. note:: In 2.5 the following tests were renamed to remove the ``is_`` prefix
+.. note:: 2.5 では、以下のテストの名前が変更になり、``is_`` 接頭辞が削除されました。
 
-The following tests can provide information about a path on the controller::
+以下のテストは、コントローラー上のパスに関する情報を提供します。
 
     - debug:
         msg: "path is a directory"
@@ -209,10 +209,10 @@ The following tests can provide information about a path on the controller::
 
 .. _test_task_results:
 
-Task results
+タスクの結果
 ````````````
 
-The following tasks are illustrative of the tests meant to check the status of tasks::
+以下のタスクは、タスクのステータスを確認するためのテストを示しています。
 
     tasks:
 
@@ -241,7 +241,7 @@ The following tasks are illustrative of the tests meant to check the status of t
           msg: "it was skipped"
         when: result is skipped
 
-.. note:: From 2.1, you can also use success, failure, change, and skip so that the grammar matches, for those who need to be strict about it.
+.. note:: 2.1 以降、文法を厳密にする必要がある場合に、success、failure、change、および skip を使用して、文法が一致できるようにすることもできます。
 
 
 
@@ -250,18 +250,18 @@ The following tasks are illustrative of the tests meant to check the status of t
 .. seealso::
 
    :ref:`playbooks_intro`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_conditionals`
-       Conditional statements in playbooks
+       Playbook の条件付きステートメント
    :ref:`playbooks_variables`
-       All about variables
+       変数の詳細
    :ref:`playbooks_loops`
-       Looping in playbooks
+       Playbook でのループ
    :ref:`playbooks_reuse_roles`
-       Playbook organization by roles
+       ロール別の Playbook の組織
    :ref:`playbooks_best_practices`
-       Best practices in playbooks
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Playbook のベストプラクティス
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

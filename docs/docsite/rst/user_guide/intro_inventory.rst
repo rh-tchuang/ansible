@@ -2,24 +2,24 @@
 .. _inventory:
 
 ***************************
-How to build your inventory
+インベントリーの構築方法
 ***************************
 
-Ansible works against multiple managed nodes or "hosts" in your infrastructure at the same time, using a list or group of lists know as inventory. Once your inventory is defined, you use :ref:`patterns <intro_patterns>` to select the hosts or groups you want Ansible to run against.
+Ansible は、インベントリーと呼ばれるリスト、またはリストのグループを使用して、インフラストラクチャーにある複数の管理ノードまたは「ホスト」に対して同時に機能します。インベントリーが定義されたら、:ref:`パターン<intro_patterns>` を使用して Ansible で実行するホストまたはグループを選択します。
 
-The default location for inventory is a file called ``/etc/ansible/hosts``. You can specify a different inventory file at the command line using the ``-i <path>`` option. You can also use multiple inventory files at the same time, and/or pull inventory from dynamic or cloud sources or different formats (YAML, ini, etc), as described in :ref:`intro_dynamic_inventory`.
-Introduced in version 2.4, Ansible has :ref:`inventory_plugins` to make this flexible and customizable.
+インベントリーのデフォルトの場所は、``/etc/ansible/hosts`` ファイルです。``-i <path>`` オプションを使用して、コマンドラインで別のインベントリーファイルを指定できます。また、:ref:`intro_dynamic_inventory` で説明されているように、複数のインベントリーファイルを同時に使用したり、動的またはクラウドのソースまたは異なる形式 (YAML、ini など) から複数のインベントリーを取得 (プル) することもできます。
+バージョン 2.4 で導入された Ansible には、この柔軟でカスタマイズ可能な :ref:`inventory_plugins` があります。
 
 .. contents::
    :local:
 
 .. _inventoryformat:
 
-Inventory basics: formats, hosts, and groups
+インベントリーの基本: 形式、ホスト、およびグループ
 ============================================
 
-The inventory file can be in one of many formats, depending on the inventory plugins you have.
-The most common formats are INI and YAML. A basic INI ``etc/ansible/hosts`` might look like this:
+インベントリーファイルは、所有するインベントリープラグインに応じて、以下に示す多くの形式のいずれかになります。
+最も一般的な形式は INI および YAML です。基本的な INI である ``/etc/ansible/hosts`` は以下のようになります。
 
 .. code-block:: text
 
@@ -34,10 +34,10 @@ The most common formats are INI and YAML. A basic INI ``etc/ansible/hosts`` migh
     two.example.com
     three.example.com
 
-The headings in brackets are group names, which are used in classifying hosts
-and deciding what hosts you are controlling at what times and for what purpose.
+括弧内の見出しはグループ名で、ホストを分類し、
+どの時点で、どのような目的で、どのホストを制御するかを決定するのに使用されます。
 
-Here's that same basic inventory file in YAML format:
+以下は、同じ基本的なインベントリーファイルの YAML 形式です。
 
 .. code-block:: yaml
 
@@ -57,25 +57,25 @@ Here's that same basic inventory file in YAML format:
 
 .. _default_groups:
 
-Default groups
+デフォルトのグループ
 --------------
 
-There are two default groups: ``all`` and ``ungrouped``. The ``all`` group contains every host.
-The ``ungrouped`` group contains all hosts that don't have another group aside from ``all``.
-Every host will always belong to at least 2 groups (``all`` and ``ungrouped`` or ``all`` and some other group). Though ``all`` and ``ungrouped`` are always present, they can be implicit and not appear in group listings like ``group_names``.
+デフォルトグループは ``all`` および ``ungrouped`` です。``all`` グループにはすべてのホストが含まれます。
+``ungrouped`` グループには、``all`` 以外のグループがないすべてのホストが含まれます。
+すべてのホストは常に 2 つ以上のグループに所属します (``all`` と、``ungrouped`` または ``all`` などのグループ)。``all`` および ``ungrouped`` は常に存在しますが、暗黙的であり、``group_names`` のようなグループ一覧に表示されない場合があります。
 
 .. _host_multiple_groups:
 
-Hosts in multiple groups
+複数グループ内のホスト
 ------------------------
 
-You can (and probably will) put each host in more than one group. For example a production webserver in a datacenter in Atlanta might be included in groups called [prod] and [atlanta] and [webservers]. You can create groups that track:
+各ホストを複数のグループに配置できます。よく選択される方法です。たとえば、Atlanta のデータセンター内の実稼働 Web サーバーは [prod]、[atlanta]、および [webservers] と呼ばれるグループに含まれる場合があります。以下を追跡するグループを作成できます。
 
-* What - An application, stack or microservice. (For example, database servers, web servers, etc).
-* Where - A datacenter or region, to talk to local DNS, storage, etc. (For example, east, west).
-* When - The development stage, to avoid testing on production resources. (For example, prod, test).
+* なにを - アプリケーション、スタック、またはマイクロサービス (データベースサーバー、Web サーバーなど)
+* どこで - (ローカル DNS、ストレージなどと通信する) データセンターまたはリージョン (例: 東、西)
+* いつ - 実稼働リソースでのテストを回避する開発ステージ (例: 実稼働、テスト)
 
-Extending the previous YAML inventory to include what, when, and where would look like:
+以前の YAML インベントリーを拡張して、上述の「いつ、どこで、なにを」が含まれるようにします。
 
 .. code-block:: yaml
 
@@ -111,9 +111,9 @@ Extending the previous YAML inventory to include what, when, and where would loo
           bar.example.com:
           three.example.com:
 
-You can see that ``one.example.com`` exists in the ``dbservers``, ``east``, and ``prod`` groups.
+``one.example.com`` が、``dbservers`` グループ、``east`` グループ、および ``prod`` グループに存在することを確認できます。
 
-You can also use nested groups to simplify ``prod`` and ``test`` in this inventory, for the same result:
+このインベントリーの ``prod`` および ``test`` を簡素化するために、ネストされたグループを使用することもできます。
 
 .. code-block:: yaml
 
@@ -146,21 +146,21 @@ You can also use nested groups to simplify ``prod`` and ``test`` in this invento
         children:
           west:
 
-You can find more examples on how to organize your inventories and group your hosts in :ref:`inventory_setup_examples`.
+インベントリーを整理し、ホストをグループ化する方法は、「:ref:`inventory_setup_examples`」を参照してください。
 
-Adding ranges of hosts
+ホスト範囲の追加
 ----------------------
 
-If you have a lot of hosts with a similar pattern, you can add them as a range rather than listing each hostname separately:
+同様のパターンを持つホストが多数ある場合は、各ホスト名を個別に表示するのではなく、ホストを範囲として追加できます。
 
-In INI:
+INI の場合は、以下のようになります。
 
 .. code-block:: text
 
     [webservers]
     www[01:50].example.com
 
-In YAML:
+YAML の場合は、以下のようになります。
 
 .. code-block:: yaml
 
@@ -169,24 +169,24 @@ In YAML:
         hosts:
           www[01:50].example.com:
 
-For numeric patterns, leading zeros can be included or removed, as desired. Ranges are inclusive. You can also define alphabetic ranges:
+数値のパターンでは、必要に応じて、先頭にゼロを含めるか、または削除できます。範囲が含まれます。また、アルファベットの範囲を定義することもできます。
 
 .. code-block:: text
 
     [databases]
     db-[a:f].example.com
 
-Adding variables to inventory
+インベントリーへの変数の追加
 =============================
 
-You can store variable values that relate to a specific host or group in inventory. To start with, you may add variables directly to the hosts and groups in your main inventory file. As you add more and more managed nodes to your Ansible inventory, however, you will likely want to store variables in separate host and group variable files.
+特定のホストまたはグループに関連する変数の値をインベントリーに保存できます。まず、メインのインベントリーファイルのホストおよびグループに変数を直接追加することができます。ただし、管理ノードを Ansible インベントリーに追加するため、変数を別々のホスト変数およびグループ変数のファイルに保存することが推奨されます。
 
 .. _host_variables:
 
-Assigning a variable to one machine: host variables
+あるマシンへの変数の割り当て: ホスト変数
 ===================================================
 
-You can easily assign a variable to a single host, then use it later in playbooks. In INI:
+1 台のホストに変数を簡単に割り当てると、後で Playbook で使用できます。INI の場合は、以下のようになります。
 
 .. code-block:: text
 
@@ -194,25 +194,25 @@ You can easily assign a variable to a single host, then use it later in playbook
    host1 http_port=80 maxRequestsPerChild=808
    host2 http_port=303 maxRequestsPerChild=909
 
-In YAML:
+YAML の場合は、以下のようになります。
 
 .. code-block:: yaml
 
     atlanta:
       host1:
-        http_port: 80
-        maxRequestsPerChild: 808
+        http_port:80
+        maxRequestsPerChild:808
       host2:
-        http_port: 303
-        maxRequestsPerChild: 909
+        http_port:303
+        maxRequestsPerChild:909
 
-Unique values like non-standard SSH ports work well as host variables. You can add them to your Ansible inventory by adding the port number after the hostname with a colon:
+非標準の SSH ポートなどの一意な値は、ホスト変数として機能します。コロンを使用してポート番号をホスト名の後に追加することで、ホスト変数として Ansible インベントリーに追加できます。
 
 .. code-block:: text
 
     badwolf.example.com:5309
 
-Connection variables also work well as host variables:
+接続変数もホスト変数として機能します。
 
 .. code-block:: text
 
@@ -222,53 +222,53 @@ Connection variables also work well as host variables:
    other1.example.com     ansible_connection=ssh        ansible_user=myuser
    other2.example.com     ansible_connection=ssh        ansible_user=myotheruser
 
-.. note:: If you list non-standard SSH ports in your SSH config file, the ``openssh`` connection will find and use them, but the ``paramiko`` connection will not.
+.. note:: SSH 設定ファイル内に非標準の SSH ポートの一覧を表示した場合、``openssh`` 接続はそのポートを見つけて使用しますが、``paramiko`` 接続は行われません。
 
 .. _inventory_aliases:
 
-Inventory aliases
+インベントリーエイリアス
 -----------------
 
-You can also define aliases in your inventory:
+エイリアスをインベントリーに定義することもできます。
 
-In INI:
+INI の場合は、以下のようになります。
 
 .. code-block:: text
 
     jumper ansible_port=5555 ansible_host=192.0.2.50
 
-In YAML:
+YAML の場合は、以下のようになります。
 
 .. code-block:: yaml
 
     ...
       hosts:
         jumper:
-          ansible_port: 5555
-          ansible_host: 192.0.2.50
+          ansible_port:5555
+          ansible_host:192.0.2.50
 
-In the above example, running Ansible against the host alias "jumper" will connect to 192.0.2.50 on port 5555.
-This only works for hosts with static IPs, or when you are connecting through tunnels.
+上記の例では、ホストエイリアス「jumper」に対して Ansible を実行すると、ポート 5555 で 192.0.2.50 に接続します。
+これは、静的 IP があるホスト、またはトンネル経由で接続しているホストでのみ機能します。
 
 .. note::
-   Values passed in the INI format using the ``key=value`` syntax are interpreted differently depending on where they are declared:
+   ``key=value`` 構文を使用して INI 形式で渡される値が解釈される方法は、宣言される場所に応じて異なります。
 
-   * When declared inline with the host, INI values are interpreted as Python literal structures           (strings, numbers, tuples, lists, dicts, booleans, None). Host lines accept multiple ``key=value`` parameters per line. Therefore they need a way to indicate that a space is part of a value rather than a separator.
+   * ホストとインラインで宣言すると、INI 値は Python リテラル構造 (文字列、数値、タプル、リスト、辞書、ブール値、なし) として解釈されます。ホスト行は、行ごとに複数の ``key=value`` パラメーターを受け入れます。そのため、空白文字が区切り文字ではなく値の一部であることを示す方法が必要になります。
 
-   * When declared in a ``:vars`` section, INI values are interpreted as strings. For example ``var=FALSE`` would create a string equal to 'FALSE'. Unlike host lines, ``:vars`` sections accept only a single entry per line, so everything after the ``=`` must be the value for the entry.
+   * ``:vars`` セクションで宣言すると、INI 値は文字列として解釈されます。たとえば、``var=FALSE`` は「FALSE」に等しい文字列を作成します。ホスト行とは異なり、``:vars`` セクションは行ごとにエントリーを 1 つしか受け入れないため、``=`` に続くものはすべてエントリーの値である必要があります。
 
-   * If a variable value set in an INI inventory must be a certain type (for example, a string or a boolean value), always specify the type with a filter in your task. Do not rely on types set in INI inventories when consuming variables.
+   * INI インベントリーに設定された変数の値を特定のタイプ (文字列やブール値など) にする必要がある場合は、タスクで常にそのタイプをフィルターで指定します。変数の使用時に INI インベントリーに設定されたタイプに依存しないでください。
 
-   * Consider using YAML format for inventory sources to avoid confusion on the actual type of a variable. The YAML inventory plugin processes variable values consistently and correctly.
+   * 変数の実際のタイプの混乱を避けるために、インベントリーソースには YAML 形式を使用することを検討してください。YAML インベントリープラグインは、変数の値を一貫して正しく処理します。
 
-Generally speaking, this is not the best way to define variables that describe your system policy. Setting variables in the main inventory file is only a shorthand. See :ref:`splitting_out_vars` for guidelines on storing variable values in individual files in the 'host_vars' directory.
+通常は、システムポリシーを記述する変数を定義するのが最適な方法ではありません。メインのインベントリーファイルで変数を設定するのは簡単な方法です。「host_vars」ディレクトリーの個別ファイルに変数の値を保存するガイドラインは、「:ref:`splitting_out_vars`」を参照してください。
 
 .. _group_variables:
 
-Assigning a variable to many machines: group variables
+多くのマシンへの変数の割り当て: グループ変数
 ======================================================
 
-If all hosts in a group share a variable value, you can apply that variable to an entire group at once. In INI:
+グループのすべてのホストが変数値を共有している場合は、その変数をグループ全体に一度に適用できます。INI の場合は、以下のようになります。
 
 .. code-block:: text
 
@@ -280,7 +280,7 @@ If all hosts in a group share a variable value, you can apply that variable to a
    ntp_server=ntp.atlanta.example.com
    proxy=proxy.atlanta.example.com
 
-In YAML:
+YAML の場合は、以下のようになります。
 
 .. code-block:: yaml
 
@@ -292,17 +292,17 @@ In YAML:
         ntp_server: ntp.atlanta.example.com
         proxy: proxy.atlanta.example.com
 
-Group variables are a convenient way to apply variables to multiple hosts at once. Before executing, however, Ansible always flattens variables, including inventory variables, to the host level. If a host is a member of multiple groups, Ansible reads variable values from all of those groups. If you assign different values to the same variable in different groups, Ansible chooses which value to use based on internal :ref:`rules for merging <how_we_merge>`.
+グループ変数は、変数を複数のホストに同時に適用する便利な方法です。ただし、Ansible を実行する前に、インベントリー変数などの変数は常にホストレベルにフラットにします。ホストが複数グループのメンバーである場合、Ansible は、そのすべてのグループから変数の値を読み取ります。異なるグループ内の同じ変数に異なる値を割り当てる場合、Ansible は内部の :ref:`マージ用ルール<how_we_merge>` に基づいて、使用する値を選択します。
 
 .. _subgroups:
 
-Inheriting variable values: group variables for groups of groups
+変数値の継承: グループのグループ用グループ変数
 ----------------------------------------------------------------
 
-You can make groups of groups using the ``:children`` suffix in INI or the ``children:`` entry in YAML.
-You can apply variables to these groups of groups using ``:vars`` or ``vars:``:
+INI の ``:children`` 接尾辞または YAML の ``children:`` エントリーを使用して、グループのグループを作成できます。
+変数は、``:vars`` または ``vars:`` を使用して、これらのグループのグループに適用できます。
 
-In INI:
+INI の場合は、以下のようになります。
 
 .. code-block:: text
 
@@ -330,7 +330,7 @@ In INI:
    southwest
    northwest
 
-In YAML:
+YAML の場合は、以下のようになります。
 
 .. code-block:: yaml
 
@@ -350,31 +350,31 @@ In YAML:
                   host3:
             vars:
               some_server: foo.southeast.example.com
-              halon_system_timeout: 30
-              self_destruct_countdown: 60
-              escape_pods: 2
+              halon_system_timeout:30
+              self_destruct_countdown:60
+              escape_pods:2
           northeast:
           northwest:
           southwest:
 
-If you need to store lists or hash data, or prefer to keep host and group specific variables separate from the inventory file, see :ref:`splitting_out_vars`.
+一覧またはハッシュデータを保存する必要がある場合や、インベントリーファイルとは別にホストおよびグループ固有の変数を保持する必要がある場合は、:ref:`splitting_out_vars` を参照してください。
 
-Child groups have a couple of properties to note:
+子グループには以下のプロパティーがあります。
 
- - Any host that is member of a child group is automatically a member of the parent group.
- - A child group's variables will have higher precedence (override) a parent group's variables.
- - Groups can have multiple parents and children, but not circular relationships.
- - Hosts can also be in multiple groups, but there will only be **one** instance of a host, merging the data from the multiple groups.
+ - 子グループのメンバーであるホストは、自動的に親グループのメンバーになります。
+ - 子グループの変数は、親グループの変数よりも優先度が高くなります (オーバライド)。
+ - グループに複数の親と子を追加することはできますが、循環関係は設定できません。
+ - ホストは複数のグループに属することもできますが、ホストのインスタンスは **1 つ** だけであり、複数のグループからのデータをマージします。
 
 .. _splitting_out_vars:
 
-Organizing host and group variables
+ホスト変数とグループ変数の整理
 ===================================
 
-Although you can store variables in the main inventory file, storing separate host and group variables files may help you organize your variable values more easily. Host and group variable files must use YAML syntax. Valid file extensions include '.yml', '.yaml', '.json', or no file extension.
-See :ref:`yaml_syntax` if you are new to YAML.
+メインのインベントリーファイルに変数を格納できますが、個別のホスト変数とグループ変数のファイルを保存すると、変数値をより簡単に整理できる場合があります。ホスト変数およびグループの変数のファイルでは YAML 構文を使用する必要があります。有効なファイル拡張子は「.yml」、「.yaml」、「.json」です。ファイルに拡張子を付けなくても有効です。
+YAML を初めて使用する場合は、:ref:`yaml_syntax` を参照してください。
 
-Ansible loads host and group variable files by searching paths relative to the inventory file or the playbook file. If your inventory file at ``/etc/ansible/hosts`` contains a host named 'foosball' that belongs to two groups, 'raleigh' and 'webservers', that host will use variables in YAML files at the following locations:
+Ansible は、インベントリーファイルまたは Playbook ファイルの相対パスを検索して、ホスト変数およびグループ変数のファイルを読み込みます。``/etc/ansible/hosts`` のインベントリーファイルに、「raleigh」および「webservers」というグループに属する「foosball」という名前のホストが含まれる場合、そのホストは次の場所にある YAML ファイルの変数を使用します。
 
 .. code-block:: bash
 
@@ -382,7 +382,7 @@ Ansible loads host and group variable files by searching paths relative to the i
     /etc/ansible/group_vars/webservers
     /etc/ansible/host_vars/foosball
 
-For example, if you group hosts in your inventory by datacenter, and each datacenter uses its own NTP server and database server, you can create a file called ``/etc/ansible/group_vars/raleigh`` to store the variables for the ``raleigh`` group:
+たとえば、インベントリー内のホストをデータセンターごとにまとめ、各データセンターが独自の NTP サーバーおよびデータベースサーバーを使用する場合は、``/etc/ansible/group_vars/raleigh`` という名前のファイルを作成して、``raleigh`` グループの変数を保存できます。
 
 .. code-block:: yaml
 
@@ -390,80 +390,80 @@ For example, if you group hosts in your inventory by datacenter, and each datace
     ntp_server: acme.example.org
     database_server: storage.example.org
 
-You can also create *directories* named after your groups or hosts. Ansible will read all the files in these directories in lexicographical order. An example with the 'raleigh' group:
+グループまたはホストの後に、名前を付けた *ディレクトリー* を作成することもできます。Ansible は、これらのディレクトリー内のすべてのファイルを辞書順で読み取ります。以下は、「raleigh」グループを使用した例となります。
 
 .. code-block:: bash
 
     /etc/ansible/group_vars/raleigh/db_settings
     /etc/ansible/group_vars/raleigh/cluster_settings
 
-All hosts in the 'raleigh' group will have the variables defined in these files
-available to them. This can be very useful to keep your variables organized when a single
-file gets too big, or when you want to use :ref:`Ansible Vault<playbooks_vault>` on some group variables.
+「raleigh」グループのすべてのホストには、
+これらのファイルで定義された変数が使用されます。これは、1 つのファイルが大きすぎる場合や、一部のグループ変数で Ansible Vault を使用する場合に、
+お使いの変数を整理しておくのに非常に役立ちます。
 
-You can also add ``group_vars/`` and ``host_vars/`` directories to your playbook directory. The ``ansible-playbook`` command looks for these directories in the current working directory by default. Other Ansible commands (for example, ``ansible``, ``ansible-console``, etc.) will only look for ``group_vars/`` and ``host_vars/`` in the inventory directory. If you want other commands to load group and host variables from a playbook directory, you must provide the ``--playbook-dir`` option on the command line.
-If you load inventory files from both the playbook directory and the inventory directory, variables in the playbook directory will override variables set in the inventory directory.
+``group_vars/`` ディレクトリーおよび ``host_vars/`` ディレクトリーを Playbook ディレクトリーに追加することもできます。``ansible-playbook`` コマンドは、デフォルトでこのようなディレクトリーを現在の作業ディレクトリーで検索します。他の Ansible コマンド (``ansible``、``ansible-console`` など) は、インベントリーディレクトリーで ``group_vars/`` および ``host_vars/`` のみを検索します。Playbook ディレクトリーからグループ変数およびホスト変数を読み込む他のコマンドが必要な場合は、コマンドラインで ``--playbook-dir`` オプションを指定する必要があります。
+Playbook ディレクトリーとインベントリーディレクトリーの両方からインベントリーファイルを読み込む場合、Playbook ディレクトリーの変数は、インベントリーディレクトリーに設定された変数を上書きします。
 
-Keeping your inventory file and variables in a git repo (or other version control)
-is an excellent way to track changes to your inventory and host variables.
+git リポジトリー (または他のバージョン管理) でインベントリーファイルおよび変数を維持することは、
+インベントリーおよびホスト変数への変更を追跡する優れた方法です。
 
 .. _how_we_merge:
 
-How variables are merged
+変数をマージする方法
 ========================
 
-By default variables are merged/flattened to the specific host before a play is run. This keeps Ansible focused on the Host and Task, so groups don't really survive outside of inventory and host matching. By default, Ansible overwrites variables including the ones defined for a group and/or host (see :ref:`DEFAULT_HASH_BEHAVIOUR<DEFAULT_HASH_BEHAVIOUR>`). The order/precedence is (from lowest to highest):
+デフォルトでは、変数は、プレイの実行前に特定ホストにマージまたはフラット化されます。これにより、Ansible はホストとタスクに焦点を当てたままになるため、グループはインベントリーとホストの一致以外では生き残れません。デフォルトでは、Ansible はグループやホストに定義された変数を含む変数を上書きします (:ref:`DEFAULT_HASH_BEHAVIOUR<DEFAULT_HASH_BEHAVIOUR>` を参照)。順序/優先順位は (最低から最高へ) です。
 
-- all group (because it is the 'parent' of all other groups)
-- parent group
-- child group
-- host
+- すべてのグループ (他のすべてのグループの「親」であるため)
+- 親グループ
+- 子グループ
+- ホスト
 
-By default Ansible merges groups at the same parent/child level alphabetically, and the last group loaded overwrites the previous groups. For example, an a_group will be merged with b_group and b_group vars that match will overwrite the ones in a_group.
+デフォルトでは、Ansible は同じ親/子レベルでグループをマージし、最後に読み込まれたグループは以前のグループを上書きします。たとえば、a_group は b_group とマージされ、一致する b_group の変数は、a_group の変数を上書きします。
 
-You can change this behavior by setting the group variable ``ansible_group_priority`` to change the merge order for groups of the same level (after the parent/child order is resolved). The larger the number, the later it will be merged, giving it higher priority. This variable defaults to ``1`` if not set. For example:
+この動作を変更するには、グループ変数 ``ansible_group_priority`` を設定し、同じレベルのグループのマージ順序を変更します (親/子順序の解決後)。数値が大きいほど、後の数字がマージされ、優先度が高くなります。この変数が設定されていないと、デフォルトは ``1`` になります。例:
 
 .. code-block:: yaml
 
     a_group:
         testvar: a
-        ansible_group_priority: 10
+        ansible_group_priority:10
     b_group:
         testvar: b
 
-In this example, if both groups have the same priority, the result would normally have been ``testvar == b``, but since we are giving the ``a_group`` a higher priority the result will be ``testvar == a``.
+この例では、両方のグループの優先順位が同じ場合、結果は通常 ``testvar == b`` になりますが、``a_group`` の優先度が高いため、結果は ``testvar == a`` になります。
 
-.. note:: ``ansible_group_priority`` can only be set in the inventory source and not in group_vars/, as the variable is used in the loading of group_vars.
+.. note:: ``ansible_group_priority`` は、group_vars/ ではなくインベントリーソースでのみ設定でき、group_vars の読み込みで変数が使用されるため設定できます。
 
 .. _using_multiple_inventory_sources:
 
-Using multiple inventory sources
+複数のインベントリーソースの使用
 ================================
 
-You can target multiple inventory sources (directories, dynamic inventory scripts
-or files supported by inventory plugins) at the same time by giving multiple inventory parameters from the command
-line or by configuring :envvar:`ANSIBLE_INVENTORY`. This can be useful when you want to target normally
-separate environments, like staging and production, at the same time for a specific action.
+コマンドラインから複数のインベントリーパラメーターを指定するか、
+ANSIBLE_INVENTORY を構成することにより、複数のインベントリーリソース (ディレクトリー、動的インベントリースクリプト、
+またはインベントリープラグインによりサポートされるファイル) を同時に対象に指定できます。これは、特定のアクションに対して、ステージ環境や実稼働環境など、
+通常は異なる環境を同時に対象に指定する場合に役立ちます。
 
-Target two sources from the command line like this:
+以下のようなコマンドラインから 2 つのソースを対象とします。
 
 .. code-block:: bash
 
     ansible-playbook get_logs.yml -i staging -i production
 
-Keep in mind that if there are variable conflicts in the inventories, they are resolved according
-to the rules described in :ref:`how_we_merge` and :ref:`ansible_variable_precedence`.
-The merging order is controlled by the order of the inventory source parameters.
-If ``[all:vars]`` in staging inventory defines ``myvar = 1``, but production inventory defines ``myvar = 2``,
-the playbook will be run with ``myvar = 2``. The result would be reversed if the playbook was run with
-``-i production -i staging``.
+インベントリーに変数の競合がある場合、
+その競合は「:ref:`how_we_merge`」および「:ref:`ansible_variable_precedence`」で説明されているルールに従って解決されることに注意してください。
+マージの順序はインベントリーソースパラメーターの順序で制御されます。
+ステージングインベントリーの ``[all:vars]`` で ``myvar = 1`` が定義され、実稼働インベントリーで ``myvar = 2`` が定義されると、
+Playbook は ``myvar = 2`` で実行されます。Playbook を -i production -i staging で実行すると、
+結果は逆になります。
 
-**Aggregating inventory sources with a directory**
+**インベントリソースをディレクトリーに集約**
 
-You can also create an inventory by combining multiple inventory sources and source types under a directory.
-This can be useful for combining static and dynamic hosts and managing them as one inventory.
-The following inventory combines an inventory plugin source, a dynamic inventory script,
-and a file with static hosts:
+また、ディレクトリーで複数のインベントリーソースとソースタイプを組み合わせてインベントリーを作成することもできます。
+これは、静的ホストと動的ホストを組み合わせて、1 つのインベントリーとして管理するのに役立ちます。
+以下のインベントリーは、インベントリープラグインソース、動的インベントリースクリプト、
+およびファイルを静的ホストと組み合わせたものです。
 
 .. code-block:: text
 
@@ -474,16 +474,16 @@ and a file with static hosts:
       group_vars/
         all.yml              # assign variables to all hosts
 
-You can target this inventory directory simply like this:
+このインベントリーディレクトリーは、次のように簡単に対象に設定できます。
 
 .. code-block:: bash
 
     ansible-playbook example.yml -i inventory
 
-It can be useful to control the merging order of the inventory sources if there's variable
-conflicts or group of groups dependencies to the other inventory sources. The inventories
-are merged in alphabetical order according to the filenames so the result can
-be controlled by adding prefixes to the files:
+他のインベントリーソースに対する変数の競合またはグループのグループの依存関係がある場合は、
+インベントリーソースのマージ順序を制御すると役に立ちます。インベントリーはファイル名に従って
+アルファベット順にマージされるため、
+ファイルに接頭辞を追加することで結果を制御できます。
 
 .. code-block:: text
 
@@ -494,107 +494,107 @@ be controlled by adding prefixes to the files:
       group_vars/
         all.yml                 # assign variables to all hosts
 
-If ``01-openstack.yml`` defines ``myvar = 1`` for the group ``all``, ``02-dynamic-inventory.py`` defines ``myvar = 2``,
-and ``03-static-inventory`` defines ``myvar = 3``, the playbook will be run with ``myvar = 3``.
+``01-openstack.yml`` がグループ ``all`` に ``myvar = 1`` を定義し、``02-dynamic-inventory.py`` が ``myvar = 2`` を定義し、
+``03-static-inventory`` が ``myvar = 3`` を定義すると、Playbook は ``myvar = 3`` で実行されます。
 
-For more details on inventory plugins and dynamic inventory scripts see :ref:`inventory_plugins` and :ref:`intro_dynamic_inventory`.
+インベントリープラグインおよび動的インベントリースクリプトの詳細は、:ref:`inventory_plugins` および :ref:`intro_dynamic_inventory` を参照してください。
 
 .. _behavioral_parameters:
 
-Connecting to hosts: behavioral inventory parameters
+ホストへの接続: 動作用のインベントリーパラメーター
 ====================================================
 
-As described above, setting the following variables control how Ansible interacts with remote hosts.
+上記のように、以下の変数を設定して、Ansible がリモートホストと対話する方法を制御します。
 
-Host connection:
+ホスト接続:
 
 .. include:: shared_snippets/SSH_password_prompt.txt
 
 ansible_connection
-    Connection type to the host. This can be the name of any of ansible's connection plugins. SSH protocol types are ``smart``, ``ssh`` or ``paramiko``.  The default is smart. Non-SSH based types are described in the next section.
+    ホストへの接続の種類。これには、ansible の接続プラグインの名前を使用できます。SSH プロトコルタイプは、``smart``、``ssh``、または ``paramiko`` です。 デフォルトは smart です。SSH 以外のタイプは、次のセクションで説明します。
 
-General for all connections:
+すべての接続に対する一般的な設定:
 
 ansible_host
-    The name of the host to connect to, if different from the alias you wish to give to it.
+    接続するホストの名前 (割り当てたいエイリアスと異なる場合)。
 ansible_port
-    The connection port number, if not the default (22 for ssh)
+    デフォルトではない場合 (ssh の場合は 22) は、接続ポート番号。
 ansible_user
-    The user name to use when connecting to the host
+    ホストに接続する際に使用するユーザー名。
 ansible_password
-    The password to use to authenticate to the host (never store this variable in plain text; always use a vault. See :ref:`best_practices_for_variables_and_vaults`)
+    ホストへの認証に使用するパスワード (この変数をプレーンテキストで保存しないでください。常に Valut を使用してください。「:ref:`best_practices_for_variables_and_vaults`」を参照してください。)
 
 
-Specific to the SSH connection:
+SSH 接続に固有のキー:
 
 ansible_ssh_private_key_file
-    Private key file used by ssh.  Useful if using multiple keys and you don't want to use SSH agent.
+    ssh が使用する秘密鍵ファイル。 複数のキーを使用し、SSH エージェントを使用しない場合に便利です。
 ansible_ssh_common_args
-    This setting is always appended to the default command line for :command:`sftp`, :command:`scp`,
-    and :command:`ssh`. Useful to configure a ``ProxyCommand`` for a certain host (or
-    group).
+    この設定は、常に :command:`sftp`、:command:`scp`、
+    および :command:`ssh` のデフォルトのコマンドラインに追加されます。特定のホスト (またはグループ) に ``ProxyCommand`` 
+    を設定するのに便利です。
 ansible_sftp_extra_args
-    This setting is always appended to the default :command:`sftp` command line.
+    この設定は、常にデフォルトの :command:`sftp` コマンドラインに追加されます。
 ansible_scp_extra_args
-    This setting is always appended to the default :command:`scp` command line.
+    この設定は、常にデフォルトの :command:`scp` コマンドラインに追加されます。
 ansible_ssh_extra_args
-    This setting is always appended to the default :command:`ssh` command line.
+    この設定は、常にデフォルトの :command:`ssh` コマンドラインに追加されます。
 ansible_ssh_pipelining
-    Determines whether or not to use SSH pipelining. This can override the ``pipelining`` setting in :file:`ansible.cfg`.
-ansible_ssh_executable (added in version 2.2)
-    This setting overrides the default behavior to use the system :command:`ssh`. This can override the ``ssh_executable`` setting in :file:`ansible.cfg`.
+    SSH パイプを使用するかどうかを決定します。これにより、:file:`ansible.cfg` の ``pipelining`` 設定を上書きできます。
+ansible_ssh_executable (バージョン 2.2 で追加)
+    この設定により、システムの :command:`ssh` を使用するデフォルトの動作が上書きされます。これにより、:file:`ansible.cfg` の ``ssh_executable`` 設定を上書きできます。
 
 
-Privilege escalation (see :ref:`Ansible Privilege Escalation<become>` for further details):
+権限の昇格 (詳細は :ref:`Ansible Privilege Escalation<become>` を参照):
 
 ansible_become
-    Equivalent to ``ansible_sudo`` or ``ansible_su``, allows to force privilege escalation
+    ``ansible_sudo`` または ``ansible_su`` と同等です。これにより、権限のエスカレーションを強制できます。
 ansible_become_method
-    Allows to set privilege escalation method
+    権限昇格メソッドの設定を許可します。
 ansible_become_user
-    Equivalent to ``ansible_sudo_user`` or ``ansible_su_user``, allows to set the user you become through privilege escalation
+    ``ansible_sudo_user`` または ``ansible_su_user`` と同等で、権限の昇格でユーザーを設定できます。
 ansible_become_password
-    Equivalent to ``ansible_sudo_password`` or ``ansible_su_password``, allows you to set the privilege escalation password (never store this variable in plain text; always use a vault. See :ref:`best_practices_for_variables_and_vaults`)
+    ``ansible_sudo_password`` または ``ansible_su_password`` と同等で、特権昇格パスワードを設定できます (この変数をプレーンテキストで保存しないでください。常に Valut を使用してください。「:ref:`best_practices_for_variables_and_vaults`」を参照してください。)
 ansible_become_exe
-    Equivalent to ``ansible_sudo_exe`` or ``ansible_su_exe``, allows you to set the executable for the escalation method selected
+    ``ansible_sudo_exe`` または ``ansible_su_exe`` と同等で、選択した昇格メソッドの実行ファイルを設定できます。
 ansible_become_flags
-    Equivalent to ``ansible_sudo_flags`` or ``ansible_su_flags``, allows you to set the flags passed to the selected escalation method. This can be also set globally in :file:`ansible.cfg` in the ``sudo_flags`` option
+    ``ansible_sudo_flags`` または ``ansible_su_flags`` と同等で、選択した昇格メソッドに渡すフラグを設定できます。これは、``sudo_flags`` オプションの :file:`ansible.cfg` でグローバルに設定することもできます。
 
-Remote host environment parameters:
+リモートホスト環境パラメーター:
 
 .. _ansible_shell_type:
 
 ansible_shell_type
-    The shell type of the target system. You should not use this setting unless you have set the
-    :ref:`ansible_shell_executable<ansible_shell_executable>` to a non-Bourne (sh) compatible shell.  By default commands are
-    formatted using ``sh``-style syntax.  Setting this to ``csh`` or ``fish`` will cause commands
-    executed on target systems to follow those shell's syntax instead.
+    ターゲットシステムのシェルタイプ。:ref:`ansible_shell_executable<ansible_shell_executable>` を非 Bourne (sh) 互換シェルに設定しない限り、
+    この設定は使用しないでください。 デフォルトのコマンドは、
+    ``sh`` スタイルの構文を使用してフォーマットされます。 これを ``csh`` または ``fish`` に設定すると、
+    ターゲットシステムで実行されるコマンドがシェルの構文に従います。
 
 .. _ansible_python_interpreter:
 
 ansible_python_interpreter
-    The target host python path. This is useful for systems with more
-    than one Python or not located at :command:`/usr/bin/python` such as \*BSD, or where :command:`/usr/bin/python`
-    is not a 2.X series Python.  We do not use the :command:`/usr/bin/env` mechanism as that requires the remote user's
-    path to be set right and also assumes the :program:`python` executable is named python, where the executable might
-    be named something like :program:`python2.6`.
+    ターゲットホストの Python のパス。これは、複数の Python があるシステム、
+    または *BSD などの :command:`/usr/bin/python` にないシステム、または :command:`/usr/bin/python` が 
+    2.X シリーズの Python 以外のシステムに役に立ちます。 :command:`/usr/bin/env` メカニズムは使用しません。
+    リモートユーザーのパスを正しく設定する必要があり、また :program:`python` 実行ファイルの名前が python であることを前提としています。
+    実行ファイルの名前は、:program:`python2.6` のようになります。
 
 ansible_*_interpreter
-    Works for anything such as ruby or perl and works just like :ref:`ansible_python_interpreter<ansible_python_interpreter>`.
-    This replaces shebang of modules which will run on that host.
+    ruby や perl などのあらゆるもので動作し、:ref:`ansible_python_interpreter<ansible_python_interpreter>` と同じように機能します。
+    これは、そのホストで実行するモジュールのシバンに代わるものです。
 
-.. versionadded:: 2.1
+バージョン 2.1 における新機能
 
 .. _ansible_shell_executable:
 
 ansible_shell_executable
-    This sets the shell the ansible controller will use on the target machine,
-    overrides ``executable`` in :file:`ansible.cfg` which defaults to
-    :command:`/bin/sh`.  You should really only change it if is not possible
-    to use :command:`/bin/sh` (i.e. :command:`/bin/sh` is not installed on the target
-    machine or cannot be run from sudo.).
+    ansible コントローラーがターゲットマシンで使用するシェルを設定し、
+    :file:`ansible.cfg` の ``executable`` を上書きします。
+    このデフォルトは :command:`/bin/sh` です。 :command:`/bin/sh` を使用できない場合 
+    (つまり :command:`/bin/sh` がターゲットマシンにインストールされず、
+    sudo から実行できない場合) に限り変更してください。
 
-Examples from an Ansible-INI host file:
+Ansible-INI ホストファイルの例:
 
 .. code-block:: text
 
@@ -603,31 +603,31 @@ Examples from an Ansible-INI host file:
   freebsd_host      ansible_python_interpreter=/usr/local/bin/python
   ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
 
-Non-SSH connection types
+SSH 以外の接続タイプ
 ------------------------
 
-As stated in the previous section, Ansible executes playbooks over SSH but it is not limited to this connection type.
-With the host specific parameter ``ansible_connection=<connector>``, the connection type can be changed.
-The following non-SSH based connectors are available:
+前のセクションで説明したように、Ansible は SSH で Playbook を実行しますが、接続タイプはこれに限定されません。
+ホスト固有のパラメーター ``ansible_connection=<connector>`` を使用すると、接続タイプを変更できます。
+SSH ベースでない以下のコネクターを利用できます。
 
 **local**
 
-This connector can be used to deploy the playbook to the control machine itself.
+このコネクターは、Playbook をコントロールマシン自体にデプロイするために使用できます。
 
 **docker**
 
-This connector deploys the playbook directly into Docker containers using the local Docker client. The following parameters are processed by this connector:
+このコネクターは、ローカルの Docker クライアントを使用して Playbook を直接 Docker コンテナーにデプロイします。以下のパラメーターは、このコネクターにより処理されます。
 
 ansible_host
-    The name of the Docker container to connect to.
+    接続先の Docker コンテナーの名前。
 ansible_user
-    The user name to operate within the container. The user must exist inside the container.
+    コンテナー内で動作するユーザー名。ユーザーはコンテナー内に存在している必要があります。
 ansible_become
-    If set to ``true`` the ``become_user`` will be used to operate within the container.
+    ``true`` に設定すると、``become_user`` はコンテナー内で動作するために使用されます。
 ansible_docker_extra_args
-    Could be a string with any additional arguments understood by Docker, which are not command specific. This parameter is mainly used to configure a remote Docker daemon to use.
+    Docker が認識する追加の引数を持つ文字列を指定できますが、これはコマンド固有ではありません。このパラメーターは、主に、使用するリモート Docker デーモンを設定するために使用されます。
 
-Here is an example of how to instantly deploy to created containers:
+以下は、作成されたコンテナーに即時にデプロイする例を示しています。
 
 .. code-block:: yaml
 
@@ -651,29 +651,29 @@ Here is an example of how to instantly deploy to created containers:
        path: "/var/jenkins_home/.ssh/jupiter"
        state: directory
 
-For a full list with available plugins and examples, see :ref:`connection_plugin_list`.
+利用可能なプラグインとサンプルの一覧は、:ref:`connection_plugin_list` を参照してください。
 
-.. note:: If you're reading the docs from the beginning, this may be the first example you've seen of an Ansible playbook. This is not an inventory file.
-          Playbooks will be covered in great detail later in the docs.
+.. note:: ドキュメントを最初から読んでいる場合、これが Ansibleプレイブックの初めての例になるかもしれません。これはインベントリーファイルではありません。
+          Playbook については、ドキュメントで後ほど詳細に説明します。
 
 .. _inventory_setup_examples:
 
-Inventory setup examples
+インベントリーの設定例
 ========================
 
 .. _inventory_setup-per_environment:
 
-Example: One inventory per environment
+例:環境ごとのインベントリー
 --------------------------------------
 
-If you need to manage multiple environments it's sometimes prudent to
-have only hosts of a single environment defined per inventory. This
-way, it is harder to, for instance, accidentally change the state of
-nodes inside the "test" environment when you actually wanted to update
-some "staging" servers.
+複数の環境を管理する必要がある場合は、
+インベントリーごとに 1 つの環境のホストのみを定義することが推奨されます。これにより、
+実際に、
+「ステージング」サーバーを更新する必要がある場合などに、
+「テスト」環境内のノードの状態を誤って変更するのが難しくなります。
 
-For the example mentioned above you could have an
-:file:`inventory_test` file:
+上記の例では、
+:file:`inventory_test` ファイルを使用できます。
 
 .. code-block:: ini
 
@@ -686,9 +686,9 @@ For the example mentioned above you could have an
   app02.test.example.com
   app03.test.example.com
 
-That file only includes hosts that are part of the "test"
-environment. Define the "staging" machines in another file
-called :file:`inventory_staging`:
+このファイルには、
+「テスト」環境の一部であるホストのみが含まれます。:file:`inventory_staging` と呼ばれる別のファイルで
+「ステージング」マシンを定義します。
 
 .. code-block:: ini
 
@@ -701,21 +701,21 @@ called :file:`inventory_staging`:
   app02.staging.example.com
   app03.staging.example.com
 
-To apply a playbook called :file:`site.yml`
-to all the app servers in the test environment, use the
-following command::
+:file:`site.yml` という名前の Playbook を、
+テスト環境のすべてのアプリケーションサーバーに適用するには、
+次のコマンドを使用します。
 
   ansible-playbook -i inventory_test site.yml -l appservers
 
 .. _inventory_setup-per_function:
 
-Example: Group by function
+例:機能別にグループ化
 --------------------------
 
-In the previous section you already saw an example for using groups in
-order to cluster hosts that have the same function. This allows you,
-for instance, to define firewall rules inside a playbook or role
-without affecting database servers:
+前のセクションでは、
+同じ機能を持つホストをクラスター化するためにグループを使用する例を説明しました。これにより、
+たとえば、データベースサーバーに影響を与えることなく、
+Playbook またはロール内でファイアウォールルールを定義できます。
 
 .. code-block:: yaml
 
@@ -723,18 +723,18 @@ without affecting database servers:
     tasks:
     - name: allow access from 10.0.0.1
       iptables:
-        chain: INPUT
-        jump: ACCEPT
-        source: 10.0.0.1
+        chain:INPUT
+        jump:ACCEPT
+        source:10.0.0.1
 
 .. _inventory_setup-per_location:
 
-Example: Group by location
+例: ロケーション別にグループ化
 --------------------------
 
-Other tasks might be focused on where a certain host is located. Let's
-say that ``db01.test.example.com`` and ``app01.test.example.com`` are
-located in DC1 while ``db02.test.example.com`` is in DC2:
+他のタスクは、特定のホストが置かれる場所が重要になる可能性があります。たとえば、
+``db01.test.example.com`` および ``app01.test.example.com`` が DC1 にあり、
+``db02.test.example.com`` が DC2 にあるとします。
 
 .. code-block:: ini
 
@@ -745,22 +745,22 @@ located in DC1 while ``db02.test.example.com`` is in DC2:
   [dc2]
   db02.test.example.com
 
-In practice, you might even end up mixing all these setups as you
-might need to, on one day, update all nodes in a specific data center
-while, on another day, update all the application servers no matter
-their location.
+実際には、
+たとえば特定のデータセンター内のすべてのノードを更新する日と、
+置かれている場所に関係なくすべてのアプリケーションサーバーを更新する日が必要になるため、
+このすべての設定を組み合わせて使用することがあります。
 
 .. seealso::
 
    :ref:`inventory_plugins`
-       Pulling inventory from dynamic or static sources
+       動的ソースまたは静的ソースからのインベントリーのプル
    :ref:`intro_dynamic_inventory`
-       Pulling inventory from dynamic sources, such as cloud providers
+       クラウドプロバイダーなどの動的ソースからのインベントリーのプル
    :ref:`intro_adhoc`
-       Examples of basic commands
+       基本コマンドの例
    :ref:`working_with_playbooks`
-       Learning Ansible's configuration, deployment, and orchestration language.
-   `Mailing List <https://groups.google.com/group/ansible-project>`_
-       Questions? Help? Ideas?  Stop by the list on Google Groups
+       Ansible の設定、デプロイメント、オーケストレーション言語について
+   `メーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

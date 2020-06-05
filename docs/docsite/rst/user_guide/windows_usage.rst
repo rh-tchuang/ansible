@@ -1,34 +1,34 @@
-Using Ansible and Windows
+Ansible と Windows の使用
 =========================
-When using Ansible to manage Windows, many of the syntax and rules that apply
-for Unix/Linux hosts also apply to Windows, but there are still some differences
-when it comes to components like path separators and OS-specific tasks.
-This document covers details specific to using Ansible for Windows.
+Ansible を 使用して Windows を管理する場合、
+Unix/Linux ホストに適用される構文とルールの多くは Windows にも適用されますが、
+パスセパレーターや OS 固有のタスクなどのコンポーネントに関してはいくつか相違点があります。
+ここでは、Windows 向けに Ansible を使用する場合の注意点を説明します。
 
-.. contents:: Topics
+.. contents:: トピック
    :local:
 
-Use Cases
+ユースケース
 `````````
-Ansible can be used to orchestrate a multitude of tasks on Windows servers.
-Below are some examples and info about common tasks.
+Ansible は、Windows サーバーにある多数のタスクを調整 (オーケストレート) するのに使用できます。
+以下に、一般的なタスクに関するいくつかの例と情報を示します。
 
-Installing Software
+ソフトウェアのインストール
 -------------------
-There are three main ways that Ansible can be used to install software:
+Ansible を使用してソフトウェアをインストールできる主な方法は 3 つあります。
 
-* Using the ``win_chocolatey`` module. This sources the program data from the default
-  public `Chocolatey <https://chocolatey.org/>`_ repository. Internal repositories can
-  be used instead by setting the ``source`` option.
+* ``win_chocolatey`` モジュールを使用する。この場合は、
+  公開されているデフォルトの `Chocolatey <https://chocolatey.org/>`_ リポジトリーからプログラムデータを取得します。内部リポジトリーは、
+  代わりに、``source`` オプションを設定して使用します。
 
-* Using the ``win_package`` module. This installs software using an MSI or .exe installer
-  from a local/network path or URL.
+* ``win_package`` モジュールを使用する。これにより、
+  ローカル/ネットワークパスまたは URL から MSI または .exe インストーラーを使用してソフトウェアがインストールされます。
 
-* Using the ``win_command`` or ``win_shell`` module to run an installer manually.
+* ``win_command`` モジュールまたは ``win_shell`` モジュールを使用して手動でインストーラーを実行する。
 
-The ``win_chocolatey`` module is recommended since it has the most complete logic for checking to see if a package has already been installed and is up-to-date.
+``win_chocolatey`` モジュールは、パッケージがすでにインストールされていて最新かどうかを確認するための最も完全なロジックを備えているため、このモジュールを使用することが推奨されます。
 
-Below are some examples of using all three options to install 7-Zip:
+以下は、3 つのすべてのオプションを使用して 7-Zip をインストールするいくつかの例です。
 
 .. code-block:: yaml+jinja
 
@@ -78,27 +78,27 @@ Below are some examples of using all three options to install 7-Zip:
       win_command: C:\Windows\System32\msiexec.exe /x {23170F69-40C1-2702-1701-000001000000} /qn /norestart
       when: 7zip_installed.exists == true
 
-Some installers like Microsoft Office or SQL Server require credential delegation or
-access to components restricted by WinRM. The best method to bypass these
-issues is to use ``become`` with the task. With ``become``, Ansible will run
-the installer as if it were run interactively on the host.
+Microsoft OfficeやSQL Serverなどの一部のインストーラーでは、
+認証情報の委譲または WinRM によって制限されたコンポーネントへのアクセスが必要です。これらの問題を回避する最良の方法は、
+タスクで ``become`` を使用することです。``become`` を使用すると、
+Ansible は、ホスト上でインタラクティブに実行されたかのようにインストーラーを実行します。
 
-.. Note:: Many installers do not properly pass back error information over WinRM. In these cases, if the install has been  verified to work locally the recommended method is to use become.
+.. Note:: 多くのインストーラーは、WinRM 経由でエラー情報を適切に返しません。この場合、インストールがローカルで動作することが確認されている場合は、become を使用することが推奨されます。
 
-.. Note:: Some installers restart the WinRM or HTTP services, or cause them to become temporarily unavailable, making Ansible assume the system is unreachable.
+.. Note:: 一部のインストーラーは、WinRM または HTTP サービスを再起動したり、一時的に利用できなくなったりするため、システムが到達不能であると Ansible により想定されます。
 
-Installing Updates
+更新のインストール
 ------------------
-The ``win_updates`` and ``win_hotfix`` modules can be used to install updates
-or hotfixes on a host. The module ``win_updates`` is used to install multiple
-updates by category, while ``win_hotfix`` can be used to install a single
-update or hotfix file that has been downloaded locally.
+``win_updates`` モジュールおよび ``win_hotfix`` モジュールを使用して、
+ホストに更新またはホットフィックスをインストールできます。``win_updates`` モジュールは、カテゴリーごとに複数の更新をインストールするために使用されます。
+一方、``win_hotfix`` は、
+ローカルにダウンロードされた単一の更新またはホットフィックスファイルをインストールするために使用できます。
 
-.. Note:: The ``win_hotfix`` module has a requirement that the DISM PowerShell cmdlets are
-    present. These cmdlets were only added by default on Windows Server 2012
-    and newer and must be installed on older Windows hosts.
+.. Note:: ``win_hotfix`` モジュールには、
+    DISM PowerShell コマンドレットが存在する必要があります。このようなコマンドレットは、
+    Windows Server 2012 以降でのみデフォルトで追加され、古い Windows ホストにインストールする必要があります。
 
-The following example shows how ``win_updates`` can be used:
+次の例は、``win_updates`` の使用方法を示しています。
 
 .. code-block:: yaml+jinja
 
@@ -114,38 +114,38 @@ The following example shows how ``win_updates`` can be used:
       win_reboot:
       when: update_result.reboot_required
 
-The following example show how ``win_hotfix`` can be used to install a single
-update or hotfix:
+次の例は、``win_hotfix`` を使用して、
+更新またはホットフィックスを 1 つインストールする方法を示しています。
 
 .. code-block:: yaml+jinja
 
-    - name: Download KB3172729 for Server 2012 R2
+    - name:Download KB3172729 for Server 2012 R2
       win_get_url:
         url: http://download.windowsupdate.com/d/msdownload/update/software/secu/2016/07/windows8.1-kb3172729-x64_e8003822a7ef4705cbb65623b72fd3cec73fe222.msu
-        dest: C:\temp\KB3172729.msu
+        dest:C:\temp\KB3172729.msu
 
-    - name: Install hotfix
+    - name:Install hotfix
       win_hotfix:
-        hotfix_kb: KB3172729
-        source: C:\temp\KB3172729.msu
+        hotfix_kb:KB3172729
+        source:C:\temp\KB3172729.msu
         state: present
       register: hotfix_result
 
-    - name: Reboot host if required
+    - name:Reboot host if required
       win_reboot:
       when: hotfix_result.reboot_required
 
-Set Up Users and Groups
+ユーザーとグループの設定
 -----------------------
-Ansible can be used to create Windows users and groups both locally and on a domain.
+Ansible を使用して、ローカルとドメインの両方で Windows ユーザーとグループを作成できます。
 
-Local
+ローカル
 +++++
-The modules ``win_user``, ``win_group`` and ``win_group_membership`` manage
-Windows users, groups and group memberships locally.
+``win_user`` モジュール、``win_group`` モジュール、および ``win_group_membership`` モジュールは、
+Windows ユーザー、グループ、およびグループメンバーシップをローカルで管理します。
 
-The following is an example of creating local accounts and groups that can
-access a folder on the same host:
+以下は、
+同じホスト上のディレクトリーにアクセスできるローカルアカウントとグループを作成する例です。
 
 .. code-block:: yaml+jinja
 
@@ -185,12 +185,12 @@ access a folder on the same host:
         path: C:\Development
         reorganize: yes
         state: absent
-
-Domain
+    
+ドメイン
 ++++++
-The modules ``win_domain_user`` and ``win_domain_group`` manages users and
-groups in a domain. The below is an example of ensuring a batch of domain users
-are created:
+``win_domain_user`` モジュールおよび ``win_domain_group`` モジュールが、
+ドメイン内のユーザーとグループを管理します。以下は、
+ドメインユーザーのバッチを確実に作成する例です。
 
 .. code-block:: yaml+jinja
 
@@ -212,34 +212,34 @@ are created:
         password: SuperSecretPass01
       - name: Dev User
         password: '@fvr3IbFBujSRh!3hBg%wgFucD8^x8W5'
-
-Running Commands
+    
+コマンドの実行
 ----------------
-In cases where there is no appropriate module available for a task,
-a command or script can be run using the ``win_shell``, ``win_command``, ``raw``, and ``script`` modules.
+タスクに利用できる適切なモジュールがない場合、
+コマンドまたはスクリプトは、``win_shell`` モジュール、``win_command`` モジュール、``raw`` モジュール、および ``script`` モジュールを使用して実行できます。
 
-The ``raw`` module simply executes a Powershell command remotely. Since ``raw``
-has none of the wrappers that Ansible typically uses, ``become``, ``async``
-and environment variables do not work.
+``raw`` モジュールは、Powershell コマンドをリモートで実行するだけです。``raw`` には、
+Ansible が通常使用するラッパーがないため、``become``、``async``、
+および環境変数は機能しません。
 
-The ``script`` module executes a script from the Ansible controller on
-one or more Windows hosts. Like ``raw``, ``script`` currently does not support
-``become``, ``async``, or environment variables.
+``script`` モジュールは、
+1 つ以上の Windows ホスト上の Ansible コントローラーからスクリプトを実行します。``raw`` と同様に、``script`` は現在、
+``become``、``async``、または環境変数をサポートしていません。
 
-The ``win_command`` module is used to execute a command which is either an
-executable or batch file, while the ``win_shell`` module is used to execute commands within a shell.
+``win_command`` モジュールは、実行ファイルまたはバッチファイルであるコマンドを実行するために使用され、
+``win_shell`` モジュールは、シェル内でコマンドを実行するのに使用されます。
 
-Choosing Command or Shell
+コマンドまたはシェルの選択
 +++++++++++++++++++++++++
-The ``win_shell`` and ``win_command`` modules can both be used to execute a command or commands.
-The ``win_shell`` module is run within a shell-like process like ``PowerShell`` or ``cmd``, so it has access to shell
-operators like ``<``, ``>``, ``|``, ``;``, ``&&``, and ``||``. Multi-lined commands can also be run in ``win_shell``.
+``win_shell`` モジュールおよび ``win_command`` モジュールの両方を使用して、1 つまたは複数のコマンドを実行できます。
+``win_shell``モジュールは、``PowerShell`` や ``cmd`` などのシェルのようなプロセス内で実行されるため、
+``<``、``>``、``|``、``;``、``&&``、``||`` などのシェル演算子にアクセスできます複数行のコマンドは、``win_shell`` でも実行できます。
 
-The ``win_command`` module simply runs a process outside of a shell. It can still
-run a shell command like ``mkdir`` or ``New-Item`` by passing the shell commands
-to a shell executable like ``cmd.exe`` or ``PowerShell.exe``.
+``win_command`` モジュールは、シェルの外でプロセスを実行するだけです。シェルコマンドを、
+``cmd.exe`` や ``PowerShell.exe`` などのシェル実行ファイルに渡すことで、
+``mkdir`` や ``New-Item`` などのシェルコマンドを引き続き実行できます。
 
-Here are some examples of using ``win_command`` and ``win_shell``:
+以下は、``win_command`` および ``win_shell`` の使用例です。
 
 .. code-block:: yaml+jinja
 
@@ -267,36 +267,36 @@ Here are some examples of using ``win_command`` and ``win_shell``:
     - name: Run a vbs script
       win_command: cscript.exe script.vbs
 
-.. Note:: Some commands like ``mkdir``, ``del``, and ``copy`` only exist in
-    the CMD shell. To run them with ``win_command`` they must be
-    prefixed with ``cmd.exe /c``.
+.. Note:: ``mkdir``、``del``、``copy`` などの一部のコマンドは、
+    CMD シェルにのみ存在します。``win_command`` で実行するには、
+    先頭に ``cmd.exe /c`` が付いています。
 
-Argument Rules
+引数のルール
 ++++++++++++++
-When running a command through ``win_command``, the standard Windows argument
-rules apply:
+``win_command`` を使用してコマンドを実行する場合は、
+標準のWindows 引数ルールが適用されます。
 
-* Each argument is delimited by a white space, which can either be a space or a
-  tab.
+* 各引数は空白で区切られます。
+  空白はスペースまたはタブのいずれかです。
 
-* An argument can be surrounded by double quotes ``"``. Anything inside these
-  quotes is interpreted as a single argument even if it contains whitespace.
+* 引数は二重引用符 (``"``) で囲むことができます。これらの引用符内のすべては、
+  空白が含まれている場合でも、単一の引数として解釈されます。
 
-* A double quote preceded by a backslash ``\`` is interpreted as just a double
-  quote ``"`` and not as an argument delimiter.
+* バックスラッシュ ```` が前に付いた二重引用符は、
+  単なる二重引用符 ``"`` として解釈され、引数の区切り文字として解釈されません。
 
-* Backslashes are interpreted literally unless it immediately precedes double
-  quotes; for example ``\`` == ``\`` and ``\"`` == ``"``
+* バックスラッシュは、二重引用符の直前にない限り、
+  文字どおりに解釈されます (```` == ```` および ``\"`` == ``"`` など)。
 
-* If an even number of backslashes is followed by a double quote, one
-  backslash is used in the argument for every pair, and the double quote is
-  used as a string delimiter for the argument.
+* 偶数個のバックスラッシュの後に二重引用符が続く場合は、
+  すべてのペアの引数で 1 つのバックスラッシュが使用され、
+  二重引用符は引数の文字列区切り文字として使用されます。
 
-* If an odd number of backslashes is followed by a double quote, one backslash
-  is used in the argument for every pair, and the double quote is escaped and
-  made a literal double quote in the argument.
+* 奇数のバックスラッシュの後に二重引用符が続く場合は、
+  各ペアの引数で 1 つのバックスラッシュが使用され、
+  二重引用符はエスケープされ、
 
-With those rules in mind, here are some examples of quoting:
+引数でリテラルの二重引用符が作成されます。
 
 .. code-block:: yaml+jinja
 
@@ -320,19 +320,19 @@ With those rules in mind, here are some examples of quoting:
     argv[0] = C:\temp\executable.exe
     argv[1] = C:\no\space\path
     argv[2] = arg with end \ before end quote\"
+    
+詳細は「`escaping arguments <https://msdn.microsoft.com/en-us/library/17w5ykft(v=vs.85).aspx>`\_」を参照してください。
 
-For more information, see `escaping arguments <https://msdn.microsoft.com/en-us/library/17w5ykft(v=vs.85).aspx>`_.
-
-Creating and Running a Scheduled Task
+スケジュールされたタスクの作成と実行
 -------------------------------------
-WinRM has some restrictions in place that cause errors when running certain
-commands. One way to bypass these restrictions is to run a command through a
-scheduled task. A scheduled task is a Windows component that provides the
-ability to run an executable on a schedule and under a different account.
+WinRM には、
+特定のコマンドの実行時にエラーを引き起こすいくつかの制限があります。これらの制限を回避する 1 つの方法は、
+スケジュールされたタスクを介してコマンドを実行することです。スケジュールされたタスクは、
+スケジュールに従って別のアカウントで実行ファイルを実行する機能を提供する Windows コンポーネントです。
 
-Ansible version 2.5 added modules that make it easier to work with scheduled tasks in Windows.
-The following is an example of running a script as a scheduled task that deletes itself after
-running:
+Ansible バージョン 2.5 では、Windows でスケジュールされたタスクを簡単に操作できるようにするモジュールが追加されました。
+以下は、
+実行後に自身を削除するスケジュールされたタスクとしてスクリプトを実行する例です。
 
 .. code-block:: yaml+jinja
 
@@ -359,50 +359,49 @@ running:
       retries: 12
       delay: 10
 
-.. Note:: The modules used in the above example were updated/added in Ansible
-    version 2.5.
+.. Note:: 上記の例で使用されているモジュールは、
+    Ansible バージョン 2.5 で更新/追加されました。
 
-Path Formatting for Windows
+Windows のパスのフォーマット
 ```````````````````````````
-Windows differs from a traditional POSIX operating system in many ways. One of
-the major changes is the shift from ``/`` as the path separator to ``\``. This
-can cause major issues with how playbooks are written, since ``\`` is often used
-as an escape character on POSIX systems.
+Windows は、多くの点で従来の POSIX オペレーティングシステムとは異なります。主な変更点の 1 つは、
+パス区切り文字としての ``/`` から ```` へのシフトです。```` は POSIX システムでエスケープ文字として使用されることが多いため、
+これは、
+Playbook の作成方法に大きな問題を引き起こす可能性があります。
 
-Ansible allows two different styles of syntax; each deals with path separators for Windows differently:
+Ansible では、2 つの異なるスタイルの構文を使用できます。それぞれ Windows のパスセパレーターの扱いが異なります。
 
-YAML Style
+YAML スタイル
 ----------
-When using the YAML syntax for tasks, the rules are well-defined by the YAML
-standard:
+タスクに YAML 構文を使用する場合、
+ルールは YAML 標準仕様によって明確に定義されます
 
-* When using a normal string (without quotes), YAML will not consider the
-  backslash an escape character.
+* 通常の文字列 (引用符なし) を使用する場合、
+  YAMLは バックスラッシュをエスケープ文字と見なしません。
 
-* When using single quotes ``'``, YAML will not consider the backslash an
-  escape character.
+* 単一引用符 ``'`` を使用する場合、
+  YAML はバックスラッシュをエスケープ文字と見なしません。
 
-* When using double quotes ``"``, the backslash is considered an escape
-  character and needs to escaped with another backslash.
+* 二重引用符 ``"`` を使用する場合、
+  バックスラッシュはエスケープ文字と見なされ、別のバックスラッシュでエスケープする必要があります。
 
-.. Note:: You should only quote strings when it is absolutely
-    necessary or required by YAML, and then use single quotes.
+.. Note:: YAML で絶対に必要または要求される場合にのみ文字列を引用し、
+    その後は単一引用符を使用する必要があります。
 
-The YAML specification considers the following `escape sequences <https://yaml.org/spec/current.html#id2517668>`_:
+YAML 仕様では、`次のエスケープシーケンス <https://yaml.org/spec/current.html#id2517668>`_ が考慮されます。
 
 * ``\0``, ``\\``, ``\"``, ``\_``, ``\a``, ``\b``, ``\e``, ``\f``, ``\n``, ``\r``, ``\t``,
-  ``\v``, ``\L``, ``\N`` and ``\P`` -- Single character escape
+  ``\v``, ``\L``, ``\N`` and ``\P`` -- 1 文字のエスケープ
 
-* ``<TAB>``, ``<SPACE>``, ``<NBSP>``, ``<LNSP>``, ``<PSP>`` -- Special
-  characters
+* ``<TAB>``, ``<SPACE>``, ``<NBSP>``, ``<LNSP>``, ``<PSP>`` -- 特殊文字
 
-* ``\x..`` -- 2-digit hex escape
+* ``\x..`` -- 2 桁の 16 進エスケープ
 
-* ``\u....`` -- 4-digit hex escape
+* ``\u....`` -- 4 桁の 16 進エスケープ
 
-* ``\U........`` -- 8-digit hex escape
+* ``\U........`` -- 8 桁の 16 進エスケープ
 
-Here are some examples on how to write Windows paths::
+Windows パスの記述方法の例を次に示します。
 
     # GOOD
     tempdir: C:\Windows\Temp
@@ -416,48 +415,48 @@ Here are some examples on how to write Windows paths::
     tempdir: 'C:\\Windows\\Temp'
     tempdir: C:/Windows/Temp
 
-This is an example which will fail:
+これは失敗する例です。
 
 .. code-block:: text
 
     # FAILS
     tempdir: "C:\Windows\Temp"
 
-This example shows the use of single quotes when they are required::
+この例は、必要な場合の単一引用符の使用を示しています。
 
     ---
-    - name: Copy tomcat config
+    - name:Copy tomcat config
       win_copy:
         src: log4j.xml
         dest: '{{tc_home}}\lib\log4j.xml'
 
-Legacy key=value Style
+従来の key=value スタイル
 ----------------------
-The legacy ``key=value`` syntax is used on the command line for ad-hoc commands,
-or inside playbooks. The use of this style is discouraged within playbooks
-because backslash characters need to be escaped, making playbooks harder to read.
-The legacy syntax depends on the specific implementation in Ansible, and quoting
-(both single and double) does not have any effect on how it is parsed by
-Ansible.
+従来の ``key=value`` 構文は、
+アドホックコマンドのコマンドライン、または Playbook 内で使用されます。バックスラッシュ文字をエスケープする必要があるため、
+Playbook でこのスタイルを使用することは推奨されません。Playbook が読みにくくなります。
+従来の構文は、Ansible の特定の実装に依存し、
+引用符 (単一と二重の両方) は、
+Ansible による解析方法に影響を与えません。
 
-The Ansible key=value parser parse_kv() considers the following escape
-sequences:
+Ansible の key=value パーサー parse\_kv() は、
+次のエスケープシーケンスを考慮します。
 
-* ``\``, ``'``, ``"``, ``\a``, ``\b``, ``\f``, ``\n``, ``\r``, ``\t`` and
-  ``\v`` -- Single character escape
+* ``\``, ``'``, ``"``, ``\a``, ``\b``, ``\f``, ``\n``, ``\r``, ``\t``、および 
+  ``\v`` -- 1 文字のエスケープ
 
-* ``\x..`` -- 2-digit hex escape
+* ``\x..`` -- 2 桁の 16 進エスケープ
 
-* ``\u....`` -- 4-digit hex escape
+* ``\u....`` -- 4 桁の 16 進エスケープ
 
-* ``\U........`` -- 8-digit hex escape
+* ``\U........`` -- 8 桁の 16 進エスケープ
 
-* ``\N{...}`` -- Unicode character by name
+* ``\N{...}`` -- 名前による Unicode 文字
 
-This means that the backslash is an escape character for some sequences, and it
-is usually safer to escape a backslash when in this form.
+これは、バックスラッシュが一部のシーケンスのエスケープ文字であることを意味します。
+通常、この形式ではバックスラッシュをエスケープする方が安全です。
 
-Here are some examples of using Windows paths with the key=value style:
+key=value スタイルで Windows パスを使用する例を次に示します。
 
 .. code-block:: ini
 
@@ -479,35 +478,35 @@ Here are some examples of using Windows paths with the key=value style:
     tempdir='C:\Windows\temp'
     tempdir="C:\Windows\temp"
 
-The failing examples don't fail outright but will substitute ``\t`` with the
-``<TAB>`` character resulting in ``tempdir`` being ``C:\Windows<TAB>emp``.
+失敗した例は完全には失敗していませんが、``\t`` を 
+``<TAB>`` を文字で置き換えます。その結果、``tempdir`` が、``C:\Windows<TAB>emp`` になります。
 
-Limitations
+制限事項
 ```````````
-Some things you cannot do with Ansible and Windows are:
+ここでは、Ansible と Windows でできないことを説明します。
 
-* Upgrade PowerShell
+* PowerShell のアップグレード
 
-* Interact with the WinRM listeners
+* WinRM リスナーとの対話
 
-Because WinRM is reliant on the services being online and running during normal operations, you cannot upgrade PowerShell or interact with WinRM listeners with Ansible. Both of these actions will cause the connection to fail. This can technically be avoided by using ``async`` or a scheduled task, but those methods are fragile if the process it runs breaks the underlying connection Ansible uses, and are best left to the bootstrapping process or before an image is
-created.
+WinRM は通常の対話中にオンラインで実行されているサービスに依存しているため、PowerShell をアップグレードしたり、Ansible で WinRM リスナーと対話することはできません。このアクションにより、接続が失敗します。これは技術的には ``async`` またはスケジュールされたタスクを使用することで回避できますが、そのようなメソッドは、実行するプロセスがAnsible が使用する基本的な接続を中断する場合は脆弱であり、
+ブートストラッププロセスまたはイメージが作成される前に残されるのが最適です。
 
-Developing Windows Modules
+Windows モジュールの開発
 ``````````````````````````
-Because Ansible modules for Windows are written in PowerShell, the development
-guides for Windows modules differ substantially from those for standard standard modules. Please see
-:ref:`developing_modules_general_windows` for more information.
+Windows 用の Ansible モジュールは PowerShell で記述されているため、
+Windows モジュールの開発ガイドは、標準の標準モジュールの開発ガイドとは大きく異なります。詳細は、
+「:ref:`developing_modules_general_windows`」参照してください。
 
 .. seealso::
 
    :ref:`playbooks_intro`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_best_practices`
-       Best practices advice
-   :ref:`List of Windows Modules <windows_modules>`
-       Windows specific module list, all implemented in PowerShell
-   `User Mailing List <https://groups.google.com/group/ansible-project>`_
-       Have a question?  Stop by the google group!
+       ベストプラクティスのアドバイス
+   :ref:`Windows モジュールリスト <windows_modules>`
+       Windows 固有のモジュールリスト (すべて PowerShell に実装)
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

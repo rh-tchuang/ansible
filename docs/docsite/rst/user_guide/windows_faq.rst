@@ -1,18 +1,18 @@
 .. _windows_faq:
 
-Windows Frequently Asked Questions
+Windows に関するよくある質問 (FAQ)
 ==================================
 
-Here are some commonly asked questions in regards to Ansible and Windows and
-their answers.
+ここでは、Ansible と Windows に関するよくある質問と、
+その回答を紹介します。
 
-.. note:: This document covers questions about managing Microsoft Windows servers with Ansible.
-    For questions about Ansible Core, please see the
-    :ref:`general FAQ page <ansible_faq>`.
+.. note:: このドキュメントでは、Microsoft Windows サーバーでの Ansible に管理に関する質問を扱います。
+    Ansible Core に関する質問は、
+    「:ref:`全般的な FAQ ページ <ansible_faq>`」を参照してください。
 
-Does Ansible work with Windows XP or Server 2003?
+Ansible は、Windows XP または Server 2003 で動作しますか
 ``````````````````````````````````````````````````
-Ansible does not work with Windows XP or Server 2003 hosts. Ansible does work with these Windows operating system versions:
+Ansible は、Windows XP または Server 2003 ホストでは動作しません。Ansible は、以下の Windows オペレーティングシステムバージョンで動作します。
 
 * Windows Server 2008
 * Windows Server 2008 R2
@@ -24,25 +24,25 @@ Ansible does not work with Windows XP or Server 2003 hosts. Ansible does work wi
 * Windows 8.1
 * Windows 10
 
-Ansible also has minimum PowerShell version requirements - please see
-:ref:`windows_setup` for the latest information.
+Ansible には、PowerShell バージョンの最小要件もあります。
+最新の情報は「:ref:`windows_setup`」を参照してください。
 
-Can I manage Windows Nano Server with Ansible?
+Ansible で Windows Nano Server を管理できますか
 ``````````````````````````````````````````````
-Ansible does not currently work with Windows Nano Server, since it does
-not have access to the full .NET Framework that is used by the majority of the
-modules and internal components.
+Ansible は現在、Windows Nano Server では動作しません。
+これは、Ansible が、
+モジュールおよび内部コンポーネントの大部分で使用される完全な .NET Framework にアクセスできないためです。
 
-Can Ansible run on Windows?
+Ansible は Windows で実行できますか
 ```````````````````````````
-No, Ansible can only manage Windows hosts. Ansible cannot run on a Windows host
-natively, though it can run under the Windows Subsystem for Linux (WSL).
+いいえ、Ansible は Windows ホストを管理するだけです。Ansible は、Windows ホストでネイティブに実行することはできませんが、
+Linux 用の Windows サブシステム (WSL) では実行できます。
 
-.. note:: The Windows Subsystem for Linux is not supported by Ansible and
-    should not be used for production systems.
+.. note:: Linux 用の Windows サブシステムは、Ansible でサポートされていないため、
+    実稼働システムには使用しないでください。
 
-To install Ansible on WSL, the following commands
-can be run in the bash terminal:
+Ansible を WSL にインストールするには、
+bash 端末で次のコマンドを実行できます。
 
 .. code-block:: shell
 
@@ -50,8 +50,8 @@ can be run in the bash terminal:
     sudo apt-get install python-pip git libffi-dev libssl-dev -y
     pip install ansible pywinrm
 
-To run Ansible from source instead of a release on the WSL, simply uninstall the pip
-installed version and then clone the git repo.
+WSL のリリースではなくソースから Ansible を実行するには、
+pip をインストールしたバージョンをアンインストールしてから、git リポジトリーを複製します。
 
 .. code-block:: shell
 
@@ -62,74 +62,74 @@ installed version and then clone the git repo.
     # To enable Ansible on login, run the following
     echo ". ~/ansible/hacking/env-setup -q' >> ~/.bashrc
 
-Can I use SSH keys to authenticate to Windows hosts?
+SSH キーを使用して Windows ホストへの認証を行うことはできますか
 ````````````````````````````````````````````````````
-You cannot use SSH keys with the WinRM or PSRP connection plugins.
-These connection plugins use X509 certificates for authentication instead
-of the SSH key pairs that SSH uses.
+WinRM または PSRP 接続プラグインで SSH キーを使用することはできません。
+これらの接続プラグインは、
+SSH が使用する SSH キーペアの代わりに X509 証明書を認証に使用します。
 
-The way X509 certificates are generated and mapped to a user is different
-from the SSH implementation; consult the :ref:`windows_winrm` documentation for
-more information.
+X509 証明書が生成されてユーザーにマッピングされる方法は、
+SSH 実装とは異なります。
+詳細は、「:ref:`windows_winrm`」のドキュメントを参照してください。
 
-Ansible 2.8 has added an experimental option to use the SSH connection plugin,
-which uses SSH keys for authentication, for Windows servers. See :ref:`this question <windows_faq_ssh>`
-for more information.
+Ansible 2.8 には、SSH 接続プラグインを使用するための実験的なオプションが追加されました。
+これは、Windows サーバーの認証に SSH キーを使用します。詳細は、「:ref:`こちらの質問 <windows_faq_ssh>`」
+を参照してください。
 
 .. _windows_faq_winrm:
 
-Why can I run a command locally that does not work under Ansible?
+Ansible で機能しないコマンドをローカルで実行できるのはなぜですか
 `````````````````````````````````````````````````````````````````
-Ansible executes commands through WinRM. These processes are different from
-running a command locally in these ways:
+Ansible は、WinRM を介してコマンドを実行します。このプロセスは、次の点で、
+コマンドをローカルで実行することとは異なります。
 
-* Unless using an authentication option like CredSSP or Kerberos with
-  credential delegation, the WinRM process does not have the ability to
-  delegate the user's credentials to a network resource, causing ``Access is
-  Denied`` errors.
+* CredSSP や Kerberos などの認証オプションと認証情報の委譲を使用しない限り、
+  WinRM プロセスにはユーザーの認証情報をネットワークリソースに委譲する機能がないため、
+  ``Access is
+Denied`` エラーが発生します。
 
-* All processes run under WinRM are in a non-interactive session. Applications
-  that require an interactive session will not work.
+* WinRM で実行されるすべてのプロセスは、非対話型セッションです。対話型セッションを必要とするアプリケーションは
+  機能しません。
 
-* When running through WinRM, Windows restricts access to internal Windows
-  APIs like the Windows Update API and DPAPI, which some installers and
-  programs rely on.
+* WinRM を介して実行する場合、
+  Windows は、
+  一部のインストーラーおよびプログラムが使用する Windows Update API や DPAPI などの内部 Windows API へのアクセスを制限します。
 
-Some ways to bypass these restrictions are to:
+これらの制限を回避する方法は次のとおりです。
 
-* Use ``become``, which runs a command as it would when run locally. This will
-  bypass most WinRM restrictions, as Windows is unaware the process is running
-  under WinRM when ``become`` is used. See the :ref:`become` documentation for more
-  information.
+* ローカルで実行する場合と同様にコマンドを実行する ``become`` を使用します。Windows は、
+  ``become`` が使用されたときにプロセスが WinRM で実行されていることを Windows が認識していないため、
+  ほとんどの WinRM 制限を回避します。詳細は、
+  :ref:`become` のドキュメントを参照してください。
 
-* Use a scheduled task, which can be created with ``win_scheduled_task``. Like
-  ``become``, it will bypass all WinRM restrictions, but it can only be used to run
-  commands, not modules.
+* ``win_scheduled_task`` で作成できるスケジュールされたタスクを使用します。``become`` のように、
+  それはすべての WinRM 制限を回避しますが、
+  モジュールではなくコマンドを実行するためにのみ使用できます
 
-* Use ``win_psexec`` to run a command on the host. PSExec does not use WinRM
-  and so will bypass any of the restrictions.
+* ``win_psexec`` を使用して、ホストでコマンドを実行します。PSExec は WinRM を使用しないため、
+  すべての制限を回避します。
 
-* To access network resources without any of these workarounds, you can use
-  CredSSP or Kerberos with credential delegation enabled.
+* これらの回避策なしでネットワークリソースにアクセスするには、
+  認証情報の委譲を有効にして CredSSP または Kerberos を使用できます。
 
-See :ref:`become` more info on how to use become. The limitations section at
-:ref:`windows_winrm` has more details around WinRM limitations.
+become を使用する方法の詳細は、「:ref:`become`」を参照してください。「:ref:`windows_winrm`」の制限セクションには、
+WinRM の制限に関する詳細があります。
 
-This program won't install on Windows with Ansible
+このプログラムは、Ansible がインストールされている Windows にはインストールされません
 ``````````````````````````````````````````````````
-See :ref:`this question <windows_faq_winrm>` for more information about WinRM limitations.
+WinRMの制限の詳細は、「:ref:`こちらの質問 <windows_faq_winrm>`」を参照してください。
 
-What Windows modules are available?
+どのような Windows モジュールが利用できますか
 ```````````````````````````````````
-Most of the Ansible modules in Ansible Core are written for a combination of
-Linux/Unix machines and arbitrary web services. These modules are written in
-Python and most of them do not work on Windows.
+Ansible Core のほとんどの Ansible モジュールは、
+Linux/Unix マシンと任意の Web サービスを組み合わせて使用するように作成されています。これらのモジュールは Python で作成されており、
+そのほとんどは Windows では動作しません。
 
-Because of this, there are dedicated Windows modules that are written in
-PowerShell and are meant to be run on Windows hosts. A list of these modules
-can be found :ref:`here <windows_modules>`.
+このため、PowerShell で記述され、
+Windows ホストで実行することを目的とした専用の Windows モジュールがあります。このようなモジュールの一覧は、
+「:ref:`こちら<windows_modules>`」を参照してください。
 
-In addition, the following Ansible Core modules/action-plugins work with Windows:
+次の Ansible Core モジュールおよびアクションプラグインは、Windows で動作します。
 
 * add_host
 * assert
@@ -152,29 +152,29 @@ In addition, the following Ansible Core modules/action-plugins work with Windows
 * template (also: win_template)
 * wait_for_connection
 
-Can I run Python modules on Windows hosts?
+Windows ホストで Python モジュールを実行できますか
 ``````````````````````````````````````````
-No, the WinRM connection protocol is set to use PowerShell modules, so Python
-modules will not work. A way to bypass this issue to use
-``delegate_to: localhost`` to run a Python module on the Ansible controller.
-This is useful if during a playbook, an external service needs to be contacted
-and there is no equivalent Windows module available.
+いいえ、WinRM 接続プロトコルは PowerShell モジュールを使用するように設定されているため、
+Python モジュールは機能しません。この問題を回避するには、
+``delegate_to: localhost`` を使用して、Ansible コントローラーで Python モジュールを実行します。
+これは、Playbook の実行時に外部サービスに連絡する必要があり、
+利用可能な同等の Windows モジュールがない場合に役に立ちます。
 
 .. _windows_faq_ssh:
 
-Can I connect to Windows hosts over SSH?
+SSH 経由で Windows ホストに接続できますか
 ````````````````````````````````````````
-Ansible 2.8 has added an experimental option to use the SSH connection plugin
-to manage Windows hosts. To connect to Windows hosts over SSH, you must install and configure the `Win32-OpenSSH <https://github.com/PowerShell/Win32-OpenSSH>`_
-fork that is in development with Microsoft on
-the Windows host(s). While most of the basics should work with SSH,
-``Win32-OpenSSH`` is rapidly changing, with new features added and bugs
-fixed in every release. It is highly recommend you `install <https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH>`_ the latest release
-of ``Win32-OpenSSH`` from the GitHub Releases page when using it with Ansible
-on Windows hosts.
+Ansible 2.8 には、
+SSH 接続プラグインを使用して、Windows ホストを管理するための実験的なオプションが追加されました。SSH 経由で Windows ホストに接続するには、
+Windows ホストに、
+Microsoft 社と開発している `Win32-OpenSSH <https://github.com/PowerShell/Win32-OpenSSH>`_ をインストールして設定する必要があります。ほとんどの基本動作は SSH で有効なはずですが、
+``Win32-OpenSSH`` は急速に変化しており、
+新しい機能が追加され、すべてのリリースでバグが修正されています。Windows ホストで Ansible を使用する場合は、
+GitHub のリリースページから、
+``Win32-OpenSSH`` の最新リリースを `インストール <https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH>`_ することが強く推奨されます。
 
-To use SSH as the connection to a Windows host, set the following variables in
-the inventory::
+Windows ホストへの接続として SSH を使用するには、
+インベントリーで次の変数を設定します。
 
     ansible_connection=ssh
 
@@ -182,47 +182,47 @@ the inventory::
     ansible_shell_type=cmd
     # ansible_shell_type=powershell
 
-The value for ``ansible_shell_type`` should either be ``cmd`` or ``powershell``.
-Use ``cmd`` if the ``DefaultShell`` has not been configured on the SSH service
-and ``powershell`` if that has been set as the ``DefaultShell``.
+``ansible_shell_type`` の値は、``cmd`` または ``powershell`` のいずれかである必要があります。
+``DefaultShell`` が SSH サービスで構成されていない場合は ``cmd`` を使用し、
+``DefaultShell`` として設定されている場合は ``powershell`` を使用します。
 
-Why is connecting to a Windows host via SSH failing?
+SSH 経由で Windows ホストに接続できないのはなぜですか
 ````````````````````````````````````````````````````
-Unless you are using ``Win32-OpenSSH`` as described above, you must connect to
-Windows hosts using :ref:`windows_winrm`. If your Ansible output indicates that
-SSH was used, either you did not set the connection vars properly or the host is not inheriting them correctly.
+上記のように ``Win32-OpenSSH`` を使用している場合を除き、
+:ref:`windows_winrm` を使用して Windows ホストに接続する必要があります。Ansible の出力に SSH が使用されたことが示されている場合は、
+接続変数を適切に設定していないか、ホストが接続変数を正しく継承していません。
 
-Make sure ``ansible_connection: winrm`` is set in the inventory for the Windows
-host(s).
+``ansible_connection: winrm`` が、
+Windows ホストのインベントリーに設定されていることを確認してください。
 
-Why are my credentials being rejected?
+認証情報が拒否されるのはなぜですか
 ``````````````````````````````````````
-This can be due to a myriad of reasons unrelated to incorrect credentials.
+これは、誤った認証情報とは無関係の、多種多様なものが原因である可能性があります。
 
-See HTTP 401/Credentials Rejected at :ref:`windows_setup` for a more detailed
-guide of this could mean.
+この問題に関する詳細なガイドは、「:ref:`windows_setup`」の
+「HTTP 401/認証情報の拒否」を参照してください。
 
-Why am I getting an error SSL CERTIFICATE_VERIFY_FAILED?
+SSL CERTIFICATE_VERIFY_FAILED エラーが発生するのはなぜですか
 ````````````````````````````````````````````````````````
-When the Ansible controller is running on Python 2.7.9+ or an older version of Python that
-has backported SSLContext (like Python 2.7.5 on RHEL 7), the controller will attempt to
-validate the certificate WinRM is using for an HTTPS connection. If the
-certificate cannot be validated (such as in the case of a self signed cert), it will
-fail the verification process.
+Python 2.7.9 以降、または SSLContext をバックポートした古いバージョンの Python (RHEL 7 上の Python 2.7.5 など) で Ansible コントローラーを実行している場合は、
+コントローラーが、
+WinRM が HTTPS 接続に使用している証明書を検証しようとします。証明書を検証できない場合 
+(自己署名証明書の場合など) は、
+検証プロセスに失敗します。
 
-To ignore certificate validation, add
-``ansible_winrm_server_cert_validation: ignore`` to inventory for the Windows
-host.
+証明書の検証を無効にするには、
+Windows ホストのインベントリーに、
+``ansible_winrm_server_cert_validation: ignore`` を追加します。
 
 .. seealso::
 
    :ref:`windows`
-       The Windows documentation index
+       Windows ドキュメントの目次
    :ref:`about_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_best_practices`
-       Best practices advice
-   `User Mailing List <https://groups.google.com/group/ansible-project>`_
-       Have a question?  Stop by the google group!
+       ベストプラクティスのアドバイス
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

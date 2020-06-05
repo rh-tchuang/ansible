@@ -1,27 +1,27 @@
 .. _intro_getting_started:
 
 ***************
-Getting Started
+はじめに
 ***************
 
-Now that you have read the :ref:`installation guide<installation_guide>` and installed Ansible on a control node, you are ready to learn how Ansible works. A basic Ansible command or playbook:
-  * selects machines to execute against from inventory
-  * connects to those machines (or network devices, or other managed nodes), usually over SSH
-  * copies one or more modules to the remote machines and starts execution there
+:ref:`インストールガイド<installation_guide>` を読み、コントロールノードに Ansible をインストールしたら、Ansible の仕組みを学ぶ準備ができました。基本的な Ansible コマンドまたはプレイブック:
+  * インベントリーから実行するマシンを選択する
+  * 通常は SSH 経由で、このマシン (またはネットワークデバイス、またはその他の管理対象ノード) に接続する
+  * 1 つ以上のモジュールをリモートマシンにコピーし、そこで実行を開始する
 
-Ansible can do much more, but you should understand the most common use case before exploring all the powerful configuration, deployment, and orchestration features of Ansible. This page illustrates the basic process with a simple inventory and an ad-hoc command. Once you understand how Ansible works, you can read more details about :ref:`ad-hoc commands<intro_adhoc>`, organize your infrastructure with :ref:`inventory<intro_inventory>`, and harness the full power of Ansible with :ref:`playbooks<playbooks_intro>`.
+Ansible はさらに多くのことができますが、Ansible の強力な設定、デプロイメント、オーケストレーションの機能をすべて試す前に最も一般的なユースケースを理解しておく必要があります。このページでは、簡単なインベントリーとアドホックコマンドを使用した基本的なプロセスを説明します。Ansible の仕組みを理解したら、:ref:`アドホックコマンド<intro_adhoc>` の詳細を読み、:ref:`インベントリー<intro_inventory>` でインフラストラクチャーを整理し、:ref:`Playbook<playbooks_intro>` で Ansible の全機能を活用できます。
 
 .. contents::
    :local:
 
-Selecting machines from inventory
+インベントリーからのマシンの選択
 =================================
 
-Ansible reads information about which machines you want to manage from your inventory. Although you can pass an IP address to an ad-hoc command, you need inventory to take advantage of the full flexibility and repeatability of Ansible.
+Ansible は、インベントリーから管理するマシンの情報を読み取ります。IP アドレスをアドホックコマンドに渡すことはできますが、Ansible の柔軟性と再現性を完全に活用するにはインベントリーが必要です。
 
-Action: create a basic inventory
+アクション: 基本的なインベントリーの作成
 --------------------------------
-For this basic inventory, edit (or create) ``/etc/ansible/hosts`` and add a few remote systems to it. For this example, use either IP addresses or FQDNs:
+この基本的なインベントリーでは、``/etc/ansible/hosts`` を編集 (または作成) し、リモートシステムをいくつか追加します。この例では、IP アドレスまたは FQDN を使用します。
 
 .. code-block:: text
 
@@ -29,51 +29,51 @@ For this basic inventory, edit (or create) ``/etc/ansible/hosts`` and add a few 
    aserver.example.org
    bserver.example.org
 
-Beyond the basics
+中級編
 -----------------
-Your inventory can store much more than IPs and FQDNs. You can create :ref:`aliases<inventory_aliases>`, set variable values for a single host with :ref:`host vars<host_variables>`, or set variable values for multiple hosts with :ref:`group vars<group_variables>`.
+インベントリーは IP や FQDN よりも多くのものを保存できます。:ref:`エイリアス<inventory_aliases>` を作成し、:ref:`host 変数<host_variables>` で 1 台のホストに変数値を設定し、:ref:`group 変数<group_variables>` で複数のホストに変数値を設定できます。
 
 .. _remote_connection_information:
 
-Connecting to remote nodes
+リモートノードへの接続
 ==========================
 
-Ansible communicates with remote machines over the `SSH protocol <https://www.ssh.com/ssh/protocol/>`_. By default, Ansible uses native OpenSSH and connects to remote machines using your current user name, just as SSH does.
+Ansible は、`SSH プロトコル <https://www.ssh.com/ssh/protocol/>`_ でリモートマシンと通信します。デフォルトでは、Ansible はネイティブの OpenSSH を使用し、SSH のように、現在のユーザー名を使用してリモートマシンに接続します。
 
-Action: check your SSH connections
+アクション: SSH 接続の確認
 ----------------------------------
-Confirm that you can connect using SSH to all the nodes in your inventory using the same username. If necessary, add your public SSH key to the ``authorized_keys`` file on those systems.
+同じユーザー名で、SSH を使用してインベントリー内のすべてのノードに接続できることを確認します。必要に応じて、公開 SSH キーを、システムの ``authorized_keys`` ファイルに追加します。
 
-Beyond the basics
+中級編
 -----------------
-You can override the default remote user name in several ways, including:
-* passing the ``-u`` parameter at the command line
-* setting user information in your inventory file
-* setting user information in your configuration file
-* setting environment variables
+次のようないくつかの方法で、デフォルトのリモートユーザー名を上書きできます。
+* コマンドラインで ``-u`` パラメーターを渡す
+* インベントリーファイルにユーザー情報を設定する
+* 設定ファイルにユーザー情報を設定する
+* 追加の環境変数を設定する
 
-See :ref:`general_precedence_rules` for details on the (sometimes unintuitive) precedence of each method of passing user information. You can read more about connections in :ref:`connections`.
+ユーザー情報を渡す各方法の優先順位 (意図しない場合もあります) の詳細は、:ref:`general_precedence_rules` を参照してください。接続の詳細は、:ref:`connections` を参照してください。
 
-Copying and executing modules
+モジュールのコピーおよび実行
 =============================
 
-Once it has connected, Ansible transfers the modules required by your command or playbook to the remote machine(s) for execution.
+接続後、Ansible はコマンドまたは Playbook が必要とするモジュールを、リモートマシンに転送して実行します。
 
-Action: run your first Ansible commands
+アクション: 最初の Ansible コマンドの実行
 ---------------------------------------
-Use the ping module to ping all the nodes in your inventory:
+ping モジュールを使用して、インベントリー内のすべてのノードに対して ping を実行します。
 
 .. code-block:: bash
 
    $ ansible all -m ping
 
-Now run a live command on all of your nodes:
+全ノードでライブコマンドを実行します。
 
 .. code-block:: bash
 
    $ ansible all -a "/bin/echo hello"
 
-You should see output for each host in your inventory, similar to this:
+次のようなインベントリー内の各ホストの出力が表示されます。
 
 .. code-block:: ansible-output
 
@@ -85,11 +85,11 @@ You should see output for each host in your inventory, similar to this:
        "ping": "pong"
    }
 
-Beyond the basics
+中級編
 -----------------
-By default Ansible uses SFTP to transfer files. If the machine or device you want to manage does not support SFTP, you can switch to SCP mode in :ref:`intro_configuration`. The files are placed in a temporary directory and executed from there.
+デフォルトでは、Ansible は SFTP を使用してファイルを転送します。管理するマシンまたはデバイスが SFTP に対応していない場合は、:ref:`intro_configuration` で SCP モードに切り替えることができます。ファイルは一時ディレクトリーに置かれ、そこから実行されます。
 
-If you need privilege escalation (sudo and similar) to run a command, pass the ``become`` flags:
+コマンドを実行する権限昇格 (sudo など) が必要な場合は、``become`` フラグを渡します。
 
 .. code-block:: bash
 
@@ -100,26 +100,26 @@ If you need privilege escalation (sudo and similar) to run a command, pass the `
     # as bruce, sudoing to batman
     $ ansible all -m ping -u bruce --become --become-user batman
 
-You can read more about privilege escalation in :ref:`become`.
+権限の昇格の詳細は、:ref:`become` を参照してください。
 
-Congratulations! You have contacted your nodes using Ansible. You used a basic inventory file and an ad-hoc command to direct Ansible to connect to specific remote nodes, copy a module file there and execute it, and return output. You have a fully working infrastructure.
+おめでとうございます。Ansible を使用してノードに接続しました。基本的なインベントリーファイルとアドホックコマンドを使用して、Ansible が特定のリモートノードに接続し、そこでモジュールファイルをコピーして実行し、出力を返すように指定しました。完全に機能するインフラストラクチャーがあります。
 
-Next steps
+次のステップ
 ==========
-Next you can read about more real-world cases in :ref:`intro_adhoc`,
-explore what you can do with different modules, or read about the Ansible
-:ref:`working_with_playbooks` language.  Ansible is not just about running commands, it
-also has powerful configuration management and deployment features.
+次に、:ref:`intro_adhoc` で実際のケースについて読むか、
+さまざまなモジュールで実行できることを調べるか、
+Ansible の :ref:`working_with_playbooks` 言語に関する情報を確認できます。 Ansible は、コマンドの実行だけでなく、
+強力な設定管理およびデプロイメント機能があります。
 
 .. seealso::
 
    :ref:`intro_inventory`
-       More information about inventory
+       インベントリーの詳細情報
    :ref:`intro_adhoc`
-       Examples of basic commands
+       基本コマンドの例
    :ref:`working_with_playbooks`
-       Learning Ansible's configuration management language
-   `Mailing List <https://groups.google.com/group/ansible-project>`_
-       Questions? Help? Ideas?  Stop by the list on Google Groups
+       Ansible の設定管理言語について
+   `メーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

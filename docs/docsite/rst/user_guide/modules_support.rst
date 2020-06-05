@@ -1,72 +1,72 @@
 .. _modules_support:
 
 ****************************
-Module Maintenance & Support
+モジュールのメンテナンスおよびサポート
 ****************************
 
 .. contents::
   :depth: 2
   :local:
 
-Maintenance
+メンテナンス
 ===========
 
-To clarify who maintains each included module, adding features and fixing bugs, each included module now has associated metadata that provides information about maintenance.
+同梱される各モジュールの保守、機能の追加、バグの修正を行う者が明確になるように、同梱される各モジュールには、保守に関する情報を提供するメタデータが関連付けられています。
 
-Core
+コア
 ----
 
-:ref:`Core Maintained<core_supported>` modules are maintained by the Ansible Engineering Team.
-These modules are integral to the basic foundations of the Ansible distribution.
+:ref:`コア保守<core_supported>` モジュールは、Ansible エンジニアリングチームにより保守されます。
+これらのモジュールは、Ansible ディストリビューションの基本的な基盤に必須のものです。
 
-Network
+ネットワーク
 -------
 
-:ref:`Network Maintained<network_supported>` modules are are maintained by the Ansible Network Team. Please note there are additional networking modules that are categorized as Certified or Community not maintained by Ansible.
+:ref:`ネットワーク保守<network_supported>` モジュールは、Ansible ネットワークチームにより保守されます。追加のネットワークモジュールは、Ansible で保守されない認定済みまたはコミュニティーとして分類されています。
 
 
-Certified
+認定済み
 ---------
 
-`Certified <https://access.redhat.com/articles/3642632>`_ modules are maintained by Ansible Partners.
+`認定 <https://access.redhat.com/articles/3642632>`_ モジュールは Ansible パートナーによって保守されます。
 
-Community
+コミュニティー
 ---------
 
-:ref:`Community Maintained<community_supported>` modules are submitted and maintained by the Ansible community.  These modules are not maintained by Ansible, and are included as a convenience.
+:ref:`コミュニティー保守<community_supported>` モジュールは、Ansible コミュニティーにより送信および保守されます。 これらのモジュールは Ansible により保守されず、利便性のために組み込まれています。
 
-Issue Reporting
+問題の報告
 ===============
 
-If you believe you have found a bug in a module and are already running the latest stable or development version of Ansible, first look at the `issue tracker in the Ansible repo <https://github.com/ansible/ansible/issues>`_ to see if an issue has already been filed. If not, please file one.
+モジュールにバグが見つかり、最新の安定性または開発バージョンの Ansible を実行していると思われる場合は、まず `Ansible リポジトリーで問題のトラッカー <https://github.com/ansible/ansible/issues>`_ を確認し、問題がすでに報告されているかどうかを確認します。報告されていない場合は報告してください。
 
-Should you have a question rather than a bug report, inquiries are welcome on the `ansible-project Google group <https://groups.google.com/forum/#%21forum/ansible-project>`_ or on Ansible's "#ansible" channel, located on irc.freenode.net.
+バグの報告ではなく質問がある場合は、`ansible-project Google グループ <https://groups.google.com/forum/#%21forum/ansible-project>`_ または Ansible の "#ansible" channel, located on irc.freenode.net. でお問い合わせください。
 
-For development-oriented topics, use the `ansible-devel Google group <https://groups.google.com/forum/#%21forum/ansible-devel>`_ or Ansible's #ansible and #ansible-devel channels, located on irc.freenode.net. You should also read the :ref:`Community Guide <ansible_community_guide>`, :ref:`Testing Ansible <developing_testing>`, and the :ref:`Developer Guide <developer_guide>`.
+開発指向のトピックは、`ansible-devel Google group <https://groups.google.com/forum/#%21forum/ansible-devel>`_ または Ansible の #ansible and #ansible-devel channels, located on irc.freenode.net. You should also read the :ref:`コミュニティーガイド<ansible_community_guide>`、:ref:`Ansible のテスト<developing_testing>`、および:ref:`開発者ガイド<developer_guide>` を参照してください。
 
-The modules are hosted on GitHub in a subdirectory of the `Ansible <https://github.com/ansible/ansible/tree/devel/lib/ansible/modules>`_ repo.
+モジュールは、`Ansible <https://github.com/ansible/ansible/tree/devel/lib/ansible/modules>`_ リポジトリーのサブディレクトリーにある GitHub でホストされます。
 
-NOTE: If you have a Red Hat Ansible Automation product subscription, please follow the standard issue reporting process via the `Red Hat Customer Portal <https:///access.redhat.com/>`_.
+注記:Red Hat Ansible Automation 製品サブスクリプションをお持ちの場合は、`Red Hat カスタマーポータル<https:///access.redhat.com/>`_ から標準の問題報告プロセスを実行してください。
 
-Support
+サポート
 =======
 
-For more information on how included Ansible modules are supported by Red Hat,
-please refer to the following `knowledge base article <https://access.redhat.com/articles/3166901>`_ as well as other resources on the `Red Hat Customer Portal. <https://access.redhat.com/>`_
+同梱されている Ansible モジュールが Red Hat でどのようにサポートされているかは、
+以下の `ナレッジベースの記事<https://access.redhat.com/articles/3166901>`_ と、`Red Hat カスタマーポータル <https://access.redhat.com/>`_ のその他のリソースを参照してください。
 
 .. seealso::
 
-   :ref:`Module index<modules_by_category>`
-       A complete list of all available modules.
+   :ref:`モジュールインデックス<modules_by_category>`
+       利用可能なモジュールの完全なリスト
    :ref:`intro_adhoc`
-       Examples of using modules in /usr/bin/ansible
+       /usr/bin/ansible におけるモジュールの使用例
    :ref:`working_with_playbooks`
-       Examples of using modules with /usr/bin/ansible-playbook
+       /usr/bin/ansible-playbook でモジュールを使用する例
    :ref:`developing_modules`
-       How to write your own modules
-   `List of Ansible Certified Modules <https://access.redhat.com/articles/3642632>`_
-       High level list of Ansible certified modules from Partners
-   `Mailing List <https://groups.google.com/group/ansible-project>`_
-       Questions? Help? Ideas?  Stop by the list on Google Groups
+       独自のモジュールの作成方法
+   `Ansible 認定モジュールの一覧 <https://access.redhat.com/articles/3642632>`_
+       パートナー企業の Ansible 認定モジュールの概要一覧
+   `メーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

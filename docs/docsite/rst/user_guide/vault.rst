@@ -3,93 +3,93 @@
 Ansible Vault
 =============
 
-.. contents:: Topics
+.. contents:: トピック
 
-Ansible Vault is a feature of ansible that allows you to keep sensitive data such as passwords or keys in encrypted files, rather than as plaintext in playbooks or roles. These vault files can then be distributed or placed in source control.
+Ansible Vault は Ansible の機能で、Playbook またはロールで平文テキストとしてではなく、パスワードやキーの保護などの機密データを暗号化ファイルに維持できます。この vault ファイルは、ソース制御に配布または配置することができます。
 
-To enable this feature, a command line tool - :ref:`ansible-vault` - is used to edit files, and a command line flag (:option:`--ask-vault-pass <ansible-playbook --ask-vault-pass>`, :option:`--vault-password-file <ansible-playbook --vault-password-file>` or  :option:`--vault-id <ansible-playbook --vault-id>`) is used. Alternately, you may specify the location of a password file or command Ansible to always prompt for the password in your ansible.cfg file. These options require no command line flag usage.
+この機能を有効にするには、コマンドラインツール :ref:`ansible-vault` を使用してファイルを編集し、コマンドラインフラグ (:option:`--ask-vault-pass <ansible-playbook --ask-vault-pass>`、:option:`--vault-password-file <ansible-playbook --vault-password-file>`、または :option:`--vault-id <ansible-playbook --vault-id>`) を使用します。または、ansible.cfg ファイルを変更してパスワードファイルの場所を指定するか、常にパスワードを入力するように Ansible を設定することもできます。このオプションには、コマンドラインフラグの使用は必要ありません。
 
-For best practices advice, refer to :ref:`best_practices_for_variables_and_vaults`.
+ベストプラクティスに関するアドバイスは、:ref:`best_practices_for_variables_and_vaults` を参照してください。
 
 .. _what_can_be_encrypted_with_vault:
 
-What Can Be Encrypted With Vault
+Vault で暗号化できるもの
 ````````````````````````````````
 
-File-level encryption
+ファイルレベルの暗号化
 ^^^^^^^^^^^^^^^^^^^^^
 
-Ansible Vault can encrypt any structured data file used by Ansible.
+Ansible Vault は、Ansible が使用する構造化データファイルを暗号化できます。
 
-This can include "group_vars/" or "host_vars/" inventory variables, variables loaded by "include_vars" or "vars_files", or variable files passed on the ansible-playbook command line with ``-e @file.yml`` or ``-e @file.json``.  Role variables and defaults are also included.
+これには、「group_vars/」または「host_vars/」インベントリー変数、「include_vars」または「vars_files」により読み込まれた変数、または ``-e @file.yml`` または ``-e @file.json`` を使用して ansible-playbook コマンドラインで渡された変数ファイルを含めることができます。 ロール変数とデフォルトも含まれています。
 
-Ansible tasks, handlers, and so on are also data so these can be encrypted with vault as well. To hide the names of variables that you're using, you can encrypt the task files in their entirety.
+Ansible タスク、ハンドラーなどもデータであるため、vault で暗号化できます。使用している変数の名前を隠すために、タスクファイル全体を暗号化できます。
 
-Ansible Vault can also encrypt arbitrary files, even binary files.  If a vault-encrypted file is
-given as the ``src`` argument to the :ref:`copy <copy_module>`, :ref:`template <template_module>`,
-:ref:`unarchive <unarchive_module>`, :ref:`script <script_module>` or :ref:`assemble
-<assemble_module>` modules, the file will be placed at the destination on the target host decrypted
-(assuming a valid vault password is supplied when running the play).
+Ansible Vault は、バイナリーファイルも含め、任意のファイルを暗号化できます。 vault で暗号化されたファイルが、
+``src`` 引数として、:ref:`copy <copy_module>`、:ref:`template <template_module>`
+:ref:`unarchive <unarchive_module>`、:ref:`script <script_module>`、または :ref:`assemble
+<assemble_module>` モジュールとして指定されていると、ファイルは復号されたターゲットホストの宛先に配置されます 
+(プレイの実行時に有効な vault パスワードが提供されている場合)。
 
 .. note::
-    The advantages of file-level encryption are that it is easy to use and that password rotation is straightforward with :ref:`rekeying <rekeying_files>`.
-    The drawback is that the contents of files are no longer easy to access and read. This may be problematic if it is a list of tasks (when encrypting a variables file, :ref:`best practice <best_practices_for_variables_and_vaults>` is to keep references to these variables in a non-encrypted file).
+    ファイルレベルの暗号化の利点は、使いやすく、パスワードのローテーションが :ref:`鍵の変更 <rekeying_files>` で簡単に行えることです。
+    欠点は、ファイルのコンテンツへのアクセスと読み取りが容易ではなくなったことです。タスクのリストである場合は、これは問題になる可能性があります (変数ファイルを暗号化するときの :ref:`ベストプラクティス <best_practices_for_variables_and_vaults>` は、これらの変数への参照を暗号化されていないファイルに保持することです)。
 
 
-Variable-level encryption
+変数レベルの暗号化
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Ansible also supports encrypting single values inside a YAML file, using the `!vault` tag to let YAML and Ansible know it uses special processing. This feature is covered in more detail :ref:`below <encrypt_string_for_use_in_yaml>`.
+Ansible は、`!vault` タグを使用して YAML ファイル内の単一値の暗号化もサポートし、YAML と Ansible に特別な処理が使用されていることを知らせます。この機能は、:ref:`以下 <encrypt_string_for_use_in_yaml>` で詳しく説明します。
 
 .. note::
-    The advantage of variable-level encryption is that files are still easily legible even if they mix plaintext and encrypted variables.
-    The drawback is that password rotation is not as simple as with file-level encryption: the :ref:`rekey <ansible_vault_rekey>` command does not work with this method.
+    変数レベルの暗号化の利点は、平文の変数と暗号化された変数が混在している場合でも、ファイルが簡単に判読できることです。
+    欠点は、パスワードローテーションがファイルレベルの暗号化ほど単純ではないことです。:ref:`rekey <ansible_vault_rekey>` コマンドはこの方法では有効ではありません。
 
 
 .. _vault_ids:
 
-Vault IDs and Multiple Vault Passwords
+Vault ID および複数の Vault パスワード
 ``````````````````````````````````````
 
 
-A vault ID is an identifier for one or more vault secrets;
-Ansible supports multiple vault passwords.
+vault ID は、1 つ以上の vault シークレットの識別子です。
+Ansible は複数の valut パスワードをサポートしています。
 
-Vault IDs provide labels to distinguish between individual vault passwords.
+Valut IDは、個々の vault パスワードを区別するラベルを提供します。
 
-To use vault IDs, you must provide an ID *label* of your choosing and a *source* to obtain its password (either ``prompt`` or a file path):
+vaule ID を使用するには、選択した ID *ラベル* とそのパスワードを取得する *source* (``prompt`` またはファイルパスのいずれか) を提供する必要があります。
 
 .. code-block:: bash
 
    --vault-id label@source
 
-This switch is available for all Ansible commands that can interact with vaults: :ref:`ansible-vault`, :ref:`ansible-playbook`, etc.
+このスイッチは、vault と対話できるすべての Ansible コマンド (:ref:`ansible-vault`、:ref:`ansible-playbook` など) で使用できます。
 
-Vault-encrypted content can specify which vault ID it was encrypted with.
+Vault で暗号化されたコンテンツは、暗号化された vault ID を指定できます。
 
-For example, a playbook can now include a vars file encrypted with a 'dev' vault
-ID and a 'prod' vault ID.
+たとえば、Playbook には、
+vault ID の「dev」と「prod」で暗号化された変数ファイルを指定できます。
 
-.. note:
-    Older versions of Ansible, before 2.4, only supported using one single vault password at a time.
+.. 注記:
+    2.4 より前の古いバージョンの Ansible では、一度に 1 つの vault パスワードのみを使用できました。
 
 
 .. _creating_files:
 
-Creating Encrypted Files
+暗号化されたファイルの作成
 ````````````````````````
 
-To create a new encrypted data file, run the following command:
+新しい暗号化されたデータファイルを作成するには、次のコマンドを実行します。
 
 .. code-block:: bash
 
    ansible-vault create foo.yml
 
-First you will be prompted for a password. After providing a password, the tool will launch whatever editor you have defined with $EDITOR, and defaults to vi.  Once you are done with the editor session, the file will be saved as encrypted data.
+まず、パスワードの入力を求められます。パスワードを入力すると、ツールは $EDITOR で定義したエディターを起動します。デフォルトは vi です。 エディターセッションが完了すると、ファイルは暗号化されたデータとして保存されます。
 
-The default cipher is AES (which is shared-secret based).
+デフォルトの暗号は AES (共有秘密ベース) です。
 
-To create a new encrypted data file with the Vault ID 'password1' assigned to it and be prompted for the password, run:
+Vault ID「password1」が割り当てられ、暗号化された新しいデータファイルを作成し、パスワードの入力を求めるには、次を実行します。
 
 .. code-block:: bash
 
@@ -98,18 +98,18 @@ To create a new encrypted data file with the Vault ID 'password1' assigned to it
 
 .. _editing_encrypted_files:
 
-Editing Encrypted Files
+暗号化されたファイルの編集
 ```````````````````````
 
-To edit an encrypted file in place, use the :ref:`ansible-vault edit <ansible_vault_edit>` command.
-This command will decrypt the file to a temporary file and allow you to edit
-the file, saving it back when done and removing the temporary file:
+暗号化されたファイルをインプレース編集するには、:ref:`ansible-vault edit <ansible_vault_edit>` コマンドを使用します。
+このコマンドは、ファイルを一時ファイルに復号し、ファイルを編集し、
+完了したら保存して一時ファイルを削除できるようにします。
 
 .. code-block:: bash
 
    ansible-vault edit foo.yml
 
-To edit a file encrypted with the 'vault2' password file and assigned the 'pass2' vault ID:
+「vault2」パスワードファイルで暗号化され、vault ID「pass2」を割り当てたファイルを編集するには、以下を実行します。
 
 .. code-block:: bash
 
@@ -118,39 +118,39 @@ To edit a file encrypted with the 'vault2' password file and assigned the 'pass2
 
 .. _rekeying_files:
 
-Rekeying Encrypted Files
+暗号化されたファイルの再入力
 ````````````````````````
 
-Should you wish to change your password on a vault-encrypted file or files, you can do so with the rekey command:
+Vaule で暗号化されたファイルのパスワードを変更する場合は、rekey コマンドを使用できます。
 
 .. code-block:: bash
 
     ansible-vault rekey foo.yml bar.yml baz.yml
 
-This command can rekey multiple data files at once and will ask for the original
-password and also the new password.
+このコマンドは、複数のデータファイルのキーを一度に変更できます。
+元のパスワードと新しいパスワードが必要になります。
 
-To rekey files encrypted with the 'preprod2' vault ID and the 'ppold' file and be prompted for the new password:
+Vault ID の「preprod2」と「ppold」ファイルで暗号化された鍵を変更し、新しいパスワードの入力を求めるには、以下を実行します。
 
 .. code-block:: bash
 
     ansible-vault rekey --vault-id preprod2@ppold --new-vault-id preprod2@prompt foo.yml bar.yml baz.yml
 
-A different ID could have been set for the rekeyed files by passing it to ``--new-vault-id``.
+鍵を変更したファイルを ``--new-vault-id`` に渡して、鍵を変更したファイルに別の ID を設定できます。
 
 .. _encrypting_files:
 
-Encrypting Unencrypted Files
+暗号化されていないファイルの暗号化
 ````````````````````````````
 
-If you have existing files that you wish to encrypt, use
-the :ref:`ansible-vault encrypt <ansible_vault_encrypt>` command.  This command can operate on multiple files at once:
+暗号化する既存のファイルがある場合は、
+:ref:`ansible-vault encrypt <ansible_vault_encrypt>` コマンドを使用します。 このコマンドは、複数のファイルを一度に処理できます。
 
 .. code-block:: bash
 
    ansible-vault encrypt foo.yml bar.yml baz.yml
 
-To encrypt existing files with the 'project' ID and be prompted for the password:
+「プロジェクト」IDで既存のファイルを暗号化し、パスワードの入力を求めるプロンプトを表示するには、以下のようになります。
 
 .. code-block:: bash
 
@@ -158,19 +158,19 @@ To encrypt existing files with the 'project' ID and be prompted for the password
 
 .. note::
 
-   It is technically possible to separately encrypt files or strings with the *same* vault ID but *different* passwords, if different password files or prompted passwords are provided each time.
-   This could be desirable if you use vault IDs as references to classes of passwords (rather than a single password) and you always know which specific password or file to use in context. However this may be an unnecessarily complex use-case.
-   If two files are encrypted with the same vault ID but different passwords by accident, you can use the :ref:`rekey <rekeying_files>` command to fix the issue.
+   異なるパスワードファイルまたはプロンプトされるパスワードが毎回提供される場合は、*同じ* vault ID で *異なる* パスワードを持つファイルまたは文字列を個別に暗号化することは技術的に可能です。
+   これは、(単一のパスワードではなく) パスワードのクラスへの参照として vault ID を使用し、コンテキストで使用する特定のパスワードまたはファイルを常に知っている場合に推奨されることが望ましい場合があります。ただし、これは不要に複雑なユースケースになる可能性があります。
+   2 つのファイルが同じ vault IDで暗号化されていますが、誤って異なるパスワードが使用されている場合は、:ref:`rekey <rekeying_files>` コマンドを使用して問題を修正できます。
 
 
 .. _decrypting_files:
 
-Decrypting Encrypted Files
+暗号化されたファイルの復号化
 ``````````````````````````
 
-If you have existing files that you no longer want to keep encrypted, you can permanently decrypt
-them by running the :ref:`ansible-vault decrypt <ansible_vault_decrypt>` command.  This command will save them unencrypted
-to the disk, so be sure you do not want :ref:`ansible-vault edit <ansible_vault_edit>` instead:
+暗号化が必要なくなった既存のファイルがある場合は、
+:ref:`ansible-vault decrypt <ansible_vault_decrypt>` コマンドを実行することで完全に復号できます。 このコマンドはそれらを暗号化せずにディスクに保存するため、
+:ref:`ansible-vault edit <ansible_vault_edit>` は使用しないことを確認してください。
 
 .. code-block:: bash
 
@@ -179,10 +179,10 @@ to the disk, so be sure you do not want :ref:`ansible-vault edit <ansible_vault_
 
 .. _viewing_files:
 
-Viewing Encrypted Files
+暗号化されたファイルの表示
 ```````````````````````
 
-If you want to view the contents of an encrypted file without editing it, you can use the :ref:`ansible-vault view <ansible_vault_view>` command:
+暗号化されたファイルの内容を編集せずに表示する場合は、:ref:`ansible-vault view <ansible_vault_view>` コマンドを使用できます。
 
 .. code-block:: bash
 
@@ -191,19 +191,19 @@ If you want to view the contents of an encrypted file without editing it, you ca
 
 .. _encrypt_string_for_use_in_yaml:
 
-Use encrypt_string to create encrypted variables to embed in yaml
+encrypt_string を使用して、yaml に埋め込む暗号化変数を作成します
 `````````````````````````````````````````````````````````````````
 
-The :ref:`ansible-vault encrypt_string <ansible_vault_encrypt_string>` command will encrypt and format a provided string into a format
-that can be included in :ref:`ansible-playbook` YAML files.
+:ref:`ansible-vault encrypt_string <ansible_vault_encrypt_string>` コマンドは、提供された文字列を暗号化し、
+:ref:`ansible-playbook` の YAML ファイルで指定できる形式にフォーマットします。
 
-To encrypt a string provided as a cli arg:
+CLI 引数として提供される文字列を暗号化する場合は、以下のようになります。
 
 .. code-block:: bash
 
     ansible-vault encrypt_string --vault-password-file a_password_file 'foobar' --name 'the_secret'
 
-Result::
+結果::
 
     the_secret: !vault |
           $ANSIBLE_VAULT;1.1;AES256
@@ -213,13 +213,13 @@ Result::
           3438626666666137650a353638643435666633633964366338633066623234616432373231333331
           6564
 
-To use a vault-id label for 'dev' vault-id:
+vault-id「dev」に、vault ID ラベルを使用する場合は、以下のようになります。
 
 .. code-block:: bash
 
     ansible-vault encrypt_string --vault-id dev@a_password_file 'foooodev' --name 'the_dev_secret'
 
-Result::
+結果::
 
     the_dev_secret: !vault |
               $ANSIBLE_VAULT;1.2;AES256;dev
@@ -229,7 +229,7 @@ Result::
               6664656334373166630a363736393262666465663432613932613036303963343263623137386239
               6330
 
-To encrypt a string read from stdin and name it 'db_password':
+stdin から読み取った文字列を暗号化し、「db_password」という名前を付けます。
 
 .. code-block:: bash
 
@@ -237,9 +237,9 @@ To encrypt a string read from stdin and name it 'db_password':
 
 .. warning::
 
-   This method leaves the string in your shell history. Do not use it outside of testing.
+   このメソッドは、シェルの履歴に文字列を残します。テスト以外で使用しないでください。
 
-Result::
+結果::
 
     Reading plaintext input from stdin. (ctrl-d to end input)
     db_password: !vault |
@@ -250,24 +250,24 @@ Result::
               6565633133366366360a326566323363363936613664616364623437336130623133343530333739
               3039
 
-To be prompted for a string to encrypt, encrypt it, and give it the name 'new_user_password':
+暗号化する文字列の入力を求め、暗号化し、「new_user_password」という名前を付けるようにするには、以下を行います。
 
 
 .. code-block:: bash
 
     ansible-vault encrypt_string --vault-id dev@a_password_file --stdin-name 'new_user_password'
 
-Output::
+出力結果::
 
     Reading plaintext input from stdin. (ctrl-d to end input)
 
-User enters 'hunter2' and hits ctrl-d.
+ユーザーは、「hunter2」と入力して、ctrl-d を押します。
 
 .. warning::
 
-   Do not press Enter after supplying the string. That will add a newline to the encrypted value.
+   文字列を指定した後に Enter キーを押さないでください。これにより、暗号化された値に新しい行が追加されます。
 
-Result::
+結果::
 
     new_user_password: !vault |
               $ANSIBLE_VAULT;1.2;AES256;dev
@@ -277,9 +277,9 @@ Result::
               3866363862363335620a376466656164383032633338306162326639643635663936623939666238
               3161
 
-See also :ref:`single_encrypted_variable`
+:ref:`single_encrypted_variable` も参照してください
 
-After you added the encrypted value to a var file (vars.yml), you can see the original value using the debug module.
+暗号化された値を変数ファイル (vars.yml) に追加した後、デバッグモジュールを使用して元の値を確認できます。
 
 .. code-block:: console
 
@@ -293,172 +293,172 @@ After you added the encrypted value to a var file (vars.yml), you can see the or
 
 .. _providing_vault_passwords:
 
-Providing Vault Passwords
+Vault パスワードの提供
 `````````````````````````
 
-When all data is encrypted using a single password the :option:`--ask-vault-pass <ansible-playbook --ask-vault-pass>`
-or :option:`--vault-password-file <ansible-playbook --vault-password-file>` cli options should be used.
+すべてのデータが 1 つのパスワードを使用して暗号化される場合は、CLI オプションの :option:`--ask-vault-pass <ansible-playbook --ask-vault-pass>` 
+または :option:`--vault-password-file <ansible-playbook --vault-password-file>` を使用する必要があります。
 
-For example, to use a password store in the text file :file:`/path/to/my/vault-password-file`:
+たとえば、テキストファイル :file:`/path/to/my/vault-password-file` でパスワードストアを使用する場合は、次のようにします。
 
 .. code-block:: bash
 
     ansible-playbook --vault-password-file /path/to/my/vault-password-file site.yml
 
-To prompt for a password:
+パスワードを要求する場合は、次のようにします。
 
 .. code-block:: bash
 
     ansible-playbook --ask-vault-pass site.yml
 
-To get the password from a vault password executable script :file:`my-vault-password.py`:
+パスワード実行スクリプト :file:`my-vault-password.py` からパスワードを取得する場合は、以下のようにします。
 
 .. code-block:: bash
 
     ansible-playbook --vault-password-file my-vault-password.py
 
-The config option :ref:`DEFAULT_VAULT_PASSWORD_FILE` can be used to specify a vault password file so that the
-:option:`--vault-password-file <ansible-playbook --vault-password-file>` cli option does not have to be
-specified every time.
+設定オプション :ref:`DEFAULT_VAULT_PASSWORD_FILE` を使用して vault パスワードファイルを指定すると、
+CLI オプション :option:`--vault-password-file <ansible-playbook --vault-password-file>` 
+を毎回指定する必要がなくなります。
 
 
 .. _specifying_vault_ids:
 
-Labelling Vaults
+ボールトのラベル付け
 ^^^^^^^^^^^^^^^^
 
-Since Ansible 2.4 the :option:`--vault-id <ansible-playbook --vault-id>` can be used to indicate which vault ID
-('dev', 'prod', 'cloud', etc) a password is for as well as how to source the password (prompt, a file path, etc).
+Ansible 2.4 以降、:option:`--vault-id <ansible-playbook --vault-id>` を使用して、
+パスワードがどの vault ID (「dev」、「prod」、「cloud」など) のものであるかと、パスワードの取得方法 (プロンプト、ファイルパスなど) を示すことができます。
 
-By default the vault-id label is only a hint, any values encrypted with the password will be decrypted.
-The config option :ref:`DEFAULT_VAULT_ID_MATCH` can be set to require the vault id to match the vault ID
-used when the value was encrypted.
-This can reduce errors when different values are encrypted with different passwords.
+デフォルトでは、vault-id ラベルはヒントにすぎず、パスワードで暗号化された値はすべて複号されます。
+構成オプション :ref:`DEFAULT_VAULT_ID_MATCH` は、vault id が、
+値を暗号化したときに使用される valut ID と一致することを要求するように設定できます。
+これにより、異なる値が異なるパスワードで暗号化されている場合のエラーを減らすことができます。
 
-For example, to use a password file :file:`dev-password` for the vault-id 'dev':
+たとえば、vault-id「dev」にパスワードファイル :file:`dev-password` を使用する場合は以下のようになります。
 
 .. code-block:: bash
 
     ansible-playbook --vault-id dev@dev-password site.yml
 
-To prompt for the password for the 'dev' vault ID:
+vault ID 「dev」のパスワードを要求する場合は、次のようになります。
 
 .. code-block:: bash
 
     ansible-playbook --vault-id dev@prompt site.yml
 
-To get the 'dev' vault ID password from an executable script :file:`my-vault-password.py`:
+実行スクリプト :file:`my-vault-password.py` から「dev」vault ID パスワードを取得する場合は次のようになります。
 
 .. code-block:: bash
 
     ansible-playbook --vault-id dev@my-vault-password.py
 
 
-The config option :ref:`DEFAULT_VAULT_IDENTITY_LIST` can be used to specify a default vault ID and password source
-so that the :option:`--vault-id <ansible-playbook --vault-id>` cli option does not have to be specified every time.
+設定オプション :ref:`DEFAULT_VAULT_IDENTITY_LIST` を使用してデフォルトの vault ID とパスワードソースを指定できるため、
+毎回 CLI オプション :option:`--vault-id <ansible-playbook --vault-id>` を指定する必要はありません。
 
 
-The :option:`--vault-id <ansible-playbook --vault-id>` option can also be used without specifying a vault-id.
-This behaviour is equivalent to :option:`--ask-vault-pass <ansible-playbook --ask-vault-pass>` or
-:option:`--vault-password-file <ansible-playbook --vault-password-file>` so is rarely used.
+:option:`--vault-id <ansible-playbook --vault-id>` オプションは、vault-id を指定せずに使用することもできます。
+この動作は、:option:`--ask-vault-pass <ansible-playbook --ask-vault-pass>`、
+または :option:`--vault-password-file <ansible-playbook --vault-password-file>` に相当するため、ほとんど使用されません。
 
-For example, to use a password file :file:`dev-password`:
+たとえば、パスワードファイル :file:`dev-password` を使用する場合は、以下のようになります。
 
 .. code-block:: bash
 
     ansible-playbook --vault-id dev-password site.yml
 
-To prompt for the password:
+パスワードを要求する場合は、以下のようになります。
 
 .. code-block:: bash
 
     ansible-playbook --vault-id @prompt site.yml
 
-To get the password from an executable script :file:`my-vault-password.py`:
+実行スクリプト :file:`my-vault-password.py` からパスワードを取得する場合は、以下のようになります。
 
 .. code-block:: bash
 
     ansible-playbook --vault-id my-vault-password.py
 
 .. note::
-    Prior to Ansible 2.4, the :option:`--vault-id <ansible-playbook --vault-id>` option is not supported
-    so :option:`--ask-vault-pass <ansible-playbook --ask-vault-pass>` or
-    :option:`--vault-password-file <ansible-playbook --vault-password-file>` must be used.
+    Ansible 2.4 より前のバージョンでは、:option:`--vault-id <ansible-playbook --vault-id>` オプションはサポートされていないため、
+    :option:`--ask-vault-pass <ansible-playbook --ask-vault-pass>` または、
+    :option:`--vault-password-file <ansible-playbook --vault-password-file>` を使用する必要があります。
 
 
-Multiple Vault Passwords
+複数の vault パスワード
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Ansible 2.4 and later support using multiple vault passwords, :option:`--vault-id <ansible-playbook --vault-id>` can
-be provided multiple times.
+Ansible 2.4 以降では、複数の Valut パスワードを使用して、
+:option:`--vault-id <ansible-playbook --vault-id>` を複数回指定できます。
 
-For example, to use a 'dev' password read from a file and to be prompted for the 'prod' password:
+たとえば、ファイルから読み取った「dev」パスワードを使用し、「prod」パスワードの入力を求めるプロンプトを表示する場合は、次のようにします。
 
 .. code-block:: bash
 
     ansible-playbook --vault-id dev@dev-password --vault-id prod@prompt site.yml
 
-By default the vault ID labels (dev, prod etc.) are only hints, Ansible will attempt to decrypt vault content
-with each password. The password with the same label as the encrypted data will be tried first, after that
-each vault secret will be tried in the order they were provided on the command line.
+デフォルトでは、vault ID ラベル (dev、prodなど) はヒントにすぎず、
+Ansiblebは、各パスワードで vault コンテンツの復号を試みます。暗号化されたデータと同じラベルのパスワードが最初に試行され、
+その後、各 vault シークレットがコマンドラインで指定された順序で試行されます。
 
-Where the encrypted data doesn't have a label, or the label doesn't match any of the provided labels, the
-passwords will be tried in the order they are specified.
+暗号化したデータにラベルがない場合や、ラベルが、提供されたどのラベルとも一致しない場合は、
+パスワードが指定された順序で試行されます。
 
-In the above case, the 'dev' password will be tried first, then the 'prod' password for cases
-where Ansible doesn't know which vault ID is used to encrypt something.
+上記の場合は、最初に「dev」パスワードが試行され、次に、Ansible が、
+暗号化に使用される vault ID を知らない場合は「prod」パスワードが試行されます。
 
-To add a vault ID label to the encrypted data use the :option:`--vault-id <ansible-vault-create --vault-id>` option
-with a label when encrypting the data.
+暗号化されたデータに vault ID ラベルを追加するには、データを暗号化するときに、
+ラベルを付けて :option:`--vault-id <ansible-vault-create --vault-id>` オプションを使用します
 
-The :ref:`DEFAULT_VAULT_ID_MATCH` config option can be set so that Ansible will only use the password with
-the same label as the encrypted data. This is more efficient and may be more predictable when multiple
-passwords are used.
+:ref:`DEFAULT_VAULT_ID_MATCH` 構成オプションを設定して、Ansible が、
+暗号化されたデータと同じラベルのパスワードのみを使用するようにすることができます。これはより効率的であり、
+複数のパスワードが使用されている場合により予測可能になります。
 
-The config option :ref:`DEFAULT_VAULT_IDENTITY_LIST` can have multiple values which is equivalent to multiple :option:`--vault-id <ansible-playbook --vault-id>` cli options.
+構成オプション:ref:`DEFAULT_VAULT_IDENTITY_LIST` には、複数の CLI オプション :option:`--vault-id <ansible-playbook --vault-id>` に相当する複数の値を含めることができます。
 
-The :option:`--vault-id <ansible-playbook --vault-id>` can be used in lieu of the :option:`--vault-password-file <ansible-playbook --vault-password-file>` or :option:`--ask-vault-pass <ansible-playbook --ask-vault-pass>` options,
-or it can be used in combination with them.
+:option:`--vault-id <ansible-playbook --vault-id>` は、:option:`--vault-password-file <ansible-playbook --vault-password-file>` オプションまたは :option:`--ask-vault-pass <ansible-playbook --ask-vault-pass>` オプションの代わりに使用できます。
+または、それらを組み合わせて使用できます。
 
-When using :ref:`ansible-vault` commands that encrypt content (:ref:`ansible-vault encrypt <ansible_vault_encrypt>`, :ref:`ansible-vault encrypt_string <ansible_vault_encrypt_string>`, etc)
-only one vault-id can be used.
+コンテンツを暗号化する :ref:`ansible-vault` コマンド（:ref:`ansible-vault encrypt <ansible_vault_encrypt>`、:ref:`ansible-vault encrypt_string <ansible_vault_encrypt_string>` など）を使用する場合、
+使用できる vault-id は 1 つだけです。
 
 
 .. _vault_password_client_scripts:
 
-Vault Password Client Scripts
+Vault パスワードクライアントスクリプト
 `````````````````````````````
 
-When implementing a script to obtain a vault password it may be convenient to know which vault ID label was
-requested. For example a script loading passwords from a secret manager may want to use the vault ID label to pick
-either the 'dev' or 'prod' password.
+vault パスワードを取得するスクリプトを実装する場合は、
+どの vault ID ラベルが要求されたかを知っておくと便利です。たとえば、シークレットマネージャーからパスワードを読み込むスクリプトでは、
+vault ID ラベルを使用して「dev」または「prod」のパスワードを選択できます。
 
-Since Ansible 2.5 this is supported through the use of Client Scripts. A Client Script is an executable script
-with a name ending in ``-client``. Client Scripts are used to obtain vault passwords in the same way as any other
-executable script. For example:
+Ansible 2.5以降、これはクライアントスクリプトの使用を通じてサポートされています。クライアントスクリプトは、
+名前が ``-client`` で終わる実行スクリプトです。クライアントスクリプトは、
+他の実行スクリプトと同じ方法で vault パスワードを取得するために使用されます。例:
 
 .. code-block:: bash
 
     ansible-playbook --vault-id dev@contrib/vault/vault-keyring-client.py
 
-The difference is in the implementation of the script. Client Scripts are executed with a ``--vault-id`` option
-so they know which vault ID label was requested. So the above Ansible execution results in the below execution
-of the Client Script:
+違いは、スクリプトの実装にあります。クライアントスクリプトは ``--vault-id`` オプションを使用して実行されるため、
+どの vault ID ラベルが要求されたかがわかります。したがって、上記の Ansible を実行すると、
+クライアントスクリプトが次のように実行されます。
 
 .. code-block:: bash
 
     contrib/vault/vault-keyring-client.py --vault-id dev
 
-:file:`contrib/vault/vault-keyring-client.py` is an example of Client Script that loads passwords from the
-system keyring.
+:file:`contrib/vault/vault-keyring-client.py` は、
+システムキーリングからパスワードを読み込むするクライアントスクリプトの例です。
 
 
 .. _speeding_up_vault:
 
-Speeding Up Vault Operations
+Vault 操作の高速化
 ````````````````````````````
 
-If you have many encrypted files, decrypting them at startup may cause a perceptible delay. To speed this up, install the cryptography package:
+暗号化されたファイルが多数ある場合は、起動時にそれを復号すると、かなりの遅延が発生する可能性があります。これを高速化するには、cryptography パッケージをインストールします。
 
 .. code-block:: bash
 
@@ -467,75 +467,75 @@ If you have many encrypted files, decrypting them at startup may cause a percept
 
 .. _vault_format:
 
-Vault Format
+Vault 形式
 ````````````
 
-A vault encrypted file is a UTF-8 encoded txt file.
+vault 暗号化ファイルは、UTF-8 でエンコードされた txt ファイルです。
 
-The file format includes a newline terminated header.
+ファイル形式には、改行で終了するヘッダーが含まれます。
 
-For example::
+例::
 
     $ANSIBLE_VAULT;1.1;AES256
 
-or::
+または::
 
     $ANSIBLE_VAULT;1.2;AES256;vault-id-label
 
-The header contains the vault format id, the vault format version, the vault cipher, and a vault-id label (with format version 1.2), separated by semi-colons ';'
+ヘッダーには、セミコロン「;」で区切られた vault フォーマット ID、vault フォーマットバージョン、vault 暗号、および vault-id ラベル (フォーマットバージョン1.2) が含まれます。
 
-The first field ``$ANSIBLE_VAULT`` is the format id. Currently ``$ANSIBLE_VAULT`` is the only valid file format id. This is used to identify files that are vault encrypted (via vault.is_encrypted_file()).
+最初のフィールド ``$ANSIBLE_VAULT`` はフォーマット ID です。現在、``$ANSIBLE_VAULT`` が有効な唯一のファイルフォーマット ID です。これは、(vault.is_encrypted_file() を介して) vault で暗号化されたファイルを識別するために使用されます。
 
-The second field (``1.X``) is the vault format version. All supported versions of ansible will currently default to '1.1' or '1.2' if a labeled vault-id is supplied. 
+2番目のフィールド (``1.X``) は、vault フォーマットのバージョンです。ラベル付き vault-id が指定されている場合、サポートされている Ansible のすべてのバージョンは、現在デフォルトで「1.1」または「1.2」になります。 
 
-The '1.0' format is supported for reading only (and will be converted automatically to the '1.1' format on write). The format version is currently used as an exact string compare only (version numbers are not currently 'compared').
+「1.0」フォーマットは、読み取り専用としてサポートされています (書き込み時に「1.1」フォーマットに自動的に変換されます)。現在、フォーマットバージョンは正確な文字列比較のみとして使用されています (バージョン番号は現在「比較」されていません)。
 
-The third field (``AES256``) identifies the cipher algorithm used to encrypt the data. Currently, the only supported cipher is 'AES256'. [vault format 1.0 used 'AES', but current code always uses 'AES256']
+3 番目のフィールド (``AES256``) は、データの暗号化に使用される暗号アルゴリズムを識別します。現在、サポートされている暗号は「AES256」のみです。(vault フォーマット 1.0 は「AES」を使用していましたが、現在のコードは常に「AES256」を使用します。)
 
-The fourth field (``vault-id-label``) identifies the vault-id label used to encrypt the data. For example using a vault-id of ``dev@prompt`` results in a vault-id-label of 'dev' being used.
+4 番目のフィールド (``vault-id-label``) は、データの暗号化に使用される vault-id ラベルを識別します。たとえば、``dev@prompt`` の vault-id を使用すると、「dev」の vault-id-label が使用されます。
 
-Note: In the future, the header could change. Anything after the vault id and version can be considered to depend on the vault format version. This includes the cipher id, and any additional fields that could be after that.
+注記:ヘッダーは、今後変更する可能性があります。vault ID とバージョンに続くものはすべて、vault フォーマットのバージョンに依存すると考えることができます。これには、暗号 ID、およびその後に続く可能性のある追加フィールドが含まれます。
 
-The rest of the content of the file is the 'vaulttext'. The vaulttext is a text armored version of the
-encrypted ciphertext. Each line will be 80 characters wide, except for the last line which may be shorter.
+ファイルの残りのコンテンツは「vaulttext」です。vault テキストは、暗号化された暗号文の text-armor バージョンです。
+各行の幅は 80 文字になりますが、最後の行は短くなる場合があります。
 
-Vault Payload Format 1.1 - 1.2
+Vault ペイロードフォーマット 1.1-1.2
 ``````````````````````````````
 
-The vaulttext is a concatenation of the ciphertext and a SHA256 digest with the result 'hexlifyied'.
+vault テキストは、暗号化テキストと SHA256 ダイジェストを連結したもので、結果は「hexlifyied」です。
 
-'hexlify' refers to the ``hexlify()`` method of the Python Standard Library's `binascii <https://docs.python.org/3/library/binascii.html>`_ module.
+「hexlify」は、Python 標準ライブラリーの `binascii <https://docs.python.org/3/library/binascii.html>`_ モジュールの ``hexlify()`` メソッドを指します。
 
-hexlify()'ed result of:
+hexlify() が行われた結果:
 
-- hexlify()'ed string of the salt, followed by a newline (``0x0a``)
-- hexlify()'ed string of the crypted HMAC, followed by a newline. The HMAC is:
+- hexlify() で編集されたソルトの文字列とそれに続く改行 (``0x0a``)。
+- 暗号化された HMAC の、hexlify() で編集された文字列とそれに続く改行。HMAC は次のとおりです。
 
-  - a `RFC2104 <https://www.ietf.org/rfc/rfc2104.txt>`_ style HMAC
+  - `RFC2104 <https://www.ietf.org/rfc/rfc2104.txt>`_ 型 HMAC
 
-    - inputs are:
+    - 入力は以下のとおりです。
 
-      - The AES256 encrypted ciphertext
-      - A PBKDF2 key. This key, the cipher key, and the cipher IV are generated from:
+      - AES256 で暗号化した暗号文
+      - PBKDF2 キー。このキー、暗号キー、および暗号 IV は、以下から生成されます。
 
-        - the salt, in bytes
-        - 10000 iterations
-        - SHA256() algorithm
-        - the first 32 bytes are the cipher key
-        - the second 32 bytes are the HMAC key
-        - remaining 16 bytes are the cipher IV
+        - バイト単位のソルト
+        - 10000 回の繰り返し
+        - SHA256() アルゴリズム
+        - 最初の 32 バイトは暗号キーです
+        - 2 番目の 32 バイトは HMAC キーです
+        - 残りの 16 バイトは暗号 IV です
 
--  hexlify()'ed string of the ciphertext. The ciphertext is:
+-  暗号文の hexlify() が行われた文字列。暗号文は次のとおりです。
 
-  - AES256 encrypted data. The data is encrypted using:
+  - AES256 暗号化データ。データは次を使用して暗号化されます。
 
-    - AES-CTR stream cipher
-    - cipher key
+    - AES-CTR ストリーム暗号
+    - 暗号鍵
     - IV
-    - a 128 bit counter block seeded from an integer IV
-    - the plaintext
+    - 整数 IV からシードされた 128 ビットのカウンターブロック
+    - 平文
 
-      - the original plaintext
-      - padding up to the AES256 blocksize. (The data used for padding is based on `RFC5652 <https://tools.ietf.org/html/rfc5652#section-6.3>`_)
+      - 元の平文
+      - AES256 ブロックサイズまでのパディング(パディングに使用されるデータは `RFC5652 <https://tools.ietf.org/html/rfc5652#section-6.3>`_ に基づいています。)
 
 

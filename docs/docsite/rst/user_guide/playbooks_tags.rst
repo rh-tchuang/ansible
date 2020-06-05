@@ -1,13 +1,13 @@
-Tags
+タグ
 ====
 
-If you have a large playbook, it may become useful to be able to run only
-a specific part of it rather than running *everything* in the playbook.
-Ansible supports a "tags:" attribute for this reason.
+Playbook が大きい場合は、
+Playbook で *すべて* を実行するのではなく、その特定の部分のみを実行できると便利な場合があります。
+Ansible は、この理由により「tags:」属性をサポートします。
 
-Tags can be applied to *many* structures in Ansible (see "tag inheritance",
-below), but its simplest use is with individual tasks. Here is an example
-that tags two tasks with different tags::
+タグは、Ansible の *多く* の構造に適用できます (下記の「タグの継承」を参照) が、
+最も簡単なのは、個別のタスクを使用することです。以下は、
+2 つのタスクに異なるタグを付ける例となります::
 
     tasks:
     - yum:
@@ -24,40 +24,40 @@ that tags two tasks with different tags::
       tags:
       - configuration
 
-When you execute a playbook, you can filter tasks based on tags in two ways:
+Playbook を実行する場合は、次の 2 つの方法でタグに基づいてタスクをフィルタリングできます。
 
-- On the command line, with the ``--tags`` or ``--skip-tags`` options
-- In Ansible configuration settings, with the ``TAGS_RUN``
-  and ``TAGS_SKIP`` options
+- コマンドラインで、``--tags`` オプションまたは ``--skip-tags`` オプション使用
+- Ansible 構成設定で、``TAGS_RUN`` オプションおよび 
+  ``TAGS_SKIP`` オプションの使用
 
-For example, if you wanted to just run the "configuration" and "packages" part
-of a very long playbook, you can use the ``--tags`` option on the command line::
+たとえば、非常に長い Playbook の「構成」と「パッケージ」の部分だけを実行する場合は、
+コマンドラインで ``--tags`` オプションを使用できます。
 
     ansible-playbook example.yml --tags "configuration,packages"
 
-On the other hand, if you want to run a playbook *without* certain tagged
-tasks, you can use the ``--skip-tags`` command-line option::
+一方、特定のタグ付きタスク *なし* で Playbook を実行する場合は、
+``--skip-tags`` コマンドラインオプションを使用できます。
 
     ansible-playbook example.yml --skip-tags "packages"
 
-You can see which tasks will be executed with ``--tags`` or ``--skip-tags`` by
-combining it with ``--list-tasks``::
+``--list-tasks`` と組み合わせることで、
+``--tags`` または ``--skip-tags`` で実行するタスクを確認できます。
 
     ansible-playbook example.yml --tags "configuration,packages" --list-tasks
 
 .. warning::
-    * Fact gathering is tagged with 'always' by default. It is ONLY skipped if
-      you apply a tag and then use a different tag in ``--tags`` or the same
-      tag in ``--skip-tags``.
+    * ファクト収集は、デフォルトで「always」でタグ付けされます。タグを適用して、
+      ``--tags`` で別のタグを使用するか、
+      ``--skip-tags`` で同じタグを使用する場合にのみ省略されます。
 
 .. _tag_reuse:
 
-Tag Reuse
+タグの再使用
 ```````````````
-You can apply the same tag to more than one task. When a play is run using
-the ``--tags`` command-line option, all tasks with that tag name will be run.
+複数のタスクに同じタグを適用できます。``--tags`` コマンドラインオプションを使用してプレイを実行すると、
+そのタグ名を持つすべてのタスクが実行されます。
 
-This example tags several tasks with one tag, "ntp"::
+この例では、タグ「ntp」がある複数のタスクをタグ付けしています::
 
     ---
     # file: roles/common/tasks/main.yml
@@ -85,21 +85,21 @@ This example tags several tasks with one tag, "ntp"::
 
 .. _tag_inheritance:
 
-Tag Inheritance
+タグの継承
 ```````````````
 
-Adding ``tags:`` to a play, or to statically imported tasks and roles, adds
-those tags to all of the contained tasks. This is referred to as *tag
-inheritance*. Tag inheritance is *not* applicable to dynamic inclusions
-such as ``include_role`` and ``include_tasks``.
+``tags:`` をプレイに追加、または静的にインポートされたタスクおよびロールに追加すると、
+含まれているすべてのタスクにそのタグを追加します。これは *タグの継承
+* と呼ばれています。タグの継承は、
+``include_role`` や ``include_tasks`` などの動的な包含には *適用されません*。
 
-When you apply ``tags:`` attributes to structures other than tasks,
-Ansible processes the tag attribute to apply ONLY to the tasks they contain.
-Applying tags anywhere other than tasks is just a convenience so you don't
-have to tag tasks individually.
+``tags:`` 属性をタスク以外の構造に適用すると、
+Ansible はタグ属性を処理して、その属性に含まれるタスクのみに適用します。
+タスク以外の場所にタグを付けるのは利便性のためであり、
+個別にタスクにタグを付ける必要はありません。
 
-This example tags all tasks in the two plays. The first play has all its tasks
-tagged with 'bar', and the second has all its tasks tagged with 'foo'::
+この例では、2 つのプレイのすべてのタスクにタグを付けています。最初のプレイはすべてのタスクに「bar」のタグが付けられており、
+2 番目のプレイにはすべてのタスクに「foo」のタグが付けられています::
 
     - hosts: all
       tags:
@@ -112,15 +112,15 @@ tagged with 'bar', and the second has all its tasks tagged with 'foo'::
       tasks:
         ...
 
-You may also apply tags to the tasks imported by ``roles``::
+また、``roles`` でインポートされたタスクにタグを適用することもできます::
 
     roles:
       - role: webserver
         vars:
-          port: 5000
+          port:5000
         tags: [ web, foo ]
 
-And to ``import_role:`` and ``import_tasks:`` statements::
+``import_role:`` ステートメントおよび ``import_tasks:`` ステートメントに追加します::
 
     - import_role:
         name: myrole
@@ -130,39 +130,39 @@ And to ``import_role:`` and ``import_tasks:`` statements::
       tags: [ web, foo ]
 
 
-All of these apply the specified tags to EACH task inside the play, imported
-file, or role, so that these tasks can be selectively run when the playbook
-is invoked with the corresponding tags.
+このタグはすべて、指定されたタグをプレイ、インポートされたファイル、またはロール内の「各」タスクに適用するため、
+対応するタグを使用して Playbook が呼び出されたときに、
+このタスクを選択的に実行できます。
 
-Tags are applied *down* the dependency chain. In order for a tag to be
-inherited to a dependent role's tasks, the tag should be applied to the
-role declaration or static import, not to all the tasks within the role.
+タグは、依存関係チェーン *に* 適用されます。タグを依存ロールのタスクに継承するには、
+タグを、ロール内のすべてのタスクではなく、
+ロール宣言または静的インポートに適用する必要があります。
 
-There is no way to 'import only these tags'; you probably want to split
-into smaller roles/includes if you find yourself looking for such a feature.
+「これらのタグのみをインポートする」方法はありません。
+このような機能を探している場合は、おそらくより小さなロール/インクルードに分割する必要があります。
 
-The above information does not apply to `include_tasks` or other dynamic
-includes, as the attributes applied to an include, only affect the include
-itself.
+上記の情報は、`include_tasks` または他の動的インクルードには適用されません。
+インクルードに適用される属性は、
+インクルード自体にのみ影響するためです。
 
-You can see which tags are applied to tasks, roles, and static imports
-by running ``ansible-playbook`` with the ``--list-tasks`` option. You can
-display all tags available with the ``--list-tags`` option.
+``--list-tasks`` オプションを指定して ``ansible-playbook`` を実行すると、
+タスク、ロール、および静的インポートに適用されるタグを確認できます。``--list-tags`` オプションで、
+使用可能なすべてのタグを表示できます。
 
 .. note::
-    The above information does not apply to `include_tasks`, `include_roles`,
-    or other dynamic includes. Tags applied to either of these only tag the
-    include itself.
+    上記の情報は、`include_tasks`、`include_roles`、
+    またはその他の動的インクルードには適用されません。これらのいずれかに適用されるタグは、
+    インクルード自体にのみタグを付けます。
 
-To use tags with tasks and roles intended for dynamic inclusions,
-all needed tasks should be explicitly tagged at the task level; or
-``block:`` may be used to tag more than one task at once. The include
-itself should also be tagged.
+動的包含を目的としたタスクとロールでタグを使用するには、
+必要なすべてのタスクにタスクレベルで明示的にタグを付ける必要があります。
+または ``block:`` を使用して一度に複数のタスクにタグを付けることができます。インクルード自体にも、
+タグを付ける必要があります。
 
-Here is an example of tagging role tasks with the tag ``mytag``, using a
-``block`` statement, to then be used with a dynamic include:
+次に、``block`` ステートメントを使用してロールタスクにタグ ``mytag`` を付け、
+動的インクルードで使用する例を示します。
 
-Playbook file::
+Playbook ファイル::
 
     - hosts: all
       tasks:
@@ -170,12 +170,12 @@ Playbook file::
           name: myrole
         tags: mytag
 
-Role tasks file::
+ロールタスクファイル::
 
     - block:
-      - name: First task to run
+      - name:First task to run
         ...
-      - name: Second task to run
+      - name:Second task to run
         ...
       tags:
       - mytag
@@ -183,17 +183,17 @@ Role tasks file::
 
 .. _special_tags:
 
-Special Tags
+特別なタグ
 ````````````
 
-There is a special ``always`` tag that will always run a task, unless
-specifically skipped (``--skip-tags always``)
+特に省略しない限り、常にタスクを実行する特別な ``always`` タグがあります 
+(``--skip-tags always``)。
 
-Example::
+例:
 
     tasks:
     - debug:
-        msg: "Always runs"
+        msg:"Always runs"
       tags:
       - always
 
@@ -204,32 +204,32 @@ Example::
 
 .. versionadded:: 2.5
 
-Another special tag is ``never``, which will prevent a task from running unless
-a tag is specifically requested.
+他にも、特別なタグとして ``never`` があります。
+これは、タグが特に要求されない限り、タスクを実行しないようにします。
 
-Example::
+例:
 
     tasks:
       - debug: msg="{{ showmevar }}"
         tags: [ never, debug ]
 
-In this example, the task will only run when the ``debug`` or ``never`` tag
-is explicitly requested.
+この例では、タスクは、``debug`` タグまたは ``never`` 
+タグが明示的に要求された場合に限り実行されます。
 
 
-There are another 3 special keywords for tags: ``tagged``, ``untagged`` and
-``all``, which run only tagged, only untagged
-and all tasks respectively.
+タグには、``タグ付き``、``タグなし``、
+``すべて`` の 3 つの特別なキーワードがあります。
+これは、それぞれ「タグ付きのみ」、「タグなしのみ」、または「すべてのタスク」を実行します。
 
-By default, Ansible runs as if ``--tags all`` had been specified.
+デフォルトでは、Ansible は ``--tags all`` が指定されている時のように実行されます。
 
 .. seealso::
 
    :ref:`playbooks_intro`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_reuse_roles`
-       Playbook organization by roles
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       ロール別の Playbook の組織
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

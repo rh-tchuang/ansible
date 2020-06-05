@@ -1,18 +1,18 @@
 .. _working_with_bsd:
 
-Ansible and BSD
+Ansible および BSD
 ===============
 
-Managing BSD machines is different from managing Linux/Unix machines. If you have managed nodes running BSD, review these topics.
+BSD マシンの管理は、Linux/Unix マシンの管理とは異なります。BSD を実行している管理ノードをお持ちの場合は、以下のトピックを確認してください。
 
 .. contents::
    :local:
 
-Connecting to BSD nodes
+BSD ノードへの接続
 -----------------------
 
-Ansible connects to managed nodes using OpenSSH by default. This works on BSD if you use SSH keys for authentication. However, if you use SSH passwords for authentication, Ansible relies on sshpass. Most
-versions of sshpass do not deal well with BSD login prompts, so when using SSH passwords against BSD machines, use ``paramiko`` to connect instead of OpenSSH. You can do this in ansible.cfg globally or you can set it as an inventory/group/host variable. For example:
+Ansible はデフォルトで OpenSSH を使用して管理ノードに接続します。これは、認証に SSH キーを使用する場合に BSD で機能します。ただし、認証に SSH パスワードを使用する場合、Ansible は sshpass に依存します。sshpass のほとんどのバージョンは BSD ログインプロンプトを適切に処理できないため、
+BSD マシンに SSH パスワードを使用する場合は、OpenSSH ではなく ``paramiko`` を使用して接続します。これは、ansible.cfg でグローバルに実行するか、inventory/group/host 変数として設定することもできます。以下に例を示します。
 
 .. code-block:: text
 
@@ -21,35 +21,35 @@ versions of sshpass do not deal well with BSD login prompts, so when using SSH p
 
 .. _bootstrap_bsd:
 
-Bootstrapping BSD
+BSD のブートストラップ
 -----------------
 
-Ansible is agentless by default, however, it requires Python on managed nodes. Only the :ref:`raw <raw_module>` module will operate without Python. Although this module can be used to bootstrap Ansible and install Python on BSD variants (see below), it is very limited and the use of Python is required to make full use of Ansible's features.
+Ansible はデフォルトでエージェントレスですが、管理ノードで Python が必要になります。Python を使用しないと、:ref:`raw <raw_module>` モジュールしか動作しません。このモジュールを使用して Ansible をブートストラップし、Python を BSD バリアントにインストールするために使用できます (以下を参照) が、非常に制限されており、Ansible の機能を最大限に活用するには Python を使用する必要があります。
 
-The following example installs Python 2.7 which includes the json library required for full functionality of Ansible.
-On your control machine you can execute the following for most versions of FreeBSD:
+次の例では、Ansible の全機能に必要な json ライブラリーを含む Python 2.7 をインストールします。
+コントロールマシンでは、FreeBSD のほとんどのバージョンに対して次のコマンドを実行できます。
 
 .. code-block:: bash
 
     ansible -m raw -a "pkg install -y python27" mybsdhost1
 
-Or for most versions of OpenBSD:
+または、ほとんどのバージョンの OpenBSD の場合:
 
 .. code-block:: bash
 
     ansible -m raw -a "pkg_add -z python-2.7"
 
-Once this is done you can now use other Ansible modules apart from the ``raw`` module.
+これが完了すると、``raw`` モジュール以外の他の Ansible モジュールを使用できるようになります。
 
 .. note::
-    This example demonstrated using pkg on FreeBSD and pkg_add on OpenBSD, however you should be able to substitute the appropriate package tool for your BSD; the package name may also differ. Refer to the package list or documentation of the BSD variant you are using for the exact Python package name you intend to install.
+    この例では、FreeBSD で pkg を使用し、OpenBSD で pkg_add を使用する方法を示しましたが、BSD の代わりに適切なパッケージツールを使用できるはずです。パッケージ名が異なる場合もあります。インストールする Python パッケージの正確な名前は、使用している BSD バリアントのパッケージ一覧またはドキュメントを参照してください。
 
-.. BSD_python_location:
+..BSD_python_location:
 
-Setting the Python interpreter
+Python インタープリターの設定
 ------------------------------
 
-To support a variety of Unix/Linux operating systems and distributions, Ansible cannot always rely on the existing environment or ``env`` variables to locate the correct Python binary. By default, modules point at ``/usr/bin/python`` as this is the most common location. On BSD variants, this path may differ, so it is advised to inform Ansible of the binary's location, through the ``ansible_python_interpreter`` inventory variable. For example:
+さまざまな Unix/Linux オペレーティングシステムおよびディストリビューションに対応するために、Ansible は常に既存の環境変数 (または ``env`` 変数) を使用して、適切な Python バイナリーを特定することはできません。モジュールは、デフォルトでは、最もよく使用される ``/usr/bin/python`` を参照します。BSD バリアントではこのパスが異なる可能性があるため、``ansible_python_interpreter`` インベントリー変数を使用して、バイナリーの場所を Ansible に通知することが推奨されます。以下に例を示します。
 
 .. code-block:: text
 
@@ -58,7 +58,7 @@ To support a variety of Unix/Linux operating systems and distributions, Ansible 
     [openbsd:vars]
     ansible_python_interpreter=/usr/local/bin/python2.7
 
-If you use additional plugins beyond those bundled with Ansible, you can set similar variables for ``bash``, ``perl`` or ``ruby``, depending on how the plugin is written. For example:
+Ansible でバンドルされているプラグイン以外のプラグインを使用する場合は、プラグインの記述方法に応じて ``bash``、``perl``、または ``ruby`` に同様の変数を設定できます。以下に例を示します。
 
 .. code-block:: text
 
@@ -67,40 +67,40 @@ If you use additional plugins beyond those bundled with Ansible, you can set sim
     ansible_perl_interpreter=/usr/bin/perl5
 
 
-Which modules are available?
+利用可能なモジュール
 ----------------------------
 
-The majority of the core Ansible modules are written for a combination of Linux/Unix machines and other generic services, so most should function well on the BSDs with the obvious exception of those that are aimed at Linux-only technologies (such as LVG).
+Ansible のコアモジュールの大半は、Linux/Unix マシンと他の汎用サービスを組み合わせて記述されているため、Linux に限定したテクノロジー (LVG など) を対象とするものを除き、その大半が BSD 上で正常に機能します。
 
-Using BSD as the control node
+コントロールノードとしての BSD の使用
 -----------------------------
 
-Using BSD as the control machine is as simple as installing the Ansible package for your BSD variant or by following the ``pip`` or 'from source' instructions.
+BSD をコントロールマシンとして使用することは、BSD バリアントの Ansible パッケージをインストールするか、``pip`` または「from source」の指示に従うのと同じくらい簡単です。
 
 .. _bsd_facts:
 
-BSD facts
+BSD ファクト
 ---------
 
-Ansible gathers facts from the BSDs in a similar manner to Linux machines, but since the data, names and structures can vary for network, disks and other devices, one should expect the output to be slightly different yet still familiar to a BSD administrator.
+Ansible は、Linux マシンと同様の方法で BSD からファクトを収集しますが、データ、名前、構造は、ネットワーク、ディスク、およびその他のデバイスにより異なる可能性があるため、BSD 管理者にとっては出力が多少異なるもののまだ馴染みがあることが期待できます。
 
 .. _bsd_contributions:
 
-BSD efforts and contributions
+BSD の取り組みおよび貢献
 -----------------------------
 
-BSD support is important to us at Ansible. Even though the majority of our contributors use and target Linux we have an active BSD community and strive to be as BSD-friendly as possible.
-Please feel free to report any issues or incompatibilities you discover with BSD; pull requests with an included fix are also welcome!
+Ansible では、BSD サポートが重要になります。貢献者の大半は Linux を使用し、対象としていますが、BSD コミュニティーは活発で、できるだけ BSD が使いやすくなるように努めています。
+BSD と検出された問題または非互換性を報告してください。修正を含む pull リクエストもお寄せください。
 
 .. seealso::
 
    :ref:`intro_adhoc`
-       Examples of basic commands
+       基本コマンドの例
    :ref:`working_with_playbooks`
-       Learning ansible's configuration management language
+       Ansible の設定管理言語について
    :ref:`developing_modules`
-       How to write modules
-   `Mailing List <https://groups.google.com/group/ansible-project>`_
-       Questions? Help? Ideas?  Stop by the list on Google Groups
+       モジュールの書き方
+   `メーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

@@ -1,116 +1,116 @@
 .. _playbook_debugger:
 
-Playbook Debugger
+Playbook デバッガー
 =================
 
-.. contents:: Topics
+.. contents:: トピック
 
-Ansible includes a debugger as part of the strategy plugins. This debugger enables you to debug as task.
-You have access to all of the features of the debugger in the context of the task.  You can then, for example, check or set the value of variables, update module arguments, and re-run the task with the new variables and arguments to help resolve the cause of the failure.
+Ansible には、ストラテジープラグインの一部としてデバッガーが含まれています。このデバッガーを使用すると、タスクをデバッグできます。
+タスクのコンテキストで、デバッガーのすべての機能にアクセスできます。 たとえば、変数の値を確認または設定したり、モジュール引数を更新したり、新しい変数や引数でタスクを再実行して障害の原因を解決したりできます。
 
-There are multiple ways to invoke the debugger.
+デバッガーを呼び出す方法は複数あります。
 
-Using the debugger keyword
+デバッガーキーワードの使用
 ++++++++++++++++++++++++++
 
 .. versionadded:: 2.5
 
-The ``debugger`` keyword can be used on any block where you provide a ``name`` attribute, such as a play, role, block or task.
+``debugger`` キーワードは、プレイ、ロール、ブロック、タスクなどの ``name`` 属性を指定するブロックで使用できます。
 
-The ``debugger`` keyword accepts several values:
+``debugger`` キーワードは、いくつかの値を受け入れます。
 
 always
-  Always invoke the debugger, regardless of the outcome
+  結果に関係なく、常にデバッガーを呼び出します。
 
 never
-  Never invoke the debugger, regardless of the outcome
+  結果に関係なく、デバッガーを呼び出しません。
 
 on_failed
-  Only invoke the debugger if a task fails
+  タスクが失敗した場合に限りデバッガーを呼び出します。
 
 on_unreachable
-  Only invoke the debugger if the a host was unreachable
+  ホストが到達できない場合に限りデバッガーを呼び出します。
 
 on_skipped
-  Only invoke the debugger if the task is skipped
+  タスクがスキップされた場合に限りデバッガーを呼び出します。
 
-These options override any global configuration to enable or disable the debugger.
+これらのオプションは、デバッガーを有効または無効にするグローバル設定を上書きします。
 
-On a task
+タスクでは、以下のようになります。
 `````````
 
 ::
 
-    - name: Execute a command
+    - name:Execute a command
       command: false
       debugger: on_failed
 
-On a play
+プレイでは、以下のようになります。
 `````````
 
 ::
 
-    - name: Play
+    - name:Play
       hosts: all
       debugger: on_skipped
       tasks:
-        - name: Execute a command
+        - name:Execute a command
           command: true
-          when: False
+          when:False
 
-When provided at a generic level and a more specific level, the more specific wins::
+指定したレベルが複数あると、具体的に指定した定義が適用されます。
 
-    - name: Play
+    - name:Play
       hosts: all
       debugger: never
       tasks:
-        - name: Execute a command
+        - name:Execute a command
           command: false
           debugger: on_failed
 
 
-Configuration or environment variable
+設定または環境変数
 +++++++++++++++++++++++++++++++++++++
 
 .. versionadded:: 2.5
 
-In ansible.cfg::
+ansible.cfg では、以下のようになります。
 
     [defaults]
     enable_task_debugger = True
 
-As an environment variable::
+環境変数では、以下のようになります。
 
     ANSIBLE_ENABLE_TASK_DEBUGGER=True ansible-playbook -i hosts site.yml
 
-When using this method, any failed or unreachable task will invoke the debugger,
-unless otherwise explicitly disabled.
+この方法を使用すると、特に明示的に無効になっていない限り、
+失敗したタスクまたは到達できないタスクによりデバッガーが呼び出されます。
 
-As a Strategy
+ストラテジーとして
 +++++++++++++
 
 .. note::
-     This is a backwards compatible method, to match Ansible versions before 2.5,
-     and may be removed in a future release
+     これは、2.5 より前の Ansible バージョンに一致する後方互換性があり、
+     今後のリリースで削除される可能性があります。
 
-To use the ``debug`` strategy, change the ``strategy`` attribute like this::
+``デバッグ`` ストラテジーを使用するには、以下のような ``ストラテジー`` 属性を変更します。
 
     - hosts: test
       strategy: debug
       tasks:
       ...
 
-If you don't want change the code, you can define ``ANSIBLE_STRATEGY=debug``
-environment variable in order to enable the debugger, or modify ``ansible.cfg`` such as::
+コードを変更しない場合は、
+デバッガーを有効にしたり、以下のように ``ansible.cfg`` を変更したりするために ``ANSIBLE_STRATEGY=debug`` 環境変数を定義できます。
 
     [defaults]
     strategy = debug
 
 
-Examples
+例
 ++++++++
 
-For example, run the playbook below::
+たとえば、以下のように Playbook を実行します。
 
     - hosts: test
       debugger: on_failed
@@ -121,9 +121,9 @@ For example, run the playbook below::
         - name: wrong variable
           ping: data={{ wrong_var }}
 
-The debugger is invoked since the *wrong_var* variable is undefined.
+*wrong_var* 変数が定義されていないため、デバッガーが呼び出されます。
 
-Let's change the module's arguments and run the task again
+モジュールの引数を変更して、タスクを再実行します。
 
 .. code-block:: none
 
@@ -158,11 +158,11 @@ Let's change the module's arguments and run the task again
     PLAY RECAP *********************************************************************
     192.0.2.10               : ok=1    changed=0    unreachable=0    failed=0
 
-This time, the task runs successfully!
+今回は、タスクが正常に実行します。
 
 .. _available_commands:
 
-Available Commands
+利用可能なコマンド
 ++++++++++++++++++
 
 .. _pprint_command:
@@ -170,7 +170,7 @@ Available Commands
 p(print) *task/task_vars/host/result*
 `````````````````````````````````````
 
-Print values used to execute a module::
+モジュールの実行に使用される値を出力します。
 
     [192.0.2.10] TASK: install package (debug)> p task
     TASK: install package
@@ -186,9 +186,9 @@ Print values used to execute a module::
     [192.0.2.10] TASK: install package (debug)> p host
     192.0.2.10
     [192.0.2.10] TASK: install package (debug)> p result._result
-    {'_ansible_no_log': False,
-     'changed': False,
-     u'failed': True,
+    {'_ansible_no_log':False,
+     'changed':False,
+     u'failed':True,
      ...
      u'msg': u"No package matching 'not_exist' is available"}
 
@@ -197,9 +197,9 @@ Print values used to execute a module::
 task.args[*key*] = *value*
 ``````````````````````````
 
-Update module's argument.
+モジュールの引数を更新します。
 
-If you run a playbook like this::
+以下のような Playbook を実行すると、
 
     - hosts: test
       strategy: debug
@@ -210,7 +210,7 @@ If you run a playbook like this::
         - name: install package
           apt: name={{ pkg_name }}
 
-Debugger is invoked due to wrong package name, so let's fix the module's args::
+パッケージ名が間違っているためにデバッガーが呼び出されるため、モジュールの引数を修正します。
 
     [192.0.2.10] TASK: install package (debug)> p task.args
     {u'name': u'{{ pkg_name }}'}
@@ -219,16 +219,16 @@ Debugger is invoked due to wrong package name, so let's fix the module's args::
     {u'name': 'bash'}
     [192.0.2.10] TASK: install package (debug)> redo
 
-Then the task runs again with new args.
+次に、新しい引数でタスクを再実行します。
 
 .. _update_vars_command:
 
 task_vars[*key*] = *value*
 ``````````````````````````
 
-Update ``task_vars``.
+``task_vars`` を更新します。
 
-Let's use the same playbook above, but fix ``task_vars`` instead of args::
+上記と同じ Playbook を使用しますが、引数ではなく、``task_vars`` を修正します。
 
     [192.0.2.10] TASK: install package (debug)> p task_vars['pkg_name']
     u'not_exist'
@@ -238,56 +238,56 @@ Let's use the same playbook above, but fix ``task_vars`` instead of args::
     [192.0.2.10] TASK: install package (debug)> update_task
     [192.0.2.10] TASK: install package (debug)> redo
 
-Then the task runs again with new ``task_vars``.
+次に、新しい ``task_vars`` でタスクを再実行します。
 
 .. note::
-    In 2.5 this was updated from ``vars`` to ``task_vars`` to not conflict with the ``vars()`` python function.
+    2.5 では、これは ``vars`` から ``task_vars`` に更新され、python 関数 ``vars()`` と競合しませんでした。
 
 .. _update_task_command:
 
 u(pdate_task)
 `````````````
 
-.. versionadded:: 2.8
+バージョン 2.8 における新機能
 
-This command re-creates the task from the original task data structure, and templates with updated ``task_vars``
+このコマンドは、元のタスクのデータ構造および更新された ``task_vars`` が含まれるテンプレートからタスクを再作成します。
 
-See the above documentation for :ref:`update_vars_command` for an example of use.
+使用例は、上記の :ref:`update_vars_command` ドキュメントを参照してください。
 
 .. _redo_command:
 
 r(edo)
 ``````
 
-Run the task again.
+タスクを再度実行します。
 
 .. _continue_command:
 
 c(ontinue)
 ``````````
 
-Just continue.
+続行するだけです。
 
 .. _quit_command:
 
 q(uit)
 ``````
 
-Quit from the debugger. The playbook execution is aborted.
+デバッガーを終了します。Playbook の実行は中止します。
 
-Use with the free strategy
+無料ストラテジーの使用
 ++++++++++++++++++++++++++
 
-Using the debugger on the ``free`` strategy will cause no further tasks to be queued or executed
-while the debugger is active. Additionally, using ``redo`` on a task to schedule it for re-execution
-may cause the rescheduled task to execute after subsequent tasks listed in your playbook.
+``空き`` ストラテジーでデバッガーを使用すると、
+デバッガーがアクティブである間に、追加のタスクがキューに入ったり、実行したりしなくなります。さらに、タスクで ``redo`` を使用して再実行のスケジュールを設定すると、
+Playbook に記載されている後続のタスクの後に再スケジュールされたタスクが実行することがあります。
 
 
 .. seealso::
 
    :ref:`playbooks_intro`
-       An introduction to playbooks
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Playbook の概要
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

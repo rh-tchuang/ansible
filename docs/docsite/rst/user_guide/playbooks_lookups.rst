@@ -1,56 +1,56 @@
 .. _playbooks_lookups:
 
-Lookups
+lookup
 -------
 
-Lookup plugins allow access to outside data sources. Like all templating, these plugins are evaluated on the Ansible control machine, and can include reading the filesystem as well as contacting external datastores and services. This data is then made available using the standard templating system in Ansible.
+lookup プラグインを使用すると、外部データソースにアクセスできます。すべてのテンプレートと同様、このプラグインは Ansible コントロールマシンで評価されファイルシステムの読み取り、外部データストアおよびサービスへの接続を含めることができます。このデータは、Ansible で標準のテンプレートシステムを使用して利用できるようになります。
 
 .. note::
-    - Lookups occur on the local computer, not on the remote computer.
-    - They are executed within the directory containing the role or play, as opposed to local tasks which are executed with the directory of the executed script.
-    - You can pass wantlist=True to lookups to use in jinja2 template "for" loops.
-    - Lookups are an advanced feature. You should have a good working knowledge of Ansible plays before incorporating them.
+    - ルックアップは、リモートコンピューターではなく、ローカルコンピューターで行われます。
+    - これは、実行したスクリプトのディレクトリーで実行されるローカルタスクではなく、ロールまたはプレイを含むディレクトリーで実行します。
+    - wantlist=True を lookup に渡して、Jinja2 テンプレート「for」ループで使用できます。
+    - ルックアップは高度な機能です。Ansible プレイの知識を組み込むには、十分な実用的な知識が必要です。
 
-.. warning:: Some lookups pass arguments to a shell. When using variables from a remote/untrusted source, use the `|quote` filter to ensure safe usage.
+.. warning:: lookup によってはシェルに引数を渡します。リモート/信頼されていないソースから変数を使用する場合には、`|quote` フィルターで、安全に使用できるようにします。
 
-.. contents:: Topics
+.. contents:: トピック
 
 .. _lookups_and_loops:
 
-Lookups and loops
+lookup および loop
 `````````````````
 
-*lookup plugins* are a way to query external data sources, such as shell commands or even key value stores.
+*lookup プラグイン* は、シェルコマンドやキー値ストアなどの外部データソースにクエリーする手段です。
 
-Before Ansible 2.5, lookups were mostly used indirectly in ``with_<lookup>`` constructs for looping. Starting with Ansible version 2.5, lookups are used more explicitly as part of Jinja2 expressions fed into the ``loop`` keyword.
+Ansible 2.5 以前は、ほとんどの場合、ルックアップはループの ``with_<lookup>`` 構造で間接的に使用されていました。Ansible バージョン 2.5 以降、lookup は ``loop`` キーワードに入力される Jinja2 式の一部としてより明示的に使用されます。
 
 
 .. _lookups_and_variables:
 
-Lookups and variables
+lookup および変数
 `````````````````````
 
-One way of using lookups is to populate variables. These macros are evaluated each time they are used in a task (or template)::
+lookup を使用する 1 つの方法は、変数を設定することです。これらのマクロは、タスク (またはテンプレート) で使用されるたびに評価されます。
 
     vars:
       motd_value: "{{ lookup('file', '/etc/motd') }}"
-    tasks:
-      - debug:
-          msg: "motd value is {{ motd_value }}"
-
-For more details and a complete list of lookup plugins available, please see :ref:`plugins_lookup`.
+tasks:
+  - debug:
+      msg: "motd value is {{ motd_value }}"
+    
+詳細と、利用可能な lookup プラグインの完全な一覧は、:ref:`plugins_lookup` を参照してください。
 
 .. seealso::
 
    :ref:`working_with_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_conditionals`
-       Conditional statements in playbooks
+       Playbook の条件付きステートメント
    :ref:`playbooks_variables`
-       All about variables
+       変数の詳細
    :ref:`playbooks_loops`
-       Looping in playbooks
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Playbook でのループ
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

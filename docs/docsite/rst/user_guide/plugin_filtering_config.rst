@@ -1,12 +1,12 @@
 .. _plugin_filtering_config:
 
-Plugin Filter Configuration
+プラグインのフィルター設定
 ===========================
 
-Ansible 2.5 adds the ability for a site administrator to blacklist modules that they do not want to
-be available to Ansible. This is configured via a yaml configuration file (by default,
-:file:`/etc/ansible/plugin_filters.yml`). Use ``plugin_filters_cfg`` configuration
-in ``defaults`` section to change this configuration file path. The format of the file is:
+Ansible 2.5 には、
+サイト管理者が Ansible で利用できないモジュールをブラックリストに登録する機能が追加されました。これは、yaml 設定ファイル
+(デフォルトでは :file:`/etc/ansible/plugin_filters.yml`) を使用して設定されます。``defaults`` のセクションで ``plugin_filters_cfg`` 設定を使用して、
+この設定ファイルのパスを変更します。ファイルの形式は以下のとおりです。
 
 .. code-block:: YAML
 
@@ -18,14 +18,14 @@ in ``defaults`` section to change this configuration file path. The format of th
       # We only allow pip, not easy_install
       - easy_install
 
-The file contains two fields:
+このファイルには、2 つのフィールドが含まれています。
 
-* a version so that it will be possible to update the format while keeping backwards
-  compatibility in the future. The present version should be the string, ``"1.0"``
+* 今後の後方互換性を維持しつつ、
+  フォーマットを更新できるようにするバージョン。現在のバージョンは文字列 ``"1.0"`` である必要があります。
 
-* a list of modules to blacklist.  Any module listed here will not be found by Ansible when it
-  searches for a module to invoke for a task.
+* ブラックリストに登録するモジュールの一覧。 ここに登録されるモジュールは、
+  Ansible でタスクを呼び出すモジュールを検索するときに検出されません。
 
 .. note::
 
-    The ``stat`` module is required for Ansible to run. So, please make sure you do not add this module in a blacklist modules list.
+    Ansible を実行するには、``stat`` モジュールが必要です。そのため、このモジュールをブラックリストモジュールリストに追加しないでください。

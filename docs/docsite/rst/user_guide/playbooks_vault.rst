@@ -1,84 +1,84 @@
 .. _playbooks_vault:
 
-Using Vault in playbooks
+Playbook での Vault の使用
 ========================
 
-.. contents:: Topics
+.. contents:: トピック
 
-The "Vault" is a feature of Ansible that allows you to keep sensitive data such as passwords or keys protected at rest, rather than as plaintext in playbooks or roles. These vaults can then be distributed or placed in source control.
+「Vault」は Ansible の機能で、Playbook またはロールで平文テキストとしてではなく、パスワードやキーの保護などの機密データを静止させて維持できます。この vault ファイルは、ソース制御に配布または配置することができます。
 
-There are 2 types of vaulted content and each has their own uses and limitations:
+vault の内容は 2 種類あり、それぞれに使用法と制限があります。
 
-:Vaulted files:
-    * The full file is encrypted in the vault, this can contain Ansible variables or any other type of content.
-    * It will always be decrypted when loaded or referenced, Ansible cannot know if it needs the content unless it decrypts it.
-    * It can be used for inventory, anything that loads variables (i.e vars_files, group_vars, host_vars, include_vars, etc)
-      and some actions that deal with files (i.e M(copy), M(assemble), M(script), etc).
+:Vault で暗号化が行われたファイル:
+    * 完全なファイルが vault で暗号化されると、Ansible 変数や他の種類のコンテンツを含めることができます。
+    * 読み込み時または参照時には常に復号されるため、復号しない限り、コンテンツが必要かどうかを Ansible が認識できません。
+    * これはインベントリー、変数を読み込むすべてのもの (つまり vars_files、group_vars、host_vars、include_vars など) と、
+      ファイルを処理する一部のアクション (M(copy)、M(assemble)、M(script) など) に使用できます。
 
-:Single encrypted variable:
-    * Only specific variables are encrypted inside a normal 'variable file'.
-    * Does not work for other content, only variables.
-    * Decrypted on demand, so you can have vaulted variables with different vault secrets and only provide those needed.
-    * You can mix vaulted and non vaulted variables in the same file, even inline in a play or role.
+:Single で暗号化された変数:
+    * 特定の変数のみが通常の「variable file」内で暗号化されます。
+    * 他のコンテンツでは機能しません。変数でのみ有効です。
+    * オンデマンドで復号されるため、異なる vault シークレットで vault 処理された変数を指定し、必要な変数のみを使用できます。
+    * 再生やロールにインラインがある場合でも、同じファイル内で vault 処理された変数と、行われていな変数を混在させることができます。
 
 .. warning::
-    * Vault ONLY protects data 'at rest'.  Once decrypted, play and plugin authors are responsible for avoiding any secret disclosure,
-      see :ref:`no_log <keep_secret_data>` for details on hiding output.
+    * vault は、データを「静止させて」保護します。 復号すると、プレイおよびプラグインの作成者はシークレットの公開を防ぐことができます。
+      出力を非表示にする詳細は、「:ref:`no_log <keep_secret_data>`」を参照してください。
 
-To enable this feature, a command line tool, :ref:`ansible-vault` is used to edit files, and a command line flag :option:`--ask-vault-pass <ansible-vault-create --ask-vault-pass>`, :option:`--vault-password-file <ansible-vault-create --vault-password-file>` or :option:`--vault-id <ansible-playbook --vault-id>` is used. You can also modify your ``ansible.cfg`` file to specify the location of a password file or configure Ansible to always prompt for the password. These options require no command line flag usage.
+この機能を有効にするには、コマンドラインツール :ref:`ansible-vault` を使用してファイルを編集し、コマンドラインフラグ :option:`--ask-vault-pass <ansible-vault-create --ask-vault-pass>`、:option:`--vault-password-file <ansible-vault-create --vault-password-file>`、または :option:`--vault-id <ansible-playbook --vault-id>` を使用します。``ansible.cfg`` ファイルを変更してパスワードファイルの場所を指定するか、常にパスワードを入力するように Ansible を設定することもできます。このオプションには、コマンドラインフラグの使用は必要ありません。
 
-For best practices advice, refer to :ref:`best_practices_for_variables_and_vaults`.
+ベストプラクティスに関するアドバイスは、:ref:`best_practices_for_variables_and_vaults` を参照してください。
 
-Running a Playbook With Vault
+vault を使用した Playbook の実行
 `````````````````````````````
 
-To run a playbook that contains vault-encrypted data files, you must provide the vault password.
+vault で暗号化されたデータファイルが含まれる Playbook を実行するには、vault パスワードを指定する必要があります。
 
-To specify the vault-password interactively::
+vault-password をインタラクティブに指定するには、以下を実行します。
 
     ansible-playbook site.yml --ask-vault-pass
 
-This prompt will then be used to decrypt (in memory only) any vault encrypted files that are accessed.
+このプロンプトは、アクセスされる、vault で暗号化されたファイルを復号する (インメモリーのみ) ために使用されます。
 
-Alternatively, passwords can be specified with a file or a script (the script version will require Ansible 1.7 or later).  When using this flag, ensure permissions on the file are such that no one else can access your key and do not add your key to source control::
+または、パスワードはファイルまたはスクリプトで指定できます (スクリプトバージョンには Ansible 1.7 以降が必要です)。 このフラグを使用する場合は、ファイルのパーミッションで、他のユーザーが鍵にアクセスできないことを確認し、キーをソースコントロールに追加しないようにします。
 
     ansible-playbook site.yml --vault-password-file ~/.vault_pass.txt
 
     ansible-playbook site.yml --vault-password-file ~/.vault_pass.py
 
-The password should be a string stored as a single line in the file.
+パスワードは、ファイル内に単一行として保存される文字列である必要があります。
 
-If you are using a script instead of a flat file, ensure that it is marked as executable, and that the password is printed to standard output.  If your script needs to prompt for data, prompts can be sent to standard error.
+フラットファイルの代わりにスクリプトを使用している場合は、そのスクリプトを実行ファイルとするマークが付いていて、パスワードが標準出力に出力されていることを確認します。 スクリプトでデータの入力を要求する必要がある場合は、プロンプトを標準エラーに送信できます。
 
 .. note::
-   You can also set :envvar:`ANSIBLE_VAULT_PASSWORD_FILE` environment variable, e.g. ``ANSIBLE_VAULT_PASSWORD_FILE=~/.vault_pass.txt`` and Ansible will automatically search for the password in that file.
+   :envvar:`ANSIBLE_VAULT_PASSWORD_FILE` 環境変数 (``ANSIBLE_VAULT_PASSWORD_FILE=~/.vault_pass.txt`` など) を設定することもできます。Ansible は、このファイル内のパスワードを自動的に検索します。
 
-   This is something you may wish to do if using Ansible from a continuous integration system like Jenkins.
+   これは、Jenkins などの継続的な統合システムから Ansible を使用する場合に行うことができます。
 
-The :option:`--vault-password-file <ansible-pull --vault-password-file>` option can also be used with the :ref:`ansible-pull` command if you wish, though this would require distributing the keys to your nodes, so understand the implications -- vault is more intended for push mode.
+:option:`--vault-password-file <ansible-pull --vault-password-file>` オプションは、必要に応じて :ref:`ansible-pull` コマンドと併用することもできます。ただし、ノードにキーを配布する必要があるため、意図を理解してください。プッシュモードの場合は vault を使用することが意図されています。
 
 
-Multiple Vault Passwords
+複数の vault パスワード
 ````````````````````````
 
-Ansible 2.4 and later support the concept of multiple vaults that are encrypted with different passwords
-Different vaults can be given a label to distinguish them (generally values like dev, prod etc.).
+Ansible 2.4 以降では、異なるパスワードで暗号化される複数の vault の概念に対応します。
+異なる vault には、それを区別するためのラベルを指定できます (通常は dev、prod などの値)。
 
-The :option:`--ask-vault-pass <ansible-playbook --ask-vault-pass>` and
-:option:`--vault-password-file <ansible-playbook --vault-password-file>` options can be used as long as
-only a single password is needed for any given run.
+:option:`--ask-vault-pass <ansible-playbook --ask-vault-pass>` オプションおよび 
+:option:`--vault-password-file <ansible-playbook --vault-password-file>` オプションは、
+任意の実行には、パスワードは 1 つだけ必要になる場合に限り使用できます。
 
-Alternatively the :option:`--vault-id <ansible-playbook --vault-id>` option can be used to provide the
-password and indicate which vault label it's for. This can be clearer when multiple vaults are used within
-a single inventory. For example:
+または、:option:`--vault-id <ansible-playbook --vault-id>` オプションを使用してパスワードを入力し、
+使用する vault ラベルを示します。これは、
+複数の vault が 1 つのインベントリー内で使用される場合により明確になります。例:
 
-To be prompted for the 'dev' password:
+「dev」パスワードの入力が求められるようにするには、以下を実行します。
 
 .. code-block:: bash
 
     ansible-playbook site.yml --vault-id dev@prompt
 
-To get the 'dev' password from a file or script:
+ファイルまたはスクリプトから「dev」パスワードを取得するには、以下を実行します。
 
 .. code-block:: bash
 
@@ -86,48 +86,48 @@ To get the 'dev' password from a file or script:
 
     ansible-playbook site.yml --vault-id dev@~/.vault_pass.py
 
-If multiple vault passwords are required for a single run, :option:`--vault-id <ansible-playbook --vault-id>` must
-be used as it can be specified multiple times to provide the multiple passwords.  For example:
+複数の vault パスワードが一回の実行に必要となる場合は、:option:`--vault-id <ansible-playbook --vault-id>` が、
+複数回指定して、複数のパスワードを提供する場合に使用されます。 例:
 
-To read the 'dev' password from a file and prompt for the 'prod' password:
+ファイルから「dev」パスワードを読み取り、「prod」パスワードの入力を求められます。
 
 .. code-block:: bash
 
     ansible-playbook site.yml --vault-id dev@~/.vault_pass.txt --vault-id prod@prompt
 
-The :option:`--ask-vault-pass <ansible-playbook --ask-vault-pass>` or
-:option:`--vault-password-file <ansible-playbook --vault-password-file>` options can be used to specify one of
-the passwords, but it's generally cleaner to avoid mixing these with :option:`--vault-id <ansible-playbook --vault-id>`.
+:option:`--ask-vault-pass <ansible-playbook --ask-vault-pass>` オプションまたは
+:option:`--vault-password-file <ansible-playbook --vault-password-file>` オプションを使用すると、パスワードのいずれかを指定できます。
+これらを :option:`--vault-id <ansible-playbook --vault-id>` と混在させないようにする方が一般的には適切です。
 
 .. note::
-    By default the vault label (dev, prod etc.) is just a hint. Ansible will try to decrypt each
-    vault with every provided password.
+    デフォルトでは、vault ラベル (dev、prod など）は単なるヒントです。Ansible は、
+    指定されたすべてのパスワードで各 vault を復号しようとします。
 
-    Setting the config option :ref:`DEFAULT_VAULT_ID_MATCH` will change this behavior so that each password
-    is only used to decrypt data that was encrypted with the same label. See :ref:`specifying_vault_ids`
-    for more details.
+    設定オプション :ref:`DEFAULT_VAULT_ID_MATCH` を設定すると、
+    この動作に変更なり、各パスワードは同じラベルで暗号化されたデータの復号にのみ使用されます。詳細は、「:ref:`specifying_vault_ids`」
+    を参照してください。
 
-Vault Password Client Scripts
+Vault パスワードクライアントスクリプト
 `````````````````````````````
 
-Ansible 2.5 and later support using a single executable script to get different passwords depending on the
-vault label. These client scripts must have a file name that ends with :file:`-client`. For example:
+Ansible 2.5以降では、1 つの実行スクリプトを使用して、
+vault ラベルに応じて異なるパスワードを取得できます。これらのクライアントスクリプトには、:file:`-client` で終わるファイル名が必要です。例:
 
-To get the dev password from the system keyring using the :file:`contrib/vault/vault-keyring-client.py` script:
+:file:`contrib/vault/vault-keyring-client.py` スクリプトを使用してシステムキーリングから dev パスワードを取得するには、以下を実行します。
 
 .. code-block:: bash
 
     ansible-playbook --vault-id dev@contrib/vault/vault-keyring-client.py
 
-See :ref:`vault_password_client_scripts` for a complete explanation of this topic.
+このトピックの詳細は、:ref:`vault_password_client_scripts` を参照してください。
 
 
 .. _single_encrypted_variable:
 
-Single Encrypted Variable
+単一の暗号化変数
 `````````````````````````
 
-As of version 2.3, Ansible can now use a vaulted variable that lives in an otherwise 'clear text' YAML file::
+バージョン 2.3 以降、Ansible は、それ以外の「平文」の YAML ファイルにある vault 処理された変数を使用できるようになりました。
 
     notsecret: myvalue
     mysecret: !vault |
@@ -139,19 +139,19 @@ As of version 2.3, Ansible can now use a vaulted variable that lives in an other
               34623731376664623134383463316265643436343438623266623965636363326136
     other_plain_text: othervalue
 
-To create a vaulted variable, use the :ref:`ansible-vault encrypt_string <ansible_vault_encrypt_string>` command. See :ref:`encrypt_string` for details.
+vault 処理された変数を作成するには、:ref:`ansible-vault encrypt_string <ansible_vault_encrypt_string>` コマンドを使用します。詳細は「:ref:`encrypt_string`」を参照してください。
 
-This vaulted variable will be decrypted with the supplied vault secret and used as a normal variable. The ``ansible-vault`` command line supports stdin and stdout for encrypting data on the fly, which can be used from your favorite editor to create these vaulted variables; you just have to be sure to add the ``!vault`` tag so both Ansible and YAML are aware of the need to decrypt. The ``|`` is also required, as vault encryption results in a multi-line string.
+vault 処理された変数は、提供された vault シークレットで復号化され、通常の変数として使用されます。``ansible-vault`` コマンドラインは、オンザフライでデータの暗号化用に stdin および stdout をサポートします。これは、お気に入りのエディターから使用して、このような vault 処理された変数を作成できます。Ansible と YAML の両方を復号する必要があることを認識できるように、必ず ``!vault`` タグを追加する必要があります。vault の暗号化により複数行の文字列になるため、``|`` も必要になります。
 
 .. note::
-   Inline vaults ONLY work on variables, you cannot use directly on a task's options.
+   インライン vault は変数でのみ機能し、タスクのオプションで直接使用することはできません。
 
 .. _encrypt_string:
 
-Using encrypt_string
+encrypt_string の使用
 ````````````````````
 
-This command will output a string in the above format ready to be included in a YAML file.
-The string to encrypt can be provided via stdin, command line arguments, or via an interactive prompt.
+このコマンドは、YAML ファイルに含めるために上記の形式の文字列を出力します。
+暗号化する文字列は、stdin、コマンドライン引数、または対話式プロンプトで指定できます。
 
-See :ref:`encrypt_string_for_use_in_yaml`.
+:ref:`encrypt_string_for_use_in_yaml` を参照してください。

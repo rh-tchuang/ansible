@@ -1,32 +1,32 @@
 .. _pb-py-compat:
 
-Python Version and Templating
+Python のバージョンおよびテンプレート
 =============================
 
-Jinja2 templates leverage Python data types and standard functions.  This
-makes for a rich set of operations that can be performed on data.  However,
-this also means that certain specifics of the underlying Python becomes
-visible to template authors.  Since Ansible playbooks use Jinja2 for templates
-and variables, this means that playbook authors need to be aware of these
-specifics as well.
+Jinja2 テンプレートは、Python データタイプと標準機能を活用します。 これにより、
+実行できる豊富な操作セットを作成します。 ただし、
+これは、
+基礎となる Python の特定の詳細がテンプレート作成者に表示されます。 Ansible Playbook はテンプレートと変数に Jinja2 を使用するため、
+Playbook の作者が、
+このような詳細に注意する必要があることも意味します。
 
-Unless otherwise noted, these differences are only of interest when running
-Ansible in Python2 versus Python3.  Changes within Python2 and Python3 are
-generally small enough that they are not visible at the jinja2 level.
+特に明記しない限り、この違いは、
+Python2 と Python3 で Ansible を実行する場合に限り重要です。 Python2 と Python3 内の変更は、
+一般に、jinja2 レベルでは表示されないほど小さくなります。
 
 .. _pb-py-compat-dict-views:
 
-Dictionary Views
+ディクショナリービュー
 ----------------
 
-In Python2, the :meth:`dict.keys`, :meth:`dict.values`, and :meth:`dict.items`
-methods returns a list.  Jinja2 returns that to Ansible via a string
-representation that Ansible can turn back into a list.  In Python3, those
-methods return a :ref:`dictionary view <python3:dict-views>` object.  The
-string representation that Jinja2 returns for dictionary views cannot be parsed back 
-into a list by Ansible.  It is, however, easy to make this portable by
-using the :func:`list <jinja2:list>` filter whenever using :meth:`dict.keys`,
-:meth:`dict.values`, or :meth:`dict.items`::
+Python2 では、:meth:`dict.keys`、:meth:`dict.values`、および :meth:`dict.items` 
+の各メソッドがリストを返します。 Jinja2 は、
+Ansible がリストに戻せる文字列表現で Ansible に返します。 Python3 では、
+これらのメソッドは :ref:`ディクショナリービュー <python3:dict-views>` オブジェクトを返します。 Jinja2 がディクショナリービューに対して返す文字列表現は、
+Ansible が
+解析してリストに戻すことができません。 ただし、
+:meth:`dict.keys`、
+:meth:`dict.values`、または :meth:`dict.items` を使用する場合は常に :func:`list <jinja2:list>` フィルターを使用することでこの移植性を容易にできます::
 
     vars:
       hosts:
@@ -39,17 +39,17 @@ using the :func:`list <jinja2:list>` filter whenever using :meth:`dict.keys`,
         #loop: "{{ hosts.keys() }}"
         # Works with both Python 2 and Python 3
         loop: "{{ hosts.keys() | list }}"
-
+    
 .. _pb-py-compat-iteritems:
 
 dict.iteritems()
 ----------------
 
-In Python2, dictionaries have :meth:`~dict.iterkeys`,
-:meth:`~dict.itervalues`, and :meth:`~dict.iteritems` methods.  These methods
-have been removed in Python3.  Playbooks and Jinja2 templates should use
-:meth:`dict.keys`, :meth:`dict.values`, and :meth:`dict.items` in order to be
-compatible with both Python2 and Python3::
+Python2 では、ディクショナリーには :meth:`~dict.iterkeys`、
+:meth:`~dict.itervalues`、および :meth:`~dict.iteritems` の各メソッドがあります。 この方法は、
+Python3 で削除されました。 :meth:`dict.keys`、
+:meth:`dict.values`、および :meth:`dict.items` を使用して、
+Playbook と Jinja2 テンプレートを Python2 と Python3 の両方と互換性を持たせるようにします。
 
     vars:
       hosts:
@@ -62,8 +62,8 @@ compatible with both Python2 and Python3::
         #loop: "{{ hosts.iteritems() }}"
         # Works with both Python 2 and Python 3
         loop: "{{ hosts.items() | list }}"
-
+    
 .. seealso::
-    * The :ref:`pb-py-compat-dict-views` entry for information on
-      why the :func:`list filter <jinja2:list>` is necessary
-      here.
+    * ここで、
+      :func:`list filter<jinja2:list>` が必要な理由は、
+      :ref:`pb-py-compat-dict-views` エントリーを参照してください。

@@ -1,14 +1,14 @@
 .. _windows:
 
-Windows Guides
+Windows ガイド
 ``````````````
 
-The following sections provide information on managing
-Windows hosts with Ansible.
+以下のセクションでは、
+Ansible を使用した Windows ホストの管理を説明します。
 
-Because Windows is a non-POSIX-compliant operating system, there are differences between
-how Ansible interacts with them and the way Windows works. These guides will highlight
-some of the differences between Linux/Unix hosts and hosts running Windows.
+Windows は、POSIX に準拠していないオペレーティングシステムであるため、
+Ansible が Windows と対話する方法と、Windows が機能する方法には違いがあります。本ガイドでは、Linux/Unix のホストと、
+Windows を実行しているホストの相違点をいくつか取り上げます。
 
 .. toctree::
    :maxdepth: 2

@@ -1,39 +1,39 @@
 .. _become:
 
 ******************************************
-Understanding privilege escalation: become
+権限昇格の理解: become
 ******************************************
 
-Ansible uses existing privilege escalation systems to execute tasks with root privileges or with another user's permissions. Because this feature allows you to 'become' another user, different from the user that logged into the machine (remote user), we call it ``become``. The ``become`` keyword leverages existing privilege escalation tools like `sudo`, `su`, `pfexec`, `doas`, `pbrun`, `dzdo`, `ksu`, `runas`, `machinectl` and others.
+Ansible は既存の権限昇格システムを使用して、root 権限または別のユーザーのパーミッションでタスクを実行します。この機能を使用すると、このマシンにログインしたユーザー (リモートユーザー) とは別のユーザー「になる (become)」ことができるため、この機能は ``become`` と呼ばれています。``become`` キーワードは、`sudo`、`su`、`pfexec`、`doas`、`pbrun`、`dzdo`、`ksu`、`runas`、`machinectl` などの既存の権限昇格ツールを利用します。
 
 .. contents::
    :local:
 
-Using become
+become の使用
 ============
 
-You can control the use of ``become`` with play or task directives, connection variables, or at the command line. If you set privilege escalation properties in multiple ways, review the :ref:`general precedence rules<general_precedence_rules>` to understand which settings will be used.
+play ディレクティブまたは task ディレクティブ、接続変数、またはコマンドラインでの ``become`` の使用を制御できます。複数の方法で権限昇格プロパティーを設定する場合は、:ref:`一般的な優先順位ルール<general_precedence_rules>` を確認し、使用する設定を確認します。
 
-A full list of all become plugins that are included in Ansible can be found in the :ref:`become_plugin_list`.
+Ansible に含まれる全 become プラグインの完全リストは、:ref:`become_plugin_list` にあります。
 
-Become directives
+Become ディレクティブ
 -----------------
 
-You can set the directives that control ``become`` at the play or task level. You can override these by setting connection variables, which often differ from one host to another. These variables and directives are independent. For example, setting ``become_user`` does not set ``become``.
+play レベルまたは task レベルで ``become`` を制御するディレクティブを設定できます。接続変数を別のホストに設定すると、その変数を上書きできます。これは多くの場合は、ホスト間で異なります。これらの変数とディレクティブは独立しています。たとえば、``become_user`` を設定すると ``become`` に設定されません。
 
 become
-    set to ``yes`` to activate privilege escalation.
+    権限昇格をアクティブにするには、``yes`` に設定します。
 
 become_user
-    set to user with desired privileges — the user you `become`, NOT the user you login as. Does NOT imply ``become: yes``, to allow it to be set at host level. Default value is ``root``.
+    希望する権限を持つユーザーに設定します。ログインしたユーザーではなく、`become` を行ったユーザーになります。ホストレベルで設定できる ``become: yes`` を意味しているわけではありません。デフォルト値は ``root`` です。
 
 become_method
-    (at play or task level) overrides the default method set in ansible.cfg, set to use any of the :ref:`become_plugins`.
+    (play レベルまたは task レベルで)、ansible.cfg に設定されたデフォルトのメソッドをオーバーライドし、:ref:`become_plugins` を使用するよう設定します。
 
 become_flags
-    (at play or task level) permit the use of specific flags for the tasks or role. One common use is to change the user to nobody when the shell is set to no login. Added in Ansible 2.2.
+    (play レベルまたは task レベルで) を使用すると、タスクまたはロールに特定のフラグを使用できます。シェルに no login を設定する場合は、ユーザーを nobody に変更するのが一般的な方法です。Ansible 2.2 で追加されました。
 
-For example, to manage a system service (which requires ``root`` privileges) when connected as a non-``root`` user, you can use the default value of ``become_user`` (``root``):
+たとえば、``root`` 以外のユーザーとして接続する際にシステムサービスを管理する (``root`` 権限が必要) には、``become_user`` (``root``) のデフォルト値を使用できます。
 
 .. code-block:: yaml
 
@@ -43,175 +43,175 @@ For example, to manage a system service (which requires ``root`` privileges) whe
         state: started
       become: yes
 
-To run a command as the ``apache`` user:
+``apache`` ユーザーとしてコマンドを実行するには、次を実行します。
 
 .. code-block:: yaml
 
-    - name: Run a command as the apache user
+    - name:Run a command as the apache user
       command: somecommand
       become: yes
       become_user: apache
 
-To do something as the ``nobody`` user when the shell is nologin:
+シェルが nologin の場合に ``nobody`` ユーザーとして何かを行うには、次を実行します。
 
 .. code-block:: yaml
 
-    - name: Run a command as nobody
+    - name:Run a command as nobody
       command: somecommand
       become: yes
       become_method: su
       become_user: nobody
       become_flags: '-s /bin/sh'
 
-Become connection variables
+Become 接続変数
 ---------------------------
 
-You can define different ``become`` options for each managed node or group. You can define these variables in inventory or use them as normal variables.
+管理対象ノードまたはグループごとに異なる ``become`` オプションを定義できます。これらの変数はインベントリーで定義するか、通常の変数として使用できます。
 
 ansible_become
-    equivalent of the become directive, decides if privilege escalation is used or not.
+    become ディレクティブと同等です。権限のエスカレーションが使用されるかどうかを指定します。
 
 ansible_become_method
-    which privilege escalation method should be used
+    使用する権限昇格方法
 
 ansible_become_user
-    set the user you become through privilege escalation; does not imply ``ansible_become: yes``
+    権限昇格で become を行うユーザーを設定します。``ansible_become: yes`` を意味するものではありません。
 
 ansible_become_password
-    set the privilege escalation password. See :ref:`playbooks_vault` for details on how to avoid having secrets in plain text
+    権限昇格パスワードを設定します。平文での秘密の使用を回避する方法は、「:ref:`playbooks_vault`」を参照してください。
 
-For example, if you want to run all tasks as ``root`` on a server named ``webserver``, but you can only connect as the ``manager`` user, you could use an inventory entry like this:
+たとえば、すべてのタスクを ``webserver`` という名前のサーバーで ``root`` として実行することを望んでいて、``manager`` ユーザーとしてのみ接続できる場合は、以下のようなインベントリーエントリーを使用できます。
 
 .. code-block:: text
 
     webserver ansible_user=manager ansible_become=yes
 
 .. note::
-    The variables defined above are generic for all become plugins but plugin specific ones can also be set instead.
-    Please see the documentation for each plugin for a list of all options the plugin has and how they can be defined.
-    A full list of become plugins in Ansible can be found at :ref:`become_plugins`.
+    上記の変数は全 become プラグインに汎用的なものですが、プラグイン固有の変数を設定することもできます。
+    そのプラグインが持つすべてのオプションとその定義方法の一覧は、各プラグインのドキュメントを参照してください。
+    Ansible の become プラグインの完全リストは、:ref:`become_plugins` にあります。
 
-Become command-line options
+Become コマンドラインオプション
 ---------------------------
 
 --ask-become-pass, -K
-    ask for privilege escalation password; does not imply become will be used. Note that this password will be used for all hosts.
+    権限昇格パスワードを要求します。これは必ずしも使用されることは限りません。このパスワードはすべてのホストで使用されることに注意してください。
 
 --become, -b
-    run operations with become (no password implied)
+    become で操作を実行します (パスワードないことを示しています)
 
 --become-method=BECOME_METHOD
-    privilege escalation method to use (default=sudo),
-    valid choices: [ sudo | su | pbrun | pfexec | doas | dzdo | ksu | runas | machinectl ]
+    使用する権限昇格方法 (default=sudo) です。
+    有効な選択肢は、[ sudo | su | pbrun | pfexec | doas | dzdo | ksu | runas | machinectl ] です。
 
 --become-user=BECOME_USER
-    run operations as this user (default=root), does not imply --become/-b
+    このユーザー (デフォルトは root) として操作を実行します。--become/-b を意味するものではありません。
 
-Risks and limitations of become
+become のリスクと制限
 ===============================
 
-Although privilege escalation is mostly intuitive, there are a few limitations
-on how it works.  Users should be aware of these to avoid surprises.
+特権の昇格はほとんど直感的ですが、それがどのように機能するかについては、
+いくつかの制限があります。 問題が発生しないように、これらの点に注意する必要があります。
 
-Risks of becoming an unprivileged user
+非特権ユーザーになるリスク
 --------------------------------------
 
-Ansible modules are executed on the remote machine by first substituting the
-parameters into the module file, then copying the file to the remote machine,
-and finally executing it there.
+Ansible モジュールは、
+最初にパラメーターをモジュールファイルに入力し、そのファイルをリモートマシンにコピーします。
+そして最後にそこで実行します。
 
-Everything is fine if the module file is executed without using ``become``,
-when the ``become_user`` is root, or when the connection to the remote machine
-is made as root.  In these cases Ansible creates the module file with permissions
-that only allow reading by the user and root, or only allow reading by the unprivileged
-user being switched to.
+``become`` を使用せずにモジュールファイルが実行しているかどうか、
+``become_user`` が root の場合、またはリモートマシンへの接続が root として作成された場合は、
+何も問題がありません。 この場合、Ansible は、
+ユーザーと root による読み取りのみを許可するパーミッション、
+または切り替えられる非特権ユーザーによる読み取りのみを許可するパーミッションでモジュールファイルを作成します。
 
-However, when both the connection user and the ``become_user`` are unprivileged,
-the module file is written as the user that Ansible connects as, but the file needs to
-be readable by the user Ansible is set to ``become``. In this case, Ansible makes
-the module file world-readable for the duration of the Ansible module execution.
-Once the module is done executing, Ansible deletes the temporary file.
+ただし、接続ユーザーと ``become_user`` の両方に権限がない場合、
+モジュールファイルは Ansible が接続するユーザーとして書き込まれますが、
+ファイルは Ansible が ``become`` に設定したユーザーが読み取り可能である必要があります。この場合、Ansible は、
+Ansible モジュールの実行中に、モジュールファイルを誰でも読み取り可能にします。
+モジュールの実行が完了すると、Ansible は一時ファイルを削除します。
 
-If any of the parameters passed to the module are sensitive in nature, and you do
-not trust the client machines, then this is a potential danger.
+モジュールに渡されるパラメーターのいずれかが本質的に機密であり、
+クライアントマシンを信頼していない場合、これは潜在的な危険です。
 
-Ways to resolve this include:
+この問題を解決する方法には、以下が含まれます。
 
-* Use `pipelining`.  When pipelining is enabled, Ansible does not save the
-  module to a temporary file on the client.  Instead it pipes the module to
-  the remote python interpreter's stdin. Pipelining does not work for
-  python modules involving file transfer (for example: :ref:`copy <copy_module>`,
-  :ref:`fetch <fetch_module>`, :ref:`template <template_module>`), or for non-python modules.
+* `パイプライン` を使用します。 パイプラインが有効な場合、
+  Ansible はクライアント上の一時ファイルにモジュールを保存しません。 代わりに、
+  モジュールをリモートの python インタープリターの stdin にパイプします。パイプライン処理は、
+  ファイル転送を伴う python モジュール (たとえば、:ref:`copy <copy_module>`、
+  :ref:`fetch <fetch_module>`、:ref:`template <template_module>`)、または非 python モジュールでは機能しません。
 
-* Install POSIX.1e filesystem acl support on the
-  managed host.  If the temporary directory on the remote host is mounted with
-  POSIX acls enabled and the :command:`setfacl` tool is in the remote ``PATH``
-  then Ansible will use POSIX acls to share the module file with the second
-  unprivileged user instead of having to make the file readable by everyone.
+* 管理対象ホストに、
+  POSIX.1e ファイルシステムの acl サポートをインストールします。 リモートホスト上の一時ディレクトリーが POSIX acl を有効にしてマウントされ、
+  :command:`setfacl` ツールがリモートの ``PATH`` にある場合、
+  Ansible は POSIX acl を使用して、誰もがファイルを読み取れるようにする代わりに、
+  2 番目の非特権ユーザーとモジュールファイルを共有します。
 
-* Avoid becoming an unprivileged
-  user.  Temporary files are protected by UNIX file permissions when you
-  ``become`` root or do not use ``become``.  In Ansible 2.1 and above, UNIX
-  file permissions are also secure if you make the connection to the managed
-  machine as root and then use ``become`` to access an unprivileged account.
+* 非特権ユーザーには
+  ならないようにしてください。 一時ファイルは、
+  root になる (``become``) か、``become`` を使用しない場合は、UNIX ファイルのパーミッションにより保護されます。 Ansible 2.1 以降では、
+  管理対象マシンに root として接続してから、
+  非特権アカウントにアクセスするために ``become`` を使用する場合でも、UNIXファイルの権限は安全です。
 
-.. warning:: Although the Solaris ZFS filesystem has filesystem ACLs, the ACLs
-    are not POSIX.1e filesystem acls (they are NFSv4 ACLs instead).  Ansible
-    cannot use these ACLs to manage its temp file permissions so you may have
-    to resort to ``allow_world_readable_tmpfiles`` if the remote machines use ZFS.
+.. warning:: Solaris ZFS ファイルシステムにはファイルシステム ACL がありますが、
+    ACL は POSIX.1e ファイルシステムの acl ではありません (代わりに NFSv4 ACL になります)。 Ansible はこれらの ACL を使用して一時ファイルのパーミッションを管理できないため、
+    リモートマシンが ZFS を使用している場合は、
+    ``allow_world_readable_tmpfiles`` を使用する必要があります。
 
-.. versionchanged:: 2.1
+バージョン 2.1 における新機能
 
-Ansible makes it hard to unknowingly use ``become`` insecurely. Starting in Ansible 2.1,
-Ansible defaults to issuing an error if it cannot execute securely with ``become``.
-If you cannot use pipelining or POSIX ACLs, you must connect as an unprivileged user,
-you must use ``become`` to execute as a different unprivileged user,
-and you decide that your managed nodes are secure enough for the
-modules you want to run there to be world readable, you can turn on
-``allow_world_readable_tmpfiles`` in the :file:`ansible.cfg` file.  Setting
-``allow_world_readable_tmpfiles`` will change this from an error into
-a warning and allow the task to run as it did prior to 2.1.
+Ansible は、知らないうちに、保護されずに ``become`` を使用することが簡単にできないようにします。Ansible 2.1 以降、
+Ansible は、``become`` で安全に実行できない場合は、デフォルトでエラーを発生します。
+パイプラインまたは POSIX ACL を使用できない場合は、特権のないユーザーとして接続する必要があります。
+別の非特権ユーザーとして実行するには、``become`` を使用する必要があり、
+管理対象ノードが、
+そこで実行するモジュールが誰でも読み取り可能であるように十分に安全であると判断した場合は、
+:file:`ansible.cfg` ファイルで ``allow_world_readable_tmpfiles`` をオンにできます。 ``allow_world_readable_tmpfiles`` を設定すると、
+これがエラーから警告に変わり、
+タスクが 2.1 以前のように実行されるようになります。
 
-Not supported by all connection plugins
+すべての接続プラグインでサポートされない
 ---------------------------------------
 
-Privilege escalation methods must also be supported by the connection plugin
-used. Most connection plugins will warn if they do not support become. Some
-will just ignore it as they always run as root (jail, chroot, etc).
+使用する接続プラグインでは、
+権限昇格方法もサポートする必要があります。ほとんどの接続プラグインは、become をサポートしない場合は警告されます。常に root (jail、chroot など) として実行されるため、
+これを無視する人もいます。
 
-Only one method may be enabled per host
+ホストごとに有効にできる方法は 1 つだけ
 ---------------------------------------
 
-Methods cannot be chained. You cannot use ``sudo /bin/su -`` to become a user,
-you need to have privileges to run the command as that user in sudo or be able
-to su directly to it (the same for pbrun, pfexec or other supported methods).
+メソッドは連鎖できません。``sudo /bin/su -`` を使用してユーザーになる (become) ことはできません。
+そのユーザーになるには、sudo でそのユーザーとしてコマンドを実行するか、
+直接そのユーザーに su を実行するための権限が必要です (pbrun、pfexec、またはその他のサポートされている方法でも同じです)。
 
-Privilege escalation must be general
+特権昇格は一般的なものにすること
 ------------------------------------
 
-You cannot limit privilege escalation permissions to certain commands.
-Ansible does not always
-use a specific command to do something but runs modules (code) from
-a temporary file name which changes every time.  If you have '/sbin/service'
-or '/bin/chmod' as the allowed commands this will fail with ansible as those
-paths won't match with the temporary file that Ansible creates to run the
-module. If you have security rules that constrain your sudo/pbrun/doas environment
-to running specific command paths only, use Ansible from a special account that
-does not have this constraint, or use :ref:`ansible_tower` to manage indirect access to SSH credentials.
+特権昇格パーミッションを特定のコマンドに制限できません。
+Ansible は、
+常に特定のコマンドを使用して何かを行うわけではありませんが、
+毎回変更される一時ファイル名からモジュール (コード) を実行します。 許可されたコマンドとして「/sbin/service」または「/bin/chmod」がある場合は、
+Ansible で、
+モジュールを実行するために作成する一時ファイルとそのパスが一致しないため、
+Ansible で失敗します。sudo/pbrun/doas 環境を特定のコマンドパスのみを実行するように制約するセキュリティールールがある場合は、
+この制約のない特別なアカウントから Ansible を使用するか、
+:ref:`ansible_tower` を使用して SSH 認証情報への間接アクセスを管理します。
 
-May not access environment variables populated by pamd_systemd
+pamd_systemd が設定する環境変数にアクセスできない場合
 --------------------------------------------------------------
 
-For most Linux distributions using ``systemd`` as their init, the default
-methods used by ``become`` do not open a new "session", in the sense of
-systemd. Because the ``pam_systemd`` module will not fully initialize a new
-session, you might have surprises compared to a normal session opened through
-ssh: some environment variables set by ``pam_systemd``, most notably
-``XDG_RUNTIME_DIR``, are not populated for the new user and instead inherited
-or just emptied.
+``systemd`` を init として使用するほとんどの Linux ディストリビューションでは、
+systemd の意味で、``become`` が使用するデフォルトのメソッドは、
+新しい「セッション」を開きません。``pam_systemd`` モジュールは新規セッションを完全に初期化しないため、
+ssh を介して開かれた通常のセッションと比較すると驚くかもしれません。
+``pam_systemd`` が設定する環境変数、
+特に ``xdg_RUNTIME_DIR`` は、新しいユーザー用に設定されず、
+継承されるか空になります。
 
-This might cause trouble when trying to invoke systemd commands that depend on
-``XDG_RUNTIME_DIR`` to access the bus:
+``XDG_RUNTIME_DIR`` に依存する systemd コマンドを呼び出してバスにアクセスしようとすると、
+問題が発生する可能性があります。
 
 .. code-block:: console
 
@@ -220,30 +220,30 @@ This might cause trouble when trying to invoke systemd commands that depend on
    $ systemctl --user status
    Failed to connect to bus: Permission denied
 
-To force ``become`` to open a new systemd session that goes through
-``pam_systemd``, you can use ``become_method: machinectl``.
+``pam_systemd`` を経由する新規 systemd セッションを開くように ``become`` 強制するには、
+``become_method: machinectl`` を使用できます。
 
-For more information, see `this systemd issue
-<https://github.com/systemd/systemd/issues/825#issuecomment-127917622>`_.
+詳細は、「`この systemd の問題
+<https://github.com/systemd/systemd/issues/825#issuecomment-127917622>`_」を参照してください。
 
 .. _become_network:
 
-Become and network automation
+become およびネットワーク自動化
 =============================
 
-As of version 2.6, Ansible supports ``become`` for privilege escalation (entering ``enable`` mode or privileged EXEC mode) on all :ref:`Ansible-maintained platforms<network_supported>` that support ``enable`` mode. Using ``become`` replaces the ``authorize`` and ``auth_pass`` options in a ``provider`` dictionary.
+バージョン 2.6 では、Ansible は、``enable`` モードに対応するすべての :ref:`Ansible 管理プラットフォーム <network_supported>` で、特権昇格に対して ``become`` をサポートします (``enable`` モードまたは特権が付いた EXEC モードに入ります)。``become`` を使用すると、``provider`` ディクショナリーの ``authorize`` オプションおよび ``auth_pass`` オプションが置き換えられます。
 
-You must set the connection type to either ``connection: network_cli`` or ``connection: httpapi`` to use ``become`` for privilege escalation on network devices. Check the :ref:`platform_options` and :ref:`network_modules` documentation for details.
+接続の種類を ``connection: network_cli`` または ``connection: httpapi`` のいずれかに設定し、ネットワークデバイスの権限昇格に ``become`` を使用する必要があります。詳細は、:ref:`platform_options` および :ref:`network_modules` のドキュメントを参照してください。
 
-You can use escalated privileges on only the specific tasks that need them, on an entire play, or on all plays. Adding ``become: yes`` and ``become_method: enable`` instructs Ansible to enter ``enable`` mode before executing the task, play, or playbook where those parameters are set.
+昇格した権限は、それを必要とする特定のタスクのみ、またはプレイ全体でのみ、またはすべてのプレイで使用することができます。``become: yes`` および ``become_method: enable`` は、パラメーターが設定されるタスク、プレイ、または Playbook を実行する前に Ansible に ``enable`` モードに入るように指示します。
 
-If you see this error message, the task that generated it requires ``enable`` mode to succeed:
+このエラーメッセージが表示される場合は、エラーメッセージを生成したタスクを成功させるには、``enable`` モードが必要があります。
 
 .. code-block:: console
 
    Invalid input (privileged mode required)
 
-To set ``enable`` mode for a specific task, add ``become`` at the task level:
+特定のタスクに ``enable`` モードを設定するには、タスクレベルで ``become`` を追加します。
 
 .. code-block:: yaml
 
@@ -254,7 +254,7 @@ To set ``enable`` mode for a specific task, add ``become`` at the task level:
      become: yes
      become_method: enable
 
-To set enable mode for all tasks in a single play, add ``become`` at the play level:
+1 つのプレイのすべてのタスクに enable モードを設定するには、プレイレベルに ``become`` を追加します。
 
 .. code-block:: yaml
 
@@ -267,10 +267,10 @@ To set enable mode for all tasks in a single play, add ``become`` at the play le
            gather_subset:
              - "!hardware"
 
-Setting enable mode for all tasks
+すべてのタスクに enable モードの設定
 ---------------------------------
 
-Often you wish for all tasks in all plays to run using privilege mode, that is best achieved by using ``group_vars``:
+多くの場合は、すべてのプレイのすべてのタスクで特権モードを使用したいと考えることがあります。これには、``group_vars`` を使用することが最適です。
 
 **group_vars/eos.yml**
 
@@ -282,22 +282,22 @@ Often you wish for all tasks in all plays to run using privilege mode, that is b
    ansible_become: yes
    ansible_become_method: enable
 
-Passwords for enable mode
+enable モードのパスワード
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you need a password to enter ``enable`` mode, you can specify it in one of two ways:
+``enable`` モードに入るパスワードが必要な場合は、以下のいずれかの方法で指定できます。
 
-* providing the :option:`--ask-become-pass <ansible-playbook --ask-become-pass>` command line option
-* setting the ``ansible_become_password`` connection variable
+* :option:`--ask-become-pass <ansible-playbook --ask-become-pass>` コマンドラインオプションの指定
+* ``ansible_become_password`` 接続変数の設定
 
 .. warning::
 
-   As a reminder passwords should never be stored in plain text. For information on encrypting your passwords and other secrets with Ansible Vault, see :ref:`vault`.
+   通知パスワードは平文で保存しないでください。Ansible Vault でパスワードやその他の秘密を暗号化する方法は、「:ref:`vault`」を参照してください。
 
-authorize and auth_pass
+authorize および auth_pass
 -----------------------
 
-Ansible still supports ``enable`` mode with ``connection: local`` for legacy network playbooks. To enter ``enable`` mode with ``connection: local``, use the module options ``authorize`` and ``auth_pass``:
+Ansible は、引き続き ``connection: local`` (従来のネットワーク Playbook 用) による ``enable`` モードをサポートします。``connection: local`` で ``enable`` モードにするには、モジュールオプション ``authorize`` および ``auth_pass`` を使用します。
 
 .. code-block:: yaml
 
@@ -312,47 +312,47 @@ Ansible still supports ``enable`` mode with ``connection: local`` for legacy net
            authorize: yes
            auth_pass: " {{ secret_auth_pass }}"
 
-We recommend updating your playbooks to use ``become`` for network-device ``enable`` mode consistently. The use of ``authorize`` and of ``provider`` dictionaries will be deprecated in future. Check the :ref:`platform_options` and :ref:`network_modules` documentation for details.
+ネットワークデバイスの ``enable`` モードで一貫して ``become`` するように Playbook を更新することが推奨されます。``authorize`` ディクショナリーおよび ``provider`` ディクショナリーの使用は今後非推奨になります。詳細は、:ref:`platform_options` および :ref:`network_modules` のドキュメントを参照してください。
 
 .. _become_windows:
 
-Become and Windows
+Become および Windows
 ==================
 
-Since Ansible 2.3, ``become`` can be used on Windows hosts through the
-``runas`` method. Become on Windows uses the same inventory setup and
-invocation arguments as ``become`` on a non-Windows host, so the setup and
-variable names are the same as what is defined in this document.
+Ansible 2.3 以降、
+``become`` を使用して、``runas`` メソッドを Windows ホスト上で使用できるようになります。Windows の Become は、
+Windows 以外のホストと同じインベントリーセットアップと呼び出し引数を ``become`` として使用するため、
+セットアップ名と変数名は、このドキュメントで定義されているものと同じです。
 
-While ``become`` can be used to assume the identity of another user, there are other uses for
-it with Windows hosts. One important use is to bypass some of the
-limitations that are imposed when running on WinRM, such as constrained network
-delegation or accessing forbidden system calls like the WUA API. You can use
-``become`` with the same user as ``ansible_user`` to bypass these limitations
-and run commands that are not normally accessible in a WinRM session.
+``become`` は、別のユーザー ID の役割を担うために使用できますが、
+Windows ホストでは他にも利用方法があります。重要な用途の 1 つは、
+WinRM での実行時に課せられる制限の一部を回避します 
+(ネットワーク委譲や、WUA API などの禁止システムコールへのアクセスなど)。``become`` を使用して ``ansible_user`` と同じユーザーになると、
+これらの制限を回避し、
+WinRM セッションでは通常アクセスできないコマンドを実行できます。
 
-Administrative rights
+管理者権限
 ---------------------
 
-Many tasks in Windows require administrative privileges to complete. When using
-the ``runas`` become method, Ansible will attempt to run the module with the
-full privileges that are available to the remote user. If it fails to elevate
-the user token, it will continue to use the limited token during execution.
+Windows の多くのタスクを完了するには、管理者権限が必要です。``runas`` になるメソッドを使用すると、
+Ansibleは、
+リモートユーザーが使用できるすべての権限でモジュールを実行しようとします。ユーザートークンの昇格に失敗すると、
+実行中に制限されたトークンを使用し続けます。
 
-A user must have the ``SeDebugPrivilege`` to run a become process with elevated
-privileges. This privilege is assigned to Administrators by default. If the
-debug privilege is not available, the become process will run with a limited
-set of privileges and groups.
+昇格された特権で become プロセスを実行するには、
+ユーザーに ``SeDebugPrivilege`` が必要です。この権限は、デフォルトで管理者に割り当てられます。デバッグ特権が使用できない場合、
+become プロセスは、
+限られた特権とグループのセットで実行します。
 
-To determine the type of token that Ansible was able to get, run the following
-task:
+Ansible が取得できたトークンのタイプを判別するには、
+次のタスクを実行します。
 
 .. code-block:: yaml
 
     - win_whoami:
       become: yes
 
-The output will look something similar to the below:
+出力は以下のようになります。
 
 .. code-block:: ansible-output
 
@@ -439,39 +439,39 @@ The output will look something similar to the below:
         "upn": "vagrant-domain@DOMAIN.LOCAL",
         "user_flags": []
     }
+    
+``label`` キーの下の ``account_name`` エントリーは、
+ユーザーに管理者権限があるかどうかを決定します。返されるラベルと、
+そのラベルが表すものは次のとおりです。
 
-Under the ``label`` key, the ``account_name`` entry determines whether the user
-has Administrative rights. Here are the labels that can be returned and what
-they represent:
+* ``Medium``: Ansible は、昇格したトークンの取得に失敗し、
+  限られたトークンで実行されました。ユーザーに割り当てられた特権のサブセットのみがモジュールの実行中に利用可能であり、
+  ユーザーには管理者権限がありません。
 
-* ``Medium``: Ansible failed to get an elevated token and ran under a limited
-  token. Only a subset of the privileges assigned to user are available during
-  the module execution and the user does not have administrative rights.
+* ``High``: 昇格されたトークンが使用され、
+  ユーザーに割り当てられたすべての特権は、モジュールの実行時に利用できます。
 
-* ``High``: An elevated token was used and all the privileges assigned to the
-  user are available during the module execution.
+* ``System``: ``NT AUTHORITY\System`` アカウントが使用され、
+  権限レベルは、利用可能な中で最も高いものになります。
 
-* ``System``: The ``NT AUTHORITY\System`` account is used and has the highest
-  level of privileges available.
+出力には、
+ユーザーに付与されている特権のリストも表示されます。特権の値が ``無効`` になっている場合、
+特権はログオントークンに割り当てられますが、有効になっていません。ほとんどのシナリオでは、
+これらの特権は必要なときに自動的に有効になります。
 
-The output will also show the list of privileges that have been granted to the
-user. When the privilege value is ``disabled``, the privilege is assigned to
-the logon token but has not been enabled. In most scenarios these privileges
-are automatically enabled when required.
+2.5 よりも古いバージョンの Ansible で実行するか、
+通常の ``runas`` 昇格プロセスが失敗した場合、昇格したトークンは次の方法で取得できます。
 
-If running on a version of Ansible that is older than 2.5 or the normal
-``runas`` escalation process fails, an elevated token can be retrieved by:
+* オペレーティングシステムを完全に制御できる ``System`` に 
+  ``become_user`` を設定します。
 
-* Set the ``become_user`` to ``System`` which has full control over the
-  operating system.
-
-* Grant ``SeTcbPrivilege`` to the user Ansible connects with on
-  WinRM. ``SeTcbPrivilege`` is a high-level privilege that grants
-  full control over the operating system. No user is given this privilege by
-  default, and care should be taken if you grant this privilege to a user or group.
-  For more information on this privilege, please see
-  `Act as part of the operating system <https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/dn221957(v=ws.11)>`_.
-  You can use the below task to set this privilege on a Windows host:
+* WinRM で、
+  Ansible が接続するユーザーに ``SeTcbPrivilege`` を付与します。``SeTcbPrivilege`` は、
+  オペレーティングシステムの完全な制御を許可する高レベルの特権です。デフォルトでは、この特権はユーザーに付与されません。
+  この特権をユーザーまたはグループに付与する場合は注意が必要です。
+  この特権の詳細は、
+  「`Act as part of the operating system <https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/dn221957(v=ws.11)>`_」を参照してください。
+  以下のタスクを使用して、Windows ホストでこの権限を設定できます。
 
   .. code-block:: yaml
 
@@ -481,10 +481,10 @@ If running on a version of Ansible that is older than 2.5 or the normal
         users: '{{ansible_user}}'
         action: add
 
-* Turn UAC off on the host and reboot before trying to become the user. UAC is
-  a security protocol that is designed to run accounts with the
-  ``least privilege`` principle. You can turn UAC off by running the following
-  tasks:
+* ユーザーになる前に、ホストで UAC をオフにし、再起動します。UAC は、
+  ``最小特権`` の原則で、
+  アカウントを実行するように設計されたセキュリティープロトコルです。以下のタスクを実行して、
+  UAC をオフにできます。
 
   .. code-block:: yaml
 
@@ -501,75 +501,75 @@ If running on a version of Ansible that is older than 2.5 or the normal
       win_reboot:
       when: uac_result is changed
 
-.. Note:: Granting the ``SeTcbPrivilege`` or turning UAC off can cause Windows
-    security vulnerabilities and care should be given if these steps are taken.
+.. Note:: ``SeTcbPrivilege`` を付与するか UAC をオフにすると、
+    Windows のセキュリティーの脆弱性が発生する可能性があるため、これらの手順を実行する場合は注意が必要です。
 
-Local service accounts
+ローカルサービスアカウント
 ----------------------
 
-Prior to Ansible version 2.5, ``become`` only worked on Windows with a local or domain
-user account. Local service accounts like ``System`` or ``NetworkService``
-could not be used as ``become_user`` in these older versions. This restriction
-has been lifted since the 2.5 release of Ansible. The three service accounts
-that can be set under ``become_user`` are:
+Ansible バージョン 2.5 より前のバージョンでは、``become`` は、
+ローカルまたはドメインのユーザーアカウントを持つ Windows でのみ有効でした。これらの古いバージョンでは、``System`` や ``NetworkService`` などのローカルサービスアカウントは、
+``become_user`` として使用できませんでした。この制限は、
+Ansible の 2.5 リリース以降、この制限は解除されました。``become_user`` 
+で設定できる 3 つのサービスアカウントは次のとおりです。
 
 * System
 * NetworkService
 * LocalService
 
-Because local service accounts do not have passwords, the
-``ansible_become_password`` parameter is not required and is ignored if
-specified.
+ローカルサービスアカウントにはパスワードがないため、
+``ansible_become_password`` パラメーターは必要ありません。指定しても無視されます。
 
-Become without setting a password
+
+パスワードを設定しない Become
 ---------------------------------
 
-As of Ansible 2.8, ``become`` can be used to become a Windows local or domain account
-without requiring a password for that account. For this method to work, the
-following requirements must be met:
+Ansible 2.8 以降、Windows のローカルアカウントまたはドメインアカウントになるために、
+``become`` が使用できるようになりました。この方法が機能するには、
+次の要件を満たす必要があります。
 
-* The connection user has the ``SeDebugPrivilege`` privilege assigned
-* The connection user is part of the ``BUILTIN\Administrators`` group
-* The ``become_user`` has either the ``SeBatchLogonRight`` or ``SeNetworkLogonRight`` user right
+* 接続ユーザーには ``SeDebugPrivilege`` 権限が割り当てられている
+* 接続ユーザーは ``BUILTIN\Administrators`` グループに属している
+* ``become_user`` に ユーザー権限 ``SeBatchLogonRight`` または ``SeNetworkLogonRight`` がある
 
-Using become without a password is achieved in one of two different methods:
+パスワードなしの become の使用は、2 つの方法のいずれかで可能です。
 
-* Duplicating an existing logon session's token if the account is already logged on
-* Using S4U to generate a logon token that is valid on the remote host only
+* アカウントがすでにログオンしている場合は、既存のログオンセッションのトークンを複製する
+* S4U を使用してリモートホストでのみ有効なログイントークンを生成する
 
-In the first scenario, the become process is spawned from another logon of that
-user account. This could be an existing RDP logon, console logon, but this is
-not guaranteed to occur all the time. This is similar to the
-``Run only when user is logged on`` option for a Scheduled Task.
+最初のシナリオでは、
+become プロセスはその別のログオンから生成されます。これは、既存の RDP ログオン、コンソールログオンの場合がありますが、
+常に発生するとは限りません。これは、スケジュールされたタスクの 
+``Run only when user is logged on`` オプションに似ています。
 
-In the case where another logon of the become account does not exist, S4U is
-used to create a new logon and run the module through that. This is similar to
-the ``Run whether user is logged on or not`` with the ``Do not store password``
-option for a Scheduled Task. In this scenario, the become process will not be
-able to access any network resources like a normal WinRM process.
+become アカウントの別のログオンが存在しない場合は、
+S4U を使用して新しいログオンを作成し、それを介してモジュールを実行します。これは、スケジュールされたタスクの、``Do not store password`` オプションを使用して、
+``ユーザーがログオンしているかどうかにかかわらず実行する`` 
+のと似ています。このシナリオでは、
+become プロセスは通常の WinRM プロセスのようなネットワークリソースにアクセスできません。
 
-To make a distinction between using become with no password and becoming an
-account that has no password make sure to keep ``ansible_become_password`` as
-undefined or set ``ansible_become_password:``.
+パスワードなしで become を使用することと、パスワードがないアカウントになる (become) ことを区別するには、
+``ansible_become_password`` を未定義のままにするか、
+``ansible_become_password:`` を定義します。
 
-.. Note:: Because there are no guarantees an existing token will exist for a
-  user when Ansible runs, there's a high change the become process will only
-  have access to local resources. Use become with a password if the task needs
-  to access network resources
+.. Note:: Ansible の実行時に既存のトークンがユーザーに対して存在するという保証はないため、
+  become プロセスが、
+  ローカルリソースにのみアクセスできるようになるという大きな変化があります。タスクがネットワークリソースにアクセスする必要がある場合は、
+  パスワード付きの become になります。
 
-Accounts without a password
+パスワードのないアカウント
 ---------------------------
 
-.. Warning:: As a general security best practice, you should avoid allowing accounts without passwords.
+.. Warning:: セキュリティーに関する一般的なベストプラクティスとして、パスワードのないアカウントを許可しないでください。
 
-Ansible can be used to become a Windows account that does not have a password (like the
-``Guest`` account). To become an account without a password, set up the
-variables like normal but set ``ansible_become_password: ''``.
+Ansible を使用して、
+パスワードのない Windowsアカウント (``Guest`` アカウントなど) になる (become) ことができます。パスワードなしのアカウントになるには、
+通常どおり変数を設定しますが、``ansible_become_password: "`` を設定します。
 
-Before become can work on an account like this, the local policy
-`Accounts: Limit local account use of blank passwords to console logon only <https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/jj852174(v=ws.11)>`_
-must be disabled. This can either be done through a Group Policy Object (GPO)
-or with this Ansible task:
+このようなアカウントで become を有効にする前に、ローカルポリシー 
+`Accounts:Limit local account use of blank passwords to console logon only <https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/jj852174(v=ws.11)>`_ 
+を無効にする必要があります。これは、
+Group Policy Object (GPO) を介して、またはこの Ansible タスクを使用して実行できます。
 
 .. code-block:: yaml
 
@@ -581,70 +581,70 @@ or with this Ansible task:
        type: dword
        state: present
 
-.. Note:: This is only for accounts that do not have a password. You still need
-    to set the account's password under ``ansible_become_password`` if the
-    become_user has a password.
+.. Note:: これは、パスワードのないアカウント用に限定されます。ただし、
+    become_user にパスワードがある場合は、
+    ``ansible_become_password`` でアカウントのパスワードを設定する必要があります。
 
-Become flags for Windows
+Windows での Become フラグ
 ------------------------
 
-Ansible 2.5 added the ``become_flags`` parameter to the ``runas`` become method.
-This parameter can be set using the ``become_flags`` task directive or set in
-Ansible's configuration using ``ansible_become_flags``. The two valid values
-that are initially supported for this parameter are ``logon_type`` and
-``logon_flags``.
+Ansible 2.5 では、``become_flags`` パラメーターが ``runas`` の become メソッドに追加されています。
+このパラメーターは、``become_flags`` タスクディレクティブを使用して設定するか、
+``ansible_become_flags`` を使用して Ansible の構成で設定できます。このパラメーターで最初にサポートされる 2 つの有効な値は、
+``logon_type`` および 
+``logon_flags`` です。
 
-.. Note:: These flags should only be set when becoming a normal user account, not a local service account like LocalSystem.
+.. Note:: これらのフラグは、LocalSystem などのローカルサービスアカウントではなく、通常のユーザーアカウントになる (become) 場合にのみ設定する必要があります。
 
-The key ``logon_type`` sets the type of logon operation to perform. The value
-can be set to one of the following:
+``logon_type`` キーは、実行するログオン操作のタイプを設定します。値は、
+次のいずれかに設定できます。
 
-* ``interactive``: The default logon type. The process will be run under a
-  context that is the same as when running a process locally. This bypasses all
-  WinRM restrictions and is the recommended method to use.
+* ``interactive``: デフォルトのログオンタイプ。プロセスは、
+  プロセスをローカルで実行する場合と同じコンテキストで実行されます。これは、
+  すべての WinRM 制限を回避するため、推奨される使用方法です。
 
-* ``batch``: Runs the process under a batch context that is similar to a
-  scheduled task with a password set. This should bypass most WinRM
-  restrictions and is useful if the ``become_user`` is not allowed to log on
-  interactively.
+* ``batch``: パスワードが設定されたスケジュール済みタスクに似たバッチコンテキストで
+  プロセスを実行します。これは、ほとんどの WinRM 制限を回避する必要があり、
+  ``become_user`` 
+  が対話的にログオンすることを許可されていない場合に役立ちます。
 
-* ``new_credentials``: Runs under the same credentials as the calling user, but
-  outbound connections are run under the context of the ``become_user`` and
-  ``become_password``, similar to ``runas.exe /netonly``. The ``logon_flags``
-  flag should also be set to ``netcredentials_only``. Use this flag if
-  the process needs to access a network resource (like an SMB share) using a
-  different set of credentials.
+* ``new_credentials``: 呼び出し元ユーザーと同じ認証情報で実行しますが、
+  送信接続は、``become_user`` と ``become_password`` のコンテキストで実行され、
+  ``runas.exe /netonly`` に似ています。``logon_flags`` フラグも、
+  ``netcredentials_only`` に設定できるようにする必要があります。プロセスが、
+  別の認証情報セットを使用してネットワークリソース (SMB 共有など) にアクセスする必要がある場合は、
+  このフラグを使用します。
 
-* ``network``: Runs the process under a network context without any cached
-  credentials. This results in the same type of logon session as running a
-  normal WinRM process without credential delegation, and operates under the same
-  restrictions.
+* ``network``: キャッシュされた認証情報なしで、
+  ネットワークコンテキストでプロセスを実行します。これにより、
+  認証情報の委譲なしで通常の WinRM プロセスを実行するのと同じ種類のログオンセッションが行われ、
+  同じ制限の下で動作します。
 
-* ``network_cleartext``: Like the ``network`` logon type, but instead caches
-  the credentials so it can access network resources. This is the same type of
-  logon session as running a normal WinRM process with credential delegation.
+* ``network_cleartext``: ``network`` ログオンタイプと同様ですが、
+  代わりに認証情報をキャッシュして、ネットワークリソースにアクセスできるようにします。これは、
+  認証情報の委譲を使用して通常の WinRM プロセスを実行するのと同じ種類のログオンセッションです。
 
-For more information, see
-`dwLogonType <https://docs.microsoft.com/en-gb/windows/desktop/api/winbase/nf-winbase-logonusera>`_.
+詳細情報は、
+「`dwLogonType <https://docs.microsoft.com/en-gb/windows/desktop/api/winbase/nf-winbase-logonusera>`_」を参照してください。
 
-The ``logon_flags`` key specifies how Windows will log the user on when creating
-the new process. The value can be set to none or multiple of the following:
+``logon_flags`` キーは、
+新しいプロセスの作成時に Windows がユーザーのログを記録する方法を指定します。値は、以下の複数の値、またはゼロを設定できます。
 
-* ``with_profile``: The default logon flag set. The process will load the
-  user's profile in the ``HKEY_USERS`` registry key to ``HKEY_CURRENT_USER``.
+* ``with_profile``: 設定されているデフォルトのログオンフラグ。プロセスは、
+  ``HKEY_USERS`` レジストリキーのユーザーのプロファイルを、``HKEY_CURRENT_USER`` に読み込みます。
 
-* ``netcredentials_only``: The process will use the same token as the caller
-  but will use the ``become_user`` and ``become_password`` when accessing a remote
-  resource. This is useful in inter-domain scenarios where there is no trust
-  relationship, and should be used with the ``new_credentials`` ``logon_type``.
+* ``netcredentials_only``: プロセスは、呼び出し元と同じトークンを使用しますが、
+  リモートリソースにアクセスするときは、
+  ``become_user`` および ``become_password`` します。これは、信頼関係がないドメイン間シナリオで役に立ち、
+  ``new_credentials`` ``logon_type`` とともに使用する必要があります。
 
-By default ``logon_flags=with_profile`` is set, if the profile should not be
-loaded set ``logon_flags=`` or if the profile should be loaded with
-``netcredentials_only``, set ``logon_flags=with_profile,netcredentials_only``.
+デフォルトでは、``logon_flags=with_profile`` が設定されています。
+プロファイルを読み込まない場合は ``logon_flags=`` を設定します。
+プロファイルを ``netcredentials_only`` で読み込む必要がある場合は、``logon_flags=with_profile,netcredentials_only`` を設定します。
 
-For more information, see `dwLogonFlags <https://docs.microsoft.com/en-gb/windows/desktop/api/winbase/nf-winbase-createprocesswithtokenw>`_.
+詳細は、「`dwLogonFlags <https://docs.microsoft.com/en-gb/windows/desktop/api/winbase/nf-winbase-createprocesswithtokenw>`_」を参照してください。
 
-Here are some examples of how to use ``become_flags`` with Windows tasks:
+Windows タスクで ``become_flags`` を使用する例を以下に示します。
 
 .. code-block:: yaml
 
@@ -671,28 +671,28 @@ Here are some examples of how to use ``become_flags`` with Windows tasks:
     become_flags: logon_flags=
 
 
-Limitations of become on Windows
+Windows における become 制限
 --------------------------------
 
-* Running a task with ``async`` and ``become`` on Windows Server 2008, 2008 R2
-  and Windows 7 only works when using Ansible 2.7 or newer.
+* Windows Server 2008、2008 R2、および Windows 7 で、``async`` および ``become`` でタスクを実行できるのは、
+  Ansible 2.7 以降を使用している場合のみです。
 
-* By default, the become user logs on with an interactive session, so it must
-  have the right to do so on the Windows host. If it does not inherit the
-  ``SeAllowLogOnLocally`` privilege or inherits the ``SeDenyLogOnLocally``
-  privilege, the become process will fail. Either add the privilege or set the
-  ``logon_type`` flag to change the logon type used.
+* デフォルトでは、become ユーザーは対話型セッションでログオンするため、
+  Windows ホストでログオンする権利が必要です。``SeAllowLogOnLocally`` 特権を継承しない場合、
+  または ``SeDenyLogOnLocally`` 特権を継承する場合は、
+  become プロセスでは失敗します。特権を追加するか、``logon_type`` フラグを設定して、
+  使用するログオンタイプを変更します。
 
-* Prior to Ansible version 2.3, become only worked when
-  ``ansible_winrm_transport`` was either ``basic`` or ``credssp``. This
-  restriction has been lifted since the 2.4 release of Ansible for all hosts
-  except Windows Server 2008 (non R2 version).
+* Ansible バージョン 2.3 よりも前のバージョンでは、
+  ``ansible_winrm_transport`` は ``basic`` または ``credssp`` のいずれかでした。この制限は、
+  Ansible 2.4 リリース以降、すべてのホストで解除されました。
+  ただし、Windows Server 2008 (R2 バージョン以外) を除きます。
 
-* The Secondary Logon service ``seclogon`` must be running to use ``ansible_become_method: runas``
+* ``ansible_become_method: runas`` を使用するために、セカンダリーログオンサービス ``seclogon`` が実行する必要があります。
 
 .. seealso::
 
-   `Mailing List <https://groups.google.com/forum/#!forum/ansible-project>`_
-       Questions? Help? Ideas?  Stop by the list on Google Groups
+   `メーリングリスト <https://groups.google.com/forum/#!forum/ansible-project>`_
+       ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `webchat.freenode.net <https://webchat.freenode.net>`_
        #ansible IRC chat channel

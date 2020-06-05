@@ -1,17 +1,17 @@
 .. _playbooks_blocks:
 
-Blocks
+Block
 ======
 
-Blocks allow for logical grouping of tasks and in play error handling. Most of what you can apply to a single task (with the exception of loops) can be applied at the block level, which also makes it much easier to set data or directives common to the tasks. This does not mean the directive affects the block itself, but is inherited by the tasks enclosed by a block. i.e. a `when` will be applied to the tasks, not the block itself.
+Block は、タスクの論理グループおよびプレイのエラー処理を許可します。単一タスク (ループを除く) に適用できるほとんどのタスクはブロックレベルで適用できるため、タスクに共通するデータまたはディレクティブの設定がより簡単になります。これは、ディレクティブがブロック自体に影響を与えるわけではありませんが、ブロックで囲まれたタスクに引き継がれます。つまり、ブロック自体ではなく、タスクに適用される `タイミング` です。
 
 
 .. code-block:: YAML
- :emphasize-lines: 3
- :caption: Block example with named tasks inside the block
+ :emphasize-lines:3
+ :caption: 内部に名前付きタスクを含む block の例
 
   tasks:
-    - name: Install, configure, and start Apache
+    - name:Install, configure, and start Apache
       block:
         - name: install httpd and memcached
           yum:
@@ -28,25 +28,25 @@ Blocks allow for logical grouping of tasks and in play error handling. Most of w
           service:
             name: bar
             state: started
-            enabled: True
+            enabled:True
       when: ansible_facts['distribution'] == 'CentOS'
       become: true
       become_user: root
       ignore_errors: yes
 
-In the example above, each of the 3 tasks will be executed after appending the `when` condition from the block
-and evaluating it in the task's context. Also they inherit the privilege escalation directives enabling "become to root"
-for all the enclosed tasks. Finally, ``ignore_errors: yes`` will continue executing the playbook even if some of the tasks fail.
+上記の例では、3 つの各タスクはブロックから `when` 条件を追加し、
+タスクのコンテキストで評価してから実行されます。また、引用符で囲まれたすべてのタスクに対して、
+特権昇格ディレクティブを継承して「become to root」を有効化します。最後に、``ignore_errors: yes`` は、一部のタスクが失敗しても Playbook の実行を継続します。
 
-Names for tasks within blocks have been available since Ansible 2.3. We recommend using names in all tasks, within blocks or elsewhere, for better visibility into the tasks being executed when you run the playbook.
+ブロック内のタスクの名前は、Ansible 2.3 以降で利用できます。Playbook の実行時に実行するタスクが分かりやすくなるように、ブロック内またはその他のすべてのタスクで名前を使用することが推奨されます。
 
 .. _block_error_handling:
 
-Blocks error handling
+ブロックのエラー処理
 `````````````````````
 
-Blocks also introduce the ability to handle errors in a way similar to exceptions in most programming languages.
-Blocks only deal with 'failed' status of a task. A bad task definition or an unreachable host are not 'rescuable' errors.
+また、ブロックには、ほとんどのプログラミング言語で例外を処理するのと同じような方法でエラーを処理する機能が導入されています。
+ブロックは、タスクの「faileded」ステータスのみを処理します。問題のあるタスク定義または到達不可能なホストは、「復旧可能な可能」エラーではありません。
 
 .. _block_rescue:
 .. code-block:: YAML
@@ -66,9 +66,9 @@ Blocks only deal with 'failed' status of a task. A bad task definition or an unr
       - debug:
           msg: 'I caught an error, can do stuff here to fix it, :-)'
 
-This will 'revert' the failed status of the task for the run and the play will continue as if it had succeeded.
+これにより、実行に失敗したタスクのステータスが「取り消され」、成功したかのように再生が続行されます。
 
-There is also an ``always`` section, that will run no matter what the task status is.
+また、``always`` セクションもあります。これは、タスクのステータスに関係なく実行されます。
 
 .. _block_always:
 .. code-block:: YAML
@@ -87,39 +87,39 @@ There is also an ``always`` section, that will run no matter what the task statu
       - debug:
           msg: "This always executes, :-)"
 
-They can be added all together to do complex error handling.
+これをすべて一緒に追加して、複雑なエラー処理を実行できます。
 
 .. code-block:: YAML
- :emphasize-lines: 2,9,16
- :caption: Block with all sections
+ :emphasize-lines:2,9,16
+ :caption: すべてのセクションのブロック
 
- - name: Attempt and graceful roll back demo
+ - name:Attempt and graceful roll back demo
    block:
      - debug:
-         msg: 'I execute normally'
+         msg:'I execute normally'
      - name: i force a failure
        command: /bin/false
      - debug:
-         msg: 'I never execute, due to the above task failing, :-('
+         msg:'I never execute, due to the above task failing, :-('
    rescue:
      - debug:
-         msg: 'I caught an error'
+         msg:'I caught an error'
      - name: i force a failure in middle of recovery! >:-)
        command: /bin/false
      - debug:
-         msg: 'I also never execute :-('
+         msg:'I also never execute :-('
    always:
      - debug:
-         msg: "This always executes"
+         msg:"This always executes"
 
 
-The tasks in the ``block`` would execute normally, if there is any error the ``rescue`` section would get executed
-with whatever you need to do to recover from the previous error.
-The ``always`` section runs no matter what previous error did or did not occur in the ``block`` and ``rescue`` sections.
-It should be noted that the play continues if a ``rescue`` section completes successfully as it 'erases' the error status (but not the reporting),
-this means it won't trigger ``max_fail_percentage`` nor ``any_errors_fatal`` configurations but will appear in the playbook statistics.
+``rescue`` セクションが実行されたエラーがあると、``block`` のタスクは通常どおり実行されます。
+以前のエラーからの復旧に必要な作業と併用してください。
+``always`` セクションは、``block`` セクションおよび ``rescue`` セクションで前にエラーが発生したかどうかに関わらず実行されます。
+``rescue`` セクションが正常に完了した場合は、エラーステータスが「消去」されるため (報告はされない)、プレイが続行されることに注意してください。
+これは、``max_fail_percentage`` 設定または ``any_errors_fatal`` 設定を発生させませんが、Playbook の統計には表示されることを意味します。
 
-Another example is how to run handlers after an error occurred :
+別の例として、エラーが発生した後にハンドラーを実行する方法があります。
 
 .. code-block:: YAML
  :emphasize-lines: 6,10
@@ -143,23 +143,23 @@ Another example is how to run handlers after an error occurred :
          msg: 'This handler runs even on error'
 
 
-.. versionadded:: 2.1
+バージョン 2.1 における新機能
 
-Ansible also provides a couple of variables for tasks in the ``rescue`` portion of a block:
+また、Ansible は、ブロックの ``rescue`` 部分にタスクの変数をいくつか提供します。
 
 ansible_failed_task
-    The task that returned 'failed' and triggered the rescue. For example, to get the name use ``ansible_failed_task.name``.
+    「failed」を返してレスキューを発生させたタスク。たとえば、名前を取得するには、``ansible_failed_task.name`` を使用します。
 
 ansible_failed_result
-    The captured return result of the failed task that triggered the rescue. This would equate to having used this var in the ``register`` keyword.
+    rescue を発生させた、失敗したタスクの戻り値。これは、``register`` キーワードでこの変数を使用するのと同じです。
 
 .. seealso::
 
    :ref:`playbooks_intro`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_reuse_roles`
-       Playbook organization by roles
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       ロール別の Playbook の組織
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

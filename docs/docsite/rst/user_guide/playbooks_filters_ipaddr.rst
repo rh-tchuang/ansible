@@ -2,48 +2,48 @@
 
 .. _playbooks_filters_ipaddr:
 
-ipaddr filter
+ipaddr フィルター
 `````````````
 
-.. versionadded:: 1.9
+バージョン 1.9 における新機能
 
-``ipaddr()`` is a Jinja2 filter designed to provide an interface to the `netaddr`_
-Python package from within Ansible. It can operate on strings or lists of
-items, test various data to check if they are valid IP addresses, and manipulate
-the input data to extract requested information. ``ipaddr()`` works with both
-IPv4 and IPv6 addresses in various forms. There are also additional functions
-available to manipulate IP subnets and MAC addresses.
+``ipaddr()`` は、Ansible 内から Python パッケージ `netaddr`_ へ、
+インターフェースを提供するように設計された Jinja2 フィルターです。文字列やアイテムのリストを操作したり、
+さまざまなデータをテストして有効な IP アドレスかどうかを確認したり、入力データを操作して要求された情報を抽出したりできます。
+``ipaddr()`` は、
+さまざまな形式の IPv4 アドレスと IPv6 アドレスの両方で機能します。IP サブネットと MAC アドレスを操作するために
+使用できる追加機能もあります。
 
-To use this filter in Ansible, you need to install the `netaddr`_ Python library on
-a computer on which you use Ansible (it is not required on remote hosts).
-It can usually be installed with either your system package manager or using
-``pip``::
+このフィルターを Ansible で使用するには、Ansible を使用するコンピューターに Python ライブラリー `netaddr`_ 
+をインストールする必要があります (リモートホストでは必要ありません)。
+これは通常、
+システムパッケージマネージャーまたは ``pip`` を使用してインストールできます::
 
     pip install netaddr
 
 .. _netaddr: https://pypi.org/project/netaddr/
 
-.. contents:: Topics
+.. contents:: トピック
    :local:
    :depth: 2
    :backlinks: top
 
-Basic tests
+基本的なテスト
 ^^^^^^^^^^^
 
-``ipaddr()`` is designed to return the input value if a query is True, and
-``False`` if a query is False. This way it can be easily used in chained
-filters. To use the filter, pass a string to it:
+``ipaddr()`` は、クエリーが True の場合は入力値を返し、
+False の場合は ``False`` を返すように設計されています。このように、
+連鎖フィルターで簡単に使用できます。フィルターを使用する場合は、文字列をフィルターに渡します。
 
 .. code-block:: none
 
     {{ '192.0.2.0' | ipaddr }}
 
-You can also pass the values as variables::
+変数として値を渡すこともできます。
 
     {{ myvar | ipaddr }}
 
-Here are some example test results of various input strings::
+以下は、さまざまな入力文字列のテスト結果の例です。
 
     # These values are valid IP addresses or network ranges
     '192.168.0.1'       -> 192.168.0.1
@@ -61,18 +61,18 @@ Here are some example test results of various input strings::
     ':'                 -> False
     'fe80:/10'          -> False
 
-Sometimes you need either IPv4 or IPv6 addresses. To filter only for a particular
-type, ``ipaddr()`` filter has two "aliases", ``ipv4()`` and ``ipv6()``.
+IPv4 アドレスまたは IPv6 アドレスのいずれかが必要になる場合があります。特定のタイプのみを絞り込むには、
+``ipaddr()`` フィルターには、``ipv4()`` と ``ipv6()`` の 2 つの「エイリアス」があります。
 
-Example use of an IPv4 filter::
+IPv4 フィルターの使用例:
 
     {{ myvar | ipv4 }}
 
-A similar example of an IPv6 filter::
+同様の、IPv6 フィルターの使用例::
 
     {{ myvar | ipv6 }}
 
-Here's some example test results to look for IPv4 addresses::
+以下は、IPv4 アドレスを検索するテスト結果の例です。
 
     '192.168.0.1'       -> 192.168.0.1
     '192.168.32.0/24'   -> 192.168.32.0/24
@@ -80,7 +80,7 @@ Here's some example test results to look for IPv4 addresses::
     45443646733         -> False
     '523454/24'         -> 0.7.252.190/24
 
-And the same data filtered for IPv6 addresses::
+IPv6 アドレスにフィルターが設定されたデータ::
 
     '192.168.0.1'       -> False
     '192.168.32.0/24'   -> False
@@ -89,11 +89,11 @@ And the same data filtered for IPv6 addresses::
     '523454/24'         -> False
 
 
-Filtering lists
+リストへのフィルター設定
 ^^^^^^^^^^^^^^^
 
-You can filter entire lists - ``ipaddr()`` will return a list with values
-valid for a particular query::
+リスト全体に絞り込むことができます。``ipaddr()`` は、
+特定のクエリーに有効な値を含むリストを返します::
 
     # Example list of values
     test_list = ['192.24.2.1', 'host.fqdn', '::1', '192.168.32.0/24', 'fe80::100/10', True, '', '42540766412265424405338506004571095040/64']
@@ -106,101 +106,101 @@ valid for a particular query::
 
     # {{ test_list | ipv6 }}
     ['::1', 'fe80::100/10', '2001:db8:32c:faad::/64']
+    
 
-
-Wrapping IPv6 addresses in [ ] brackets
+[ ] 括弧で IPv6 アドレスのラッピング
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Some configuration files require IPv6 addresses to be "wrapped" in square
-brackets (``[ ]``). To accomplish that, you can use the ``ipwrap()`` filter. It
-will wrap all IPv6 addresses and leave any other strings intact::
+一部の設定ファイルでは、
+IPv6 アドレスを角括弧 (``[ ]``) で「ラップする」必要があります。これを実行するには、``ipwrap()`` フィルターを使用できます。すべての IPv6 アドレスをラップし、
+その他の文字列をそのまま残します。
 
     # {{ test_list | ipwrap }}
     ['192.24.2.1', 'host.fqdn', '[::1]', '192.168.32.0/24', '[fe80::100]/10', True, '', '[2001:db8:32c:faad::]/64']
-
-As you can see, ``ipwrap()`` did not filter out non-IP address values, which is
-usually what you want when for example you are mixing IP addresses with
-hostnames. If you still want to filter out all non-IP address values, you can
-chain both filters together::
+    
+上記のとおり、``ipwrap()`` は非 IP アドレス値をフィルタリングしませんでした。
+これは、たとえば、
+通常、IP アドレスとホスト名を混在させる場合に必要な値です。それでもすべての非 IP アドレス値をフィルターで除外する場合は、
+両方のフィルターを連結できます。
 
     # {{ test_list | ipaddr | ipwrap }}
     ['192.24.2.1', '[::1]', '192.168.32.0/24', '[fe80::100]/10', '[2001:db8:32c:faad::]/64']
+    
 
-
-Basic queries
+基本クエリー
 ^^^^^^^^^^^^^
 
-You can provide a single argument to each ``ipaddr()`` filter. The filter will then
-treat it as a query and return values modified by that query. Lists will
-contain only values that you are querying for.
+各 ``ipaddr()`` フィルターに引数を 1 つ指定できます。その後、フィルターはそれをクエリーとして扱い、
+そのクエリーによって変更された値を返します。リストには、
+クエリーする値のみが含まれます。
 
-Types of queries include:
+クエリーの種類は次のとおりです。
 
-- query by name: ``ipaddr('address')``, ``ipv4('network')``;
-- query by CIDR range: ``ipaddr('192.168.0.0/24')``, ``ipv6('2001:db8::/32')``;
-- query by index number: ``ipaddr('1')``, ``ipaddr('-1')``;
+- 名前によるクエリー: ``ipaddr('address')``、``ipv4('network')``
+- CIDR 範囲によるクエリー: ``ipaddr('192.168.0.0/24')``、``ipv6('2001:db8::/32')``
+- インデックス番号によるクエリー: ``ipaddr('1')``、``ipaddr('-1')``
 
-If a query type is not recognized, Ansible will raise an error.
+クエリータイプが認識されないと、Ansible はエラーを発生させます。
 
 
-Getting information about hosts and networks
+ホストおよびネットワークに関する情報の取得
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Here's our test list again::
+ここでは、テストリストを再度使用します。
 
     # Example list of values
     test_list = ['192.24.2.1', 'host.fqdn', '::1', '192.168.32.0/24', 'fe80::100/10', True, '', '42540766412265424405338506004571095040/64']
-
-Let's take the list above and get only those elements that are host IP addresses
-and not network ranges::
+    
+上記のリストを使用して、
+ネットワーク範囲ではなくホストの IP アドレスである要素のみを取得してみましょう。
 
     # {{ test_list | ipaddr('address') }}
     ['192.24.2.1', '::1', 'fe80::100']
-
-As you can see, even though some values had a host address with a CIDR prefix,
-they were dropped by the filter. If you want host IP addresses with their correct
-CIDR prefixes (as is common with IPv6 addressing), you can use the
-``ipaddr('host')`` filter::
+    
+上記のとおり、CIDR プレフィックスを持つホストアドレスがある場合でも、
+フィルターによって破棄されました。(IPv6 アドレスでよくあるように) 
+正しい CIDR プレフィックスが付いたホスト IP アドレスが必要な場合は、
+``ipaddr('host')`` フィルターを使用できます。
 
     # {{ test_list | ipaddr('host') }}
     ['192.24.2.1/32', '::1/128', 'fe80::100/10']
-
-Filtering by IP address type also works::
+    
+IP アドレスタイプによるフィルタリングも機能します。
 
     # {{ test_list | ipv4('address') }}
     ['192.24.2.1']
 
     # {{ test_list | ipv6('address') }}
     ['::1', 'fe80::100']
-
-You can check if IP addresses or network ranges are accessible on a public
-Internet, or if they are in private networks::
+    
+IP アドレスまたはネットワーク範囲にパブリックインターネットでアクセスできるかどうか、
+またはプライベートネットワークにあるかどうかを確認できます。
 
     # {{ test_list | ipaddr('public') }}
     ['192.24.2.1', '2001:db8:32c:faad::/64']
 
     # {{ test_list | ipaddr('private') }}
     ['192.168.32.0/24', 'fe80::100/10']
-
-You can check which values are specifically network ranges::
+    
+特定のネットワーク範囲の値を確認できます。
 
     # {{ test_list | ipaddr('net') }}
     ['192.168.32.0/24', '2001:db8:32c:faad::/64']
-
-You can also check how many IP addresses can be in a certain range::
+    
+特定の範囲内にある IP アドレスの数を確認することもできます。
 
     # {{ test_list | ipaddr('net') | ipaddr('size') }}
     [256, 18446744073709551616L]
-
-By specifying a network range as a query, you can check if a given value is in
-that range::
+    
+ネットワーク範囲をクエリーとして指定すると、
+指定の値がその範囲に含まれるかどうかを確認できます。
 
     # {{ test_list | ipaddr('192.0.0.0/8') }}
     ['192.24.2.1', '192.168.32.0/24']
-
-If you specify a positive or negative integer as a query, ``ipaddr()`` will
-treat this as an index and will return the specific IP address from a network
-range, in the 'host/prefix' format::
+    
+正または負の整数をクエリーとして指定すると、``ipaddr()`` はこれをインデックスとして扱い、
+ネットワーク範囲から特定のIPアドレスを
+「host/prefix」形式で返します。
 
     # First IP address (network address)
     # {{ test_list | ipaddr('net') | ipaddr('0') }}
@@ -213,9 +213,9 @@ range, in the 'host/prefix' format::
     # Last IP address (the broadcast address in IPv4 networks)
     # {{ test_list | ipaddr('net') | ipaddr('-1') }}
     ['192.168.32.255/24', '2001:db8:32c:faad:ffff:ffff:ffff:ffff/64']
-
-You can also select IP addresses from a range by their index, from the start or
-end of the range::
+    
+インデックスの範囲、
+その開始または終了までの間にある IP アドレスを選択することもできます::
 
     # Returns from the start of the range
     # {{ test_list | ipaddr('net') | ipaddr('200') }}
@@ -227,26 +227,26 @@ end of the range::
 
     # {{ test_list | ipaddr('net') | ipaddr('400') }}
     ['2001:db8:32c:faad::190/64']
+    
 
-
-Getting information from host/prefix values
+ホスト/プレフィックスの値からの情報の取得
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You frequently use a combination of IP addresses and subnet prefixes
-("CIDR"), this is even more common with IPv6. The ``ipaddr()`` filter can extract
-useful data from these prefixes.
+IP アドレスとサブネットプレフィックス ("CIDR") の組み合わせを頻繁に使用しますが、
+これは IPv6 ではさらに一般的です。``ipaddr()`` フィルターは、
+これらの接頭辞から有用なデータを抽出できます。
 
-Here's an example set of two host prefixes (with some "control" values)::
+以下は、ホストプレフィックス (「制御」の値を含む) の例です。
 
     host_prefix = ['2001:db8:deaf:be11::ef3/64', '192.0.2.48/24', '127.0.0.1', '192.168.0.0/16']
 
-First, let's make sure that we only work with correct host/prefix values, not
-just subnets or single IP addresses::
+まず、サブネットや単一の IP アドレスだけでなく、
+正しいホスト/プレフィックスの値のみを使用するようにします。
 
     # {{ host_prefix | ipaddr('host/prefix') }}
-    ['2001:db8:deaf:be11::ef3/64', '192.0.2.48/24']
-
-In Debian-based systems, the network configuration stored in the ``/etc/network/interfaces`` file uses a combination of IP address, network address, netmask and broadcast address to configure an IPv4 network interface. We can get these values from a single 'host/prefix' combination:
+['2001:db8:deaf:be11::ef3/64', '192.0.2.48/24']
+    
+Debian ベースのシステムでは、``/etc/network/interfaces`` ファイルに保存されているネットワーク設定は、IP アドレス、ネットワークアドレス、ネットマスク、およびブロードキャストアドレスの組み合わせを使用して IPv4 ネットワークインターフェースを設定します。これらの値は、単一の「host/prefix」の組み合わせから取得できます。
 
 .. code-block:: jinja
 
@@ -265,10 +265,10 @@ In Debian-based systems, the network configuration stored in the ``/etc/network/
         netmask   255.255.255.0
         broadcast 192.0.2.255
 
-In the above example, we needed to handle the fact that values were stored in
-a list, which is unusual in IPv4 networks, where only a single IP address can be
-set on an interface. However, IPv6 networks can have multiple IP addresses set
-on an interface::
+上記の例では、値がリストに格納されているという事実を処理する必要がありました。
+これは、
+インターフェイスに 1 つの IP アドレスしか設定できない IPv4 ネットワークでは珍しいことです。ただし、IPv6 ネットワークでは、
+インターフェースに複数の IP アドレスを設定できます。
 
   .. code-block:: jinja
 
@@ -287,38 +287,38 @@ on an interface::
     iface eth0 inet6 static
       address 2001:db8:deaf:be11::ef3/64
 
-If needed, you can extract subnet and prefix information from the 'host/prefix' value::
+必要な場合は、「host/prefix」値からサブネットおよびプレフィックス情報を抽出できます。
 
     # {{ host_prefix | ipaddr('host/prefix') | ipaddr('subnet') }}
     ['2001:db8:deaf:be11::/64', '192.0.2.0/24']
 
     # {{ host_prefix | ipaddr('host/prefix') | ipaddr('prefix') }}
     [64, 24]
-
-Converting subnet masks to CIDR notation
+    
+サブネットマスクの CIDR 表記への変換
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Given a subnet in the form of network address and subnet mask, the ``ipaddr()`` filter can convert it into CIDR notation.  This can be useful for converting Ansible facts gathered about network configuration from subnet masks into CIDR format::
+ネットワークアドレスおよびサブネットマスクの形式でサブネットを指定すると、``ipaddr()`` フィルターは CIDR 表記に変換できます。 これは、ネットワーク設定に関する Ansible ファクトをサブネットマスクから CIDR 形式に変換する際に便利です。
 
     ansible_default_ipv4: {
-        address: "192.168.0.11",
+        address:"192.168.0.11",
         alias: "eth0",
-        broadcast: "192.168.0.255",
-        gateway: "192.168.0.1",
+        broadcast:"192.168.0.255",
+        gateway:"192.168.0.1",
         interface: "eth0",
         macaddress: "fa:16:3e:c4:bd:89",
-        mtu: 1500,
-        netmask: "255.255.255.0",
-        network: "192.168.0.0",
+        mtu:1500,
+        netmask:"255.255.255.0",
+        network:"192.168.0.0",
         type: "ether"
     }
 
-First concatenate the network and netmask::
+最初に、ネットワークとネットマスクを連結します。
 
     net_mask = "{{ ansible_default_ipv4.network }}/{{ ansible_default_ipv4.netmask }}"
     '192.168.0.0/255.255.255.0'
 
-This result can be converted to canonical form with ``ipaddr()`` to produce a subnet in CIDR format::
+これにより、``ipaddr()`` で正則形式に変換して、CIDR 形式でサブネットを生成できます。
 
     # {{ net_mask | ipaddr('prefix') }}
     '24'
@@ -326,59 +326,59 @@ This result can be converted to canonical form with ``ipaddr()`` to produce a su
     # {{ net_mask | ipaddr('net') }}
     '192.168.0.0/24'
 
-Getting information about the network in CIDR notation
+CIDR 表記でのネットワーク情報の取得
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Given an IP address, the ``ipaddr()`` filter can produce the network address in CIDR notation.
-This can be useful when you want to obtain the network address from the IP address in CIDR format.
+IP アドレスを指定すると、``ipaddr()`` フィルターは CIDR 表記でネットワークアドレスを生成することができます。
+これは、CIDR 形式の IP アドレスからネットワークアドレスを取得する場合に便利です。
 
-Here's an example of IP address::
+以下は IP アドレスの例です。
 
     ip_address = "{{ ansible_default_ipv4.address }}/{{ ansible_default_ipv4.netmask }}"
     '192.168.0.11/255.255.255.0'
 
-This can be used to obtain the network address in CIDR notation format::
+これは、CIDR 表記形式でネットワークアドレスを取得するのに使用できます。
 
     # {{ ip_address | ipaddr('network/prefix') }}
     '192.168.0.0/24'
 
-IP address conversion
+IP アドレス変換
 ^^^^^^^^^^^^^^^^^^^^^
 
-Here's our test list again::
+ここでは、テストリストを再度使用します。
 
     # Example list of values
     test_list = ['192.24.2.1', 'host.fqdn', '::1', '192.168.32.0/24', 'fe80::100/10', True, '', '42540766412265424405338506004571095040/64']
-
-You can convert IPv4 addresses into IPv6 addresses::
+    
+IPv4 アドレスを IPv6 アドレスに変換できます。
 
     # {{ test_list | ipv4('ipv6') }}
     ['::ffff:192.24.2.1/128', '::ffff:192.168.32.0/120']
-
-Converting from IPv6 to IPv4 works very rarely::
+    
+IPv6 から IPv4 への変換はほとんど機能しません。
 
     # {{ test_list | ipv6('ipv4') }}
     ['0.0.0.1/32']
-
-But we can make a double conversion if needed::
+    
+ただし、必要に応じて二重変換を行うことができます。
 
     # {{ test_list | ipaddr('ipv6') | ipaddr('ipv4') }}
     ['192.24.2.1/32', '0.0.0.1/32', '192.168.32.0/24']
-
-You can convert IP addresses to integers, the same way that you can convert
-integers into IP addresses::
+    
+整数を IP アドレスに変換するのと同じ方法で、
+IP アドレスを整数に変換できます。
 
     # {{ test_list | ipaddr('address') | ipaddr('int') }}
     [3222798849, 1, '3232243712/24', '338288524927261089654018896841347694848/10', '42540766412265424405338506004571095040/64']
-
-You can convert IPv4 address to `Hexadecimal notation <https://en.wikipedia.org/wiki/Hexadecimal>`_ with optional delimiter::
+    
+任意の区切り文字を使用して、IPv4 アドレスを `16 進表記 <https://en.wikipedia.org/wiki/Hexadecimal>`_ に変換できます。
 
     # {{ '192.168.1.5' | ip4_hex }}
     c0a80105
     # {{ '192.168.1.5' | ip4_hex(':') }}
     c0:a8:01:05
 
-You can convert IP addresses to PTR records::
+IP アドレスを PTR レコードに変換できます。
 
     # {% for address in test_list | ipaddr %}
     # {{ address | ipaddr('revdns') }}
@@ -390,59 +390,59 @@ You can convert IP addresses to PTR records::
     0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.d.a.a.f.c.2.3.0.8.b.d.0.1.0.0.2.ip6.arpa.
 
 
-Converting IPv4 address to a 6to4 address
+IPv4 アドレスの 6 から 4 アドレスへの変換
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A `6to4`_ tunnel is a way to access the IPv6 Internet from an IPv4-only network. If you
-have a public IPv4 address, you can automatically configure its IPv6
-equivalent in the ``2002::/16`` network range. After conversion you will gain
-access to a ``2002:xxxx:xxxx::/48`` subnet which could be split into 65535
-``/64`` subnets if needed.
+`6to4`_ トンネルは、IPv4 のみのネットワークから IPv6 インターネットにアクセスする方法です。パブリック
+IPv4 アドレスがある場合は、
+``2002::/16`` ネットワーク範囲で、IPv6 に相当するものを自動的に構成できます。変換したら、
+``2002:xxxx:xxxx::/48`` サブネットにアクセスできます 
+(必要に応じて 65535``/64`` サブネットに分割できます)。
 
-To convert your IPv4 address, just send it through the ``'6to4'`` filter. It will
-be automatically converted to a router address (with a ``::1/48`` host address)::
+IPv4 アドレスを変換するには、単に ``'6to4'`` フィルターを介してこれを送信します。これは、
+自動的にルーターアドレスに変換されます (``::1/48`` ホストアドレスを使用)。
 
     # {{ '193.0.2.0' | ipaddr('6to4') }}
     2002:c100:0200::1/48
 
 .. _6to4: https://en.wikipedia.org/wiki/6to4
 
-Finding IP addresses within a range
+範囲内の IP アドレスの検索
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To find usable IP addresses within an IP range, try these ``ipaddr`` filters:
+IP 範囲内で使用可能な IP アドレスを見つけるには、以下の ``ipaddr`` フィルターを試行します。
 
-To find the next usable IP address in a range, use ``next_usable`` ::
+範囲内の次の使用可能な IP アドレスを見つけるには、``next_usable`` を使用します::
 
     # {{ '192.168.122.1/24' | ipaddr('next_usable') }}
     192.168.122.2
 
-To find the last usable IP address from a range, use ``last_usable``::
+範囲から最後の使用可能な IP アドレスを見つけるには、``last_usable`` を使用します::
 
     # {{ '192.168.122.1/24' | ipaddr('last_usable') }}
     192.168.122.254
 
-To find the available range of IP addresses from the given network address, use ``range_usable``::
+指定したネットワークアドレスから利用可能な IP アドレスの範囲を検索するには、``range_usable`` を使用します。
 
     # {{ '192.168.122.1/24' | ipaddr('range_usable') }}
     192.168.122.1-192.168.122.254
 
-To find the next nth usable IP address within a range, use ``next_nth_usable``::
+範囲内で nth が使用可能な次の IP アドレスを見つけるには、``next_nth_usable`` を使用します。
 
     # {{ '192.168.122.1/24' | next_nth_usable(2) }}
     192.168.122.3
 
-In this example, ``next_nth_usable`` returns the second usable IP address for the given IP range.
+この例では、``next_nth_usable`` は、指定された IP 範囲で使用可能な 2 番目の IP アドレスを返します。
 
 
-IP Math
+IP 計算
 ^^^^^^^
 
-.. versionadded:: 2.7
+バージョン 2.7 における新機能
 
-The ``ipmath()`` filter can be used to do simple IP math/arithmetic.
+``ipmath()`` フィルターは、単純な IP 計算/演算をするのに使用できます。
 
-Here are a few simple examples::
+以下は簡単な例です。
 
     # {{ '192.168.1.5' | ipmath(5) }}
     192.168.1.10
@@ -467,19 +467,19 @@ Here are a few simple examples::
 
 
 
-Subnet manipulation
+サブネット操作
 ^^^^^^^^^^^^^^^^^^^
 
-The ``ipsubnet()`` filter can be used to manipulate network subnets in several ways.
+``ipsubnet()`` フィルターは、さまざまな方法でネットワークサブネットを操作するために使用できます。
 
-Here is an example IP address and subnet::
+IP アドレスとサブネットの例を以下に示します。
 
     address = '192.168.144.5'
     subnet  = '192.168.0.0/16'
 
-To check if a given string is a subnet, pass it through the filter without any
-arguments. If the given string is an IP address, it will be converted into
-a subnet::
+特定の文字列がサブネットであるかどうかを確認するには、
+引数なしでフィルターを通過させます。指定の文字列が IP アドレスである場合は、
+サブネットに変換されます::
 
     # {{ address | ipsubnet }}
     192.168.144.5/32
@@ -487,15 +487,15 @@ a subnet::
     # {{ subnet | ipsubnet }}
     192.168.0.0/16
 
-If you specify a subnet size as the first parameter of the  ``ipsubnet()`` filter, and
-the subnet size is **smaller than the current one**, you will get the number of subnets
-a given subnet can be split into::
+``ipsubnet()`` フィルターの最初のパラメーターとしてサブネットサイズを指定し、
+サブネットのサイズが **現在のものよりも小さい場合** に指定して、
+特定のサブネットを分割できるサブネットの数を取得します。
 
     # {{ subnet | ipsubnet(20) }}
     16
 
-The second argument of the ``ipsubnet()`` filter is an index number; by specifying it
-you can get a new subnet with the specified size::
+``ipsubnet()`` フィルターの 2 番目の引数はインデックス番号です。
+これを指定すると、指定したサイズの新しいサブネットを取得できます::
 
     # First subnet
     # {{ subnet | ipsubnet(20, 0) }}
@@ -513,15 +513,15 @@ you can get a new subnet with the specified size::
     # {{ subnet | ipsubnet(20, -5) }}
     192.168.176.0/20
 
-If you specify an IP address instead of a subnet, and give a subnet size as
-the first argument, the ``ipsubnet()`` filter will instead return the biggest subnet that
-contains that given IP address::
+サブネットの代わりに IP アドレスを指定し、最初の引数としてサブネットサイズを指定すると、
+``ipsubnet()`` フィルターは、
+代わりに、指定した IP アドレスを含む最大のサブネットを返します。
 
     # {{ address | ipsubnet(20) }}
     192.168.144.0/20
 
-By specifying an index number as a second argument, you can select smaller and
-smaller subnets::
+インデックス番号を 2 番目の引数として指定することにより、
+より小さなサブネットを選択できます::
 
     # First subnet
     # {{ address | ipsubnet(18, 0) }}
@@ -539,8 +539,8 @@ smaller subnets::
     # {{ address | ipsubnet(18, -5) }}
     192.168.144.0/27
 
-By specifying another subnet as a second argument, if the second subnet includes
-the first, you can determine the rank of the first subnet in the second ::
+別のサブネットを 2 番目の引数として指定すると、
+2 番目のサブネットに最初のサブネットが含まれる場合は、2 番目のサブネットの最初のサブネットのランクを指定できます::
 
     # The rank of the IP in the subnet (the IP is the 36870nth /32 of the subnet)
     # {{ address | ipsubnet(subnet) }}
@@ -558,27 +558,27 @@ the first, you can determine the rank of the first subnet in the second ::
     # {{ '192.168.144.16/30' | ipsubnet('192.168.144.0/24') }}
     5
 
-If the second subnet doesn't include the first subnet, the ``ipsubnet()`` filter raises an error.
+2 番目のサブネットに最初のサブネットが含まれていない場合には、``ipsubnet()`` フィルターによりエラーが発生します。
 
 
-You can use the ``ipsubnet()`` filter with the ``ipaddr()`` filter to, for example, split
-a given ``/48`` prefix into smaller ``/64`` subnets::
+``ipaddr()`` フィルターと一緒に ``ipsubnet()`` フィルターを使用できます。
+たとえば、``/48`` プレフィックスをより小さい ``/64`` サブネットに分割できます。
 
     # {{ '193.0.2.0' | ipaddr('6to4') | ipsubnet(64, 58820) | ipaddr('1') }}
     2002:c100:200:e5c4::1/64
 
-Because of the size of IPv6 subnets, iteration over all of them to find the
-correct one may take some time on slower computers, depending on the size
-difference between the subnets.
+IPv6 サブネットのサイズのため、
+サブネット間のサイズの違いによっては、
+低速のコンピューターではすべてのサブネットを繰り返すため、正しいサブネットを見つけるのに時間がかかる場合があります。
 
-Subnet Merging
+サブネットのマージ
 ^^^^^^^^^^^^^^
 
-.. versionadded:: 2.6
+バージョン 2.6 における新機能
 
-The ``cidr_merge()`` filter can be used to merge subnets or individual addresses
-into their minimal representation, collapsing overlapping subnets and merging
-adjacent ones wherever possible::
+``cidr_merge()`` フィルターを使用して、
+サブネットまたは個々のアドレスを最小限の表現にマージし、
+重複するサブネットを折りたたみ、可能な限り隣接するサブネットをマージできます。
 
     {{ ['192.168.0.0/17', '192.168.128.0/17', '192.168.128.1' ] | cidr_merge }}
     # => ['192.168.0.0/16']
@@ -586,8 +586,8 @@ adjacent ones wherever possible::
     {{ ['192.168.0.0/24', '192.168.1.0/24', '192.168.3.0/24'] | cidr_merge }}
     # => ['192.168.0.0/23', '192.168.3.0/24']
 
-Changing the action from 'merge' to 'span' will instead return the smallest
-subnet which contains all of the inputs::
+アクションを「マージ」から「スパン」に変更すると、
+代わりにすべての入力を含む最小のサブネットが返されます。
 
     {{ ['192.168.0.0/24', '192.168.3.0/24'] | cidr_merge('span') }}
     # => '192.168.0.0/22'
@@ -595,11 +595,11 @@ subnet which contains all of the inputs::
     {{ ['192.168.1.42', '192.168.42.1'] | cidr_merge('span') }}
     # => '192.168.0.0/18'
 
-MAC address filter
+MAC アドレスフィルター
 ^^^^^^^^^^^^^^^^^^
 
-You can use the ``hwaddr()`` filter to check if a given string is a MAC address or
-convert it between various formats. Examples::
+``hwaddr()`` フィルターを使用して、
+特定の文字列が MAC アドレスであるかどうかを確認したり、さまざまな形式に変換したりできます。例::
 
     # Example MAC address
     macaddress = '1a:2b:3c:4d:5e:6f'
@@ -616,33 +616,33 @@ convert it between various formats. Examples::
     # {{ macaddress | hwaddr('cisco') }}
     1a2b.3c4d.5e6f
 
-The supported formats result in the following conversions for the ``1a:2b:3c:4d:5e:6f`` MAC address::
+サポートされる形式により、以下の変換で、MAC アドレス ``1a:2b:3c:4d:5e:6f`` が作成されます。
 
-    bare: 1A2B3C4D5E6F
-    bool: True
-    int: 28772997619311
-    cisco: 1a2b.3c4d.5e6f
-    eui48 or win: 1A-2B-3C-4D-5E-6F
-    linux or unix: 1a:2b:3c:4d:5e:6f:
-    pgsql, postgresql, or psql: 1a2b3c:4d5e6f
+    bare:1A2B3C4D5E6F
+    bool:True
+    int:28772997619311
+    cisco:1a2b.3c4d.5e6f
+    eui48 or win:1A-2B-3C-4D-5E-6F
+    linux or unix:1a:2b:3c:4d:5e:6f:
+    pgsql, postgresql, or psql:1a2b3c:4d5e6f
 
 .. seealso::
 
    :ref:`about_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_filters`
-       Introduction to Jinja2 filters and their uses
+       Jinja2 フィルターの概要およびその用途
    :ref:`playbooks_conditionals`
-       Conditional statements in playbooks
+       Playbook の条件付きステートメント
    :ref:`playbooks_variables`
-       All about variables
+       変数の詳細
    :ref:`playbooks_loops`
-       Looping in playbooks
+       Playbook でのループ
    :ref:`playbooks_reuse_roles`
-       Playbook organization by roles
+       ロール別の Playbook の組織
    :ref:`playbooks_best_practices`
-       Best practices in playbooks
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Playbook のベストプラクティス
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

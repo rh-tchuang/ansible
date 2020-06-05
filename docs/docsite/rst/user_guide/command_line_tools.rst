@@ -1,10 +1,10 @@
 .. _command_line_tools:
 
-Working with command line tools
+コマンドラインツールの使用
 ===============================
 
-Most users are familiar with `ansible` and `ansible-playbook`, but those are not the only utilities Ansible provides.
-Below is a complete list of Ansible utilities. Each page contains a description of the utility and a listing of supported parameters.
+ほとんどのユーザーは、`ansible` および `ansible-playbook` に精通していますが、Ansible が提供するユーティリティーは他にもあります。
+以下は、Ansible ユーティリティーの完全なリストです。各ページで、ユーティリティーの説明とサポートされているパラメータの一覧が紹介されています。
 
 .. toctree::
    :maxdepth: 1

@@ -1,43 +1,43 @@
 :orphan:
 
 ***********************
-Search paths in Ansible
+Ansible でパスの検索
 ***********************
 
-Absolute paths are not an issue as they always have a known start, but relative paths ... well, they are relative.
+絶対パスは常に既知の開始点があるため問題ではありません、相対パス ... は相対的な地点を指しているため、問題になります。
 
-Config paths
+設定パス
 ============
 
-By default these should be relative to the config file, some are specifically relative to the 'cwd' or the playbook and should have this noted in their description. Things like ssh keys are left to use 'cwd' because it mirrors how the underlying tools would use it.
+デフォルトでは、設定パスは設定ファイルに対して相対的である必要があります。一部のファイルは、「cwd」または Playbook に相対的となるため、説明に記載する必要があります。ssh 鍵は、基礎となるツールによりどのように使用されるかをミラーリングするため、「cwd」を使用するように残されます。
 
 
-Task paths
+タスクパス
 ==========
 
-Here things start getting complicated, there are 2 different scopes to consider, task evaluation (paths are all local, like in lookups) and task execution, which is normally on the remote, unless an action plugin is involved.
+ここから複雑になります。検討すべき 2 つのスコープと、タスク評価 (検索のようにパスはすべてローカル)、およびタスクの実行です。これは通常、アクションプラグインが関与している場合はリモートになります。
 
-Some tasks that require 'local' resources use action plugins (template and copy are examples of these), in which case the path is also local.
+「ローカル」のリソースが必要な一部のタスクでは、アクションプラグイン (テンプレートおよびコピーが例になります) を使用します。この場合、パスはローカルにもなります。
 
-The magic of 'local' paths
+「ローカル」パスのマジック
 --------------------------
 
-Lookups and action plugins both use a special 'search magic' to find things, taking the current play into account, it uses from most specific to most general playbook dir in which a task is contained (this includes roles and includes).
+検索およびアクションプラグインはどちらも特殊な「検索マジック」を使用します。これには現在のプレイが考慮され、タスクが含まれる Playbook ディレクトリー (これにはロールとインクルードを含む) で、より具体的な指定からより一般的な指定が使用されます。
 
-Using this magic, relative paths get attempted first with a 'files|templates|vars' appended (if not already present), depending on action being taken, 'files' is the default. (i.e include_vars will use vars/).  The paths will be searched from most specific to most general (i.e role before play).
-dependent roles WILL be traversed (i.e task is in role2, role2 is a dependency of role1, role2 will be looked at first, then role1, then play).
-i.e ::
+このマジックを使用して、(相対パスがない場合は) 実行されるアクションに応じて、「files|templates|vars」を追加して最初に相対ファイルが試行されます。デフォルトは「files」(つまり、include_vars は vars/ を使用します)。 パスは、指定が具体的なものから一般的なもの (つまりプレイの前にロール) に対して検索されます。
+依存しているロールが調べられます (例: タスクが role2 にあり、role2 は role1 の依存関係で、role2 が最初に調べられ、次に role1、次にプレイが参照されます。
+つまり、以下のようになります)::
 
     role search path is rolename/{files|vars|templates}/, rolename/tasks/.
     play search path is playdir/{files|vars|templates}/, playdir/.
 
 
-The current working directory (cwd) is not searched. If you see it, it just happens to coincide with one of the paths above.
-If you `include` a task file from a role, it  will NOT trigger role behavior, this only happens when running as a role, `include_role` will work.
-A new variable `ansible_search_path` var will have the search path used, in order (but without the appended subdirs). Using 5 "v"s (`-vvvvv`) should show the detail of the search as it happens.
+現在の作業ディレクトリー (cwd) は検索されません。これを確認すると、たまたま上記のパスのいずれかと一致しています。
+ロールからのタスクファイルを `含める` と、ロールの動作がトリガーされません。これは、ロールとして実行された場合にのみ発生します。`include_role` は機能します。
+新しい変数 `ansible_search_path` の値には、検索パス (ただし、追加されたサブディレクトリーはなし) が順番に使用されます。5つ の「v」(`-vvvvv`) を使用すると、検索の詳細が表示されます。
 
-As for includes, they try the path of the included file first and fall back to the play/role that includes them.
+インクルードに関しては、最初にインクルードされたファイルのパスを試し、そのファイルを含むプレイまたはロールにフォールバックします。
 
 
 
-.. note:  The 'cwd' might vary depending on the connection plugin and if the action is local or remote. For the remote it is normally the directory on which the login shell puts the user. For local it is either the directory you executed ansible from or in some cases the playbook directory.
+.. 注記: 「cwd」は、接続プラグインと、アクションがローカルかリモートかによって異なる場合があります。通常、リモートの場合は、ログインシェルがユーザーを配置するディレクトリーになります。ローカルの場合は、ansible を実行したディレクトリーか、場合によっては Playbook ディレクトリーのいずれかになります。

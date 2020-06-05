@@ -1,49 +1,49 @@
 .. _connections:
 
 ******************************
-Connection methods and details
+接続方法と詳細
 ******************************
 
-This section shows you how to expand and refine the connection methods Ansible uses for your inventory.
+このセクションでは、Ansible がインベントリーに使用する接続方法を拡張および改良する方法を示します。
 
-ControlPersist and paramiko
+ControlPersist と paramiko
 ---------------------------
 
-By default, Ansible uses native OpenSSH, because it supports ControlPersist (a performance feature), Kerberos, and options in ``~/.ssh/config`` such as Jump Host setup. If your control machine uses an older version of OpenSSH that does not support ControlPersist, Ansible will fallback to a Python implementation of OpenSSH called 'paramiko'.
+デフォルトでは、Ansible はネイティブの OpenSSH を使用します。これは、ControlPersist (パフォーマンス機能)、Kerberos、および Jump Host 設定などの ``〜/ .ssh / configの`` のオプションをサポートしているためです。ControlPersist をサポートしない OpenSSH の古いバージョンを使用している場合、Ansible は、「paramiko」と呼ばれる OpenSSH の Python 実装にフォールバックします。
 
-SSH key setup
+SSH キーの設定
 -------------
 
-By default, Ansible assumes you are using SSH keys to connect to remote machines.  SSH keys are encouraged, but you can use password authentication if needed with the ``--ask-pass`` option. If you need to provide a password for :ref:`privilege escalation <become>` (sudo, pbrun, etc.), use ``--ask-become-pass``.
+デフォルトでは、Ansible は、SSH 鍵を使用してリモートマシンに接続していると想定します。 SSH 鍵が推奨されますが、必要に応じて ``--ask-pass`` オプションでパスワード認証を使用できます。:ref:`特権昇格 <become>` (sudo、pbrun など) のパスワードを提供する必要がある場合は、``--ask-become-pass`` を使用します。
 
 .. include:: shared_snippets/SSH_password_prompt.txt
 
-To set up SSH agent to avoid retyping passwords, you can do:
+パスワードを再入力しないように SSH エージェントをセットアップするには、次のようにします。
 
 .. code-block:: bash
 
    $ ssh-agent bash
    $ ssh-add ~/.ssh/id_rsa
 
-Depending on your setup, you may wish to use Ansible's ``--private-key`` command line option to specify a pem file instead.  You can also add the private key file:
+セットアップによっては、代わりに Ansible の ``--private-key`` コマンドラインオプションを使用して pem ファイルを指定することもできます。 秘密鍵ファイルを追加することもできます。
 
 .. code-block:: bash
 
    $ ssh-agent bash
    $ ssh-add ~/.ssh/keypair.pem
 
-Another way to add private key files without using ssh-agent is using ``ansible_ssh_private_key_file`` in an inventory file as explained here:  :ref:`intro_inventory`.
+ssh-agent を使用せずに秘密鍵ファイルを追加する別の方法は、:ref:`intro_inventory` で説明するように、インベントリーファイルで ``ansible_ssh_private_key_file`` を使用することです。
 
-Running against localhost
+ローカルホストに対して実行
 -------------------------
 
-You can run commands against the control node by using "localhost" or "127.0.0.1" for the server name:
+サーバー名に「localhost」または「127.0.0.1」を使用して、コントロールノードにコマンドを実行できます。
 
 .. code-block:: bash
 
     $ ansible localhost -m ping -e 'ansible_python_interpreter="/usr/bin/env python"'
 
-You can specify localhost explicitly by adding this to your inventory file:
+これをインベントリーファイルに追加して、localhost を明示的に指定できます。
 
 .. code-block:: bash
 
@@ -51,30 +51,30 @@ You can specify localhost explicitly by adding this to your inventory file:
 
 .. _host_key_checking_on:
 
-Host key checking
+ホストキーの確認
 -----------------
 
-Ansible enables host key checking by default. Checking host keys guards against server spoofing and man-in-the-middle attacks, but it does require some maintenance.
+Ansible は、デフォルトでホストキーチェックを有効にします。ホストキーをチェックすると、サーバーのなりすましや中間者攻撃から保護されますが、メンテナンスが必要です。
 
-If a host is reinstalled and has a different key in 'known_hosts', this will result in an error message until corrected.  If a new host is not in 'known_hosts' your control node may prompt for confirmation of the key, which results in an interactive experience if using Ansible, from say, cron. You might not want this.
+ホストが再インストールされ、「known_hosts」に異なるキーがある場合は、修正されるまでエラーメッセージが表示されます。 新しいホストが「known_hosts」にない場合は、コントロールノードから鍵の確認が求められます。これにより、cron などの Ansible を使用している場合は、相互作用が行われる可能性があります。このように動作しないようにしたい場合があります。
 
-If you understand the implications and wish to disable this behavior, you can do so by editing ``/etc/ansible/ansible.cfg`` or ``~/.ansible.cfg``:
+この動作を無効にした場合の影響を理解し、無効にする場合は、``/etc/ansible/ansible.cfg`` または ``~/.ansible.cfg`` 編集します。
 
 .. code-block:: text
 
     [defaults]
     host_key_checking = False
 
-Alternatively this can be set by the :envvar:`ANSIBLE_HOST_KEY_CHECKING` environment variable:
+また、これは、:envvar:`ANSIBLE_HOST_KEY_CHECKING` 環境変数により設定できます。
 
 .. code-block:: bash
 
     $ export ANSIBLE_HOST_KEY_CHECKING=False
 
-Also note that host key checking in paramiko mode is reasonably slow, therefore switching to 'ssh' is also recommended when using this feature.
+また、paramiko モードでのホストキーチェックはかなり遅いため、この機能を使用する場合は「ssh」に切り替えることも推奨されます。
 
-Other connection methods
+その他の接続方法
 ------------------------
 
-Ansible can use a variety of connection methods beyond SSH. You can select any connection plugin, including managing things locally and managing chroot, lxc, and jail containers.
-A mode called 'ansible-pull' can also invert the system and have systems 'phone home' via scheduled git checkouts to pull configuration directives from a central repository.
+Ansible では、SSH 以外のさまざまな接続方法を使用できます。ローカルでの管理、chroot、lxc、jail コンテナーの管理など、任意の接続プラグインを選択できます。
+「ansible-pull」と呼ばれるモードは、システムを反転させ、予定された git チェックアウトを介してシステムに「phone home」を設定して、中央リポジトリーから設定ディレクティブをプルすることもできます。

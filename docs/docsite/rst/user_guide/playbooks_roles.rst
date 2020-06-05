@@ -1,19 +1,19 @@
 :orphan:
 
-Playbook Roles and Include Statements
+Playbook ロールおよび Include ステートメント
 =====================================
 
-.. contents:: Topics
+.. contents:: トピック
 
 
-The documentation regarding roles and includes for playbooks have moved. Their new location is here: :ref:`playbooks_reuse`. Please update any links you may have made directly to this page.
+Playbook のロールおよび include に関するドキュメントは移動しました。移動先は :ref:`playbooks_reuse` です。このページに直接作成したリンクを更新してください。
 
 .. seealso::
 
    :ref:`ansible_galaxy`
-       How to share roles on galaxy, role management
+       Galaxy (ロール管理) におけるロールの共有方法
    :ref:`working_with_playbooks`
-       Review the basic Playbook language features
+       基本的な Playbook 言語機能を確認します。
    :ref:`playbooks_reuse`
-       Creating reusable Playbooks.
+       再利用可能な Playbook の作成
 

@@ -1,6 +1,6 @@
 .. _playbooks_reuse:
 
-Creating Reusable Playbooks
+再利用可能な Playbook の作成
 ===========================
 
 .. toctree::
@@ -9,82 +9,82 @@ Creating Reusable Playbooks
    playbooks_reuse_includes
    playbooks_reuse_roles
 
-While it is possible to write a playbook in one very large file (and you might start out learning playbooks this way), eventually you'll want to reuse files and start to organize things. In Ansible, there are three ways to do this: includes, imports, and roles.
+非常に大きな 1 つのファイルで Playbook を作成することは可能ですが (この方法で Playbook の学習を開始できます)、最終的にはファイルを再利用し、整理し始めます。Ansible では、これにはインクルード、インポート、およびロールの 3 つの方法があります。
 
-Includes and imports (added in Ansible version 2.4) allow users to break up large playbooks into smaller files, which can be used across multiple parent playbooks or even multiple times within the same Playbook.
+インクルードおよびインポート (Ansible バージョン 2.4 で追加) を使用すると、大規模な Playbook を小さなファイルに分類できます。これは、複数の親 Playbook 全体で使用したり、同じ Playbook 内で複数回使用したりできます。
 
-Roles allow more than just tasks to be packaged together and can include variables, handlers, or even modules and other plugins. Unlike includes and imports, roles can also be uploaded and shared via Ansible Galaxy.
+ロールを使用すると、複数のタスクを一緒にパッケージ化でき、変数、ハンドラー、またはモジュールやその他のプラグインを含めることができます。ロールはインクルードやインポートとは異なり、Ansible Galaxy を使用してアップロードおよび共有することもできます。
 
 .. _dynamic_vs_static:
 
-Dynamic vs. Static
+動的または静的
 ``````````````````
 
-Ansible has two modes of operation for reusable content: dynamic and static.
+Ansible には再利用可能なコンテンツに対する操作モード (動的および静的) があります。
 
-In Ansible 2.0, the concept of *dynamic* includes was introduced. Due to some limitations with making all includes dynamic in this way, the ability to force includes to be *static* was introduced in Ansible 2.1. Because the *include* task became overloaded to encompass both static and dynamic syntaxes, and because the default behavior of an include could change based on other options set on the Task, Ansible 2.4 introduces the concept of ``include`` vs. ``import``.
+Ansible 2.0 では、*動的* のインクルードの概念が導入されました。このようにすべてのインクルードを動的にすることにはいくつかの制限があるため、インクルードを *静的* に強制する機能は Ansible 2.1 で導入されました。*include* タスクは、静的構文と動的構文の両方を包含するため過負荷になるため、またタスクに設定したその他のオプションに基づいて include のデフォルト動作が変更する可能性があるため、Ansible 2.4 では ``include`` と ``import`` の概念が導入されています。
 
-If you use any ``include*`` Task (``include_tasks``, ``include_role``, etc.), it will be *dynamic*.
-If you use any ``import*`` Task (``import_playbook``, ``import_tasks``, etc.), it will be *static*.
+``include*`` タスク (``include_tasks``、``include_role`` など) を使用する場合は、*動的* になります。
+``import*`` タスク (``import_playbook``、``import_tasks`` など) を使用する場合は *静的* になります。
 
-The bare ``include`` task (which was used for both Task files and Playbook-level includes) is still available, however it is now considered *deprecated*.
+最小限の ``include`` タスク (Task ファイルおよび Playbook レベルの両方に使用) は引き続き利用できますが、*非推奨* と見なされています。
 
-Differences Between Dynamic and Static
+動的と静的の相違点
 ``````````````````````````````````````
 
-The two modes of operation are pretty simple:
+操作のモードの 2 つは非常にシンプルです。
 
-* Dynamic includes are processed during runtime at the point in which that task is encountered.
-* Ansible pre-processes all static imports during Playbook parsing time.
+* 動的な include は、そのタスクが発生した時点でランタイム時に処理されます。
+* Ansible は、Playbook の解析時にすべての静的インポートを事前に処理します。
 
-When it comes to Ansible task options like ``tags`` and conditional statements (``when:``):
+``タグ`` や条件付きステートメント (``when:``) などの Ansible タスクオプションが表示されます。
 
-* For dynamic includes, the task options will *only* apply to the dynamic task as it is evaluated, and will not be copied to child tasks.
-* For static imports, the parent task options will be copied to all child tasks contained within the import.
+* 動的 include の場合、タスクオプションは評価される動的タスクに *のみ* 適用され、子タスクにはコピーされません。
+* 静的インポートの場合、親タスクのオプションはインポート内に含まれるすべての子タスクにコピーされます。
 
 .. note::
-    Roles are a somewhat special case. Prior to Ansible 2.3, roles were always statically included via the special ``roles:`` option for a given play and were always executed first before any other play tasks (unless ``pre_tasks`` were used). Roles can still be used this way, however, Ansible 2.3 introduced the ``include_role`` option to allow roles to be executed inline with other tasks.
+    ロールは特殊なケースです。Ansible 2.3 よりも前のバージョンでは、ロールは常に特定のプレイの特殊な ``roles:`` オプションを使用して静的に組み込まれ、(``pre_tasks`` が使用されていない限り) 他のプレイタスクの前に常に実行されていました。ロールはそのまま使用できますが、Ansible 2.3 では ``include_role`` オプションが導入され、ロールを他のタスクとインラインで実行できるようになりました。
 
-Tradeoffs and Pitfalls Between Includes and Imports
+インクルードとインポートのトレードオフと落とし穴
 ```````````````````````````````````````````````````
 
-Using ``include*`` vs. ``import*`` has some advantages as well as some tradeoffs which users should consider when choosing to use each:
+``include*`` と ``import*`` の使用には、いくつかの利点と、使用時に考慮すべきトレードオフがあります。
 
-The primary advantage of using ``include*`` statements is looping. When a loop is used with an include, the included tasks or role will be executed once for each item in the loop.
+``include*`` ステートメントを使用する主な利点はループです。インクルードでループが使用されると、インクルードされたタスクまたはロールが、ループの各項目に対して 1 回実行されます。
 
-Using ``include*`` does have some limitations when compared to ``import*`` statements:
+``include*`` の使用には、``import*`` ステートメントと比較するといくつかの制限があります。
 
-* Tags which only exist inside a dynamic include will not show up in ``--list-tags`` output.
-* Tasks which only exist inside a dynamic include will not show up in ``--list-tasks`` output.
-* You cannot use ``notify`` to trigger a handler name which comes from inside a dynamic include (see note below).
-* You cannot use ``--start-at-task`` to begin execution at a task inside a dynamic include.
+* 動的なインクルードにのみ存在するタグは、``--list-tags`` 出力には表示されません。
+* 動的なインクルード内のタスクのみが ``--list-tasks`` 出力に表示されません。
+* ``notify`` を使用して、動的なインクルード内から取得したハンドラー名をトリガーすることはできません (以下の注記を参照してください)。
+* ``--start-at-task`` を使用して、動的なインクルード内のタスクで実行を開始することはできません。
 
-Using ``import*`` can also have some limitations when compared to dynamic includes:
+``import*`` を使用すると、動的インクルードには以下のような制限があります。
 
-* As noted above, loops cannot be used with imports at all.
-* When using variables for the target file or role name, variables from inventory sources (host/group vars, etc.) cannot be used.
-* Handlers using ``import*`` will not be triggered when notified by their name, as importing overwrites the handler's named task with the imported task list.
+* 上記のように、インポートではループを使用できません。
+* ターゲットファイルまたはロール名に変数を使用する場合、インベントリーソース (host/group 変数など) からの変数は使用できません。
+* インポートすると、ハンドラーの名前付きタスクがインポートされたタスクリストで上書きされるため、``import*`` を使用するハンドラーは、名前で通知されてもトリガーとなりません。
 
 .. note::
-    Regarding the use of ``notify`` for dynamic tasks: it is still possible to trigger the dynamic include itself, which would result in all tasks within the include being run.
+    動的タスクでの ``notify`` の使用については、動的インクルード自体をトリガーしても構いません。これにより、インクルード内のすべてのタスクが実行されます。
 
 .. seealso::
 
    :ref:`utilities_modules`
-       Documentation of the ``include*`` and ``import*`` modules discussed here.
+       ここで説明する ``include*`` モジュールおよび ``import*`` モジュールに関するドキュメント
    :ref:`working_with_playbooks`
-       Review the basic Playbook language features
+       基本的な Playbook 言語機能を確認します。
    :ref:`playbooks_variables`
-       All about variables in playbooks
+       Playbook の変数の詳細
    :ref:`playbooks_conditionals`
-       Conditionals in playbooks
+       Playbook の条件
    :ref:`playbooks_loops`
-       Loops in playbooks
+       Playbook のループ
    :ref:`playbooks_best_practices`
-       Various tips about managing playbooks in the real world
+       実際の Playbook の管理に関するさまざまなヒント
    :ref:`ansible_galaxy`
-       How to share roles on galaxy, role management
+       Galaxy (ロール管理) におけるロールの共有方法
    `GitHub Ansible examples <https://github.com/ansible/ansible-examples>`_
-       Complete playbook files from the GitHub project source
-   `Mailing List <https://groups.google.com/group/ansible-project>`_
-       Questions? Help? Ideas?  Stop by the list on Google Groups
+       Github プロジェクトソースにあるすべての Playbook ファイル
+   `メーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。

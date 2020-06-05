@@ -1,11 +1,11 @@
 .. _module_defaults:
 
-Module defaults
+モジュールのデフォルト
 ===============
 
-If you find yourself calling the same module repeatedly with the same arguments, it can be useful to define default arguments for that particular module using the ``module_defaults`` attribute.
+同じ引数で同じモジュールを繰り返し呼び出す場合は、``module_defaults`` 属性を使用して、その特定のモジュールのデフォルト引数を定義すると便利です。
 
-Here is a basic example::
+以下に基本的な例を示します。
 
     - hosts: localhost
       module_defaults:
@@ -24,7 +24,7 @@ Here is a basic example::
             state: touch
             path: /tmp/file3
 
-The ``module_defaults`` attribute can be used at the play, block, and task level. Any module arguments explicitly specified in a task will override any established default for that module argument::
+``Module_defaults`` 属性は、プレイ、ブロック、およびタスクのレベルで使用できます。タスクに明示的に指定されているモジュール引数は、そのモジュール引数に対して確立されたデフォルトを上書きします。
 
     - block:
         - debug:
@@ -33,7 +33,7 @@ The ``module_defaults`` attribute can be used at the play, block, and task level
         debug:
           msg: "a default message"
 
-It's also possible to remove any previously established defaults for a module by specifying an empty dict::
+空の dict を指定して、モジュールの以前に設定されたデフォルトを削除することもできます。
 
     - file:
         state: touch
@@ -42,11 +42,11 @@ It's also possible to remove any previously established defaults for a module by
         file: {}
 
 .. note::
-    Any module defaults set at the play level (and block/task level when using ``include_role`` or ``import_role``) will apply to any roles used, which may cause unexpected behavior in the role.
+    プレイレベルで設定されるモジュールのデフォルト (``include_role`` または ``import_role`` を使用する際のブロックまたはタスクのレベル) は、使用されるロールに適用されます。これにより、ロールで予期しない動作が発生する可能性があります。
 
-Here are some more realistic use cases for this feature.
+この機能のより実用的なユースケースを以下に示します。
 
-Interacting with an API that requires auth::
+auth を必要とする API との対話
 
     - hosts: localhost
       module_defaults:
@@ -62,7 +62,7 @@ Interacting with an API that requires auth::
         - uri:
             url: http://some.api.host/v1/whatever3
 
-Setting a default AWS region for specific EC2-related modules::
+特定の EC2 関連のモジュールにデフォルトの AWS リージョンを設定します。
 
     - hosts: localhost
       vars:
@@ -74,16 +74,16 @@ Setting a default AWS region for specific EC2-related modules::
           region: '{{ my_region }}'
         ec2_vpc_net_info:
           region: '{{ my_region }}'
-
+    
 .. _module_defaults_groups:
 
-Module defaults groups
+モジュールのデフォルトグループ
 ----------------------
 
 .. versionadded:: 2.7
 
-Ansible 2.7 adds a preview-status feature to group together modules that share common sets of parameters. This makes
-it easier to author playbooks making heavy use of API-based modules such as cloud modules.
+Ansible 2.7 は preview-status 機能を追加して、共通のパラメーターセットを共有するモジュールをグループ化します。これにより、
+クラウドモジュールなどの API ベースのモジュールを多用して、Playbook を簡単に作成できます。
 
 +-------+---------------------------+-----------------+
 | Group | Purpose                   | Ansible Version |
@@ -99,9 +99,9 @@ it easier to author playbooks making heavy use of API-based modules such as clou
 | os    | OpenStack                 | 2.8             |
 +-------+---------------------------+-----------------+
 
-Use the groups with `module_defaults` by prefixing the group name with `group/` - e.g. `group/aws`
+グループ名の前に `group/` を追加して (例: `group/aws`)、`module_defaults` でグループを使用します。
 
-In a playbook, you can set module defaults for whole groups of modules, such as setting a common AWS region.
+Playbook では、一般的な AWS リージョンの設定など、モジュールのグループ全体にモジュールのデフォルトを設定できます。
 
 .. code-block:: YAML
 

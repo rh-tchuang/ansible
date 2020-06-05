@@ -1,31 +1,31 @@
 .. _playbooks_delegation:
 
-Delegation, Rolling Updates, and Local Actions
+委任、ローリングアップデート、およびローカルアクション
 ==============================================
 
-.. contents:: Topics
+.. contents:: トピック
 
-Being designed for multi-tier deployments since the beginning, Ansible is great at doing things on one host on behalf of another, or doing local steps with reference to some remote hosts.
+Ansible は、最初からマルチ層デプロイメント用に設計されており、別のホストに代わって実行したり、一部のリモートホストを参照するローカル手順を行ったりする際にも適しています。
 
-This in particular is very applicable when setting up continuous deployment infrastructure or zero downtime rolling updates, where you might be talking with load balancers or monitoring systems.
+これは特に、ロードバランサーまたは監視システムと対話している可能性のある、継続的デプロイメントインフラストラクチャーまたはゼロダウンタイムのローリングアップデートを設定する場合に非常に適しています。
 
-Additional features allow for tuning the orders in which things complete, and assigning a batch window size for how many machines to process at once during a rolling update.
+追加機能により、完了する順序を調整し、ローリングアップデート時に一度に処理するマシン数に対してバッチウインドウサイズを割り当てることができます。
 
-This section covers all of these features.  For examples of these items in use, `please see the ansible-examples repository <https://github.com/ansible/ansible-examples/>`_. There are quite a few examples of zero-downtime update procedures for different kinds of applications.
+本セクションでは、この機能をすべて説明します。 使用中の項目の例は、`please see the ansible-examples repository <https://github.com/ansible/ansible-examples/>`_ を参照してください。さまざまなアプリケーションのゼロダウンタイム更新手順の例がいくつかあります。
 
-You should also consult the :ref:`module documentation<modules_by_category>` section. Modules like :ref:`ec2_elb<ec2_elb_module>`, :ref:`nagios<nagios_module>`, :ref:`bigip_pool<bigip_pool_module>`, and other :ref:`network_modules` dovetail neatly with the concepts mentioned here.
+また、:ref:`モジュールドキュメント<modules_by_category>` セクションを参照してください。:ref:`ec2_elb<ec2_elb_module>`、:ref:`nagios<nagios_module>`、:ref:`bigip_pool<bigip_pool_module>`、その他の :ref:`network_modules` などのモジュールは、ここで説明した概念と上手に適合します。
 
-You'll also want to read up on :ref:`playbooks_reuse_roles`, as the 'pre_task' and 'post_task' concepts are the places where you would typically call these modules.
+また、「'pre_task」と「post_task」の概念は、これらのモジュールを通常呼び出す場所であるため、:ref:`playbooks_reuse_roles` で読み取る必要もあります。
 
-Be aware that certain tasks are impossible to delegate, i.e. `include`, `add_host`, `debug`, etc as they always execute on the controller.
+特定のタスク (`include`、`add_host`、`debug` など) は、常にコントローラーで実行されるため、委譲することができないことに注意してください。
 
 
 .. _rolling_update_batch_size:
 
-Rolling Update Batch Size
+ローリングアップデートのバッチサイズ
 `````````````````````````
 
-By default, Ansible will try to manage all of the machines referenced in a play in parallel.  For a rolling update use case, you can define how many hosts Ansible should manage at a single time by using the ``serial`` keyword::
+デフォルトでは、Ansible はプレイで参照されるすべてのマシンを並行して管理しようとします。 ローリングアップデートのユースケースでは、``serial`` キーワードを使用して、Ansible が一度に管理するホストの数を定義できます。
 
     ---
     - name: test play
@@ -39,8 +39,8 @@ By default, Ansible will try to manage all of the machines referenced in a play 
         - name: task two
           command: hostname
 
-In the above example, if we had 4 hosts in the group 'webservers', 2
-would complete the play completely before moving on to the next 2 hosts::
+上記の例では、「webservers」グループに 4 台のホストがある場合は、
+その 2 台でプレイが完了してから、次の 2 つのホストに移動します。
 
 
     PLAY [webservers] ****************************************
@@ -70,17 +70,17 @@ would complete the play completely before moving on to the next 2 hosts::
     web4      : ok=2    changed=2    unreachable=0    failed=0
 
 
-The ``serial`` keyword can also be specified as a percentage, which will be applied to the total number of hosts in a
-play, in order to determine the number of hosts per pass::
+``serial`` キーワードはパーセンテージで指定することもできます。
+これは、パスごとのホストの数を決定するために、プレイ中のホストの総数に適用されます。
 
     ---
     - name: test play
       hosts: webservers
-      serial: "30%"
+      serial:"30%"
 
-If the number of hosts does not divide equally into the number of passes, the final pass will contain the remainder.
+ホスト数がパス数に分割されない場合は、最終パスには残りの数が含まれます。
 
-As of Ansible 2.2, the batch sizes can be specified as a list, as follows::
+Ansible 2.2 の時点で、バッチサイズは以下のようにリストとして指定できます。
 
     ---
     - name: test play
@@ -90,10 +90,10 @@ As of Ansible 2.2, the batch sizes can be specified as a list, as follows::
         - 5
         - 10
 
-In the above example, the first batch would contain a single host, the next would contain 5 hosts, and (if there are any hosts left),
-every following batch would contain 10 hosts until all available hosts are used.
+上記の例では、最初のバッチには単一のホストが含まれ、次のバッチには 5 つのホストが含まれ、
+(ホストが残っている場合) 使用可能なすべてのホストが使用されるまで、後続のバッチごとに 10 のホストが含まれます。
 
-It is also possible to list multiple batch sizes as percentages::
+複数のバッチサイズをパーセンテージとして一覧表示することもできます。
 
     ---
     - name: test play
@@ -103,7 +103,7 @@ It is also possible to list multiple batch sizes as percentages::
         - "20%"
         - "100%"
 
-You can also mix and match the values::
+値を混在させたり、一致させることもできます。
 
     ---
     - name: test play
@@ -114,43 +114,43 @@ You can also mix and match the values::
         - "20%"
 
 .. note::
-     No matter how small the percentage, the number of hosts per pass will always be 1 or greater.
+     パーセンテージを小さくしても、各パスのホスト数は常に 1 以上になります。
 
 
 .. _maximum_failure_percentage:
 
-Maximum Failure Percentage
+最大失敗率
 ``````````````````````````
 
-By default, Ansible will continue executing actions as long as there are hosts in the batch that have not yet failed. The batch size for a play is determined by the ``serial`` parameter. If ``serial`` is not set, then batch size is all the hosts specified in the ``hosts:`` field.
-In some situations, such as with the rolling updates described above, it may be desirable to abort the play when a
-certain threshold of failures have been reached. To achieve this, you can set a maximum failure
-percentage on a play as follows::
+デフォルトでは、Ansible は、まだ失敗していないバッチにホストがある限り、アクションを継続します。プレイのバッチサイズは、``serial`` パラメーターによって決定します。``serial`` が設定されていない場合、バッチサイズは ``hosts:`` フィールドで指定されたすべてのホストになります。
+上記のローリング更新など、状況によっては、
+障害の特定のしきい値に達したときに再生を中止することが望ましい場合があります。これを実現するために、
+次のようにプレイの最大失敗率を設定できます。
 
     ---
     - hosts: webservers
-      max_fail_percentage: 30
-      serial: 10
+      max_fail_percentage:30
+      serial:10
 
-In the above example, if more than 3 of the 10 servers in the group were to fail, the rest of the play would be aborted.
+上記の例では、グループ内の 10 台のサーバーのうち 3 台以上のサーバーに障害が発生した場合は、残りのプレイは中止されます。
 
 .. note::
 
-     The percentage set must be exceeded, not equaled. For example, if serial were set to 4 and you wanted the task to abort
-     when 2 of the systems failed, the percentage should be set at 49 rather than 50.
+     設定されたパーセンテージは、等しくせず、超過させる必要があります。たとえば、シリアルが 4 に設定されていて、2 つのシステムに障害が発生したときにタスクを中止したい場合は、
+     割合を 50 ではなく 49 に設定する必要があります。
 
 .. _delegation:
 
-Delegation
+委譲
 ``````````
 
 
-This isn't actually rolling update specific but comes up frequently in those cases.
+これは、実際にはローリングアップデートではありませんが、このような場合に頻繁に発生します。
 
-If you want to perform a task on one host with reference to other hosts, use the 'delegate_to' keyword on a task.
-This is ideal for placing nodes in a load balanced pool, or removing them.  It is also very useful for controlling outage windows.
-Be aware that it does not make sense to delegate all tasks, debug, add_host, include, etc always get executed on the controller.
-Using this with the 'serial' keyword to control the number of hosts executing at one time is also a good idea::
+他のホストを参照するあるホストでタスクを実行する場合は、タスクで「delegate_to」キーワードを使用します。
+これは、負荷分散されたプールにノードを配置したり、削除したりするのに適しています。 また、停止時間帯の制御にも非常に役立ちます。
+タスク、デバッグ、add_host、インクルードなどをすべて委譲しても意味がないことに注意してください。
+「serial」キーワードを使用して、一度に実行するホストの数を制御することが推奨されます。
 
     ---
     - hosts: webservers
@@ -171,7 +171,7 @@ Using this with the 'serial' keyword to control the number of hosts executing at
           delegate_to: 127.0.0.1
 
 
-These commands will run on 127.0.0.1, which is the machine running Ansible. There is also a shorthand syntax that you can use on a per-task basis: 'local_action'. Here is the same playbook as above, but using the shorthand syntax for delegating to 127.0.0.1::
+このコマンドは、Ansible を実行しているマシンである 127.0.0.1 で実行します。また、タスクごとに使用できる簡易構文「local_action」もあります。上記と同じプレイブックがありますが、127.0.0.1 に委譲するための簡略構文を使用しています::
 
     ---
     # ...
@@ -185,20 +185,20 @@ These commands will run on 127.0.0.1, which is the machine running Ansible. Ther
         - name: add back to load balancer pool
           local_action: command /usr/bin/add_back_to_pool {{ inventory_hostname }}
 
-A common pattern is to use a local action to call 'rsync' to recursively copy files to the managed servers.
-Here is an example::
+一般的なパターンは、ローカルアクションを使用して「rsync」を呼び出し、ファイルを管理対象サーバーに再帰的にコピーすることです。
+以下は例になります。
 
     ---
     # ...
 
-      tasks:
-        - name: recursively copy files from management server to target
-          local_action: command rsync -a /path/to/files {{ inventory_hostname }}:/path/to/target/
+  tasks:
+    - name: recursively copy files from management server to target
+      local_action: command rsync -a /path/to/files {{ inventory_hostname }}:/path/to/target/
 
-Note that you must have passphrase-less SSH keys or an ssh-agent configured for this to work, otherwise rsync
-will need to ask for a passphrase.
+パスフレーズなしの SSH キーまたはこれが機能するように設定された ssh-agent が必要です。
+そうでない場合は、rsync がパスフレーズを要求してきます。
 
-In case you have to specify more arguments you can use the following syntax::
+引数をさらに指定する必要がある場合は、以下の構文を使用できます。
 
     ---
     # ...
@@ -212,15 +212,15 @@ In case you have to specify more arguments you can use the following syntax::
             body: "{{ mail_body }}"
           run_once: True
 
-The `ansible_host` variable (`ansible_ssh_host` in 1.x or specific to ssh/paramiko plugins) reflects the host a task is delegated to.
+`ansible_host` 変数 (1.x の `ansible_ssh_host` プラグイン、または ssh/paramiko プラグインに固有) は、タスクが委譲されるホストを反映します。
 
 .. _delegate_facts:
 
-Delegated facts
+委譲されたファクト
 ```````````````
 
-By default, any fact gathered by a delegated task are assigned to the `inventory_hostname` (the current host) instead of the host which actually produced the facts (the delegated to host).
-The directive `delegate_facts` may be set to `True` to assign the task's gathered facts to the delegated host instead of the current one.::
+デフォルトでは、委譲タスクによって収集されるファクトは、ファクト (ホストへの委譲) を実際に生成したホストではなく、`inventory_hostname` (現在のホスト) に割り当てられます。
+ディレクティブ `delegate_facts` は `True` に設定して、タスクの収集ファクトを、現在のホストではなく委譲されたホストに割り当てることができます。
 
     ---
     - hosts: app_servers
@@ -232,17 +232,17 @@ The directive `delegate_facts` may be set to `True` to assign the task's gathere
           delegate_facts: True
           loop: "{{groups['dbservers']}}"
 
-The above will gather facts for the machines in the dbservers group and assign the facts to those machines and not to app_servers.
-This way you can lookup `hostvars['dbhost1']['ansible_default_ipv4']['address']` even though dbservers were not part of the play, or left out by using `--limit`.
+上記は、dbservers グループのマシンのファクトを収集し、ファクトを app_servers ではなく、それらのマシンに割り当てます。
+これにより、dbservers がプレイに含まれていなかった場合、または `--limit` を使用して除外されていても、`hostvars['dbhost1']['ansible_default_ipv4']['address']` をルックアップできます。
 
 
 .. _run_once:
 
-Run Once
+1 度実行
 ````````
 
-In some cases there may be a need to only run a task one time for a batch of hosts.
-This can be achieved by configuring "run_once" on a task::
+ホストのバッチに対してタスクを一度だけ実行しないといけない場合があります。
+そのためには、タスクに「run_once」を設定します::
 
     ---
     # ...
@@ -256,80 +256,80 @@ This can be achieved by configuring "run_once" on a task::
 
         # ...
 
-This directive forces the task to attempt execution on the first host in the current batch and then applies all results and facts to all the hosts in the same batch.
+このディレクティブは、現在のバッチの最初のホストで実行を強制的に試行し、すべての結果とファクトを同じバッチのすべてのホストに適用します。
 
-This approach is similar to applying a conditional to a task such as::
+このアプローチは、以下のようなタスクに条件を適用するのと同じです。
 
         - command: /opt/application/upgrade_db.py
           when: inventory_hostname == webservers[0]
 
-But the results are applied to all the hosts.
+ただし、結果はすべてのホストに適用されます。
 
-Like most tasks, this can be optionally paired with "delegate_to" to specify an individual host to execute on::
+多くのタスクと同様、任意で「delegate_to」とペアにして、以下を実行する個々のホストを指定できます。
 
         - command: /opt/application/upgrade_db.py
           run_once: true
           delegate_to: web01.example.org
 
-As always with delegation, the action will be executed on the delegated host, but the information is still that of the original host in the task.
+委譲の場合と同様に、アクションは委譲されたホストで実行されますが、情報はタスクの元のホストの情報になります。
 
 .. note::
-     When used together with "serial", tasks marked as "run_once" will be run on one host in *each* serial batch.
-     If it's crucial that the task is run only once regardless of "serial" mode, use
-     :code:`when: inventory_hostname == ansible_play_hosts_all[0]` construct.
+     「serial」と併用すると、「run_once」のマークが付けられたタスクが *各* シリアルバッチの 1 つホストで実行されます。
+     タスクが「serial」モードに関係なく 1 回だけ実行されることが重要である場合は、
+     :code:`when: inventory_hostname == ansible_play_hosts_all[0]` コンストラクトを使用します。
 
 .. note::
-    Any conditional (i.e `when:`) will use the variables of the 'first host' to decide if the task runs or not, no other hosts will be tested.
+    条件 (つまり `when:`) は、「first host」の変数を使用して、タスクが実行されるかどうかを判断し、他のホストはテストされません。
 
 .. note::
-    If you want to avoid the default behaviour of setting the fact for all hosts, set `delegate_facts: True` for the specific task or block.
+    すべてのホストにファクトを設定するデフォルトの動作を回避するとき、特定のタスクまたはブロックの場合は、`delegate_facts: True` を設定します。
 
 .. _local_playbooks:
 
-Local Playbooks
+ローカルの Playbook
 ```````````````
 
-It may be useful to use a playbook locally, rather than by connecting over SSH.  This can be useful
-for assuring the configuration of a system by putting a playbook in a crontab.  This may also be used
-to run a playbook inside an OS installer, such as an Anaconda kickstart.
+SSH 経由で接続するのではなく、Playbook をローカルで使用すると便利です。 これは、Playbook を crontab に配置することにより、システムの構成を保証するのに役立ちます。
+crontab に Playbook を配置することで、システムの設定を保証します。 これは、
+Anaconda キックスタートなどの OS インストーラー内で Playbook を実行するのにも使用できます。
 
-To run an entire playbook locally, just set the "hosts:" line to "hosts: 127.0.0.1" and then run the playbook like so::
+Playbook 全体をローカルで実行するには、「hosts:」行を「hosts: 127.0.0.1」 として、以下のように Playbook を実行します。
 
     ansible-playbook playbook.yml --connection=local
 
-Alternatively, a local connection can be used in a single playbook play, even if other plays in the playbook
-use the default remote connection type::
+または、Playbook 内の他のプレイでデフォルトのリモート接続タイプが使用されている場合でも、
+1 つのプレイブックプレイでローカル接続を使用できます。
 
     ---
-    - hosts: 127.0.0.1
+    - hosts:127.0.0.1
       connection: local
 
 .. note::
-    If you set the connection to local and there is no ansible_python_interpreter set, modules will run under /usr/bin/python and not
-    under {{ ansible_playbook_python }}. Be sure to set ansible_python_interpreter: "{{ ansible_playbook_python }}" in
-    host_vars/localhost.yml, for example. You can avoid this issue by using ``local_action`` or ``delegate_to: localhost`` instead.
+    接続をローカルに設定し、ansible_python_interpreter が設定されていないと、たとえば、モジュールは /usr/bin/python で実行され、{{ ansible_playbook_python }} では実行されません。
+    たとえば、host_vars/localhost.yml の "{{ ansible_playbook_python }}" に、
+    ansible_python_interpreter: を設定します。この問題は、代わりに ``local_action`` または ``delegate_to: localhost`` を使用して回避できます。
 
 
 
 .. _interrupt_execution_on_any_error:
 
-Interrupt execution on any error
+エラーで実行の中断
 ````````````````````````````````
 
-With the ''any_errors_fatal'' option, any failure on any host in a multi-host play will be treated as fatal and Ansible will exit as soon as all hosts in the current batch have finished the fatal task. Subsequent tasks and plays will not be executed. You can recover from what would be a fatal error by adding a rescue section to the block.
+「any_errors_fatal」オプションを使用すると、マルチホストプレイのすべてのホストの障害は致命的として扱われ、現在のバッチのすべてのホストが致命的なタスクを終了するとすぐに Ansible は終了します。後続のタスクおよびプレイは実行されません。ブロックにレスキューセクションを追加して、致命的なエラーから復旧できます。
 
-Sometimes ''serial'' execution is unsuitable; the number of hosts is unpredictable (because of dynamic inventory) and speed is crucial (simultaneous execution is required), but all tasks must be 100% successful to continue playbook execution.
+場合によっては「serial」の実行は適していません。ホストの数は予測不可能であり (動的インベントリーが原因で)、速度は極めて重要ですが (同時実行が必要)、Playbook の実行を続行するにはすべてのタスクが 100% 成功する必要があります。
 
-For example, consider a service located in many datacenters with some load balancers to pass traffic from users to the service. There is a deploy playbook to upgrade service deb-packages. The playbook has the stages:
+たとえば、ユーザーからサービスにトラフィックを渡すために、一部のロードバランサーを持つ多くのデータセンターにあるサービスを検討します。サービスの deb-packages をアップグレードするデプロイ Playbook があります。Playbook には以下のような段階があります。
 
-- disable traffic on load balancers (must be turned off simultaneously)
-- gracefully stop the service
-- upgrade software (this step includes tests and starting the service)
-- enable traffic on the load balancers (which should be turned on simultaneously)
+- ロードバランサーのトラフィックを無効にする (同時にオフにする必要があります)
+- サービスを正常に停止する
+- ソフトウェアをアップグレードする (この手順には、テストとサービスの起動が含まれます)
+- ロードバランサーでのトラフィックの有効化 (同時に有効にする必要があります)
 
-The service can't be stopped with "alive" load balancers; they must be disabled first. Because of this, the second stage can't be played if any server failed in the first stage.
+サービスは「alive」ロードバランサーで停止することはできません。最初に無効にする必要があります。そのため、いずれかのサーバーが最初の段階で失敗した場合は、次のステージを非表示にすることはできません。
 
-For datacenter "A", the playbook can be written this way::
+データセンター「A」の場合、Playbook は以下の方法で記述できます。
 
     ---
     - hosts: load_balancers_dc_a
@@ -354,15 +354,15 @@ For datacenter "A", the playbook can be written this way::
           command: /usr/bin/enable-dc
 
 
-In this example Ansible will start the software upgrade on the front ends only if all of the load balancers are successfully disabled.
+この例では、すべてのロードバランサーが正常に無効になっている場合にのみ、Ansible は、フロントエンドでソフトウェアのアップグレードを開始します。
 
 .. seealso::
 
    :ref:`playbooks_intro`
-       An introduction to playbooks
-   `Ansible Examples on GitHub <https://github.com/ansible/ansible-examples>`_
-       Many examples of full-stack deployments
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Playbook の概要
+   `GitHub にある Ansible の例 <https://github.com/ansible/ansible-examples>`_
+       フルスタックデプロイメントの例が多数あります。
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

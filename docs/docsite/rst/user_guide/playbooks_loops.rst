@@ -1,28 +1,28 @@
 .. _playbooks_loops:
 
 *****
-Loops
+Loop
 *****
 
-Sometimes you want to repeat a task multiple times. In computer programming, this is called a loop. Common Ansible loops include changing ownership on several files and/or directories with the :ref:`file module <file_module>`, creating multiple users with the :ref:`user module <user_module>`, and
-repeating a polling step until a certain result is reached. Ansible offers two keywords for creating loops: ``loop`` and ``with_<lookup>``.
+タスクを複数回繰り返す場合があります。コンピュータープログラミングでは、これはループと呼ばれます。一般的な Ansible ループには、:ref:`ファイルモジュール<file_module>` を使用して複数のファイルやディレクトリーの所有権の変更が含まれます。これにより、:ref:`ユーザーモジュール <user_module>` で複数のユーザーを作成し、
+特定の結果に達成するまでポーリングの手順を繰り返します。Ansible はループを作成するためのキーワードである ``loop`` と ``with_<lookup>`` を提供します。
 
 .. note::
-   * We added ``loop`` in Ansible 2.5. It is not yet a full replacement for ``with_<lookup>``, but we recommend it for most use cases.
-   * We have not deprecated the use of ``with_<lookup>`` - that syntax will still be valid for the foreseeable future.
-   * We are looking to improve ``loop`` syntax - watch this page and the `changelog <https://github.com/ansible/ansible/tree/devel/changelogs>`_ for updates.
+   * Ansible 2.5 に ``loop`` が追加されました。``with_<lookup>`` には完全に代わりませんが、ほとんどのユースケースで推奨されます。
+   * ``with_<lookup>`` の使用は非推奨になっていません。この構文は、今後も有効です。
+   * ``loop`` 構文を改善する場合は、このページと `changelog` <https://github.com/ansible/ansible/tree/devel/changelogs>_ で更新を確認します。
 
 .. contents::
    :local:
 
-Comparing ``loop`` and ``with_*``
+``loop`` と ``with_*`` の比較
 =================================
 
-* The ``with_<lookup>`` keywords rely on :ref:`lookup_plugins` - even  ``items`` is a lookup.
-* The ``loop`` keyword is equivalent to ``with_list``, and is the best choice for simple loops.
-* The ``loop`` keyword will not accept a string as input, see :ref:`query_vs_lookup`.
-* Generally speaking, any use of ``with_*`` covered in :ref:`migrating_to_loop` can be updated to use ``loop``.
-* Be careful when changing ``with_items`` to ``loop``, as ``with_items`` performed implicit single-level flattening. You may need to use ``flatten(1)`` with ``loop`` to match the exact outcome. For example, to get the same output as:
+* ``with_<lookup>`` キーワードは、:ref:`lookup_plugins` に依存します。さらに、``items`` は lookup です。
+* ``loop`` キーワードは ``with_list`` と同等で、単純なループに最適です。
+* ``loop`` キーワードは文字列を入力として受け付けません。「:ref:`query_vs_lookup`」を参照してください。
+* 通常、:ref:`migrating_to_loop` で対応している ``with_*`` を使用すると、``loop`` を使用するように更新できます。
+* ``with_items`` は暗黙的な単一レベルのフラット処理を実行するため、``with_items`` を ``loop`` に変更する場合は注意してください。正確な結果に一致するために、``loop`` で ``flatten(1)`` の使用が必要になる場合があります。たとえば、同じような出力を取得するには、以下を使用します。
 
 .. code-block:: yaml
 
@@ -31,11 +31,11 @@ Comparing ``loop`` and ``with_*``
     - [2,3]
     - 4
 
-you would need::
+以下が必要です。
 
   loop: "{{ [1, [2,3] ,4] | flatten(1) }}"
 
-* Any ``with_*`` statement that requires using ``lookup`` within a loop should not be converted to use the ``loop`` keyword. For example, instead of doing:
+* ループ内で ``lookup`` を使用する必要のある ``with_*`` ステートメントは、``loop`` キーワードを使用するよう変換しないでください。たとえば、代わりに、以下を行います。
 
 .. code-block:: yaml
 
@@ -47,13 +47,13 @@ it's cleaner to keep::
 
 .. _standard_loops:
 
-Standard loops
+標準ループ
 ==============
 
-Iterating over a simple list
+シンプルなリストでの反復
 ----------------------------
 
-Repeated tasks can be written as standard loops over a simple list of strings. You can define the list directly in the task::
+繰り返されるタスクは、文字列の単純なリストで標準ループとして記述できます。このリストはタスクに直接定義できます::
 
     - name: add several users
       user:
@@ -64,11 +64,11 @@ Repeated tasks can be written as standard loops over a simple list of strings. Y
          - testuser1
          - testuser2
 
-You can define the list in a variables file, or in the 'vars' section of your play, then refer to the name of the list in the task::
+変数ファイルでリストを定義するか、プレイの「vars」セクションで、タスク内のリストの名前を参照します。
 
     loop: "{{ somelist }}"
 
-Either of these examples would be the equivalent of::
+これらの例のいずれも、以下と同等です::
 
     - name: add user testuser1
       user:
@@ -82,7 +82,7 @@ Either of these examples would be the equivalent of::
         state: present
         groups: "wheel"
 
-You can pass a list directly to a parameter for some plugins. Most of the packaging modules, like :ref:`yum_module` and :ref:`apt_module`, have this capability. When available, passing the list to a parameter is better than looping over the task. For example::
+一部のプラグインでリストを直接パラメーターに渡すことができます。:ref:`yum_module`、:ref:`apt_module` などのほとんどのパッケージモジュールにはこの機能があります。利用可能な場合は、リストをパラメーターに渡す方が、タスクにループするよりも適切です。例::
 
    - name: optimal yum
      yum:
@@ -95,12 +95,12 @@ You can pass a list directly to a parameter for some plugins. Most of the packag
        state: present
      loop: "{{  list_of_packages  }}"
 
-Check the :ref:`module documentation <modules_by_category>` to see if you can pass a list to any particular module's parameter(s).
+:ref:`モジュールのドキュメント <modules_by_category>` で、特定モジュールのパラメーターにリストを渡すことができるかどうかを確認します。
 
-Iterating over a list of hashes
+ハッシュリストを繰り返し処理
 -------------------------------
 
-If you have a list of hashes, you can reference subkeys in a loop. For example::
+ハッシュリストがある場合は、ループでサブキーを参照できます。例::
 
     - name: add several users
       user:
@@ -110,14 +110,14 @@ If you have a list of hashes, you can reference subkeys in a loop. For example::
       loop:
         - { name: 'testuser1', groups: 'wheel' }
         - { name: 'testuser2', groups: 'root' }
+    
+:ref:`playbooks_conditionals` をループと組み合わせると、各アイテムについて ``when:`` ステートメントが個別に処理されます。
+例は、:ref:`the_when_statement` を参照してください。
 
-When combining :ref:`playbooks_conditionals` with a loop, the ``when:`` statement is processed separately for each item.
-See :ref:`the_when_statement` for examples.
-
-Iterating over a dictionary
+ディクショナリーでの反復
 ---------------------------
 
-To loop over a dict, use the ``dict2items`` :ref:`dict_filter`::
+ディクショナリーでループするには、``dict2items`` :ref:`dict_filter` を使用します::
 
     - name: create a tag dictionary of non-empty tags
       set_fact:
@@ -129,13 +129,13 @@ To loop over a dict, use the ``dict2items`` :ref:`dict_filter`::
           Application: payment
           Another: "{{ doesnotexist|default() }}"
       when: item.value != ""
+    
+ここでは、空のタグを設定しないため、空でないタグのみを含むディクショナリーを作成します。
 
-Here, we don't want to set empty tags, so we create a dictionary containing only non-empty tags.
-
-Registering variables with a loop
+ループによる変数の登録
 =================================
 
-You can register the output of a loop as a variable. For example::
+ループの出力を変数として登録できます。例::
 
    - shell: "echo {{ item }}"
      loop:
@@ -143,7 +143,7 @@ You can register the output of a loop as a variable. For example::
        - "two"
      register: echo
 
-When you use ``register`` with a loop, the data structure placed in the variable will contain a ``results`` attribute that is a list of all responses from the module. This differs from the data structure returned when using ``register`` without a loop::
+ループで ``register`` を使用すると、変数に配置されたデータ構造には、モジュールからのすべての応答のリストである ``results`` 属性が含まれます。これは、ループなしで ``register`` を使用する際に返されるデータ構造とは異なります。
 
     {
         "changed": true,
@@ -181,16 +181,16 @@ When you use ``register`` with a loop, the data structure placed in the variable
             }
         ]
     }
-
-Subsequent loops over the registered variable to inspect the results may look like::
+    
+登録済みの変数で後続のループを実行して結果を検査すると、以下のようになります。
 
     - name: Fail if return code is not 0
       fail:
         msg: "The command ({{ item.cmd }}) did not have a 0 return code"
       when: item.rc != 0
       loop: "{{ echo.results }}"
-
-During iteration, the result of the current item will be placed in the variable::
+    
+反復時に、現在のアイテムの結果は変数に配置されます。
 
     - shell: echo "{{ item }}"
       loop:
@@ -201,13 +201,13 @@ During iteration, the result of the current item will be placed in the variable:
 
 .. _complex_loops:
 
-Complex loops
+複雑なループ
 =============
 
-Iterating over nested lists
+入れ子のリストでの反復
 ---------------------------
 
-You can use Jinja2 expressions to iterate over complex lists. For example, a loop can combine nested lists::
+Jinja2 式を使用すると、複雑なリストを繰り返すことができます。たとえば、ループはネスト化されたリストを組み合わせることができます。
 
     - name: give users access to multiple databases
       mysql_user:
@@ -220,31 +220,31 @@ You can use Jinja2 expressions to iterate over complex lists. For example, a loo
 
 .. _do_until_loops:
 
-Retrying a task until a condition is met
+条件が満たされるまでタスクの再試行
 ----------------------------------------
 
 .. versionadded:: 1.4
 
-You can use the ``until`` keyword to retry a task until a certain condition is met.  Here's an example::
+``until`` キーワードを使用して、特定の条件を満たすまでタスクを再試行できます。 以下は例です。
 
     - shell: /usr/bin/foo
       register: result
       until: result.stdout.find("all systems go") != -1
-      retries: 5
-      delay: 10
+      retries:5
+      delay:10
 
-This task runs up to 5 times with a delay of 10 seconds between each attempt. If the result of any attempt has "all systems go" in its stdout, the task succeeds. The default value for "retries" is 3 and "delay" is 5.
+このタスクは、各試行の 10 秒の遅延で最大 5 回実行されます。任意の試行の結果が標準出力 (stdout) で「all systems go」の場合、タスクは成功します。「retries」のデフォルト値は 3 で、「delay」は 5 です。
 
-To see the results of individual retries, run the play with ``-vv``.
+個別の再試行の結果を表示するには、``-vv`` でプレイを実行します。
 
-When you run a task with ``until`` and register the result as a variable, the registered variable will include a key called "attempts", which records the number of the retries for the task.
+``until`` を使用してタスクを実行し、結果を変数として登録する場合は、登録済み変数には「attempts」というキーが含まれ、タスクの再試行回数を記録します。
 
-.. note:: You must set the ``until`` parameter if you want a task to retry. If ``until`` is not defined, the value for the ``retries`` parameter is forced to 1.
+.. note:: タスクを再試行するには、``until`` パラメーターを設定する必要があります。``until`` が定義されていない場合、``retries`` パラメーターの値は 1 に強制されます。
 
-Looping over inventory
+インベントリーのループ
 ----------------------
 
-To loop over your inventory, or just a subset of it, you can use a regular ``loop`` with the ``ansible_play_batch`` or ``groups`` variables::
+インベントリーをループしたり、そのサブセットのみをループするには、``ansible_play_batch`` 変数または ``groups`` 変数で通常の ``loop`` を使用します。
 
     # show all the hosts in the inventory
     - debug:
@@ -256,7 +256,7 @@ To loop over your inventory, or just a subset of it, you can use a regular ``loo
         msg: "{{ item }}"
       loop: "{{ ansible_play_batch }}"
 
-There is also a specific lookup plugin ``inventory_hostnames`` that can be used like this::
+また、以下のような特定の lookup プラグイン ``inventory_hostnames`` も使用できます。
 
     # show all the hosts in the inventory
     - debug:
@@ -268,18 +268,18 @@ There is also a specific lookup plugin ``inventory_hostnames`` that can be used 
         msg: "{{ item }}"
       loop: "{{ query('inventory_hostnames', 'all:!www') }}"
 
-More information on the patterns can be found on :ref:`intro_patterns`
+パターンの詳細は、:ref:`intro_patterns` を参照してください。
 
 .. _query_vs_lookup:
 
-Ensuring list input for ``loop``: ``query`` vs. ``lookup``
+``loop`` のリスト入力の確保: ``query`` 対 ``lookup``
 ==========================================================
 
-The ``loop`` keyword requires a list as input, but the ``lookup`` keyword returns a string of comma-separated values by default. Ansible 2.5 introduced a new Jinja2 function named :ref:`query` that always returns a list, offering a simpler interface and more predictable output from lookup plugins when using the ``loop`` keyword.
+``loop`` キーワードは、リストを入力として要求しますが、``lookup`` キーワードは、デフォルトでコンマ区切りの値の文字列を返します。Ansible 2.5 では、常にリストを返す :ref:`query` という名前の新しい Jinja2 関数が導入され、``loop`` キーワードの使用時に lookup プラグインからより単純なインターフェースと予測可能な出力が提供されます。
 
-You can force ``lookup`` to return a list to ``loop`` by using ``wantlist=True``, or you can use ``query`` instead.
+``wantlist=True`` を使用して ``lookup`` がリストを ``loop`` に返すように強制したり、代わりに ``query`` を使用できます。
 
-These examples do the same thing::
+これらの例では、以下を行います。
 
     loop: "{{ query('inventory_hostnames', 'all') }}"
 
@@ -288,17 +288,17 @@ These examples do the same thing::
 
 .. _loop_control:
 
-Adding controls to loops
+ループへのコントロールの追加
 ========================
 .. versionadded:: 2.1
 
-The ``loop_control`` keyword lets you manage your loops in useful ways.
+``loop_control`` キーワードを使用すると、ループを便利な方法で管理できます。
 
-Limiting loop output with ``label``
+``label`` を使用したループ出力の制限
 -----------------------------------
 .. versionadded:: 2.2
 
-When looping over complex data structures, the console output of your task can be enormous. To limit the displayed output, use the ``label`` directive with ``loop_control``::
+複雑なデータ構造をループするとき、タスクのコンソール出力が膨大になる可能性があります。表示される出力を制限するには、``label`` ディレクティブに ``loop_control`` を付けて使用します::
 
     - name: create servers
       digital_ocean:
@@ -314,16 +314,16 @@ When looping over complex data structures, the console output of your task can b
             ...
       loop_control:
         label: "{{ item.name }}"
+    
+このタスクの出力には、複数行の ``{{ item }}`` 変数の内容全体ではなく、各 ``アイテム`` の ``item`` フィールドのみが表示されます。
 
-The output of this task will display just the ``name`` field for each ``item`` instead of the entire contents of the multi-line ``{{ item }}`` variable.
+.. note:: これは、機密性の高いデータを保護せずに、コンソールの出力をより読みやすくするために使用します。機密データが ``loop`` 内にある場合は、開示を防ぐために、タスクで ``no_log: yes`` を設定します。
 
-.. note:: This is for making console output more readable, not protecting sensitive data. If there is sensitive data in ``loop``, set ``no_log: yes`` on the task to prevent disclosure.
-
-Pausing within a loop
+ループ内での一時停止
 ---------------------
 .. versionadded:: 2.2
 
-To control the time (in seconds) between the execution of each item in a task loop, use the ``pause`` directive with ``loop_control``::
+タスクループの各アイテムの実行間隔を (秒単位) で制御するには、``loop_control`` で ``pause`` ディレクティブを使用します。
 
     # main.yml
     - name: create servers, pause 3s before creating next
@@ -336,11 +336,11 @@ To control the time (in seconds) between the execution of each item in a task lo
       loop_control:
         pause: 3
 
-Tracking progress through a loop with ``index_var``
+``index_var`` のあるループでの進捗の追跡
 ---------------------------------------------------
 .. versionadded:: 2.5
 
-To keep track of where you are in a loop, use the ``index_var`` directive with ``loop_control``. This directive specifies a variable name to contain the current loop index::
+ループ内の場所を追跡するには、``loop_control`` で ``index_var`` ディレクティブを使用します。このディレクティブは、現在のループインデックスを含む変数名を指定します。
 
   - name: count our fruit
     debug:
@@ -352,12 +352,12 @@ To keep track of where you are in a loop, use the ``index_var`` directive with `
     loop_control:
       index_var: my_idx
 
-Defining inner and outer variable names with ``loop_var``
+``loop_var`` を使用した内部変数および外部変数名の定義
 ---------------------------------------------------------
 .. versionadded:: 2.1
 
-You can nest two looping tasks using ``include_tasks``. However, by default Ansible sets the loop variable ``item`` for each loop. This means the inner, nested loop will overwrite the value of ``item`` from the outer loop.
-You can specify the name of the variable for each loop using ``loop_var`` with ``loop_control``::
+``include_tasks`` を使用して 2 つのループタスクをネスト化できます。ただし、デフォルトでは Ansible は各ループのループ変数の ``アイテム`` を設定します。これは、内部のネストされたループが外部ループからの ``アイテム`` の値を上書きすることを意味します。
+``loop_var`` を ``loop_control`` とともに使用して、各ループの変数名を指定できます。
 
     # main.yml
     - include_tasks: inner.yml
@@ -376,27 +376,27 @@ You can specify the name of the variable for each loop using ``loop_var`` with `
         - b
         - c
 
-.. note:: If Ansible detects that the current loop is using a variable which has already been defined, it will raise an error to fail the task.
+.. note:: Ansible が、定義されている変数を使用していることを現在のループが検出すると、タスクが失敗するためにエラーが発生します。
 
-Extended loop variables
+拡張ループ変数
 -----------------------
 .. versionadded:: 2.8
 
-As of Ansible 2.8 you can get extended loop information using the ``extended`` option to loop control. This option will expose the following information.
+Ansible 2.8 では、``拡張`` オプションを使用してループ制御に拡張ループ情報を取得できます。このオプションは、以下の情報を公開します。
 
 ==========================  ===========
-Variable                    Description
+変数                    説明
 --------------------------  -----------
-``ansible_loop.allitems``   The list of all items in the loop
-``ansible_loop.index``      The current iteration of the loop. (1 indexed)
-``ansible_loop.index0``     The current iteration of the loop. (0 indexed)
-``ansible_loop.revindex``   The number of iterations from the end of the loop (1 indexed)
-``ansible_loop.revindex0``  The number of iterations from the end of the loop (0 indexed)
-``ansible_loop.first``      ``True`` if first iteration
-``ansible_loop.last``       ``True`` if last iteration
-``ansible_loop.length``     The number of items in the loop
-``ansible_loop.previtem``   The item from the previous iteration of the loop. Undefined during the first iteration.
-``ansible_loop.nextitem``   The item from the following iteration of the loop. Undefined during the last iteration.
+``ansible_loop.allitems``   ループ内のすべてのアイテムのリスト。
+``ansible_loop.index``      ループの現在の反復。(1 インデックス化)
+``ansible_loop.index0``     ループの現在の反復。(0 インデックス化)
+``ansible_loop.revindex``   ループの最後からの反復回数 (1 インデックス化)
+``ansible_loop.revindex0``  ループの最後からの反復回数 (0 インデックス化)
+``ansible_loop.first``      最初の反復の場合は ``True``。
+``ansible_loop.last``       最後の反復の場合は ``True``。
+``ansible_loop.length``     ループ内のアイテム数。
+``ansible_loop.previtem``   ループの以前の反復のアイテム。最初の反復時に未定義です。
+``ansible_loop.nextitem``   ループの次の反復からのアイテム。最後の反復時に未定義です。
 ==========================  ===========
 
 ::
@@ -404,19 +404,19 @@ Variable                    Description
       loop_control:
         extended: yes
 
-Accessing the name of your loop_var
+loop_var の名前へのアクセス
 -----------------------------------
 .. versionadded:: 2.8
 
-As of Ansible 2.8 you can get the name of the value provided to ``loop_control.loop_var`` using the ``ansible_loop_var`` variable
+Ansible 2.8 では、``ansible_loop_var`` 変数を使用して ``loop_control.loop_var`` に提供された値の名前を取得できます。
 
-For role authors, writing roles that allow loops, instead of dictating the required ``loop_var`` value, you can gather the value via::
+ロールの作成者は、必要な ``loop_var`` 値を指定する代わりに、ループを許可するロールを作成することで、次の方法で値を収集できます。
 
     "{{ lookup('vars', ansible_loop_var) }}"
 
 .. _migrating_to_loop:
 
-Migrating from with_X to loop
+with_X から loop への移行
 =============================
 
 .. include:: shared_snippets/with2loop.txt
@@ -424,16 +424,16 @@ Migrating from with_X to loop
 .. seealso::
 
    :ref:`about_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_reuse_roles`
-       Playbook organization by roles
+       ロール別の Playbook の組織
    :ref:`playbooks_best_practices`
-       Best practices in playbooks
+       Playbook のベストプラクティス
    :ref:`playbooks_conditionals`
-       Conditional statements in playbooks
+       Playbook の条件付きステートメント
    :ref:`playbooks_variables`
-       All about variables
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       変数の詳細
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

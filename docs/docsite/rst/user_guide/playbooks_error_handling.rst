@@ -1,110 +1,110 @@
-Error Handling In Playbooks
+Playbook でのエラー処理
 ===========================
 
-.. contents:: Topics
+.. contents:: トピック
 
-Ansible normally has defaults that make sure to check the return codes of commands and modules and
-it fails fast -- forcing an error to be dealt with unless you decide otherwise.
+Ansible には通常、コマンドとモジュールの戻りコードを確認するためのデフォルトがあり、フェイルファーストを行います。
+指定がない限りは、エラーを処理する必要があります。
 
-Sometimes a command that returns different than 0 isn't an error.  Sometimes a command might not always
-need to report that it 'changed' the remote system.  This section describes how to change
-the default behavior of Ansible for certain tasks so output and error handling behavior is
-as desired.
+0 とは異なるコマンドが返されることがありますが、エラーではありません。 コマンドが、
+リモートシステムを「変更した」ことを常に報告する必要がない場合があります。 本セクションでは、
+特定のタスクの Ansible のデフォルトの動作を変更して、
+出力とエラー処理の動作が希望どおりになるようにする方法を説明します。
 
 .. _ignoring_failed_commands:
 
-Ignoring Failed Commands
+失敗したコマンドの無視
 ````````````````````````
 
-Generally playbooks will stop executing any more steps on a host that has a task fail.
-Sometimes, though, you want to continue on.  To do so, write a task that looks like this::
+通常、Playbook はタスクが失敗したホストでこれ以上のステップの実行を停止します。
+ただし、場合によっては、次に進みます。 これを行うには、以下のようなタスクを作成します。
 
     - name: this will not be counted as a failure
       command: /bin/false
       ignore_errors: yes
 
-Note that the above system only governs the return value of failure of the particular task,
-so if you have an undefined variable used or a syntax error, it will still raise an error that users will need to address.
-Note that this will not prevent failures on connection or execution issues.
-This feature only works when the task must be able to run and return a value of 'failed'.
+上記のシステムは、特定のタスクの障害の戻り値のみを管理することに注意してください。
+したがって、未定義の変数が使用されているか、構文エラーが発生した場合は、ユーザーがアドレスを指定することが必要になるエラーが出力されます。
+接続または実行の問題の失敗を防ぐ訳ではないことに注意してください。
+この機能は、タスクを実行でき、「faileded」の値を返す必要がある場合にのみ機能します。
 
 .. _resetting_unreachable:
 
-Resetting Unreachable Hosts
+到達できないホストのリセット
 ```````````````````````````
 
 .. versionadded:: 2.2
 
-Connection failures set hosts as 'UNREACHABLE', which will remove them from the list of active hosts for the run.
-To recover from these issues you can use `meta: clear_host_errors` to have all currently flagged hosts reactivated,
-so subsequent tasks can try to use them again.
+接続の失敗により、ホストは「UNREACHABLE」として設定され、実行のアクティブなホストの一覧から削除されます。
+この問題から回復するには、`meta: clear_host_errors` を使用して、現在フラグが付けられたホストをすべて再アクティベートできるため、
+後続のタスクではそれを再び試行できます。
 
 
 .. _handlers_and_failure:
 
-Handlers and Failure
+ハンドラーおよび失敗
 ````````````````````
 
-When a task fails on a host, handlers which were previously notified
-will *not* be run on that host. This can lead to cases where an unrelated failure
-can leave a host in an unexpected state. For example, a task could update
-a configuration file and notify a handler to restart some service. If a
-task later on in the same play fails, the service will not be restarted despite
-the configuration change.
+ホストでタスクが失敗すると、
+以前に通知されたハンドラーはそのホストでは *実行されません*。これにより、
+無関係な障害により、ホストが予期しない状態になる可能性があります。たとえば、タスクは構成ファイルを更新し、
+ハンドラーにサービスを再起動するよう通知することができます。同じプレイで後でタスクが失敗した場合は、
+構成を変更しても
+サービスは再開しません。
 
-You can change this behavior with the ``--force-handlers`` command-line option,
-or by including ``force_handlers: True`` in a play, or ``force_handlers = True``
-in ansible.cfg. When handlers are forced, they will run when notified even
-if a task fails on that host. (Note that certain errors could still prevent
-the handler from running, such as a host becoming unreachable.)
+この動作を変更するには、``--force-handlers`` コマンドラインオプションを使用するか、
+または、プレイに ``force_handlers:True`` を追加するか、ansible.cfg に
+``force_handlers = True`` を追加します。ハンドラーが強制されると、そのホストでタスクが失敗した場合でも、
+通知されたときにハンドラーが強制されます。ホストが到達不能になるなど、
+特定のエラーによりハンドラーが実行できなくなる可能性があることに注意してください。
 
 .. _controlling_what_defines_failure:
 
-Controlling What Defines Failure
+定義の失敗の制御
 ````````````````````````````````
 
-Ansible lets you define what "failure" means in each task using the ``failed_when`` conditional. As with all conditionals in Ansible, lists of multiple ``failed_when`` conditions are joined with an implicit ``and``, meaning the task only fails when *all* conditions are met. If you want to trigger a failure when any of the conditions is met, you must define the conditions in a string with an explicit ``or`` operator.
+Ansible を使用すると、``failed_when`` 条件を使用して、各タスクに「失敗」の意味を定義できます。Ansible のすべての条件と同様、複数の ``failed_when`` 条件の一覧は暗黙的な ``and`` で結合され、*all* 条件を満たす場合にのみタスクは失敗します。条件のいずれかを満たすときに障害を発生させる場合は、明示的な ``or`` 演算子で条件を文字列に定義する必要があります。
 
-You may check for failure by searching for a word or phrase in the output of a command::
+コマンドの出力で単語またはフレーズを検索して、障害の有無を確認できます。
 
-    - name: Fail task when the command error output prints FAILED
+    - name:Fail task when the command error output prints FAILED
       command: /usr/bin/example-command -x -y -z
       register: command_result
       failed_when: "'FAILED' in command_result.stderr"
 
-or based on the return code::
+または、戻りコードに基いて確認できます。
 
-    - name: Fail task when both files are identical
+    - name:Fail task when both files are identical
       raw: diff foo/file1 bar/file2
       register: diff_cmd
       failed_when: diff_cmd.rc == 0 or diff_cmd.rc >= 2
 
-In previous version of Ansible, this can still be accomplished as follows::
+以前のバージョンの Ansible では、これは以下のように実行できます。
 
     - name: this command prints FAILED when it fails
       command: /usr/bin/example-command -x -y -z
       register: command_result
-      ignore_errors: True
+      ignore_errors:True
 
     - name: fail the play if the previous command did not succeed
       fail:
         msg: "the command failed"
       when: "'FAILED' in command_result.stderr"
 
-You can also combine multiple conditions for failure. This task will fail if both conditions are true::
+障害のために複数の条件を組み合わせることもできます。このタスクは、両方の条件が true の場合に失敗します。
 
-    - name: Check if a file exists in temp and fail task if it does
+    - name:Check if a file exists in temp and fail task if it does
       command: ls /tmp/this_should_not_be_here
       register: result
       failed_when:
         - result.rc == 0
         - '"No such" not in result.stdout'
 
-If you want the task to fail when only one condition is satisfied, change the ``failed_when`` definition to::
+条件が満たされる場合にのみタスクが失敗する場合は、``failed_when`` 定義を以下のように変更します::
 
       failed_when: result.rc == 0 or "No such" not in result.stdout
 
-If you have too many conditions to fit neatly into one line, you can split it into a multi-line yaml value with ``>``::
+不要な条件が多数ある場合は、``>`` を使用して、これを複数行の yaml 値に分割できます。
 
 
     - name: example of many failed_when conditions with OR
@@ -117,16 +117,16 @@ If you have too many conditions to fit neatly into one line, you can split it in
 
 .. _override_the_changed_result:
 
-Overriding The Changed Result
+変更した結果の上書き
 `````````````````````````````
 
-When a shell/command or other module runs it will typically report
-"changed" status based on whether it thinks it affected machine state.
+シェル、コマンド、またはその他のモジュールが実行すると、
+通常、マシンの状態に影響を与えたと考えるかどうかに基づいて、「変更された」ステータスを報告します。
 
-Sometimes you will know, based on the return code
-or output that it did not make any changes, and wish to override
-the "changed" result such that it does not appear in report output or
-does not cause handlers to fire::
+場合によっては、戻りコードまたは出力に基づいて、
+変更が加えられなかったことがわかり、「変更された」結果を上書きして、
+レポート出力に表示されないようにするか、
+ハンドラーを起動させないようにします。
 
     tasks:
 
@@ -138,7 +138,7 @@ does not cause handlers to fire::
       - shell: wall 'beep'
         changed_when: False
 
-You can also combine multiple conditions to override "changed" result::
+複数の条件を組み合わせて「変更」の結果を上書きすることもできます。
 
     - command: /bin/fake_command
       register: result
@@ -147,12 +147,12 @@ You can also combine multiple conditions to override "changed" result::
         - '"ERROR" in result.stderr'
         - result.rc == 2
 
-Aborting the play
+プレイの中止
 `````````````````
 
-Sometimes it's desirable to abort the entire play on failure, not just skip remaining tasks for a host.
+ホストの残りのタスクを省略するだけでなく、障害時にプレイ全体を中止することが望ましい場合があります。
 
-The ``any_errors_fatal`` option will end the play and prevent any subsequent plays from running. When an error is encountered, all hosts in the current batch are given the opportunity to finish the fatal task and then the execution of the play stops. ``any_errors_fatal`` can be set at the play or block level::
+``any_errors_fatal`` オプションはプレイを終了し、その後のプレイが実行しないようにします。エラーが発生した場合は、現在のバッチのすべてのホストで致命的なタスクを終了し、その後にプレイの実行が停止します。``any_errors_fatal`` はプレイまたはブロックのレベルで設定できます。
 
      - hosts: somehosts
        any_errors_fatal: true
@@ -165,14 +165,14 @@ The ``any_errors_fatal`` option will end the play and prevent any subsequent pla
              - include_tasks: mytasks.yml
            any_errors_fatal: true
 
-for finer-grained control ``max_fail_percentage`` can be used to abort the run after a given percentage of hosts has failed.
+より粒度の細かい制御では、``max_fail_percentage`` を使用して、特定の割合のホストが失敗した後に実行を中止できます。
 
-Using blocks
+ブロックの使用
 ````````````
 
-Most of what you can apply to a single task (with the exception of loops) can be applied at the :ref:`playbooks_blocks` level, which also makes it much easier to set data or directives common to the tasks.
-Blocks also introduce the ability to handle errors in a way similar to exceptions in most programming languages.
-Blocks only deal with 'failed' status of a task. A bad task definition or an unreachable host are not 'rescuable' errors::
+単一タスク (ループを除く) に適用できるほとんどのタスクは :ref:`playbooks_blocks` レベルで適用できるため、タスクに共通するデータまたはディレクティブの設定がより簡単になります。
+また、ブロックには、ほとんどのプログラミング言語で例外を処理するのと同じような方法でエラーを処理する機能が導入されています。
+ブロックは、タスクの「faileded」ステータスのみを処理します。問題のあるタスク定義または到達不可能なホストは、「復旧可能な可能」エラーではありません。
 
     tasks:
     - name: Handle the error
@@ -187,20 +187,20 @@ Blocks only deal with 'failed' status of a task. A bad task definition or an unr
         - debug:
             msg: 'I caught an error, can do stuff here to fix it, :-)'
 
-This will 'revert' the failed status of the outer ``block`` task for the run and the play will continue as if it had succeeded.
-See :ref:`block_error_handling` for more examples.
+これにより、その実行には含まれない ``ブロック`` タスクの失敗ステータスが「取り消され」、成功したかのように再生が続行します。
+その他の例は、「:ref:`block_error_handling`」を参照してください。
 
 .. seealso::
 
    :ref:`playbooks_intro`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_best_practices`
-       Best practices in playbooks
+       Playbook のベストプラクティス
    :ref:`playbooks_conditionals`
-       Conditional statements in playbooks
+       Playbook の条件付きステートメント
    :ref:`playbooks_variables`
-       All about variables
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       変数の詳細
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

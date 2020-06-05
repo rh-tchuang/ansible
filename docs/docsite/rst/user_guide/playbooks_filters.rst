@@ -1,55 +1,55 @@
 .. _playbooks_filters:
 
-Filters
+フィルター
 -------
 
-.. contents:: Topics
+.. contents:: トピック
 
 
-Filters in Ansible are from Jinja2, and are used for transforming data inside a template expression.  Jinja2 ships with many filters. See `builtin filters`_ in the official Jinja2 template documentation.
+Ansible のフィルターは Jinja2 から取得して、テンプレート式内のデータの変換に使用されます。 Jinja2 には多くのフィルターが同梱されます。公式の Jinja2 テンプレートドキュメントの「`builtin filters`_」を参照してください。
 
-Take into account that templating happens on the Ansible controller, **not** on the task's target host, so filters also execute on the controller as they manipulate local data.
+テンプレートは、タスクのターゲットホストでは **なく**、Ansible コントローラーで実行されるため、フィルターはローカルデータを操作するため、コントローラーでも実行されます。
 
-In addition the ones provided by Jinja2, Ansible ships with its own and allows users to add their own custom filters.
+Jinja2 が提供するもののほかに、Ansible には独自のフィルターが同梱され、ユーザーが独自のカスタムフィルターを追加できるようにします。
 
 .. _filters_for_formatting_data:
 
-Filters For Formatting Data
+データフォーマットのフィルター
 ```````````````````````````
 
-The following filters will take a data structure in a template and render it in a slightly different format.  These
-are occasionally useful for debugging::
+以下のフィルターは、テンプレートのデータ構造を取り、これを若干異なる形式でレンダリングします。 これらは、
+時々デバッグに役立ちます::
 
     {{ some_variable | to_json }}
     {{ some_variable | to_yaml }}
-
-For human readable output, you can use::
+    
+人間が判読できる出力には、以下を使用できます::
 
     {{ some_variable | to_nice_json }}
     {{ some_variable | to_nice_yaml }}
-
-It's also possible to change the indentation of both (new in version 2.2)::
+    
+両方のインデントを変更することもできます (バージョン 2.2 の新機能)。
 
     {{ some_variable | to_nice_json(indent=2) }}
     {{ some_variable | to_nice_yaml(indent=8) }}
+    
 
-
-``to_yaml`` and ``to_nice_yaml`` filters use `PyYAML library`_ which has a default 80 symbol string length limit. That causes unexpected line break after 80th symbol (if there is a space after 80th symbol)
-To avoid such behaviour and generate long lines it is possible to use ``width`` option::
+``to_yaml`` フィルターおよび ``to_nice_yaml`` フィルターは、デフォルトの 80 の記号文字列の長さ制限のある `PyYAML library`_ を使用します。これにより、80 番目のシンボルの後に予期しない改行が破損します (80 番目の記号の後に空白がある場合)。
+このような動作を回避し、長い行を生成するには、``width`` オプションを使用できます。
 
     {{ some_variable | to_yaml(indent=8, width=1337) }}
     {{ some_variable | to_nice_yaml(indent=8, width=1337) }}
+    
+ハードコードされた数値の代わりに ``float("inf")`` のような構造を使用する方が適切かもしれませんが、フィルターは Python 関数のプロキシーをサポートしていません。
+また、他の YAML パラメーターのパススルーにも対応していることに注意してください。完全なリストは、`PyYAML ドキュメント`_ を参照してください。
 
-While it would be nicer to use a construction like ``float("inf")`` instead of a hardcoded number, unfortunately the filter doesn't support proxying Python functions.
-Note that it also supports passing through other YAML parameters. Full list can be found in `PyYAML documentation`_.
 
-
-Alternatively, you may be reading in some already formatted data::
+または、すでにフォーマットされている一部のデータで読み取る場合があります。
 
     {{ some_variable | from_json }}
     {{ some_variable | from_yaml }}
-
-for example::
+    
+例:
 
   tasks:
     - shell: cat /some/path/to/file.json
@@ -61,10 +61,10 @@ for example::
 
 .. versionadded:: 2.7
 
-To parse multi-document yaml strings, the ``from_yaml_all`` filter is provided.
-The ``from_yaml_all`` filter will return a generator of parsed yaml documents.
+複数ドキュメントの yaml 文字列を解析するには、``from_yaml_all`` フィルターが提供されます。
+``from_yaml_all`` フィルターは、解析された yaml ドキュメントのジェネレーターを返します。
 
-for example::
+例:
 
   tasks:
     - shell: cat /some/path/to/multidoc-file.yaml
@@ -76,42 +76,42 @@ for example::
 
 .. _forcing_variables_to_be_defined:
 
-Forcing Variables To Be Defined
+定義する変数の強制
 ```````````````````````````````
 
-The default behavior from ansible and ansible.cfg is to fail if variables are undefined, but you can turn this off.
+Ansible および ansible.cfg のデフォルトの動作は、変数が定義されていない場合に失敗しますが、これをオフにすることができます。
 
-This allows an explicit check with this feature off::
+これにより、この機能をオフにすると、この明示的なチェックが可能になります。
 
     {{ variable | mandatory }}
 
-The variable value will be used as is, but the template evaluation will raise an error if it is undefined.
+変数の値はそのまま使用されますが、定義されていない場合は、テンプレートの評価でエラーが発生します。
 
 
 .. _defaulting_undefined_variables:
 
-Defaulting Undefined Variables
+未定義変数のデフォルト設定
 ``````````````````````````````
 
-Jinja2 provides a useful 'default' filter that is often a better approach to failing if a variable is not defined::
+Jinja2 は、変数が定義されていない場合に失敗するより適切な「デフォルト」フィルターを提供します。
 
     {{ some_variable | default(5) }}
 
-In the above example, if the variable 'some_variable' is not defined, the value used will be 5, rather than an error
-being raised.
+上記の例では、「some_variable」変数が定義されていない場合、
+使用される値はエラーではなく、5 になります。
 
-If you want to use the default value when variables evaluate to false or an empty string you have to set the second parameter to
-``true``::
+変数が false または空の文字列に評価されるときにデフォルト値を使用する場合は、
+2 番目のパラメーターを ``true`` に設定する必要があります::
 
     {{ lookup('env', 'MY_USER') | default('admin', true) }}
 
 
 .. _omitting_undefined_variables:
 
-Omitting Parameters
+パラメーターの省略
 ```````````````````
 
-As of Ansible 1.8, it is possible to use the default filter to omit module parameters using the special `omit` variable::
+Ansible 1.8 より、特別な `omit` 変数を使用して、デフォルトのフィルターを使用してモジュールパラメーターを省略できるようになりました。
 
     - name: touch files with an optional mode
       file:
@@ -123,110 +123,110 @@ As of Ansible 1.8, it is possible to use the default filter to omit module param
         - path: /tmp/bar
         - path: /tmp/baz
           mode: "0444"
+    
+リストの最初の 2 つのファイルの場合、デフォルトのモードはシステムの umask によって決定されます。
+これは、最後のファイルが `mode=0444` オプションを受け取る間、`mode=` パラメーターがファイルモジュールに送信されないためです。
 
-For the first two files in the list, the default mode will be determined by the umask of the system as the `mode=`
-parameter will not be sent to the file module while the final file will receive the `mode=0444` option.
-
-.. note:: If you are "chaining" additional filters after the ``default(omit)`` filter, you should instead do something like this:
-      ``"{{ foo | default(None) | some_filter or omit }}"``. In this example, the default ``None`` (Python null) value will cause the
-      later filters to fail, which will trigger the ``or omit`` portion of the logic. Using ``omit`` in this manner is very specific to
-      the later filters you're chaining though, so be prepared for some trial and error if you do this.
+.. note:: ``default(omit)`` フィルターの後にフィルターを「チェーン」する場合は、代わりに以下のようなフィルターを実行する必要があります。
+      ``"{{ foo | default(None) | some_filter or omit }}"``この例では、デフォルトの ``None`` (Python null) 値により、
+      後のフィルターが失敗し、ロジックの ``or omit`` 部分がトリガーされなくなります。この方法で ``omit`` を使用することは、
+      連鎖する後のフィルターに非常に固有であるため、これを行う場合は、トライアル・アンド・エラーの準備をしてください。
 
 .. _list_filters:
 
-List Filters
+リストのフィルター
 ````````````
 
-These filters all operate on list variables.
+これらのフィルターはすべて、list 変数で動作します。
 
 .. versionadded:: 1.8
 
-To get the minimum value from list of numbers::
+数字リストから最小値を取得するには、以下を実行します。
 
     {{ list1 | min }}
 
-To get the maximum value from a list of numbers::
+数字リストから最大値を取得するには、以下を実行します。
 
     {{ [3, 4, 2] | max }}
 
 .. versionadded:: 2.5
 
-Flatten a list (same thing the `flatten` lookup does)::
+リストをフラット化します (`flatten` フラットルックアップと同等)。
 
     {{ [3, [4, 2] ] | flatten }}
 
-Flatten only the first level of a list (akin to the `items` lookup)::
+リストの最初のレベルのみをフラット化します (`items` ルックアップと同等)。
 
     {{ [3, [4, [2]] ] | flatten(levels=1) }}
 
 
 .. _set_theory_filters:
 
-Set Theory Filters
+集合論フィルター
 ``````````````````
-All these functions return a unique set from sets or lists.
+これらの関数はすべて、セットまたはリストから一意のセットを返します。
 
 .. versionadded:: 1.4
 
-To get a unique set from a list::
+リストから一意のセットを取得するには、以下を指定します。
 
     {{ list1 | unique }}
 
-To get a union of two lists::
+2 つのリストを組み合わせて取得するには、以下を指定します。
 
     {{ list1 | union(list2) }}
 
-To get the intersection of 2 lists (unique list of all items in both)::
+2 つのリスト (両方の全項目の一意のリスト) で構成されるものを取得するには、以下を指定します。
 
     {{ list1 | intersect(list2) }}
 
-To get the difference of 2 lists (items in 1 that don't exist in 2)::
+2 つのリストの相違点を取得するには (2 に存在しない 1 の項目）、以下を指定します。
 
     {{ list1 | difference(list2) }}
 
-To get the symmetric difference of 2 lists (items exclusive to each list)::
+2 つのリストの対称的な違いを取得する (各リストへの除外) には、以下を指定します。
 
     {{ list1 | symmetric_difference(list2) }}
 
 
 .. _dict_filter:
 
-Dict Filter
+ディクショナリーフィルター
 ```````````
 
 .. versionadded:: 2.6
 
 
-To turn a dictionary into a list of items, suitable for looping, use `dict2items`::
+ディクショナリーをループに適した項目リストに変更するには、`dict2items` を使用します:
 
     {{ dict | dict2items }}
 
-Which turns::
+以下を、
 
     tags:
       Application: payment
       Environment: dev
 
-into::
+以下のように設定します::
 
-    - key: Application
+    - key:Application
       value: payment
-    - key: Environment
+    - key:Environment
       value: dev
 
 .. versionadded:: 2.8
 
-``dict2items`` accepts 2 keyword arguments, ``key_name`` and ``value_name`` that allow configuration of the names of the keys to use for the transformation::
+``dict2items`` は、``key_name`` と ``value_name`` の 2 つのキーワード引数を受け入れ、変換に使用するキー名を設定できます。
 
     {{ files | dict2items(key_name='file', value_name='path') }}
 
-Which turns::
+以下を、
 
     files:
       users: /etc/passwd
       groups: /etc/group
 
-into::
+以下のように設定します::
 
     - file: users
       path: /etc/passwd
@@ -238,38 +238,38 @@ items2dict filter
 
 .. versionadded:: 2.7
 
-This filter turns a list of dicts with 2 keys, into a dict, mapping the values of those keys into ``key: value`` pairs::
+このフィルターは、2 つのキーを持つディクショナリーのリストを 1 つのディクショナリーに変換し、それらのキーの値を ``key: value`` のペアにマッピングします。
 
     {{ tags | items2dict }}
 
-Which turns::
+以下を、
 
     tags:
-      - key: Application
+      - key:Application
         value: payment
-      - key: Environment
+      - key:Environment
         value: dev
 
-into::
+以下のように設定します::
 
     Application: payment
     Environment: dev
 
-This is the reverse of the ``dict2items`` filter.
+これは、``dict2items`` フィルターとは異なります。
 
-``items2dict`` accepts 2 keyword arguments, ``key_name`` and ``value_name`` that allow configuration of the names of the keys to use for the transformation::
+``items2dict`` は、``key_name`` と ``value_name`` の 2 つのキーワード引数を受け入れ、変換に使用するキーの名前を設定できます。
 
     {{ tags | items2dict(key_name='key', value_name='value') }}
 
 
 .. _zip_filter:
 
-zip and zip_longest filters
+zip フィルターおよび zip_longest フィルター
 ```````````````````````````
 
 .. versionadded:: 2.3
 
-To get a list combining the elements of other lists use ``zip``::
+他のリストの要素を組み合わせるリストを取得するには、``zip`` を使用します::
 
     - name: give me list combo of two lists
       debug:
@@ -279,18 +279,18 @@ To get a list combining the elements of other lists use ``zip``::
       debug:
         msg: "{{ [1,2,3] | zip(['a','b','c','d','e','f']) | list }}"
 
-To always exhaust all list use ``zip_longest``::
+すべてのリストを常に使い切るには、``zip_longest`` を使用します::
 
     - name: give me longest combo of three lists , fill with X
       debug:
         msg: "{{ [1,2,3] | zip_longest(['a','b','c','d','e','f'], [21, 22, 23], fillvalue='X') | list }}"
 
 
-Similarly to the output of the ``items2dict`` filter mentioned above, these filters can be used to construct a ``dict``::
+上記の ``items2dict`` フィルターの出力と同様に、これらのフィルターを使用して ``dict`` を作成できます。
 
     {{ dict(keys_list | zip(values_list)) }}
 
-Which turns::
+以下を、
 
     keys_list:
       - one
@@ -299,21 +299,21 @@ Which turns::
       - apple
       - orange
 
-into::
+以下のように設定します::
 
     one: apple
     two: orange
 
-subelements Filter
+サブ要素フィルター
 ``````````````````
 
 .. versionadded:: 2.7
 
-Produces a product of an object, and subelement values of that object, similar to the ``subelements`` lookup::
+``subelements`` のルックアップと同様、オブジェクトとそのオブジェクトのサブ要素の値の積を生成します。
 
     {{ users | subelements('groups', skip_missing=True) }}
 
-Which turns::
+以下を、
 
     users:
     - name: alice
@@ -329,7 +329,7 @@ Which turns::
       groups:
       - docker
 
-Into::
+以下のように設定します::
 
     -
       - name: alice
@@ -357,133 +357,133 @@ Into::
         - docker
       - docker
 
-An example of using this filter with ``loop``::
+``loop`` でこのフィルターを使用する例::
 
-    - name: Set authorized ssh key, extracting just that data from 'users'
+    - name:Set authorized ssh key, extracting just that data from 'users'
       authorized_key:
         user: "{{ item.0.name }}"
-        key: "{{ lookup('file', item.1) }}"
-      loop: "{{ users | subelements('authorized') }}"
-
+    key: "{{ lookup('file', item.1) }}"
+  loop: "{{ users | subelements('authorized') }}"
+    
 .. _random_mac_filter:
 
-Random Mac Address Filter
+ランダムの MAC アドレスフィルター
 `````````````````````````
 
 .. versionadded:: 2.6
 
-This filter can be used to generate a random MAC address from a string prefix.
+このフィルターは、文字列接頭辞からランダムな MAC アドレスを生成するために使用できます。
 
-To get a random MAC address from a string prefix starting with '52:54:00'::
+文字列接頭辞「52:54:00」で始まるランダムな MAC アドレスを取得するには、次のコマンドを実行します。
 
     "{{ '52:54:00' | random_mac }}"
     # => '52:54:00:ef:1c:03'
 
-Note that if anything is wrong with the prefix string, the filter will issue an error.
+接頭辞の文字列で不具合が生じた場合は、フィルターによりエラーが生じることに注意してください。
 
-As of Ansible version 2.9, it's also possible to initialize the random number generator from a seed. This way, you can create random-but-idempotent MAC addresses::
+Ansible バージョン 2.9 では、シードから乱数ジェネレーターを初期化することもできます。これにより、MAC アドレスをランダムで冪等な MAC アドレスを作成できます。
 
     "{{ '52:54:00' | random_mac(seed=inventory_hostname) }}"
 
 .. _random_filter:
 
-Random Number Filter
+乱数フィルター
 ````````````````````
 
 .. versionadded:: 1.6
 
-This filter can be used similar to the default jinja2 random filter (returning a random item from a sequence of
-items), but can also generate a random number based on a range.
+このフィルターは、デフォルトの jinja2 ランダムフィルター (一連のアイテムからランダムなアイテムを返す) と同様に使用できますが、
+範囲に基づいて乱数を生成することもできます。
 
-To get a random item from a list::
+リストからランダムなアイテムを取得するには、以下を指定します。
 
     "{{ ['a','b','c'] | random }}"
     # => 'c'
 
-To get a random number between 0 and a specified number::
+0 から指定された数字の間の乱数を取得するには、次のコマンドを実行します。
 
     "{{ 60 | random }} * * * * root /script/from/cron"
     # => '21 * * * * root /script/from/cron'
 
-Get a random number from 0 to 100 but in steps of 10::
+0 から 100 までの 10 のステップで乱数を取得します::
 
     {{ 101 | random(step=10) }}
     # => 70
 
-Get a random number from 1 to 100 but in steps of 10::
+0 から 100 までの 10 のステップで乱数を取得します::
 
     {{ 101 | random(1, 10) }}
     # => 31
     {{ 101 | random(start=1, step=10) }}
     # => 51
 
-As of Ansible version 2.3, it's also possible to initialize the random number generator from a seed. This way, you can create random-but-idempotent numbers::
+Ansible バージョン 2.3 では、シードから乱数ジェネレーターを初期化することもできます。これにより、random-but-idempotent (ランダムで冪等な数) を作成することができます。
 
     "{{ 60 | random(seed=inventory_hostname) }} * * * * root /script/from/cron"
 
 
-Shuffle Filter
+シャッフルフィルター
 ``````````````
 
 .. versionadded:: 1.8
 
-This filter will randomize an existing list, giving a different order every invocation.
+このフィルターは、既存のリストをランダム化し、呼び出しごとに異なる順序を提供します。
 
-To get a random list from an existing  list::
+既存の一覧からランダムなリストを取得するには、以下を実行します。
 
     {{ ['a','b','c'] | shuffle }}
     # => ['c','a','b']
     {{ ['a','b','c'] | shuffle }}
     # => ['b','c','a']
 
-As of Ansible version 2.3, it's also possible to shuffle a list idempotent. All you need is a seed.::
+Ansible バージョン 2.3 では、リストを冪等にシャッフルすることもできます。必要なのは、シードだけです::
 
     {{ ['a','b','c'] | shuffle(seed=inventory_hostname) }}
     # => ['b','a','c']
 
-note that when used with a non 'listable' item it is a noop, otherwise it always returns a list
+「リスト可能」ではない項目と併用する場合は、noop であることに注意してください。それ以外の場合は、必ず一覧を返します。
 
 
 .. _math_stuff:
 
-Math
+計算
 ````
 
 .. versionadded:: 1.9
 
 
-Get the logarithm (default is e)::
+対数を取得します (デフォルトは e)::
 
     {{ myvar | log }}
 
-Get the base 10 logarithm::
+ベース 10 の対数を取得します::
 
     {{ myvar | log(10) }}
 
-Give me the power of 2! (or 5)::
+2 の累乗 (または 5)::
 
     {{ myvar | pow(2) }}
     {{ myvar | pow(5) }}
-
-Square root, or the 5th::
+    
+平方根または 5 番目::
 
     {{ myvar | root }}
     {{ myvar | root(5) }}
-
-Note that jinja2 already provides some like abs() and round().
+    
+jinja2 にはすでに abs() や round() があります。
 
 .. json_query_filter:
 
-JSON Query Filter
+JSON クエリーフィルター
 `````````````````
 
 .. versionadded:: 2.2
 
-Sometimes you end up with a complex data structure in JSON format and you need to extract only a small set of data within it. The **json_query** filter lets you query a complex JSON structure and iterate over it using a loop structure.
+場合によっては、JSON 形式の複雑なデータ構造になり、その中の小さなデータセットのみを抽出する必要があります。**json_query** フィルターを使用すると、複雑な JSON 構造をクエリーでき、ループ構造を使用してこれを繰り返すことができます。
 
-.. note:: This filter is built upon **jmespath**, and you can use the same syntax. For examples, see `jmespath examples <http://jmespath.org/examples.html>`_.
+.. note:: このフィルターは **jmespath** で構築され、同じ構文を使用できます。たとえば、`jmespath サンプル <http://jmespath.org/examples.html>`_ を参照してください。
 
-Now, let's take the following data structure::
+ここで、以下のデータ構造を取ります。
 
     {
         "domain_definition": {
@@ -531,52 +531,52 @@ Now, let's take the following data structure::
             }
         }
     }
+    
+この構造からすべてのクラスターを抽出するには、以下のクエリーを使用できます::
 
-To extract all clusters from this structure, you can use the following query::
-
-    - name: "Display all cluster names"
+    - name:"Display all cluster names"
       debug:
         var: item
       loop: "{{ domain_definition | json_query('domain.cluster[*].name') }}"
 
-Same thing for all server names::
+すべてのサーバー名に対しても同様です::
 
-    - name: "Display all server names"
+    - name:"Display all server names"
       debug:
         var: item
       loop: "{{ domain_definition | json_query('domain.server[*].name') }}"
 
-This example shows ports from cluster1::
+以下の例では cluster1 からのポートを示しています::
 
-    - name: "Display all ports from cluster1"
+    - name:"Display all ports from cluster1"
       debug:
         var: item
       loop: "{{ domain_definition | json_query(server_name_cluster1_query) }}"
       vars:
         server_name_cluster1_query: "domain.server[?cluster=='cluster1'].port"
 
-.. note:: You can use a variable to make the query more readable.
+.. note:: 変数を使用すると、クエリーの読み取りがより容易になります。
 
-Or, alternatively print out the ports in a comma separated string::
+または、ポートをコンマ区切りの文字列で出力します。
 
-    - name: "Display all ports from cluster1 as a string"
+    - name:"Display all ports from cluster1 as a string"
       debug:
         msg: "{{ domain_definition | json_query('domain.server[?cluster==`cluster1`].port') | join(', ') }}"
 
-.. note:: Here, quoting literals using backticks avoids escaping quotes and maintains readability.
+.. note:: ここでは、バッククォートを使用してリテラルを引用符で囲むと、引用符のエスケープが回避され、読みやすさが維持されます。
 
-Or, using YAML `single quote escaping <https://yaml.org/spec/current.html#id2534365>`_::
+または、YAML `一重引用符エスケープ <https://yaml.org/spec/current.html#id2534365>`_ を使用します::
 
-    - name: "Display all ports from cluster1"
+    - name:"Display all ports from cluster1"
       debug:
         var: item
       loop: "{{ domain_definition | json_query('domain.server[?cluster==''cluster1''].port') }}"
 
-.. note:: Escaping single quotes within single quotes in YAML is done by doubling the single quote.
+.. note:: YAML の単一引用符内で単一引用符をエスケープする場合は、単一引用符を 2 倍にします。
 
-In this example, we get a hash map with all ports and names of a cluster::
+この例では、すべてのポートおよびクラスターの名前を持つハッシュマップを取得します。
 
-    - name: "Display all server ports and names from cluster1"
+    - name:"Display all server ports and names from cluster1"
       debug:
         var: item
       loop: "{{ domain_definition | json_query(server_name_cluster1_query) }}"
@@ -585,47 +585,47 @@ In this example, we get a hash map with all ports and names of a cluster::
 
 .. _ipaddr_filter:
 
-IP address filter
+IP アドレスフィルター
 `````````````````
 
 .. versionadded:: 1.9
 
-To test if a string is a valid IP address::
+文字列が有効な IP アドレスかどうかをテストするには、以下を実行します。
 
   {{ myvar | ipaddr }}
 
-You can also require a specific IP protocol version::
+さらに、特定の IP プロトコルバージョンが必要です。
 
   {{ myvar | ipv4 }}
   {{ myvar | ipv6 }}
 
-IP address filter can also be used to extract specific information from an IP
-address. For example, to get the IP address itself from a CIDR, you can use::
+IP アドレスフィルターを使用して、
+IP アドレスから特定の情報を抽出することもできます。たとえば、CIDR から IP アドレス自体を取得するには、以下を使用します::
 
   {{ '192.0.2.1/24' | ipaddr('address') }}
 
-More information about ``ipaddr`` filter and complete usage guide can be found
-in :ref:`playbooks_filters_ipaddr`.
+``ipaddr`` フィルターおよび完全な使用方法は、
+「:ref:`playbooks_filters_ipaddr`」を参照してください。
 
 .. _network_filters:
 
-Network CLI filters
+ネットワーク CLI フィルター
 ```````````````````
 
 .. versionadded:: 2.4
 
-To convert the output of a network device CLI command into structured JSON
-output, use the ``parse_cli`` filter::
+ネットワークデバイスの CLI コマンドの出力を構造化された JSON 出力に変換するには、
+``parse_cli`` フィルターを使用します::
 
     {{ output | parse_cli('path/to/spec') }}
 
 
-The ``parse_cli`` filter will load the spec file and pass the command output
-through it, returning JSON output. The YAML spec file defines how to parse the CLI output.
+``parse_cli`` フィルターは仕様ファイルを読み込み、
+それを介してコマンド出力を渡し、JSON 出力を返します。YAML 仕様ファイルは、CLI 出力の解析方法を定義します。
 
-The spec file should be valid formatted YAML.  It defines how to parse the CLI
-output and return JSON data.  Below is an example of a valid spec file that
-will parse the output from the ``show vlan`` command.
+仕様ファイルは有効なフォーマットの YAML である必要があります。 CLI の出力を解析する方法を定義し、
+JSON データを返します。 以下は、
+``show vlan`` コマンドからの出力を解析する有効な仕様ファイルの例です。
 
 .. code-block:: yaml
 
@@ -645,12 +645,12 @@ will parse the output from the ``show vlan`` command.
        value: present
 
 
-The spec file above will return a JSON data structure that is a list of hashes
-with the parsed VLAN information.
+上記の仕様ファイルは、
+解析された VLAN 情報を含むハッシュのリストである JSON データ構造を返します。
 
-The same command could be parsed into a hash by using the key and values
-directives.  Here is an example of how to parse the output into a hash
-value using the same ``show vlan`` command.
+キーと値のディレクティブを使用して、
+同じコマンドをハッシュに解析できます。 次に、
+同じ ``show vlan`` コマンドを使用して出力を解析してハッシュ値にする方法の例を示します。
 
 .. code-block:: yaml
 
@@ -672,9 +672,9 @@ value using the same ``show vlan`` command.
        value: present
 
 
-Another common use case for parsing CLI commands is to break a large command
-into blocks that can be parsed.  This can be done using the ``start_block`` and
-``end_block`` directives to break the command into blocks that can be parsed.
+CLI コマンドを解析する別の一般的な使用例は、
+大きなコマンドを解析可能なブロックに分割することです。 これは、``start_block`` ディレクティブおよび 
+``end_block`` ディレクティブを使用して、コマンドを解析可能なブロックに分割することで実行できます。
 
 .. code-block:: yaml
 
@@ -696,35 +696,35 @@ into blocks that can be parsed.  This can be done using the ``start_block`` and
          - "Port mode is (.+)"
 
 
-The example above will parse the output of ``show interface`` into a list of
-hashes.
+上記の例では、``show interface`` の出力を
+解析してハッシュのリストを作成します。
 
-The network filters also support parsing the output of a CLI command using the
-TextFSM library.  To parse the CLI output with TextFSM use the following
-filter::
+ネットワークフィルターは、
+TextFSM ライブラリーを使用した CLI コマンドの出力の解析にも対応しています。 TextFSM で CLI 出力を解析するには、
+以下のフィルターを使用します::
 
   {{ output.stdout[0] | parse_cli_textfsm('path/to/fsm') }}
 
-Use of the TextFSM filter requires the TextFSM library to be installed.
+TextFSM フィルターを使用するには、TextFSM ライブラリーをインストールする必要があります。
 
-Network XML filters
+ネットワーク XML フィルター
 ```````````````````
 
 .. versionadded:: 2.5
 
-To convert the XML output of a network device command into structured JSON
-output, use the ``parse_xml`` filter::
+ネットワークデバイスコマンドの XML 出力を
+構造化 JSON 出力に変換するには、``parse_xml`` フィルターを使用します::
 
   {{ output | parse_xml('path/to/spec') }}
 
-The ``parse_xml`` filter will load the spec file and pass the command output
-through formatted as JSON.
+``parse_xml`` フィルターは仕様ファイルを読み込み、
+JSON 形式のコマンド出力を渡します。
 
-The spec file should be valid formatted YAML. It defines how to parse the XML
-output and return JSON data.
+仕様ファイルは有効なフォーマットの YAML である必要があります。XML 出力を解析して、
+JSON データを返す方法を定義します。
 
-Below is an example of a valid spec file that
-will parse the output from the ``show vlan | display xml`` command.
+以下は、
+``show vlan | display xml`` コマンドの出力を解析します。
 
 .. code-block:: yaml
 
@@ -748,12 +748,12 @@ will parse the output from the ``show vlan | display xml`` command.
          state: ".[@inactive='inactive']"
 
 
-The spec file above will return a JSON data structure that is a list of hashes
-with the parsed VLAN information.
+上記の仕様ファイルは、
+解析された VLAN 情報を含むハッシュのリストである JSON データ構造を返します。
 
-The same command could be parsed into a hash by using the key and values
-directives.  Here is an example of how to parse the output into a hash
-value using the same ``show vlan | display xml`` command.
+キーと値のディレクティブを使用して、
+同じコマンドをハッシュに解析できます。 同じ ``show vlan | display xml`` コマンドを使用して、
+出力をハッシュ値に解析する方法の例を次に示します。
 
 .. code-block:: yaml
 
@@ -779,19 +779,19 @@ value using the same ``show vlan | display xml`` command.
          state: ".[@inactive='inactive']"
 
 
-The value of ``top`` is the XPath relative to the XML root node.
-In the example XML output given below, the value of ``top`` is ``configuration/vlans/vlan``,
-which is an XPath expression relative to the root node (<rpc-reply>).
-``configuration`` in the value of ``top`` is the outer most container node, and ``vlan``
-is the inner-most container node.
+``top`` の値は XML root ノードに対して相対的な値です。
+以下の XML 出力例では、``top`` の値は ``configuration/vlans/vlan`` です。
+これは root ノード (<rpc-reply>) に関連する XPath 式です。
+``top`` 値の ``設定`` は、
+最も遠くにあるコンテナノードであり、``vlan`` は最も近くにあるコンテナノードです。
 
-``items`` is a dictionary of key-value pairs that map user-defined names to XPath expressions
-that select elements. The Xpath expression is relative to the value of the XPath value contained in ``top``.
-For example, the ``vlan_id`` in the spec file is a user defined name and its value ``vlan-id`` is the
-relative to the value of XPath in ``top``
+``items`` は、
+ユーザー定義の名前から、要素を選択する XPath 式にマップするキーと値のペアのディクショナリーです。Xpath 式は、``top`` に含まれる XPath 値の値を基準にしています。
+たとえば、仕様ファイルの ``vlan_id`` はユーザー定義の名前で、その値 ``vlan-id`` は、
+``top`` の XPath の値を基準にしています。
 
-Attributes of XML tags can be extracted using XPath expressions. The value of ``state`` in the spec
-is an XPath expression used to get the attributes of the ``vlan`` tag in output XML.::
+XML タグの属性は、XPath 式を使用して抽出できます。仕様の ``state`` の値は、
+出力 XML の ``vlan`` タグの属性を取得するために使用される XPath 式です::
 
     <rpc-reply>
       <configuration>
@@ -805,168 +805,168 @@ is an XPath expression used to get the attributes of the ``vlan`` tag in output 
       </configuration>
     </rpc-reply>
 
-.. note:: For more information on supported XPath expressions, see `<https://docs.python.org/2/library/xml.etree.elementtree.html#xpath-support>`_.
+.. note:: サポートされる XPath 式の詳細は、`<https://docs.python.org/2/library/xml.etree.elementtree.html#xpath-support>`_ を参照してください。
 
-Network VLAN filters
+ネットワーク VLAN フィルター
 ````````````````````
 
 .. versionadded:: 2.8
 
-Use the ``vlan_parser`` filter to manipulate an unsorted list of VLAN integers into a
-sorted string list of integers according to IOS-like VLAN list rules. This list has the following properties:
+``vlan_parser`` フィルターを使用して、
+IOS のような VLAN リストルールに従って、ソートされていない VLAN 整数のリストを、整数のソートされた文字列リストに操作します。このリストには以下のプロパティーがあります。
 
-* Vlans are listed in ascending order.
-* Three or more consecutive VLANs are listed with a dash.
-* The first line of the list can be first_line_len characters long.
-* Subsequent list lines can be other_line_len characters.
+* VLAN は昇順でリストされます。
+* 3 つ以上の連続した VLAN はダッシュ付きでリストされます。
+* リストの最初の行は、first_line_len 文字の長さになります。
+* 後続のリスト行は、other_line_len 文字になります。
 
-To sort a VLAN list::
+VLAN リストをソートするには、以下を実行します。
 
     {{ [3003, 3004, 3005, 100, 1688, 3002, 3999] | vlan_parser }}
 
-This example renders the following sorted list::
+この例では、以下のソートリストを示しています。
 
     ['100,1688,3002-3005,3999']
 
 
-Another example Jinja template::
+Jinja テンプレートの他の例:
 
     {% set parsed_vlans = vlans | vlan_parser %}
     switchport trunk allowed vlan {{ parsed_vlans[0] }}
     {% for i in range (1, parsed_vlans | count) %}
     switchport trunk allowed vlan add {{ parsed_vlans[i] }}
 
-This allows for dynamic generation of VLAN lists on a Cisco IOS tagged interface. You can store an exhaustive raw list of the exact VLANs required for an interface and then compare that to the parsed IOS output that would actually be generated for the configuration.
+これにより、Cisco IOS タグ付けインターフェースで VLAN のリストを動的に生成できます。インターフェースに必要となる正確な VLAN リストを保存し、そのリストを設定用に実際に生成される解析された IOS 出力と比較できます。
 
 
 .. _hash_filters:
 
-Hashing filters
+ハッシュフィルター
 ```````````````
 
 .. versionadded:: 1.9
 
-To get the sha1 hash of a string::
+文字列の sha1 ハッシュを取得するには、次のようになります。
 
     {{ 'test1' | hash('sha1') }}
 
-To get the md5 hash of a string::
+文字列の md5 ハッシュを取得するには、次のようになります。
 
     {{ 'test1' | hash('md5') }}
 
-Get a string checksum::
+文字列のチェックサムを取得します。
 
     {{ 'test2' | checksum }}
 
-Other hashes (platform dependent)::
+その他のハッシュ (プラットフォームに依存)::
 
     {{ 'test2' | hash('blowfish') }}
 
-To get a sha512 password hash (random salt)::
+sha512 パスワードハッシュ (任意の salt) を取得するには、次のようになります。
 
     {{ 'passwordsaresecret' | password_hash('sha512') }}
 
-To get a sha256 password hash with a specific salt::
+特定の salt を持つ sha256 パスワードハッシュを取得するには、次のようになります。
 
     {{ 'secretpassword' | password_hash('sha256', 'mysecretsalt') }}
 
-An idempotent method to generate unique hashes per system is to use a salt that is consistent between runs::
+システムごとに一意のハッシュを生成する冪等な方法は、実行間で一貫性のある salt を使用することです。
 
     {{ 'secretpassword' | password_hash('sha512', 65534 | random(seed=inventory_hostname) | string) }}
 
-Hash types available depend on the master system running ansible,
-'hash' depends on hashlib password_hash depends on passlib (https://passlib.readthedocs.io/en/stable/lib/passlib.hash.html).
+使用可能なハッシュタイプは、ansible を実行しているマスターシステムに依存し、
+「ハッシュ」は hashlib に依存し、password_hash は passlib に依存します (https://passlib.readthedocs.io/en/stable/lib/passlib.hash.html)。
 
 .. versionadded:: 2.7
 
-Some hash types allow providing a rounds parameter::
+ハッシュタイプによっては、rounds パラメーターを指定できるものもあります。
 
     {{ 'secretpassword' | password_hash('sha256', 'mysecretsalt', rounds=10000) }}
 
 .. _combine_filter:
 
-Combining hashes/dictionaries
+ハッシュ/ディクショナリーの統合
 `````````````````````````````
 
 .. versionadded:: 2.0
 
-The `combine` filter allows hashes to be merged. For example, the
-following would override keys in one hash::
+`combine` フィルターにより、ハッシュをマージできます。たとえば、
+次は 1 つのハッシュ内のキーをオーバーライドします。
 
     {{ {'a':1, 'b':2} | combine({'b':3}) }}
 
-The resulting hash would be::
+生成されるハッシュは、以下のようになります::
 
     {'a':1, 'b':3}
 
-The filter also accepts an optional `recursive=True` parameter to not
-only override keys in the first hash, but also recurse into nested
-hashes and merge their keys too
+フィルターは、オプションの `recursive=True` パラメーターも受け入れ、
+最初のハッシュのキーをオーバーライドするだけでなく、
+ネストされたハッシュに再帰し、それらのキーもマージします。
 
 .. code-block:: jinja
 
     {{ {'a':{'foo':1, 'bar':2}, 'b':2} | combine({'a':{'bar':3, 'baz':4}}, recursive=True) }}
 
-This would result in::
+これにより、以下のようになります::
 
     {'a':{'foo':1, 'bar':3, 'baz':4}, 'b':2}
 
-The filter can also take multiple arguments to merge::
+フィルターは複数の引数を使用してマージすることもできます::
 
     {{ a | combine(b, c, d) }}
 
-In this case, keys in `d` would override those in `c`, which would
-override those in `b`, and so on.
+この場合、`d` のキーは `c` のキーをオーバーライドし、
+`b` のキーをオーバーライドします。
 
-This behaviour does not depend on the value of the `hash_behaviour`
-setting in `ansible.cfg`.
+この動作は、
+`ansible.cfg` の `hash_behaviour` 設定の値に依存しません。
 
 .. _extract_filter:
 
-Extracting values from containers
+コンテナーからの値の抽出
 `````````````````````````````````
 
 .. versionadded:: 2.1
 
-The `extract` filter is used to map from a list of indices to a list of
-values from a container (hash or array)::
+`extract` フィルターは、インデックスリストから、
+コンテナーの値リスト (ハッシュまたはアレイ) へマップするために使用されます。
 
     {{ [0,2] | map('extract', ['x','y','z']) | list }}
-    {{ ['x','y'] | map('extract', {'x': 42, 'y': 31}) | list }}
+    {{ ['x','y'] | map('extract', {'x':42, 'y':31}) | list }}
 
-The results of the above expressions would be::
+上記の式の結果は、以下のようになります::
 
     ['x', 'z']
     [42, 31]
 
-The filter can take another argument::
+フィルターは別の引数を取ることができます::
 
     {{ groups['x'] | map('extract', hostvars, 'ec2_ip_address') | list }}
 
-This takes the list of hosts in group 'x', looks them up in `hostvars`,
-and then looks up the `ec2_ip_address` of the result. The final result
-is a list of IP addresses for the hosts in group 'x'.
+これは、グループ「x」のホストのリストを取得し、`hostvars` でそれを検索してから、
+結果の `ec2_ip_address` を検索します。最終結果は、
+グループの「x」にあるホストの IP アドレスリストです。
 
-The third argument to the filter can also be a list, for a recursive
-lookup inside the container::
+フィルター内の 3 番目の引数は、
+コンテナー内の再帰的な検索のためのリストでもあります。
 
     {{ ['a'] | map('extract', b, ['x','y']) | list }}
 
-This would return a list containing the value of `b['a']['x']['y']`.
+これにより、`b['a']['x']['y']` の値が含まれるリストが返されます。
 
 .. _comment_filter:
 
-Comment Filter
+コメントフィルター
 ``````````````
 
 .. versionadded:: 2.0
 
-The `comment` filter allows to decorate the text with a chosen comment
-style. For example the following::
+`comment` フィルターにより、
+選択したコメントのスタイルでテキストを飾ることができます。たとえば、次のものが、
 
     {{ "Plain style (default)" | comment }}
 
-will produce this output:
+次の出力を生成します。
 
 .. code-block:: text
 
@@ -974,32 +974,32 @@ will produce this output:
     # Plain style (default)
     #
 
-Similar way can be applied style for C (``//...``), C block
-(``/*...*/``), Erlang (``%...``) and XML (``<!--...-->``)::
+同様の方法で、C (``//...``)、
+C ブロック (``/*...*/``)、Erlang (``%...``) および XML (``<!--...-->``) にスタイルを適用できます。
 
     {{ "C style" | comment('c') }}
     {{ "C block style" | comment('cblock') }}
     {{ "Erlang style" | comment('erlang') }}
     {{ "XML style" | comment('xml') }}
-
-If you need a specific comment character that is not included by any of the
-above, you can customize it with::
+    
+上記のいずれにも含まれていない特定のコメント文字が必要な場合は、
+次のようにカスタマイズできます::
 
   {{ "My Special Case" | comment(decoration="! ") }}
 
-producing:
+次を生成します。
 
 .. code-block:: text
 
   !
-  ! My Special Case
+  !My Special Case
   !
 
-It is also possible to fully customize the comment style::
+コメントスタイルを完全にカスタマイズすることもできます::
 
     {{ "Custom style" | comment('plain', prefix='#######\n#', postfix='#\n#######\n   ###\n    #') }}
 
-That will create the following output:
+これにより、以下の出力が作成されます。
 
 .. code-block:: text
 
@@ -1011,9 +1011,9 @@ That will create the following output:
        ###
         #
 
-The filter can also be applied to any Ansible variable. For example to
-make the output of the ``ansible_managed`` variable more readable, we can
-change the definition in the ``ansible.cfg`` file to this:
+フィルターは、任意の Ansible 変数に適用することもできます。たとえば、
+``ansible_managed`` 変数の出力をより読みやすいものにするには、
+``ansible.cfg`` ファイルの定義を以下のように変更します。
 
 .. code-block:: jinja
 
@@ -1025,11 +1025,11 @@ change the definition in the ``ansible.cfg`` file to this:
       user: {uid}
       host: {host}
 
-and then use the variable with the `comment` filter::
+次に、`comment` フィルターで変数を使用します。
 
     {{ ansible_managed | comment }}
 
-which will produce this output:
+これは、次の出力を生成します。
 
 .. code-block:: sh
 
@@ -1045,12 +1045,12 @@ which will produce this output:
 
 .. _other_useful_filters:
 
-URL Split Filter
+URL Split フィルター
 `````````````````
 
 .. versionadded:: 2.4
 
-The ``urlsplit`` filter extracts the fragment, hostname, netloc, password, path, port, query, scheme, and username from an URL. With no arguments, returns a dictionary of all the fields::
+``urlsplit`` フィルターは、フラグメント、ホスト名、netloc、パスワード、パス、ポート、クエリー、スキーム、およびユーザー名を URL から抽出します。引数なしでは、すべてのフィールドのディクショナリーを返します::
 
     {{ "http://user:password@www.acme.com:9000/dir/index.html?query=term#fragment" | urlsplit('hostname') }}
     # => 'www.acme.com'
@@ -1094,10 +1094,10 @@ The ``urlsplit`` filter extracts the fragment, hostname, netloc, password, path,
     #   }
 
 
-Regular Expression Filters
+正規表現フィルター
 ``````````````````````````
 
-To search a string with a regex, use the "regex_search" filter::
+正規表現で文字列を検索するには、「regex_search」フィルターを使用します::
 
     # search for "foo" in "foobar"
     {{ 'foobar' | regex_search('(foo)') }}
@@ -1109,13 +1109,13 @@ To search a string with a regex, use the "regex_search" filter::
     {{ 'foo\nBAR' | regex_search("^bar", multiline=True, ignorecase=True) }}
 
 
-To search for all occurrences of regex matches, use the "regex_findall" filter::
+正規表現のすべてのマッチを検索するには、「regex_findall」フィルターを使用します。
 
     # Return a list of all IPv4 addresses in the string
     {{ 'Some DNS servers are 8.8.8.8 and 8.8.4.4' | regex_findall('\\b(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\b') }}
+    
 
-
-To replace text in a string with regex, use the "regex_replace" filter::
+文字列のテキストを正規表現に置き換えるには、「regex_replace」フィルターを使用します。
 
     # convert "ansible" to "able"
     {{ 'ansible' | regex_replace('^a.*i(.*)$', 'a\\1') }}
@@ -1129,9 +1129,9 @@ To replace text in a string with regex, use the "regex_replace" filter::
     # convert "localhost:80" to "localhost"
     {{ 'localhost:80' | regex_replace(':80') }}
 
-.. note:: If you want to match the whole string and you are using ``*`` make sure to always wraparound your regular expression with the start/end anchors.
-   For example ``^(.*)$`` will always match only one result, while ``(.*)`` on some Python versions will match the whole string and an empty string at the
-   end, which means it will make two replacements.
+.. note:: 文字列全体と一致させるために ``*`` を使用している場合は、必ず正規表現を開始/終了アンカーでラップアラウンドしてください。
+   たとえば、``^(.*)$`` で一致する結果は常に 1 つだけで、一部の Python バージョンでは、``(.*)`` は文字列全体と最後の空の文字列に一致します。
+   つまり、2つの置換が行われます。
 
     # add "https://" prefix to each item in a list
     GOOD:
@@ -1151,33 +1151,33 @@ To replace text in a string with regex, use the "regex_replace" filter::
     BAD:
     {{ hosts | map('regex_replace', '(.*)', '\\1:80') | list }}
 
-.. note:: Prior to ansible 2.0, if "regex_replace" filter was used with variables inside YAML arguments (as opposed to simpler 'key=value' arguments),
-   then you needed to escape backreferences (e.g. ``\\1``) with 4 backslashes (``\\\\``) instead of 2 (``\\``).
+.. note:: Ansible 2.0 よりも前のバージョンでは、(「key=value」の引数を簡単にするのではなく)「regex_replace」フィルターが YAML 引数内の変数で使用された場合は、
+   次に、2 つの (````) ではなく、4 つのバックスラッシュ (``\``) で逆参照 (``\1`` など) をエスケープする必要があります。
 
 .. versionadded:: 2.0
 
-To escape special characters within a standard Python regex, use the "regex_escape" filter (using the default re_type='python' option)::
+標準の Python 正規表現内で特殊文字をエスケープするには、「regex_escape」フィルターを使用します (デフォルトの re_type='python' オプションを使用)。
 
     # convert '^f.*o(.*)$' to '\^f\.\*o\(\.\*\)\$'
     {{ '^f.*o(.*)$' | regex_escape() }}
 
 .. versionadded:: 2.8
 
-To escape special characters within a POSIX basic regex, use the "regex_escape" filter with the re_type='posix_basic' option::
+POSIX 基本正規表現内で特殊文字をエスケープするには、re_type='posix_basic' オプションで「regex_escape」フィルターを使用します。
 
     # convert '^f.*o(.*)$' to '\^f\.\*o(\.\*)\$'
     {{ '^f.*o(.*)$' | regex_escape('posix_basic') }}
 
 
-Kubernetes Filters
+Kubernetes フィルター
 ``````````````````
 
-Use the "k8s_config_resource_name" filter to obtain the name of a Kubernetes ConfigMap or Secret,
-including its hash::
+「k8s_config_resource_name」フィルターを使用して、
+Kubernetes ConfigMap または Secret の名前を取得します。
 
     {{ configmap_resource_definition | k8s_config_resource_name }}
 
-This can then be used to reference hashes in Pod specifications::
+これは、Pod 仕様のハッシュを参照するために使用できます。
 
     my_secret:
       kind: Secret
@@ -1195,99 +1195,99 @@ This can then be used to reference hashes in Pod specifications::
 
 .. versionadded:: 2.8
 
-Other Useful Filters
+他の有用なフィルター
 ````````````````````
 
-To add quotes for shell usage::
+シェルの使用に引用符を追加するには、以下を行います。
 
     - shell: echo {{ string_value | quote }}
 
-To use one value on true and another on false (new in version 1.9)::
+true で 1 つの値を使用し、false で別の値を使用するには、以下を指定します (バージョン1.9の新機能)::
 
     {{ (name == "John") | ternary('Mr','Ms') }}
 
-To use one value on true, one value on false and a third value on null (new in version 2.8)::
+true で 1 つの値、false で 1 つの値、null で 3 番目の値を使用するには、以下を指定します (バージョン 2.8 の新機能)::
 
    {{ enabled | ternary('no shutdown', 'shutdown', omit) }}
 
-To concatenate a list into a string::
+リストを文字列に連結するには、以下を指定します::
 
     {{ list | join(" ") }}
 
-To get the last name of a file path, like 'foo.txt' out of '/etc/asdf/foo.txt'::
+「/etc/asdf/foo.txt」から「foo.txt」のように、ファイルパスの最後の名前を取得するには、以下を指定します::
 
     {{ path | basename }}
 
-To get the last name of a windows style file path (new in version 2.0)::
+ウィンドウスタイルのファイルパスの最後の名前を取得するには、以下を指定します (バージョン 2.0 の新機能)::
 
     {{ path | win_basename }}
 
-To separate the windows drive letter from the rest of a file path (new in version 2.0)::
+Windows ドライブの文字を残りのファイルパスから分離するには、以下を指定します (バージョン 2.0 の新機能)。
 
     {{ path | win_splitdrive }}
 
-To get only the windows drive letter::
+Windows ドライブの文字のみを取得するには、以下を指定します::
 
     {{ path | win_splitdrive | first }}
 
-To get the rest of the path without the drive letter::
+ドライブ文字なしで残りのパスを取得するには、以下を指定します::
 
     {{ path | win_splitdrive | last }}
 
-To get the directory from a path::
+ディレクトリーをパスから取得するには、以下を指定します::
 
     {{ path | dirname }}
 
-To get the directory from a windows path (new version 2.0)::
+Windows パスからディレクトリーを取得するには、以下を指定します (バージョン 2.0 の新機能)::
 
     {{ path | win_dirname }}
 
-To expand a path containing a tilde (`~`) character (new in version 1.5)::
+チルド (`~`) 文字を含むパスを拡張するには、以下を指定します (バージョン 1.5 の新機能)::
 
     {{ path | expanduser }}
 
-To expand a path containing environment variables::
+環境変数を含むパスを拡張するには、以下を指定します::
 
     {{ path | expandvars }}
 
-.. note:: `expandvars` expands local variables; using it on remote paths can lead to errors.
+.. note:: `expandvars` は、ローカル変数を拡張します。リモートパスで使用するとエラーが発生する可能性があります。
 
 .. versionadded:: 2.6
 
-To get the real path of a link (new in version 1.8)::
+リンクの実際のパスを取得するには、以下を指定します (バージョン 1.8 の新機能)::
 
     {{ path | realpath }}
 
-To get the relative path of a link, from a start point (new in version 1.7)::
+リンクの相対パスを取得するには、開始点から以下を行います (バージョン 1.7 の新機能)::
 
     {{ path | relpath('/etc') }}
 
-To get the root and extension of a path or filename (new in version 2.0)::
+パスまたはファイル名のルートおよび拡張を取得するには、以下を指定します (バージョン 2.0 の新機能)::
 
     # with path == 'nginx.conf' the return would be ('nginx', '.conf')
     {{ path | splitext }}
 
-To work with Base64 encoded strings::
+Base64 でエンコードされた文字列を使用するには、以下を指定します::
 
     {{ encoded | b64decode }}
     {{ decoded | string | b64encode }}
-
-As of version 2.6, you can define the type of encoding to use, the default is ``utf-8``::
+    
+バージョン 2.6 では、使用するエンコーディングのタイプを定義できます。デフォルトは ``utf-8`` です::
 
     {{ encoded | b64decode(encoding='utf-16-le') }}
     {{ decoded | string | b64encode(encoding='utf-16-le') }}
-
-.. note:: The ``string`` filter is only required for Python 2 and ensures that text to encode is a unicode string.
-    Without that filter before b64encode the wrong value will be encoded.
+    
+.. note:: ``文字列`` フィルターは Python 2 にのみ必要で、エンコードするテキストがユニコード文字列であることを確認します。
+    b64encode より前のフィルターを使用しないと、間違った値がエンコードされます。
 
 .. versionadded:: 2.6
 
-To create a UUID from a string (new in version 1.9)::
+文字列から UUID を作成するには、以下を指定します (バージョン 1.9 の新機能)::
 
     {{ hostname | to_uuid }}
 
-To cast values as certain types, such as when you input a string as "True" from a vars_prompt and the system
-doesn't know it is a boolean value::
+vars_prompt から文字列を「True」として入力し、
+システムがそれがブール値であることを認識していない場合など、特定の型として値をキャストするには、以下を指定します。
 
    - debug:
        msg: test
@@ -1295,17 +1295,17 @@ doesn't know it is a boolean value::
 
 .. versionadded:: 1.6
 
-To make use of one attribute from each item in a list of complex variables, use the "map" filter (see the `Jinja2 map() docs`_ for more)::
+複雑な変数のリストで、各項目から 1 つの属性を使用するには、「map」フィルターを使用します (詳細は `Jinja2 map() docs`_ を参照してください)。
 
     # get a comma-separated list of the mount points (e.g. "/,/mnt/stuff") on a host
     {{ ansible_mounts | map(attribute='mount') | join(',') }}
 
-To get date object from string use the `to_datetime` filter, (new in version in 2.2)::
+文字列から日付オブジェクトを取得するには、`to_datetime` フィルターを使用します (2.2 の新しいバージョン)。
 
     # Get total amount of seconds between two dates. Default date format is %Y-%m-%d %H:%M:%S but you can pass your own format
     {{ (("2016-08-14 20:00:12" | to_datetime) - ("2015-12-25" | to_datetime('%Y-%m-%d'))).total_seconds()  }}
 
-    # Get remaining seconds after delta has been calculated. NOTE: This does NOT convert years, days, hours, etc to seconds. For that, use total_seconds()
+# Get remaining seconds after delta has been calculated. NOTE: This does NOT convert years, days, hours, etc to seconds. For that, use total_seconds()
     {{ (("2016-08-14 20:00:12" | to_datetime) - ("2016-08-14 18:00:00" | to_datetime)).seconds  }}
     # This expression evaluates to "12" and not "132". Delta is 2 hours, 12 seconds
 
@@ -1314,7 +1314,7 @@ To get date object from string use the `to_datetime` filter, (new in version in 
 
 .. versionadded:: 2.4
 
-To format a date using a string (like with the shell date command), use the "strftime" filter::
+文字列 (shell date コマンドの場合のように) を使用して日付をフォーマットするには、「strftime」フィルターを使用します::
 
     # Display year-month-day
     {{ '%Y-%m-%d' | strftime }}
@@ -1329,15 +1329,15 @@ To format a date using a string (like with the shell date command), use the "str
     {{ '%Y-%m-%d' | strftime(0) }}          # => 1970-01-01
     {{ '%Y-%m-%d' | strftime(1441357287) }} # => 2015-09-04
 
-.. note:: To get all string possibilities, check https://docs.python.org/2/library/time.html#time.strftime
+.. note:: 文字列のすべての可能性を取得するには、https://docs.python.org/2/library/time.html#time.strftime を確認します。
 
-Combination Filters
+組み合わせフィルター
 ````````````````````
 
 .. versionadded:: 2.3
 
-This set of filters returns a list of combined lists.
-To get permutations of a list::
+このフィルターセットは、組み合わせたリストを返します。
+リストの順列を取得するには、以下を実行します。
 
     - name: give me largest permutations (order matters)
       debug:
@@ -1354,51 +1354,51 @@ Combinations always require a set size::
         msg: "{{ [1,2,3,4,5] | combinations(2) | list }}"
 
 
-Also see the :ref:`zip_filter`
+:ref:`zip_filter` も参照してください。
 
-Product Filters
+製品フィルター
 ```````````````
 
-The product filter returns the `cartesian product <https://docs.python.org/3/library/itertools.html#itertools.product>`_ of the input iterables.
+製品フィルターは、入力反復可能な `デカルト製品 <https://docs.python.org/3/library/itertools.html#itertools.product>`_ を返します。
 
-This is roughly equivalent to nested for-loops in a generator expression.
+これはジェネレーター式のネストされた for-loops とほぼ同等です。
 
-For example::
+例::
 
   - name: generate multiple hostnames
     debug:
       msg: "{{ ['foo', 'bar'] | product(['com']) | map('join', '.') | join(',') }}"
 
-This would result in::
+これにより、以下のようになります::
 
     { "msg": "foo.com,bar.com" }
 
 
-Debugging Filters
+デバッグフィルター
 `````````````````
 
 .. versionadded:: 2.3
 
-Use the ``type_debug`` filter to display the underlying Python type of a variable.
-This can be useful in debugging in situations where you may need to know the exact
-type of a variable::
+``type_debug`` フィルターを使用して、変数の基礎となる Python タイプを表示します。
+これは、
+変数の正確なタイプを知る必要がある状況でのデバッグに役立ちます。
 
     {{ myvar | type_debug }}
 
 
-Computer Theory Assertions
+コンピューター理論のアサーション
 ```````````````````````````
 
-The ``human_readable`` and ``human_to_bytes`` functions let you test your
-playbooks to make sure you are using the right size format in your tasks - that
-you're providing Byte format to computers and human-readable format to people.
+``human_readable`` 関数および ``human_to_bytes`` 関数を使用すると、
+Playbook をテストして、タスクで適切なサイズ形式を使用していることを確認できます。
+コンピューターにバイト形式を提供し、人が読める形式を提供していることを確認してください。
 
-Human Readable
+人間が読み取り可能
 ``````````````
 
-Asserts whether the given string is human readable or not.
+指定の文字列が人が判読できるかどうかをアサートします。
 
-For example::
+例::
 
   - name: "Human Readable"
     assert:
@@ -1410,16 +1410,16 @@ For example::
         - '"0.10 GB" == 102400000|human_readable(unit="G")'
         - '"0.10 Gb" == 102400000|human_readable(isbits=True, unit="G")'
 
-This would result in::
+これにより、以下のようになります::
 
-    { "changed": false, "msg": "All assertions passed" }
+    { "changed": false, "msg":"All assertions passed" }
 
-Human to Bytes
+人間からバイト
 ``````````````
 
-Returns the given string in the Bytes format.
+指定した文字列をバイト形式で返します。
 
-For example::
+例::
 
   - name: "Human to Bytes"
     assert:
@@ -1433,14 +1433,14 @@ For example::
         - "{{  '1.1 GB'|human_to_bytes}} == 1181116006"
         - "{{'10.00 Kb'|human_to_bytes(isbits=True)}} == 10240"
 
-This would result in::
+これにより、以下のようになります::
 
-    { "changed": false, "msg": "All assertions passed" }
+    { "changed": false, "msg":"All assertions passed" }
 
 
-A few useful filters are typically added with each new Ansible release.  The development documentation shows
-how to extend Ansible filters by writing your own as plugins, though in general, we encourage new ones
-to be added to core so everyone can make use of them.
+通常、便利なフィルターは、新しい Ansible リリースごとに追加されます。 開発ドキュメントには、
+独自のプラグインを作成して Ansibleフィルターを拡張する方法が示されていますが、
+一般的には、新しいフィルターをコアに追加して、誰でも使用できるようにすることが推奨されます。
 
 .. _Jinja2 map() docs: http://jinja.pocoo.org/docs/dev/templates/#map
 
@@ -1454,18 +1454,18 @@ to be added to core so everyone can make use of them.
 .. seealso::
 
    :ref:`about_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_conditionals`
-       Conditional statements in playbooks
+       Playbook の条件付きステートメント
    :ref:`playbooks_variables`
-       All about variables
+       変数の詳細
    :ref:`playbooks_loops`
-       Looping in playbooks
+       Playbook でのループ
    :ref:`playbooks_reuse_roles`
-       Playbook organization by roles
+       ロール別の Playbook の組織
    :ref:`playbooks_best_practices`
-       Best practices in playbooks
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Playbook のベストプラクティス
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

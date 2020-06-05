@@ -1,132 +1,132 @@
 .. _intro_patterns:
 
-Patterns: targeting hosts and groups
+パターン: ホストおよびグループを対象とする
 ====================================
 
-When you execute Ansible through an ad-hoc command or by running a playbook, you must choose which managed nodes or groups you want to execute against. Patterns let you run commands and playbooks against specific hosts and/or groups in your inventory. An Ansible pattern can refer to a single host, an IP address, an inventory group, a set of groups, or all hosts in your inventory. Patterns are highly flexible - you can exclude or require subsets of hosts, use wildcards or regular expressions, and more. Ansible executes on all inventory hosts included in the pattern.
+アドホックコマンドまたは Playbook から Ansible を実行する場合には、実行する管理ノードまたはグループを選択する必要があります。パターンにより、インベントリー内の特定のホストやグループに対してコマンドおよび Playbook を実行できます。Ansible パターンは、1 台のホスト、IP アドレス、インベントリーグループ、グループセット、またはインベントリーのすべてのホストを参照できます。パターンは柔軟性が高く、ホストのサブセットを除外または要求したり、ワイルドカードや正規表現を使用したりできます。Ansible は、パターンに含まれるすべてのインベントリーホストで実行します。
 
 .. contents::
    :local:
 
-Using patterns
+パターンの使用
 --------------
 
-You use a pattern almost any time you execute an ad-hoc command or a playbook. The pattern is the only element of an :ref:`ad-hoc command<intro_adhoc>` that has no flag. It is usually the second element::
+アドホックコマンドまたは Playbook を実行する際は、ほとんどいつでもパターンを使用できます。パターンは、フラグのない :ref:`アドホックコマンド<intro_adhoc>` の唯一の要素です。通常、これは 2 番目の要素です。
 
     ansible <pattern> -m <module_name> -a "<module options>""
 
-For example::
+例::
 
     ansible webservers -m service -a "name=httpd state=restarted"
 
-In a playbook the pattern is the content of the ``hosts:`` line for each play:
+Playbook では、パターンは各プレイの ``hosts:`` 行の内容になります。
 
 .. code-block:: yaml
 
    - name: <play_name>
      hosts: <pattern>
 
-For example::
+例::
 
     - name: restart webservers
       hosts: webservers
 
-Since you often want to run a command or playbook against multiple hosts at once, patterns often refer to inventory groups. Both the ad-hoc command and the playbook above will execute against all machines in the ``webservers`` group.
+多くの場合、コマンドまたは Playbook を複数のホストに対して一度に実行するため、パターンは多くの場合インベントリグループを参照します。アドホックコマンドと上記の Playbook は、``webservers`` グループ内のすべてのマシンに対して実行されます。
 
 .. _common_patterns:
 
-Common patterns
+一般的なパターン
 ---------------
 
-This table lists common patterns for targeting inventory hosts and groups.
+以下の表は、インベントリーホストおよびグループを対象に設定する一般的なパターンを示しています。
 
 .. table::
    :class: documentation-table
 
    ====================== ================================ ===================================================
-   Description            Pattern(s)                       Targets
+   説明            パターン                       ターゲット
    ====================== ================================ ===================================================
-   All hosts              all (or \*)
+   すべてのホスト              すべて (または \*)
 
-   One host               host1
+   1 台のホスト               host1
 
-   Multiple hosts         host1:host2 (or host1,host2)
+   複数のホスト         host1:host2 (または host1,host2)
 
-   One group              webservers
+   1 つのグループ              webservers
 
-   Multiple groups        webservers:dbservers             all hosts in webservers plus all hosts in dbservers
+   複数のグループ        webservers:dbservers             webservers 上のすべてのホストと、dbservers 上のすべてのホスト
 
-   Excluding groups       webservers:!atlanta              all hosts in webservers except those in atlanta
+   グループの除外       webservers:!atlanta              atlanta 上のホストを除く webservers のすべてのホスト
 
-   Intersection of groups webservers:&staging              any hosts in webservers that are also in staging
+   グループの包含 webservers:&staging              ステージ状態にある webservers のすべてのホスト
    ====================== ================================ ===================================================
 
-.. note:: You can use either a comma (``,``) or a colon (``:``) to separate a list of hosts. The comma is preferred when dealing with ranges and IPv6 addresses.
+.. note:: ホストの一覧を指定する場合は、コンマ (``,``) またはコロン (``:``) のいずれかを使用できます。範囲と IPv6 アドレスを扱う場合は、コンマが推奨されます。
 
-Once you know the basic patterns, you can combine them. This example::
+基本的なパターンを把握したら、それを組み合わせることができます。この例では、以下のようになります。
 
     webservers:dbservers:&staging:!phoenix
 
-targets all machines in the groups 'webservers' and 'dbservers' that are also in
-the group 'staging', except any machines in the group 'phoenix'.
+「phoenix」グループのマシンを除き、
+「staging」グループにある「webservers」グループおよび「dbservers」グループにあるすべてのマシンを対象とします。
 
-You can use wildcard patterns with FQDNs or IP addresses, as long as the hosts are named in your inventory by FQDN or IP address::
+ホストがインベントリーで FQDN または IP アドレスにより名前が付けられている限り、FQDN または IP アドレスでワイルドカードパターンを使用できます。
 
    192.0.\*
    \*.example.com
    \*.com
 
-You can mix wildcard patterns and groups at the same time::
+ワイルドカードパターンおよびグループを同時に組み合わせることができます。
 
     one*.com:dbservers
 
-Limitations of patterns
+パターンの制限
 -----------------------
 
-Patterns depend on inventory. If a host or group is not listed in your inventory, you cannot use a pattern to target it. If your pattern includes an IP address or hostname that does not appear in your inventory, you will see an error like this:
+パターンはインベントリーによって異なります。ホストまたはグループがインベントリーに記載されていない場合は、ターゲットにパターンを使用することはできません。パターンにインベントリーに表示されない IP アドレスまたはホスト名が含まれる場合は、以下のようなエラーが表示されます。
 
 .. code-block:: text
 
-   [WARNING]: No inventory was parsed, only implicit localhost is available
-   [WARNING]: Could not match supplied host pattern, ignoring: *.not_in_inventory.com
+   [WARNING]:No inventory was parsed, only implicit localhost is available
+   [WARNING]:Could not match supplied host pattern, ignoring: *.not_in_inventory.com
 
-Your pattern must match your inventory syntax. If you define a host as an :ref:`alias<inventory_aliases>`:
+お使いのパターンはインベントリー構文に一致する必要があります。ホストを :ref:`alias<inventory_aliases>` として定義する場合は、以下の指定します。
 
 .. code-block:: yaml
 
     atlanta:
       host1:
-        http_port: 80
-        maxRequestsPerChild: 808
-        host: 127.0.0.2
+        http_port:80
+        maxRequestsPerChild:808
+        host:127.0.0.2
 
-you must use the alias in your pattern. In the example above, your must use ``host1`` in your pattern. If you use the IP address, you will once again get the error::
+エイリアスをパターンで使用する必要があります。上記の例では、パターンで ``host1`` を使用する必要があります。IP アドレスを使用する場合は、以下のようなエラーが再度表示されます。
 
-   [WARNING]: Could not match supplied host pattern, ignoring: 127.0.0.2
+   [WARNING]:Could not match supplied host pattern, ignoring:127.0.0.2
 
-Advanced pattern options
+詳細なパターンオプション
 ------------------------
 
-The common patterns described above will meet most of your needs, but Ansible offers several other ways to define the hosts and groups you want to target.
+上記の一般的なパターンはほとんどのニーズに対応しますが、Ansible では、対象とするホストおよびグループを定義する他の方法もいくつか提供します。
 
-Using variables in patterns
+パターンにおける変数の使用
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can use variables to enable passing group specifiers via the ``-e`` argument to ansible-playbook::
+変数を使用して ``-e`` 引数を使用してグループ指定子を ansible-playbook に渡すことができます。
 
     webservers:!{{ excluded }}:&{{ required }}
 
-Using group position in patterns
+パターンにおけるグループの位置の使用
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can define a host or subset of hosts by its position in a group. For example, given the following group::
+ホストまたはホストのサブセットは、グループ内のその位置で定義できます。たとえば、以下のグループの場合は、
 
     [webservers]
     cobweb
     webbing
     weber
 
-you can use subscripts to select individual hosts or ranges within the webservers group::
+subscripts を使用して、webservers グループ内のホストまたは範囲を個別に選択できます。
 
     webservers[0]       # == cobweb
     webservers[-1]      # == weber
@@ -135,33 +135,33 @@ you can use subscripts to select individual hosts or ranges within the webserver
     webservers[1:]      # == webbing,weber
     webservers[:3]      # == cobweb,webbing,weber
 
-Using regexes in patterns
+パターンで正規表現の使用
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can specify a pattern as a regular expression by starting the pattern with ``~``::
+パターンを正規表現として指定するには、``~``:: でパターンを開始します。
 
     ~(web|db).*\.example\.com
 
-Patterns and ansible-playbook flags
+パターンおよび ansible-playbook フラグ
 -----------------------------------
 
-You can change the behavior of the patterns defined in playbooks using command-line options. For example, you can run a playbook that defines ``hosts: all`` on a single host by specifying ``-i 127.0.0.2,``. This works even if the host you target is not defined in your inventory. You can also limit the hosts you target on a particular run with the ``--limit`` flag::
+Playbook で定義したパターンの動作は、コマンドラインオプションを使用して変更できます。たとえば ``-i 127.0.0.2,`` を指定して、1 台のホストで ``hosts: all`` を定義する Playbook を実行できます。これは、対象とするホストがインベントリーで定義されていない場合でも有効です。``--limit`` フラグを使用して、特定の実行で対象とするホストを制限することもできます。
 
     ansible-playbook site.yml --limit datacenter2
 
-Finally, you can use ``--limit`` to read the list of hosts from a file by prefixing the file name with ``@``::
+最後に ``--limit`` を使用して、ファイル名の前に ``@`` を付けることで、ファイルからホストの一覧を読み込むことができます。
 
     ansible-playbook site.yml --limit @retry_hosts.txt
 
-To apply your knowledge of patterns with Ansible commands and playbooks, read :ref:`intro_adhoc` and :ref:`playbooks_intro`.
+Ansible コマンドおよび Playbook でパターンに関する知識を活用するには、:ref:`intro_adhoc` および :ref:`playbooks_intro` を参照してください。
 
 .. seealso::
 
    :ref:`intro_adhoc`
-       Examples of basic commands
+       基本コマンドの例
    :ref:`working_with_playbooks`
-       Learning the Ansible configuration management language
-   `Mailing List <https://groups.google.com/group/ansible-project>`_
-       Questions? Help? Ideas?  Stop by the list on Google Groups
+       Ansible の設定管理言語について
+   `メーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

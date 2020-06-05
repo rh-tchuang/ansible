@@ -1,137 +1,137 @@
 .. _playbooks_variables:
 
 ***************
-Using Variables
+変数の使用
 ***************
 
 .. contents::
    :local:
 
-While automation exists to make it easier to make things repeatable, all systems are not exactly alike; some may require configuration that is slightly different from others. In some instances, the observed behavior or state of one system might influence how you configure other systems. For example, you might need to find out the IP address of a system and use it as a configuration value on another system.
+繰り返し処理を容易にする自動化は存在しますが、すべてのシステムは全く同じではありません。他のシステムとは若干異なる設定が必要になる場合があります。場合によっては、確認済みの動作や状態が他のシステムの設定方法に影響を与える場合があります。たとえば、システムの IP アドレスを見つけ、別のシステムで設定値として使用しないといけない場合があります。
 
-Ansible uses *variables* to help deal with differences between systems.
+Ansible は、*変数* を使用してシステム間の相違点に対応します。
 
-To understand variables you'll also want to read :ref:`playbooks_conditionals` and :ref:`playbooks_loops`.
-Useful things like the **group_by** module
-and the ``when`` conditional can also be used with variables, and to help manage differences between systems.
+:ref:`playbooks_conditionals` および :ref:`playbooks_loops` も読み取る変数を理解するには、以下を実行します。
+**group_by** モジュールや、
+``when`` 条件式などの便利なものを変数とともに使用して、システム間の相違点を管理することもできます。
 
-The `ansible-examples github repository <https://github.com/ansible/ansible-examples>`_ contains many examples of how variables are used in Ansible.
+`ansible-examples github repository <https://github.com/ansible/ansible-examples>`_ には、Ansible で変数がどのように使用されているかの例が記載されています。
 
 .. _valid_variable_names:
 
-Creating valid variable names
+有効な変数名の作成
 =============================
 
-Before you start using variables, it's important to know what are valid variable names.
+変数の使用を開始する前に、有効な変数名を知っていることが重要です。
 
-Variable names should be letters, numbers, and underscores.  Variables should always start with a letter.
+変数名は文字、数字、およびアンダースコアである必要があります。 変数は常に文字で始まる必要があります。
 
-``foo_port`` is a great variable.  ``foo5`` is fine too.
+``foo_port`` は優れた変数です。``foo5`` も問題ありません。
 
-``foo-port``, ``foo port``, ``foo.port`` and ``12`` are not valid variable names.
+``foo-port``、``foo port``、``foo.port``、および ``12`` は有効な変数名ではありません。
 
-YAML also supports dictionaries which map keys to values.  For instance::
+YAML は、キーを値にマップするディクショナリーもサポートします。 例::
 
   foo:
     field1: one
     field2: two
 
-You can then reference a specific field in the dictionary using either bracket
-notation or dot notation::
+その後、括弧またはドットのいずれかの表記を使用して、
+ディクショナリーの特定のフィールドを参照できます::
 
   foo['field1']
   foo.field1
 
-These will both reference the same value ("one").  However, if you choose to
-use dot notation be aware that some keys can cause problems because they
-collide with attributes and methods of python dictionaries.  You should use
-bracket notation instead of dot notation if you use keys which start and end
-with two underscores (Those are reserved for special meanings in python) or
-are any of the known public attributes:
+これらはいずれも同じ値 (「1」) を参照します。 ただし、ドット表記を使用する場合は、一部のキーが Python ディクショナリーの属性やメソッドと競合して問題を引き起こす可能性があることに注意してください。
+ドット表記は、一部の鍵が問題を引き起こす可能性があることに注意してください。
+Python ディクショナリーの属性とメソッドと併用します。 2 つのアンダースコアで始まるキーと終了するキー (Python で特別に予約されているキー) を使用する場合、
+または既知のパブリック属性のいずれかである場合は、
+ドット表記ではなく、
+括弧表記を使用する必要があります。
 
 ``add``, ``append``, ``as_integer_ratio``, ``bit_length``, ``capitalize``, ``center``, ``clear``, ``conjugate``, ``copy``, ``count``, ``decode``, ``denominator``, ``difference``, ``difference_update``, ``discard``, ``encode``, ``endswith``, ``expandtabs``, ``extend``, ``find``, ``format``, ``fromhex``, ``fromkeys``, ``get``, ``has_key``, ``hex``, ``imag``, ``index``, ``insert``, ``intersection``, ``intersection_update``, ``isalnum``, ``isalpha``, ``isdecimal``, ``isdigit``, ``isdisjoint``, ``is_integer``, ``islower``, ``isnumeric``, ``isspace``, ``issubset``, ``issuperset``, ``istitle``, ``isupper``, ``items``, ``iteritems``, ``iterkeys``, ``itervalues``, ``join``, ``keys``, ``ljust``, ``lower``, ``lstrip``, ``numerator``, ``partition``, ``pop``, ``popitem``, ``real``, ``remove``, ``replace``, ``reverse``, ``rfind``, ``rindex``, ``rjust``, ``rpartition``, ``rsplit``, ``rstrip``, ``setdefault``, ``sort``, ``split``, ``splitlines``, ``startswith``, ``strip``, ``swapcase``, ``symmetric_difference``, ``symmetric_difference_update``, ``title``, ``translate``, ``union``, ``update``, ``upper``, ``values``, ``viewitems``, ``viewkeys``, ``viewvalues``, ``zfill``.
 
 .. _variables_in_inventory:
 
-Defining variables in inventory
+インベントリーでの変数の定義
 ===============================
 
-Often you'll want to set variables for an individual host, or for a group of hosts in your inventory. For instance, machines in Boston
-may all use 'boston.ntp.example.com' as an NTP server. The :ref:`intro_inventory` page has details on setting :ref:`host_variables` and :ref:`group_variables` in inventory.
+多くの場合は、個々のホストまたはインベントリー内のホストのグループに対して変数を設定します。たとえば、ボストンのマシンはすべて、
+NTP サーバー (boston.ntp.example.com) として使用する場合があります。:ref:`intro_inventory` ページには、インベントリーに :ref:`host_variables` および :ref:`group_variables` を設定する方法の詳細が記載されています。
 
 .. _playbook_variables:
 
-Defining variables in a playbook
+Playbook での変数の定義
 ================================
 
-You can define variables directly in a playbook::
+変数は Playbook で直接定義できます。
 
    - hosts: webservers
      vars:
-       http_port: 80
+       http_port:80
 
-This can be nice as it's right there when you are reading the playbook.
+これは、Playbook を読んでいるときにすぐそこにあるので便利です。
 
 .. _included_variables:
 
-Defining variables in included files and roles
+含まれるファイルおよびロールでの変数の定義
 ==============================================
 
-As described in :ref:`playbooks_reuse_roles`, variables can also be included in the playbook via include files, which may or may
-not be part of an Ansible Role.  Usage of roles is preferred as it provides a nice organizational system.
+:ref:`playbooks_reuse_roles` で説明されているように、
+変数は、Ansible ロールの一部である場合とそうでない場合があるインクルードファイルを介して、Playbook に含めることもできます。 適切な組織システムを提供するため、ロールの使用が推奨されます。
 
 .. _about_jinja2:
 
-Using variables with Jinja2
+Jinja2 での変数の使用
 ===========================
 
-Once you've defined variables, you can use them in your playbooks using the Jinja2 templating system.  Here's a simple Jinja2 template::
+変数を定義したら、Jinja2 テンプレートシステムを使用して Playbook で変数を使用できます。 以下は、Jinja2 の単純なテンプレートです。
 
     My amp goes to {{ max_amp_value }}
 
-This expression provides the most basic form of variable substitution.
+この式は、変数置換の最も基本的な形式を提供します。
 
-You can use the same syntax in playbooks. For example::
+Playbook で同じ構文を使用できます。例::
 
     template: src=foo.cfg.j2 dest={{ remote_install_path }}/foo.cfg
 
-Here the variable defines the location of a file, which can vary from one system to another.
+ここで変数は、システム間で異なる可能性のあるファイルの場所を定義します。
 
-Inside a template you automatically have access to all variables that are in scope for a host.  Actually
-it's more than that -- you can also read variables about other hosts.  We'll show how to do that in a bit.
+テンプレート内では、ホストのスコープにあるすべての変数に自動的にアクセスできます。 実際は、
+それだけではありません。他のホストに関する変数を読み取ることもできます。 その方法を少し説明します。
 
-.. note:: ansible allows Jinja2 loops and conditionals in templates, but in playbooks, we do not use them.  Ansible
-   playbooks are pure machine-parseable YAML.  This is a rather important feature as it means it is possible to code-generate
-   pieces of files, or to have other ecosystem tools read Ansible files.  Not everyone will need this but it can unlock
-   possibilities.
+.. note:: Ansible は、テンプレートで Jinja2 ループと条件を許可しますが、Playbook では使用しません。 Ansible の Playbook は、
+   純粋にマシンでの解析が可能な YAML です。 これは、ファイルの一部をコード生成したり、
+   他のエコシステムツールに Ansible ファイルを読み取らせることができるため、かなり重要な機能です。 誰もがこれを必要とするわけではありませんが、
+   選択肢になります。
 
 .. seealso::
 
     :ref:`playbooks_templating`
-        More information about Jinja2 templating
+        Jinja2 テンプレートの詳細はこちらを参照してください。
 
 .. _jinja2_filters:
 
-Transforming variables with Jinja2 filters
+Jinja2 フィルターを使用した変数の変換
 ==========================================
 
-Jinja2 filters let you transform the value of a variable within a template expression. For example, the ``capitalize`` filter capitalizes any value passed to it; the ``to_yaml`` and ``to_json`` filters change the format of your variable values. Jinja2 includes many `built-in filters <http://jinja.pocoo.org/docs/templates/#builtin-filters>`_ and Ansible supplies :ref:`many more filters <playbooks_filters>`.
+Jinja2 フィルターを使用すると、テンプレート式内で変数の値を変換できます。たとえば、``capitalize`` フィルターは、フィルターに渡される値を大文字にします。``to_yaml`` フィルターおよび ``to_json`` フィルターは変数の値の形式を変更します。Jinja2 には多くの `組み込みフィルター <http://jinja.pocoo.org/docs/templates/#builtin-filters>`_ が含まれ、Ansible は :ref:`より多くのフィルター <playbooks_filters>` を提供します。
 
 .. _yaml_gotchas:
 
-Hey wait, a YAML gotcha
+YAML に関する注意点
 =======================
 
-YAML syntax requires that if you start a value with ``{{ foo }}`` you quote the whole line, since it wants to be
-sure you aren't trying to start a YAML dictionary.  This is covered on the :ref:`yaml_syntax` documentation.
+YAML 構文では、``{{ foo }}`` で値を開始する場合は、行全体を引用符で囲む必要があります。
+これは、YAML ディクショナリーを起動しないようにするためです。 これは、:ref:`yaml_syntax` ドキュメントで説明されています。
 
-This won't work::
+これは機能しません::
 
     - hosts: app_servers
       vars:
           app_path: {{ base_path }}/22
 
-Do it like this and you'll be fine::
+以下のように実行してください。問題ありません。
 
     - hosts: app_servers
       vars:
@@ -139,26 +139,26 @@ Do it like this and you'll be fine::
 
 .. _vars_and_facts:
 
-Variables discovered from systems: Facts
+システムから検出される変数: Fact (ファクト)
 ========================================
 
-There are other places where variables can come from, but these are a type of variable that are discovered, not set by the user.
+変数が取得できる他の場所がありますが、これらはユーザーが設定しない、検出される変数のタイプです。
 
-Facts are information derived from speaking with your remote systems. You can find a complete set under the ``ansible_facts`` variable,
-most facts are also 'injected' as top level variables preserving the ``ansible_`` prefix, but some are dropped due to conflicts.
-This can be disabled via the :ref:`INJECT_FACTS_AS_VARS` setting.
+ファクトとは、リモートシステムとの対話から得られる情報です。``ansible_facts`` 変数で完全なセットを見つけることができます。
+ほとんどのファクトも、最上位の変数として ``ansible_`` プレフィックスを保持するように「挿入」されますが、競合のために一部削除されます。
+これは :ref:`INJECT_FACTS_AS_VARS` 設定で無効にできます。
 
-An example of this might be the IP address of the remote host, or what the operating system is.
+この例として、リモートホストの IP アドレス、またはオペレーティングシステムなどが挙げられます。
 
-To see what information is available, try the following in a play::
+利用可能な情報を確認するには、プレイで以下を実行します。
 
     - debug: var=ansible_facts
 
-To see the 'raw' information as gathered::
+「raw」情報が収集されたものとして表示されるようにするには、以下を実行します。
 
     ansible hostname -m setup
 
-This will return a large amount of variable data, which may look like this on Ansible 2.7:
+これにより、Ansible 2.7では次のような大量の変数データが返されます。
 
 .. code-block:: json
 
@@ -617,62 +617,62 @@ This will return a large amount of variable data, which may look like this on An
         ],
         "module_setup": true
     }
-
-In the above the model of the first disk may be referenced in a template or playbook as::
+    
+上記の例では、最初のディスクのモデルはテンプレートまたは Playbook で次のように参照できます。
 
     {{ ansible_facts['devices']['xvda']['model'] }}
 
-Similarly, the hostname as the system reports it is::
+同様に、それを報告するシステムのホスト名は次のとおりです。
 
     {{ ansible_facts['nodename'] }}
 
-Facts are frequently used in conditionals (see :ref:`playbooks_conditionals`) and also in templates.
+ファクトは、(:ref:`playbooks_conditionals` を参照) およびテンプレートでも頻繁に使用されます。
 
-Facts can be also used to create dynamic groups of hosts that match particular criteria, see the :ref:`modules` documentation on **group_by** for details, as well as in generalized conditional statements as discussed in the :ref:`playbooks_conditionals` chapter.
+ファクトは、特定の基準に一致するホストの動的グループを作成するために使用することもできます。詳細は、**group_by** の :ref:`モジュール` ドキュメントを参照してください。また、:ref:`playbooks_conditionals` の章で説明されているように一般的な条件付きステートメントでもあります。
 
 .. _disabling_facts:
 
-Disabling facts
+ファクトの無効化
 ---------------
 
-If you know you don't need any fact data about your hosts, and know everything about your systems centrally, you
-can turn off fact gathering.  This has advantages in scaling Ansible in push mode with very large numbers of
-systems, mainly, or if you are using Ansible on experimental platforms.   In any play, just do this::
+ホストに関するファクトデータが不要であることがわかっており、
+システムに関するすべてを一元的に知っている場合は、ファクト収集をオフにできます。 これは、主に、または試験的なプラットフォームで Ansible を使用している場合に、
+非常に多くのシステムでプッシュモードで Ansible をスケーリングするのに利点があります。  どのプレイでも、以下を行うだけです。
 
     - hosts: whatever
       gather_facts: no
 
 .. _local_facts:
 
-Local facts (facts.d)
+ローカルファクト (facts.d)
 ---------------------
 
 .. versionadded:: 1.3
 
-As discussed in the playbooks chapter, Ansible facts are a way of getting data about remote systems for use in playbook variables.
+Playbook の章で説明されているように、Ansible のファクトは Playbook 変数で使用するリモートシステムに関するデータを取得する方法です。
 
-Usually these are discovered automatically by the ``setup`` module in Ansible. Users can also write custom facts modules, as described in the API guide. However, what if you want to have a simple way to provide system or user provided data for use in Ansible variables, without writing a fact module?
+通常、これらは Ansible の ``setup`` モジュールによって自動的に検出されます。ユーザーは、API ガイドで説明されているように、カスタムファクトモジュールを作成することもできます。ただし、ファクトモジュールを作成せずに、Ansible 変数で使用するシステムまたはユーザー指定のデータを簡単に提供する方法にはどんなものがありますか。
 
-"Facts.d" is one mechanism for users to control some aspect of how their systems are managed.
+「Facts.d」は、ユーザーがシステムの管理方法のいくつかの側面を制御する 1 つのメカニズムです。
 
-.. note:: Perhaps "local facts" is a bit of a misnomer, it means "locally supplied user values" as opposed to "centrally supplied user values", or what facts are -- "locally dynamically determined values".
+.. note:: おそらく、「ローカルファクト」という名称は少し間違っています。これは、「ローカルに提供されたユーザー値」ではなく「集中的にプロビジョニングされたユーザー値」、またはファクトが何であるか、つまり「ローカルで動的に決定される値」を意味します。
 
-If a remotely managed system has an ``/etc/ansible/facts.d`` directory, any files in this directory
-ending in ``.fact``, can be JSON, INI, or executable files returning JSON, and these can supply local facts in Ansible.
-An alternate directory can be specified using the ``fact_path`` play keyword.
+リモートで管理されているシステムに ``/etc/ansible/facts.d`` ディレクトリーがある場合には、
+``.fact`` で終わるこのディレクトリー内のファイルは、JSON、INI、または JSON を返す実行ファイルであり、そのようなファイルは Ansible でローカルファクトを提供できます。
+代替ディレクトリーは、``fact_path`` play キーワードを使用して指定できます。
 
-For example, assume ``/etc/ansible/facts.d/preferences.fact`` contains::
+たとえば、``/etc/ansible/facts.d/preferences.fact`` に以下が含まれるとします。
 
     [general]
     asdf=1
     bar=2
 
-This will produce a hash variable fact named ``general`` with ``asdf`` and ``bar`` as members.
-To validate this, run the following::
+これにより、``asdf`` および ``bar`` がメンバーとして、``general`` という名前のハッシュ変数ファクトが生成されます。
+これを検証するには、以下を実行します。
 
     ansible <hostname> -m setup -a "filter=ansible_local"
 
-And you will see the following fact added::
+以下のファクトが追加されていることを確認できます。
 
     "ansible_local": {
             "preferences": {
@@ -683,20 +683,20 @@ And you will see the following fact added::
             }
      }
 
-And this data can be accessed in a ``template/playbook`` as::
+このデータは、``template/playbook`` で以下のようにアクセスできます。
 
      {{ ansible_local['preferences']['general']['asdf'] }}
 
-The local namespace prevents any user supplied fact from overriding system facts or variables defined elsewhere in the playbook.
+ローカル名前空間は、ユーザーが指定したファクトが Playbook の別の場所で定義されるシステムファクトまたは変数を上書きすることを防ぎます。
 
-.. note:: The key part in the key=value pairs will be converted into lowercase inside the ansible_local variable. Using the example above, if the ini file contained ``XYZ=3`` in the ``[general]`` section, then you should expect to access it as: ``{{ ansible_local['preferences']['general']['xyz'] }}`` and not ``{{ ansible_local['preferences']['general']['XYZ'] }}``. This is because Ansible uses Python's `ConfigParser`_ which passes all option names through the `optionxform`_ method and this method's default implementation converts option names to lower case.
+.. note:: key=value ペアのキーの部分は、ansible_local 変数内の小文字に変換されます。上記の例では、``[general]`` セクションの ``XYZ=3`` に含まれる ini ファイルが含まれると、これを、``{{ ansible_local['preferences']['general']['XYZ'] }}`` ではなく、``{{ ansible_local['preferences']['general']['xyz'] }}`` としてアクセスすることが予想されます。これは、Ansible が Python の `ConfigParser`_ を使用して、`optionxform`_ メソッドを介してオプション名をすべて渡し、このメソッドのデフォルト実装はオプション名を小文字に変換するためです。
 
 .. _ConfigParser: https://docs.python.org/2/library/configparser.html
 .. _optionxform: https://docs.python.org/2/library/configparser.html#ConfigParser.RawConfigParser.optionxform
 
-If you have a playbook that is copying over a custom fact and then running it, making an explicit call to re-run the setup module
-can allow that fact to be used during that particular play.  Otherwise, it will be available in the next play that gathers fact information.
-Here is an example of what that might look like::
+カスタムファクトをコピーして実行する Playbook がある場合は、セットアップモジュールを再実行する明示的な呼び出しを行うと、
+その特定のプレイ中にそのファクトを使用できるようになります。 それ以外の場合は、ファクト情報を収集する次のプレイで利用できます。
+以下に、以下のような例を示します。
 
   - hosts: webservers
     tasks:
@@ -707,53 +707,53 @@ Here is an example of what that might look like::
       - name: re-read facts after adding custom fact
         setup: filter=ansible_local
 
-In this pattern however, you could also write a fact module as well, and may wish to consider this as an option.
+ただし、このパターンではファクトモジュールも作成でき、これをオプションとして見なすこともできます。
 
 .. _ansible_version:
 
-Ansible version
+Ansible バージョン
 ---------------
 
 .. versionadded:: 1.8
 
-To adapt playbook behavior to specific version of ansible, a variable ansible_version is available, with the following
-structure::
+Playbook の動作を特定のバージョンの Ansible に適用するには、
+以下のように変数 ansible_version が利用できます。
 
     "ansible_version": {
-        "full": "2.0.0.2",
-        "major": 2,
-        "minor": 0,
-        "revision": 0,
-        "string": "2.0.0.2"
+        "full":"2.0.0.2",
+        "major":2,
+        "minor":0,
+        "revision":0,
+        "string":"2.0.0.2"
     }
 
 .. _fact_caching:
 
-Caching Facts
+ファクトのキャッシュ
 -------------
 
 .. versionadded:: 1.8
 
-As shown elsewhere in the docs, it is possible for one server to reference variables about another, like so::
+そのドキュメントの別の場所で示されているように、あるサーバーが別のサーバーの変数を参照することは可能です。例を以下に示します。
 
     {{ hostvars['asdf.example.com']['ansible_facts']['os_family'] }}
 
-With "Fact Caching" disabled, in order to do this, Ansible must have already talked to 'asdf.example.com' in the
-current play, or another play up higher in the playbook.  This is the default configuration of ansible.
+「ファクトキャッシング」が無効になっている場合は、
+これを行うため、現在のプレイまたは別の Playbook の上位にあるプレイではすでに「asdf.example.com」と通信している必要があります。 これは、Ansible のデフォルト設定です。
 
-To avoid this, Ansible 1.8 allows the ability to save facts between playbook runs, but this feature must be manually
-enabled.  Why might this be useful?
+これを回避するために、Ansible 1.8では、Playbook の実行間でファクトを保存できますが、
+この機能は手動で有効にする必要があります。 なぜこれが役に立つのでしょうか。
 
-With a very large infrastructure with thousands of hosts, fact caching could be configured to run nightly. Configuration of a small set of servers could run ad-hoc or periodically throughout the day. With fact caching enabled, it would
-not be necessary to "hit" all servers to reference variables and information about them.
+数千のホストを持つ非常に大きなインフラストラクチャーでは、ファクトキャッシュが夜間に実行されるように設定できます。小規模なサーバーセットの構成は、アドホックまたは 1 日を通して定期的に実行できます。ファクトキャッシングを有効にすると、
+すべてのサーバーに「到達」して、変数とそれに関する情報を参照する必要がなくなります。
 
-With fact caching enabled, it is possible for machine in one group to reference variables about machines in the other group, despite the fact that they have not been communicated with in the current execution of /usr/bin/ansible-playbook.
+ファクトキャッシュを有効にすると、あるグループのマシンが、現在の /usr/bin/ansible-playbook の実行で通信されていないため、他のグループのマシンに関する変数を参照できるようになります。
 
-To benefit from cached facts, you will want to change the ``gathering`` setting to ``smart`` or ``explicit`` or set ``gather_facts`` to ``False`` in most plays.
+キャッシュされたファクトの利点を得るには、``gathering`` 設定を ``smart`` または ``explicit`` に変更するか、ほとんどのプレイで ``gather_facts`` を ``False`` に設定します。
 
-Currently, Ansible ships with two persistent cache plugins: redis and jsonfile.
+現在、Ansible には redis および jsonfile という永続キャッシュプラグインが同梱されています。
 
-To configure fact caching using redis, enable it in ``ansible.cfg`` as follows::
+redis を使用してファクトキャッシュを設定するには、以下のように ``ansible.cfg`` で有効にします。
 
     [defaults]
     gathering = smart
@@ -761,17 +761,17 @@ To configure fact caching using redis, enable it in ``ansible.cfg`` as follows::
     fact_caching_timeout = 86400
     # seconds
 
-To get redis up and running, perform the equivalent OS commands::
+再実行するには、同等の OS コマンドを実行します。
 
     yum install redis
     service redis start
     pip install redis
 
-Note that the Python redis library should be installed from pip, the version packaged in EPEL is too old for use by Ansible.
+Python redis ライブラリーは pip からインストールする必要があることに注意してください。EPEL でパッケージ化されたバージョンは Ansible で使用するには古すぎることに注意してください。
 
-In current embodiments, this feature is in beta-level state and the Redis plugin does not support port or password configuration, this is expected to change in the near future.
+現在の実施形態では、この機能はベータ版の状態であり、Redis プラグインはポートまたはパスワード設定をサポートしません。これは近い将来、変更される予定です。
 
-To configure fact caching using jsonfile, enable it in ``ansible.cfg`` as follows::
+jsonfile を使用してファクトキャッシュを設定するには、以下のように ``ansible.cfg`` で有効にします。
 
     [defaults]
     gathering = smart
@@ -780,20 +780,20 @@ To configure fact caching using jsonfile, enable it in ``ansible.cfg`` as follow
     fact_caching_timeout = 86400
     # seconds
 
-``fact_caching_connection`` is a local filesystem path to a writeable
-directory (ansible will attempt to create the directory if one does not exist).
+``fact_caching_connection`` は、
+書き込み可能なディレクトリーへのローカルファイルシステムのパスです (Ansibleは、ディレクトリーが存在しない場合は作成しようとします)。
 
-``fact_caching_timeout`` is the number of seconds to cache the recorded facts.
+``fact_caching_timeout`` は、記録されたファクトをキャッシュする秒数です。
 
 .. _registered_variables:
 
-Registering variables
+変数の登録
 =====================
 
-Another major use of variables is running a command and registering the result of that command as a variable. When you execute a task and save the return value in a variable for use in later tasks, you create a registered variable. There are more examples of this in the
-:ref:`playbooks_conditionals` chapter.
+別の変数の主な使用方法は、コマンドを実行して、そのコマンドの結果を変数として登録することです。タスクを実行し、後続のタスクで使用するために変数に戻り値を保存する場合は、登録した変数を作成します。この例については、
+「:ref:`playbooks_conditionals`」の章を参照してください。
 
-For example::
+例::
 
    - hosts: web_servers
 
@@ -801,56 +801,56 @@ For example::
 
         - shell: /usr/bin/foo
           register: foo_result
-          ignore_errors: True
+          ignore_errors:True
 
         - shell: /usr/bin/bar
           when: foo_result.rc == 5
 
-Results will vary from module to module. Each module's documentation includes a ``RETURN`` section describing that module's return values. To see the values for a particular task, run your playbook with ``-v``.
+結果はモジュールごとに異なります。各モジュールのドキュメントには、そのモジュールの戻り値を記述する ``RETURN`` セクションが含まれています。特定のタスクの値を表示するには、Playbook に ``-v`` を指定して実行します。
 
-Registered variables are similar to facts, with a few key differences. Like facts, registered variables are host-level variables. However, registered variables are only stored in memory. (Ansible facts are backed by whatever cache plugin you have configured.) Registered variables are only valid on the host for the rest of the current playbook run. Finally, registered variables and facts have different :ref:`precedence levels <ansible_variable_precedence>`.
+登録される変数はファクトに似ていますが、いくつかの相違点があります。ファクトと同様に、登録される変数はホストレベルの変数です。ただし、登録した変数はメモリーにのみ保存されます。(Ansible のファクトは、設定したキャッシュプラグインによってサポートされます)。 登録済みの変数は、現在の Playbook 実行の残りの部分に対してホスト上でのみ有効です。最後に、登録された変数とファクトには異なる :ref:`優先順位レベル <ansible_variable_precedence>` があります。
 
-When you register a variable in a task with a loop, the registered variable contains a value for each item in the loop. The data structure placed in the variable during the loop will contain a ``results`` attribute, that is a list of all responses from the module. For a more in-depth example of how this works, see the :ref:`playbooks_loops` section on using register with a loop.
+ループでタスクに変数を登録すると、登録した変数にはループの各項目の値が含まれます。ループ時に変数に置かれたデータ構造は ``results`` 属性を含みます。これは、モジュールからのすべての応答のリストになります。この機能の仕組みの詳細な例は、ループでのレジスターの使用を説明している「:ref:`playbooks_loops`」セクションを参照してください。
 
-.. note:: If a task fails or is skipped, the variable still is registered with a failure or skipped status, the only way to avoid registering a variable is using tags.
+.. note:: タスクが失敗するか、または省略した場合、変数は失敗または省略されたステータスで登録されますが、変数の登録を回避する唯一の方法はタグの使用です。
 
 .. _accessing_complex_variable_data:
 
-Accessing complex variable data
+複雑な変数データへのアクセス
 ===============================
 
-We already described facts a little higher up in the documentation.
+このことについては、すでに上述しています。
 
-Some provided facts, like networking information, are made available as nested data structures.  To access
-them a simple ``{{ foo }}`` is not sufficient, but it is still easy to do.   Here's how we get an IP address::
+ネットワーク情報などの指定された一部のファクトは、ネストされたデータ構造として利用できます。 それにアクセスするには、
+簡単な ``{{ foo }}`` では十分ではありませんが、それでも簡単に実行できます。  IP アドレスを取得する方法を以下に示します。
 
     {{ ansible_facts["eth0"]["ipv4"]["address"] }}
 
-OR alternatively::
+または、以下を実行します。
 
     {{ ansible_facts.eth0.ipv4.address }}
 
-Similarly, this is how we access the first element of an array::
+同様に、これはアレイの最初の要素にアクセスする方法になります。
 
     {{ foo[0] }}
 
 .. _magic_variables_and_hostvars:
 
-Accessing information about other hosts with magic variables
+マジック変数を使用したその他のホストに関する情報へのアクセス
 ============================================================
 
-Whether or not you define any variables, you can access information about your hosts with the :ref:`special_variables` Ansible provides, including "magic" variables, facts, and connection variables. Magic variable names are reserved - do not set variables with these names. The variable ``environment`` is also reserved.
+変数を定義するかどうかに関係なく、Ansible が提供する :ref:`special_variables` を使用して、「マジック」変数、ファクト、接続変数など、ホストに関する情報にアクセスできます。この変数名は予約されています。これらの名前で変数を設定しないでください。変数の ``環境`` 変数も予約されています。
 
-The most commonly used magic variables are ``hostvars``, ``groups``, ``group_names``, and ``inventory_hostname``.
+最も一般的に使用されるマジック変数は、``hostvars``、``groups``、``group_names``、および ``inventory_hostname`` です。
 
-``hostvars`` lets you access variables for another host, including facts that have been gathered about that host. You can access host variables at any point in a playbook. Even if you haven't connected to that host yet in any play in the playbook or set of playbooks, you can still get the variables, but you will not be able to see the facts.
+``hostvars`` を使用すると、別のホストの変数にアクセスできます。これには、そのホストに関するファクトが含まれます。Playbook の任意の時点でホスト変数にアクセスできます。Playbook または Playbook のセットでまだホストに接続していない場合でも、変数は取得できますが、ファクトは表示されません。
 
-If your database server wants to use the value of a 'fact' from another node, or an inventory variable
-assigned to another node, it's easy to do so within a template or even an action line::
+データベースサーバーが別のノードの「ファクト」の値、または別のノードに割り当てられたインベントリー変数を使用する場合は、
+テンプレート内またはアクションライン内で簡単に使用できます。
 
     {{ hostvars['test.example.com']['ansible_facts']['distribution'] }}
 
-``groups`` is a list of all the groups (and hosts) in the inventory.  This can be used to enumerate all hosts within a group. For example:
+``グループ`` とは、インベントリー内のすべてのグループ (およびホスト) の一覧です。 これは、グループ内のすべてのホストを列挙するために使用できます。例:
 
 .. code-block:: jinja
 
@@ -858,7 +858,7 @@ assigned to another node, it's easy to do so within a template or even an action
       # something that applies to all app servers.
    {% endfor %}
 
-A frequently used idiom is walking a group to find all IP addresses in that group.
+頻繁に使用されるイディオムは、そのグループ内のすべての IP アドレスを見つけるグループです。
 
 .. code-block:: jinja
 
@@ -866,10 +866,10 @@ A frequently used idiom is walking a group to find all IP addresses in that grou
       {{ hostvars[host]['ansible_facts']['eth0']['ipv4']['address'] }}
    {% endfor %}
 
-You can use this idiom to point a frontend proxy server to all of the app servers, to set up the correct firewall rules between servers, etc.
-You need to make sure that the facts of those hosts have been populated before though, for example by running a play against them if the facts have not been cached recently (fact caching was added in Ansible 1.8).
+このイディオムを使用してフロントエンドプロキシーサーバーをすべてのアプリケーションサーバーに指定し、サーバー間で適切なファイアウォールルールなどを設定できます。
+ただし、ファクトが最近キャッシュされていない場合 (ファクトキャッシュはAnsible 1.8 で追加されています) に、そのホストのファクトが最近追加されたことを確認する必要があります。
 
-``group_names`` is a list (array) of all the groups the current host is in.  This can be used in templates using Jinja2 syntax to make template source files that vary based on the group membership (or role) of the host:
+``group_names`` は、現在のホストが置かれているすべてのグループの一覧 (アレイ) です。 これは、テンプレートで Jinja2 構文を使用して、ホストのグループメンバーシップ (またはロール) に応じて異なるテンプレートソースファイルを作成できます。
 
 .. code-block:: jinja
 
@@ -877,46 +877,46 @@ You need to make sure that the facts of those hosts have been populated before t
       # some part of a configuration file that only applies to webservers
    {% endif %}
 
-``inventory_hostname`` is the name of the hostname as configured in Ansible's inventory host file.  This can
-be useful when you've disabled fact-gathering, or you don't want to rely on the discovered hostname ``ansible_hostname``.  If you have a long FQDN, you can use ``inventory_hostname_short``, which contains the part up to the first
-period, without the rest of the domain.
+``inventory_hostname`` は、Ansible のインベントリーホストファイルで設定されるホスト名です。 これは、
+ファクト収集を無効にした場合、または検出されたホスト名 ``ansible_hostname`` に依存したくない場合に役立ちます。 FQDN が長くなると、ドメインの残りの部分なしで、最初の期間までの部分を含む ``inventory_hostname_short`` 
+を使用できます。
 
-Other useful magic variables refer to the current play or playbook, including:
-
-.. versionadded:: 2.2
-
-``ansible_play_hosts`` is the full list of all hosts still active in the current play.
+その他の便利なマジック変数は、次のような現在のプレイまたは Playbook を参照します。
 
 .. versionadded:: 2.2
 
-``ansible_play_batch`` is available as a list of hostnames that are in scope for the current 'batch' of the play. The batch size is defined by ``serial``, when not set it is equivalent to the whole play (making it the same as ``ansible_play_hosts``).
+``ansible_play_hosts`` は、現在のプレイでアクティブなままになっているすべてのホストの完全なリストです。
+
+.. versionadded:: 2.2
+
+``ansible_play_batch`` は、プレイの現在の「batch」の範囲にあるホスト名の一覧として利用できます。バッチサイズは ``serial`` で定義されます。設定されていない場合は、プレイ全体に相当するようになります (``ansible_play_hosts`` と同じになります)。
 
 .. versionadded:: 2.3
 
-``ansible_playbook_python`` is the path to the python executable used to invoke the Ansible command line tool.
+``ansible_playbook_python`` は、Ansible コマンドラインツールを起動するために使用される Python 実行ファイルへのパスです。
 
-These vars may be useful for filling out templates with multiple hostnames or for injecting the list into the rules for a load balancer.
+この変数は、テンプレートに複数のホスト名を付ける場合や、一覧をロードバランサーのルールに挿入する際に便利です。
 
-Also available, ``inventory_dir`` is the pathname of the directory holding Ansible's inventory host file, ``inventory_file`` is the pathname and the filename pointing to the Ansible's inventory host file.
+また、``inventory_dir`` は Ansible のインベントリーホストファイルを保持するディレクトリーのパス名であり、``inventory_file`` は、Ansible のインベントリーホストファイルを参照するパス名とファイル名です。
 
-``playbook_dir`` contains the playbook base directory.
+``playbook_dir`` には Playbook のベースディレクトリーが含まれます。
 
-We then have ``role_path`` which will return the current role's pathname (since 1.8). This will only work inside a role.
+次に、現在ロールのパス名 (1.8 以降) になる ``role_path`` 名があります。これはロール内でのみ機能します。
 
-And finally, ``ansible_check_mode`` (added in version 2.1), a boolean magic variable which will be set to ``True`` if you run Ansible with ``--check``.
+最後に、``ansible_check_mode`` (バージョン 2.1 で追加) はブール値のマジック変数で、``--check`` で Ansible を実行する場合は ``True`` に設定されます。
 
 .. _variable_file_separation_details:
 
-Defining variables in files
+ファイルで変数の定義
 ===========================
 
-It's a great idea to keep your playbooks under source control, but
-you may wish to make the playbook source public while keeping certain
-important variables private.  Similarly, sometimes you may just
-want to keep certain information in different files, away from
-the main playbook.
+Playbook をソースの管理下に置くことは素晴らしい考えですが、
+特定の重要な変数を非公開にしながら、
+Playbook のソースを公開することもできます。 同様に、
+特定の情報をメインの Playbook から離れた
+別のファイルに保存する場合があります。
 
-You can do this by using an external variables file, or files, just like this::
+これは、以下のような外部変数ファイル (1 つまたは複数) を使用して実行できます。
 
     ---
 
@@ -932,10 +932,10 @@ You can do this by using an external variables file, or files, just like this::
       - name: this is just a placeholder
         command: /bin/echo foo
 
-This removes the risk of sharing sensitive data with others when
-sharing your playbook source with them.
+これにより、Playbook のソースを他の人と共有するときに、
+機密データを他の人と共有するリスクがなくなります。
 
-The contents of each variables file is a simple YAML dictionary, like this::
+各変数ファイルの内容は、以下のような単純な YAML ディクショナリーです。
 
     ---
     # in the above example, this would be vars/external_vars.yml
@@ -943,68 +943,68 @@ The contents of each variables file is a simple YAML dictionary, like this::
     password: magic
 
 .. note::
-   It's also possible to keep per-host and per-group variables in very
-   similar files, this is covered in :ref:`splitting_out_vars`.
+   ホストごとおよびグループごとの変数を非常に類似したファイルに保持することも可能です。
+   これは、:ref:`splitting_out_vars` で説明されています。
 
 .. _passing_variables_on_the_command_line:
 
-Passing variables on the command line
+コマンドラインで変数を渡す
 =====================================
 
-In addition to ``vars_prompt`` and ``vars_files``, it is possible to set variables at the
-command line using the ``--extra-vars`` (or ``-e``) argument.  Variables can be defined using
-a single quoted string (containing one or more variables) using one of the formats below
+``vars_prompt`` および ``vars_files`` の他に、
+``--extra-vars`` (または ``-e``) 引数を使用して、コマンドラインで変数を設定することが可能です。 変数は、以下の形式のいずれかを使用して、
+単一引用符で囲まれた文字列 (1 つ以上の変数を含む) を使用して定義できます。
 
 key=value format::
 
     ansible-playbook release.yml --extra-vars "version=1.23.45 other_variable=foo"
 
-.. note:: Values passed in using the ``key=value`` syntax are interpreted as strings.
-          Use the JSON format if you need to pass in anything that shouldn't be a string (Booleans, integers, floats, lists etc).
+.. note:: ``key=value`` 構文を使用して渡された値は、文字列として解釈されます。
+          文字列でないもの (ブール値、整数、浮動小数点数、リストなど) を渡す必要がある場合は、JSON 形式を使用します。
 
-JSON string format::
+JSON 文字列の形式::
 
     ansible-playbook release.yml --extra-vars '{"version":"1.23.45","other_variable":"foo"}'
     ansible-playbook arcade.yml --extra-vars '{"pacman":"mrs","ghosts":["inky","pinky","clyde","sue"]}'
 
-vars from a JSON or YAML file::
+JSON ファイルまたは YAML ファイルの変数::
 
     ansible-playbook release.yml --extra-vars "@some_file.json"
 
-This is useful for, among other things, setting the hosts group or the user for the playbook.
+これは、特に、Playbook のホストグループまたはユーザーを設定するのに役立ちます。
 
-Escaping quotes and other special characters:
+引用符やその他の特殊文字をエスケープ処理します。
 
-Ensure you're escaping quotes appropriately for both your markup (e.g. JSON), and for
-the shell you're operating in.::
+マークアップ (JSON など) と操作しているシェルの両方に対して、
+適切に引用符をエスケープしていることを確認してください::
 
     ansible-playbook arcade.yml --extra-vars "{\"name\":\"Conan O\'Brien\"}"
     ansible-playbook arcade.yml --extra-vars '{"name":"Conan O'\\\''Brien"}'
     ansible-playbook script.yml --extra-vars "{\"dialog\":\"He said \\\"I just can\'t get enough of those single and double-quotes"\!"\\\"\"}"
 
-In these cases, it's probably best to use a JSON or YAML file containing the variable
-definitions.
+このような場合は、
+変数の定義が含まれる JSON ファイルまたは YAML ファイルを使用することが推奨されます。
 
 .. _ansible_variable_precedence:
 
-Variable precedence: Where should I put a variable?
+変数の優先度: 変数をどこに置くべきか
 ===================================================
 
-A lot of folks may ask about how variables override another.  Ultimately it's Ansible's philosophy that it's better
-you know where to put a variable, and then you have to think about it a lot less.
+変数が別の変数をオーバーライドする方法について疑問をもたれるかもしれません。 最終的に Ansible の哲学が優れています。
+変数をどこに配置すればいいかが分かったら、それについて考える必要はほとんどなくなります。
 
-Avoid defining the variable "x" in 47 places and then ask the question "which x gets used".
-Why?  Because that's not Ansible's Zen philosophy of doing things.
+47 か所で変数「x」を定義せず、「どの x が使用されるか」を尋ねます。
+なぜですか。 なぜなら、これは、Ansible の Zen (禅) 哲学ではないからです。
 
-There is only one Empire State Building. One Mona Lisa, etc.  Figure out where to define a variable, and don't make
-it complicated.
+エンパイア・ステート・ビルは 1 つしかありません。モナリザも 1 つしかありません。 変数を定義する場所を把握し、
+複雑にしないでください。
 
-However, let's go ahead and get precedence out of the way!  It exists.  It's a real thing, and you might have
-a use for it.
+ただし、次に進んで、優先順位を下げます。 これは存在します。 それは実際のもので、
+あなたはそれを使用するかもしれません。
 
-If multiple variables of the same name are defined in different places, they get overwritten in a certain order.
+同じ名前の複数の変数が異なる場所に定義されている場合、それらは特定の順序で上書きされます。
 
-Here is the order of precedence from least to greatest (the last listed variables winning prioritization):
+以下は、最も少ないものから大きいものへの優先度の順序です (最後に一覧表示される変数が優先されます)。
 
   #. command line values (eg "-u user")
   #. role defaults [1]_
@@ -1029,207 +1029,207 @@ Here is the order of precedence from least to greatest (the last listed variable
   #. include params
   #. extra vars (always win precedence)
 
-Basically, anything that goes into "role defaults" (the defaults folder inside the role) is the most malleable and easily overridden. Anything in the vars directory of the role overrides previous versions of that variable in namespace.  The idea here to follow is that the more explicit you get in scope, the more precedence it takes with command line ``-e`` extra vars always winning.  Host and/or inventory variables can win over role defaults, but not explicit includes like the vars directory or an ``include_vars`` task.
+基本的に、「ロールのデフォルト」となるもの (ロール内のデフォルトディレクトリー) は、最も柔軟で、簡単に上書きできます。ロールの vars ディレクトリーにある内容はすべて、名前空間内のその変数の以前のバージョンを上書きします。 ここで説明する概念は、範囲をより明確にするほど、コマンドラインの優先順位がより高くなることです。追加変数 ``-e`` は常に優先されることです。 ホスト、またはインベントリー変数は、ロールのデフォルトよりも優先されますが、vars ディレクトリーや ``include_vars`` タスクなどの明示的な機能はありません。
 
-.. rubric:: Footnotes
+.. rubric:: 注記
 
-.. [1] Tasks in each role will see their own role's defaults. Tasks defined outside of a role will see the last role's defaults.
-.. [2] Variables defined in inventory file or provided by dynamic inventory.
-.. [3] Includes vars added by 'vars plugins' as well as host_vars and group_vars which are added by the default vars plugin shipped with Ansible.
-.. [4] When created with set_facts's cacheable option, variables will have the high precedence in the play,
-       but will be the same as a host facts precedence when they come from the cache.
+.. [1] 各ロールのタスクには、独自のロールのデフォルトが表示されます。ロールの外部で定義されたタスクには、最後のロールのデフォルトが表示されます。
+.. [2] インベントリーファイルで定義される変数、または動的インベントリーで指定される変数。
+.. [3] 「vars plugins」および Ansible に同梱されるデフォルトの vars プラグインにより追加される host_vars および group_vars が含まれます。
+.. [4] set_facts のキャッシュ可能なオプションを使用して作成すると、変数がプレイで優先されます。
+       ただし、キャッシュからのホストのファクトと同様に優先されます。
 
-.. note:: Within any section, redefining a var will overwrite the previous instance.
-          If multiple groups have the same variable, the last one loaded wins.
-          If you define a variable twice in a play's ``vars:`` section, the second one wins.
-.. note:: The previous describes the default config ``hash_behaviour=replace``, switch to ``merge`` to only partially overwrite.
-.. note:: Group loading follows parent/child relationships. Groups of the same 'parent/child' level are then merged following alphabetical order.
-          This last one can be superseded by the user via ``ansible_group_priority``, which defaults to ``1`` for all groups.
-          This variable, ``ansible_group_priority``, can only be set in the inventory source and not in group_vars/ as the variable is used in the loading of group_vars/.
+.. note:: 任意のセクションで、変数を再定義すると、以前のインスタンスが上書きされます。
+          複数のグループに同じ変数がある場合は、最後に読み込まれたグループが優先されます。
+          プレイの ``vars:`` セクションで変数を 2 回定義すると、2 つ目の変数が優先されます。
+.. note::以前は、デフォルトの設定 ``hash_behaviour=replace`` を説明し、``merge`` に切り替えてを部分的に上書きします。
+.. note::グループの読み込みは、親子関係に従います。同じ「親/子」レベルのグループは、アルファベット順に従ってマージされます。
+          この最後のものは、ユーザーが ``ansible_group_priority`` を使用して置き換えることができます。デフォルトでは、すべてのグループで ``1`` になります。
+          この ``ansible_group_priority`` 変数は、group_vars の読み込みで使用されるため、この変数は、group_vars/ ではなくインベントリーソースでのみ設定できます。
 
-Another important thing to consider (for all versions) is that connection variables override config, command line and play/role/task specific options and keywords. See :ref:`general_precedence_rules` for more details. For example, if your inventory specifies ``ansible_user: ramon`` and you run::
+(すべてのバージョンで) 考慮すべきもう 1 つの重要なことは、接続変数が、設定やコマンドライン、ならびにプレイ、ロール、およびタスクに固有のオプションおよびキーワードを上書きすることです。詳細は「:ref:`general_precedence_rules`」を参照してください。たとえば、インベントリーで ``ansible_user: ramon`` が指定されている場合は、以下を実行します。
 
     ansible -u lola myhost
 
-This will still connect as ``ramon`` because the value from the variable takes priority (in this case, the variable came from the inventory, but the same would be true no matter where the variable was defined).
+変数の値が優先されるため、これは引き続き ``ramon`` として接続されます (この場合は、変数がインベントリーから取得されますが、変数が定義されている場所に関係なく、同じことが当てはまります)。
 
-For plays/tasks this is also true for ``remote_user``. Assuming the same inventory config, the following play::
+プレイまたはタスクの場合、これは ``remote_user`` にも当てはまります。インベントリー設定が同じ場合、プレイは以下のようになります::
 
  - hosts: myhost
    tasks:
-    - command: I'll connect as ramon still
+    - command:I'll connect as ramon still
       remote_user: lola
 
-will have the value of ``remote_user`` overwritten by ``ansible_user`` in the inventory.
+``remote_user`` の値はインベントリーの ``ansible_user`` によって上書きされます。
 
-This is done so host-specific settings can override the general settings. These variables are normally defined per host or group in inventory,
-but they behave like other variables.
+これは、ホスト固有の設定が一般的な設定をオーバーライドできるように行われます。これらの変数は通常、インベントリーのホストまたはグループごとに定義されますが、
+他の変数のように動作します。
 
-If you want to override the remote user globally (even over inventory) you can use extra vars. For instance, if you run::
+リモートユーザーをグローバルに上書きする必要がある場合 (インベントリーでも) は、追加の変数を使用できます。たとえば、以下を実行した場合::
 
     ansible... -e "ansible_user=maria" -u lola
 
-the ``lola`` value is still ignored, but ``ansible_user=maria`` takes precedence over all other places where ``ansible_user`` (or ``remote_user``) might be set.
+``lola`` の値は無視されますが、``ansible_user=maria`` は ``ansible_user`` (または ``remote_user``) が設定されているその他のすべての場所よりも優先されます。
 
-A connection-specific version of a variable takes precedence over more generic
-versions.  For example, ``ansible_ssh_user`` specified as a group_var would have
-a higher precedence than ``ansible_user`` specified as a host_var.
+変数の接続固有のバージョンは、
+より一般的なバージョンよりも優先されます。 たとえば、group_var として指定された ``ansible_ssh_user`` は、
+host_var として指定される ``ansible_user`` よりも優先されます。
 
-You can also override as a normal variable in a play::
+また、プレイで通常の変数として上書きすることもできます。
 
     - hosts: all
       vars:
         ansible_user: lola
       tasks:
-        - command: I'll connect as lola!
+        - command:I'll connect as lola!
 
 .. _variable_scopes:
 
-Scoping variables
+変数のスコープ設定
 -----------------
 
-You can decide where to set a variable based on the scope you want that value to have. Ansible has three main scopes:
+その値に設定するスコープに基づいて、変数を設定する場所を決定できます。Ansible には以下の主要なスコープが 3 つあります。
 
- * Global: this is set by config, environment variables and the command line
- * Play: each play and contained structures, vars entries (vars; vars_files; vars_prompt), role defaults and vars.
- * Host: variables directly associated to a host, like inventory, include_vars, facts or registered task outputs
+ * グローバル: これは、設定、環境変数、およびコマンドラインで設定されます。
+ * プレイ: 各プレイおよび含まれる構造、変数エントリー (vars、vars_files、vars_prompt)、ロールのデフォルト、および変数
+ * ホスト: インベントリー、include_vars、ファクト、または登録されたタスク出力などのホストに直接関連付けられる変数
 
 .. _variable_examples:
 
-Examples of where to set a variable
+変数を設定する場所の例
 -----------------------------------
 
- Let's show some examples and where you would choose to put what based on the kind of control you might want over values.
+ 例と、値よりも便利なコントロールの種類に基づいて配置する場所を示します。
 
-First off, group variables are powerful.
+まず、グループ変数は強力なものになります。
 
-Site-wide defaults should be defined as a ``group_vars/all`` setting.  Group variables are generally placed alongside
-your inventory file.  They can also be returned by a dynamic inventory script (see :ref:`intro_dynamic_inventory`) or defined
-in things like :ref:`ansible_tower` from the UI or API::
+サイト全体のデフォルトは、``group_vars/all`` 設定として定義する必要があります。 通常、グループ変数は、
+インベントリファイルと一緒に配置されます。 これらは動的インベントリースクリプトによって返されるか (:ref:`intro_dynamic_inventory` を参照)、
+UI または API からの :ref:`ansible_tower` などで定義できます。
 
     ---
     # file: /etc/ansible/group_vars/all
     # this is the site wide default
     ntp_server: default-time.example.com
 
-Regional information might be defined in a ``group_vars/region`` variable.  If this group is a child of the ``all`` group (which it is, because all groups are), it will override the group that is higher up and more general::
+地域情報は ``group_vars/region`` 変数で定義できます。 このグループが ``all`` グループの子である場合 (つまりすべてのグループが子であるため)、より上位でより一般的なグループをオーバーライドします。
 
     ---
     # file: /etc/ansible/group_vars/boston
     ntp_server: boston-time.example.com
 
-If for some crazy reason we wanted to tell just a specific host to use a specific NTP server, it would then override the group variable!::
+何らかの理由で特定のホストが特定の NTP サーバーを使用するように指示する場合は、グループ変数をオーバーライドします。
 
     ---
     # file: /etc/ansible/host_vars/xyz.boston.example.com
     ntp_server: override.example.com
 
-So that covers inventory and what you would normally set there.  It's a great place for things that deal with geography or behavior.  Since groups are frequently the entity that maps roles onto hosts, it is sometimes a shortcut to set variables on the group instead of defining them on a role.  You could go either way.
+そのため、インベントリーと、通常設定されている内容に対応します。 これは、地理的や動作に対処する際の適切な場所です。 グループは頻繁にホストにロールをマップするエンティティーであるため、ロールに変数を定義する代わりに、グループに変数を設定するショートカットが設定されることがあります。 どちらの方法でも実施できます。
 
-Remember:  Child groups override parent groups, and hosts always override their groups.
+以下に留意してください。 子グループは親グループを上書きし、ホストは常にそのグループを上書きします。
 
-Next up: learning about role variable precedence.
+次に、ロール変数の優先順位を説明しています。
 
-We'll pretty much assume you are using roles at this point.  You should be using roles for sure.  Roles are great.  You are using
-roles aren't you?  Hint hint.
+この時点でロールを使用していると仮定します。 確実にロールを使用する必要があります。 ロールは優れています。 詳細な
+使用方法については、 以下がヒントになります。
 
-If you are writing a redistributable role with reasonable defaults, put those in the ``roles/x/defaults/main.yml`` file.  This means
-the role will bring along a default value but ANYTHING in Ansible will override it.
-See :ref:`playbooks_reuse_roles` for more info about this::
+適切なデフォルト値で再配布可能なロールを作成する場合は、それらのロールを ``roles/x/defaults/main.yml`` ファイルに配置します。 これは、
+ロールはデフォルト値にしますが、Ansible のすべての値はこれを上書きします。
+詳細は、:ref:`playbooks_reuse_roles` を参照してください。
 
     ---
     # file: roles/x/defaults/main.yml
     # if not overridden in inventory or as a parameter, this is the value that will be used
     http_port: 80
 
-If you are writing a role and want to ensure the value in the role is absolutely used in that role, and is not going to be overridden
-by inventory, you should put it in ``roles/x/vars/main.yml`` like so, and inventory values cannot override it.  ``-e`` however, still will::
+ロールを作成していて、ロールの値がそのロールで絶対的に使用され、インベントリーによって上書きされないようにしたい場合は、
+それを ``roles/x/vars/main.yml`` に配置する必要があります。インベントリーの値はそれを上書きできません。ただし、``-e`` は次のようになります。
 
     ---
     # file: roles/x/vars/main.yml
     # this will absolutely be used in this role
     http_port: 80
 
-This is one way to plug in constants about the role that are always true.  If you are not sharing your role with others,
-app specific behaviors like ports is fine to put in here.  But if you are sharing roles with others, putting variables in here might
-be bad. Nobody will be able to override them with inventory, but they still can by passing a parameter to the role.
+これは、常に true となるロールの定数をプラグインする方法です。 ロールを他のユーザーと共有していない場合、
+ポートなどの特定の動作は、ここで十分です。 しかし、他の人とロールを共有している場合は、
+ここに変数を入れるのは適切できない場合があります。インベントリーでそれを上書きすることはできませんが、引き続きパラメーターをロールに渡すことで可能になります。
 
-Parameterized roles are useful.
+パラメーター化されたロールは便利です。
 
-If you are using a role and want to override a default, pass it as a parameter to the role like so::
+ロールを使用し、デフォルトを上書きする場合は、以下のようにパラメーターとしてロールに渡します。
 
     roles:
        - role: apache
          vars:
-            http_port: 8080
+            http_port:8080
 
-This makes it clear to the playbook reader that you've made a conscious choice to override some default in the role, or pass in some
-configuration that the role can't assume by itself.  It also allows you to pass something site-specific that isn't really part of the
-role you are sharing with others.
+これにより、Playbook リーダーは、ロールのデフォルトをオーバーライドするか、
+ロールがそれ自体では想定できない構成を渡すことを意識的に選択したことを明確にします。 また、他の人と共有しているロールの一部ではない、
+サイト固有の何かを渡すこともできます。
 
-This can often be used for things that might apply to some hosts multiple times. For example::
+これは、多くの場合は、一部のホストに複数回適用される可能性があります。例::
 
     roles:
        - role: app_user
          vars:
-            myname: Ian
+            myname:Ian
        - role: app_user
          vars:
-           myname: Terry
+           myname:Terry
        - role: app_user
          vars:
-           myname: Graham
+           myname:Graham
        - role: app_user
          vars:
-           myname: John
+           myname:John
 
-In this example, the same role was invoked multiple times.  It's quite likely there was
-no default for ``name`` supplied at all.  Ansible can warn you when variables aren't defined -- it's the default behavior in fact.
+この例では、同じロールが複数回呼び出されています。 指定している 
+``name`` デフォルトがまったくなかった可能性が非常に高いです。 Ansible は、変数が定義されていない場合に警告できます。これは実際にはデフォルトの動作です。
 
-There are a few other things that go on with roles.
+ロールに関して他のいくつかのことを扱います。
 
-Generally speaking, variables set in one role are available to others.  This means if you have a ``roles/common/vars/main.yml`` you
-can set variables in there and make use of them in other roles and elsewhere in your playbook::
+一般的には、あるロールで設定される変数が他のロールでも利用できます。 これは、``roles/common/vars/main.yml`` がある場合に、
+そこに変数を設定し、それを他のロールや Playbook の他の場所で使用できることを意味します::
 
      roles:
         - role: common_settings
         - role: something
           vars:
-            foo: 12
+            foo:12
         - role: something_else
 
-.. note:: There are some protections in place to avoid the need to namespace variables.
-          In the above, variables defined in common_settings are most definitely available to 'something' and 'something_else' tasks, but if
-          "something's" guaranteed to have foo set at 12, even if somewhere deep in common settings it set foo to 20.
+.. note:: namespace 変数を使用しなくてもいいように、いくつかの保護機能が導入されます。
+          上記では、common_settings で定義された変数が、「something」タスクおよび「something_else」タスクに対して確実に使用できますが、
+          「something」で、foo を 12 に設定していることが保証されている場合でも、foo を 20 に設定している場合があります。
 
-So, that's precedence, explained in a more direct way.  Don't worry about precedence, just think about if your role is defining a
-variable that is a default, or a "live" variable you definitely want to use.  Inventory lies in precedence right in the middle, and
-if you want to forcibly override something, use ``-e``.
+そのため、それが優先事項であり、より直接的な方法で説明されています。 優先順位を気にする必要はありません。
+自分のロールがデフォルトの変数を定義しているか、または確実に使用する「ライブ」変数を定義しているかを考えてください。 インベントリーの優先順位はちょうど真ん中にあり、
+強制的に何かを上書きする場合は、``-e`` を使用します。
 
-If you found that a little hard to understand, take a look at the `ansible-examples <https://github.com/ansible/ansible-examples>`_ repo on GitHub for a bit more about how all of these things can work together.
+理解が困難な場合は、GitHub の `ansible-examples <https://github.com/ansible/ansible-examples>`_ リポジトリーでこれらすべての機能をどのように連携できるかについて確認してください。
 
-Using advanced variable syntax
+高度な変数構文の使用
 ==============================
 
-For information about advanced YAML syntax used to declare variables and have more control over the data placed in YAML files used by Ansible, see :ref:`playbooks_advanced_syntax`.
+変数を宣言するために使用される高度な YAML 構文、および Ansible により使用される YAML ファイルにあるデータに対する制御の詳細は、「:ref:`playbooks_advanced_syntax`」を参照してください。
 
 .. seealso::
 
    :ref:`about_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_conditionals`
-       Conditional statements in playbooks
+       Playbook の条件付きステートメント
    :ref:`playbooks_filters`
-       Jinja2 filters and their uses
+       Jinja2 フィルターとそれらの使用
    :ref:`playbooks_loops`
-       Looping in playbooks
+       Playbook でのループ
    :ref:`playbooks_reuse_roles`
-       Playbook organization by roles
+       ロール別の Playbook の組織
    :ref:`playbooks_best_practices`
-       Best practices in playbooks
+       Playbook のベストプラクティス
    :ref:`special_variables`
-       List of special variables
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       特殊な変数の一覧
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       \#ansible IRC chat channel

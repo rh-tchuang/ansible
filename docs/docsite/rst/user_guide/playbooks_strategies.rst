@@ -1,58 +1,58 @@
 .. _playbooks_strategies:
 
-Controlling playbook execution: strategies and more
+Playbook の実行の制御: strategy およびその他
 ===================================================
 
-By default, Ansible runs each task on all hosts affected by a play before starting the next task on any host, using 5 forks. If you want to change this default behavior, you can use a different strategy plugin, change the number of forks, or apply one of several play-level keywords like ``serial``.
+デフォルトでは、Ansible は 5 フォークを使用して、任意のホストで次のタスクを開始する前に、プレイの影響を受けるすべてのホストで各タスクを実行します。このデフォルト動作を変更する場合は、異なるストラテジープラグインを使用するか、フォークの数を変更するか、``serial`` などのプレイレベルのキーワードからいずれかを適用します。
 
 .. contents::
    :local:
 
-Selecting a strategy
+ストラテジーの選択
 --------------------
-The default behavior described above is the :ref:`linear strategy<linear_strategy>`. Ansible offers other strategies, including the :ref:`debug strategy<debug_strategy>` (see also  :ref:`playbook_debugger`) and the :ref:`free strategy<free_strategy>`, which allows
-each host to run until the end of the play as fast as it can::
+上記のデフォルトの動作は :ref:`リニアストラテジー<linear_strategy>` です。Ansible は、:ref:`debug ストラテジー<debug_strategy>` (:ref:`playbook_debugger` を参照) および :ref:`free ストラテジー<free_strategy>` 
+を含むその他のストラテジーを提供します。
 
     - hosts: all
       strategy: free
       tasks:
       ...
 
-You can select a different strategy for each play as shown above, or set your preferred strategy globally in ``ansible.cfg``, under the ``defaults`` stanza::
+上記のように各プレイに異なるストラテジーを選択するか、``defaults`` stanza は、``ansible.cfg`` で優先されるストラテジーをグローバルに設定できます。
 
     [defaults]
     strategy = free
 
-All strategies are implemented as :ref:`strategy plugins<strategy_plugins>`. Please review the documentation for each strategy plugin for details on how it works.
+すべてのストラテジーは、:ref:`ストラテジープラグイン<strategy_plugins>` として実装されます。仕組みの詳細は、各ストラテジープラグインのドキュメントを参照してください。
 
-Setting the number of forks
+フォークの数の設定
 ---------------------------
-If you have the processing power available and want to use more forks, you can set the number in ``ansible.cfg``::
+利用可能な処理能力があり、さらに多くのフォークを使用する場合は、``ansible.cfg`` で数値を設定できます。
 
     [defaults]
     forks = 30
 
-or pass it on the command line: `ansible-playbook -f 30 my_playbook.yml`.
+または、コマンドライン `ansible-playbook -f 30 my_playbook.yml` で渡します。
 
-Using keywords to control execution
+キーワードを使用した実行の制御
 -----------------------------------
-Several play-level :ref:`keyword<playbook_keywords>` also affect play execution. The most common one is ``serial``, which sets a number, a percentage, or a list of numbers of hosts you want to manage at a time. Setting ``serial`` with any strategy directs Ansible to 'batch' the hosts, completing the play on the specified number or percentage of hosts before starting the next 'batch'. This is especially useful for :ref:`rolling updates<rolling_update_batch_size>`.
+一部のプレイレベル :ref:`keyword<playbook_keywords>` は、プレイの実行にも影響を与えます。最も一般的なのは ``serial`` です。これは、一度に管理するホストの番号、パーセンテージ、または数の一覧を設定します。すべてのストラテジーで ``serial`` を設定すると、Ansible はホストを「バッチ」するように指示し、次の「バッチ」を開始する前に、指定した数またはホストのパーセンテージでプレイを完了します。これは、:ref:`ローリングアップデート<rolling_update_batch_size>` で特に便利です。
 
-The second keyword to affect execution is ``throttle``, which can also be used at the block and task level. This keyword limits the number of workers up to the maximum set via the forks setting or ``serial``. This can be useful in restricting tasks that may be CPU-intensive or interact with a rate-limiting API::
+実行に影響する次のキーワードは ``throttle`` で、ブロックおよびタスクレベルでも使用できます。このキーワードは、forks 設定または ``serial`` を使用して設定するワーカーの数を最大限に制限します。これは、CPU 集約型またはレート制限 API と対話する可能性のあるタスクを制限するのに役に立ちます。
 
     tasks:
     - command: /path/to/cpu_intensive_command
-      throttle: 1
+      throttle:1
 
-Other keywords that affect play execution include ``ignore_errors``, ``ignore_unreachable``, and ``any_errors_fatal``. Please note that these keywords are not strategies. They are play-level directives or options.
+プレイの実行に影響する他のキーワードには、``ignore_errors``、``ignore_unreachable``、および ``any_errors_fatal`` が含まれます。これらのキーワードはストラテジーではないことに注意してください。これは、プレイレベルのディレクティブまたはオプションです。
 
 .. seealso::
 
    :ref:`about_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_reuse_roles`
-       Playbook organization by roles
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       ロール別の Playbook の組織
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

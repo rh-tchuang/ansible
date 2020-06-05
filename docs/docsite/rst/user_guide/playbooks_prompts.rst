@@ -1,61 +1,61 @@
-Prompts
+Prompt
 =======
 
-When running a playbook, you may wish to prompt the user for certain input, and can
-do so with the 'vars_prompt' section.
+Playbook を実行するとき、ユーザーに特定の入力を求めることができ、
+「vars_prompt」セクションでこれを行います。
 
-A common use for this might be for asking for sensitive data that you do not want to record.
+これの一般的な用途は、記録したくない機密データを要求することです。
 
-This has uses beyond security, for instance, you may use the same playbook for all
-software releases and would prompt for a particular release version
-in a push-script.
+これはセキュリティーを超えた用途があります。たとえば、
+すべてのソフトウェアリリースに同じ Playbook と、
+プッシュスクリプトで、特定のリリースバージョンの入力が求められます。
 
-Here is a most basic example::
+以下は最も基本的な例です。
 
     ---
     - hosts: all
       vars_prompt:
 
         - name: username
-          prompt: "What is your username?"
+          prompt:"What is your username?"
           private: no
 
         - name: password
-          prompt: "What is your password?"
+          prompt:"What is your password?"
 
       tasks:
 
         - debug:
-            msg: 'Logging in as {{ username }}'
+            msg:'Logging in as {{ username }}'
 
-The user input is hidden by default but it can be made visible by setting ``private: no``.
+ユーザー入力はデフォルトでは表示されませんが、``private: no`` を設定することで表示できます。
 
 .. note::
-    Prompts for individual ``vars_prompt`` variables will be skipped for any variable that is already defined through the command line ``--extra-vars`` option, or when running from a non-interactive session (such as cron or Ansible Tower). See :ref:`passing_variables_on_the_command_line` in the /Variables/ chapter.
+    個別の ``vars_prompt`` 変数の入力を求めるプロンプトは、コマンドラインの ``--extra-vars`` オプションですでに定義されている変数や、非対話的なセッション (cron や Ansible Tower など) から実行する場合に省略されます。/Variables/ の章の :ref:`passing_variables_on_the_command_line` を参照してください。
 
-If you have a variable that changes infrequently, it might make sense to
-provide a default value that can be overridden. This can be accomplished using
-the default argument::
+まれにしか変更しない変数がある場合は、
+上書きできるデフォルト値を指定できます。これは、
+以下のデフォルトの引数を使用して行います。
 
    vars_prompt:
 
      - name: "release_version"
-       prompt: "Product release version"
-       default: "1.0"
+       prompt:"Product release version"
+       default:"1.0"
 
-If `Passlib <https://passlib.readthedocs.io/en/stable/>`_ is installed, vars_prompt can also encrypt the
-entered value so you can use it, for instance, with the user module to define a password::
+`Passlib <https://passlib.readthedocs.io/en/stable/>`_ がインストールされている場合、
+vars_prompt は、入力値を暗号化して、たとえばユーザーモジュールを使用してパスワードを定義できます。
 
    vars_prompt:
 
      - name: "my_password2"
-       prompt: "Enter password2"
+       prompt:"Enter password2"
        private: yes
        encrypt: "sha512_crypt"
        confirm: yes
-       salt_size: 7
+       salt_size:7
 
-You can use any crypt scheme supported by 'Passlib':
+「Passlib」がサポートする crypt スキームを使用できます。
 
 - *des_crypt* - DES Crypt
 - *bsdi_crypt* - BSDi Crypt
@@ -75,39 +75,39 @@ You can use any crypt scheme supported by 'Passlib':
 - *scram* - SCRAM Hash
 - *bsd_nthash* - FreeBSD's MCF-compatible nthash encoding
 
-However, the only parameters accepted are 'salt' or 'salt_size'. You can use your own salt using
-'salt', or have one generated automatically using 'salt_size'. If nothing is specified, a salt
-of size 8 will be generated.
+ただし、許可されるパラメーターは「salt」または「salt_size」のみです。「salt」を定義するか、または「salt_size」を使用して自動生成して、
+独自の「salt」を使用できます。何も指定しないと、
+サイズ 8 の「salt」が生成されます。
 
-.. versionadded:: 2.7
+バージョン 2.7 における新機能
 
-When Passlib is not installed the `crypt <https://docs.python.org/2/library/crypt.html>`_ library is used as fallback.
-Depending on your platform at most the following crypt schemes are supported:
+Passlib がインストールされていない場合は、`crypt <https://docs.python.org/2/library/crypt.html>`_ ライブラリーがフォールバックとして使用されます。
+プラットフォームに応じて、最大で次の暗号化スキームがサポートされます。
 
 - *bcrypt* - BCrypt
 - *md5_crypt* - MD5 Crypt
 - *sha256_crypt* - SHA-256 Crypt
 - *sha512_crypt* - SHA-512 Crypt
 
-.. versionadded:: 2.8
+バージョン 2.8 における新機能
 
-If you need to put in special characters (i.e `{%`) that might create templating errors, use the ``unsafe`` option::
+テンプレートエラーを作成する特殊文字 (つまり `{%`) を配置する必要がある場合は、``unsafe`` オプションを使用します。
 
    vars_prompt:
      - name: "my_password_with_weird_chars"
-       prompt: "Enter password"
+       prompt:"Enter password"
        unsafe: yes
        private: yes
 
 .. seealso::
 
    :ref:`playbooks_intro`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_conditionals`
-       Conditional statements in playbooks
+       Playbook の条件付きステートメント
    :ref:`playbooks_variables`
-       All about variables
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       変数の詳細
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

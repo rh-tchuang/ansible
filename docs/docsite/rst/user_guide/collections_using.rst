@@ -2,11 +2,11 @@
 .. _collections:
 
 *****************
-Using collections
+コレクションの使用
 *****************
 
-Collections are a distribution format for Ansible content that can include playbooks, roles, modules, and plugins.
-You can install and use collections through `Ansible Galaxy <https://galaxy.ansible.com>`_.
+コレクションは、Playbook、ロール、モジュール、およびプラグインを含むことができる Ansible コンテンツのディストリビューション形式です。
+`Ansible Galaxy <https://galaxy.ansible.com>`_ を使用してコレクションをインストールして使用できます。
 
 .. contents::
    :local:
@@ -14,32 +14,32 @@ You can install and use collections through `Ansible Galaxy <https://galaxy.ansi
 
 .. _collections_installing:
 
-Installing collections
+コレクションのインストール
 ======================
 
 
-Installing collections with ``ansible-galaxy``
+``ansible-galaxy`` を使用したコレクションのインストール
 ----------------------------------------------
 
 .. include:: ../shared_snippets/installing_collections.txt
 
 .. _collections_older_version:
 
-Installing an older version of a collection
+古いバージョンのコレクションのインストール
 -------------------------------------------
 
 .. include:: ../shared_snippets/installing_older_collection.txt
 
 .. _collection_requirements_file:
 
-Install multiple collections with a requirements file
+要件ファイルを使用して複数のコレクションのインストール
 -----------------------------------------------------
 
 .. include:: ../shared_snippets/installing_multiple_collections.txt
 
 .. _galaxy_server_config:
 
-Configuring the ``ansible-galaxy`` client
+``ansible-galaxy`` クライアントの設定
 ------------------------------------------
 
 .. include:: ../shared_snippets/galaxy_server_list.txt
@@ -47,10 +47,10 @@ Configuring the ``ansible-galaxy`` client
 
 .. _using_collections:
 
-Using collections in a Playbook
+Playbook でのコレクションの使用
 ===============================
 
-Once installed, you can reference a collection content by its fully qualified collection name (FQCN):
+インストールが完了すると、完全修飾コレクション名 (FQCN) でコレクションコンテンツを参照できます。
 
 .. code-block:: yaml
 
@@ -59,7 +59,7 @@ Once installed, you can reference a collection content by its fully qualified co
          - my_namespace.my_collection.mymodule:
              option1: value
 
-This works for roles or any type of plugin distributed within the collection:
+これは、ロールまたはコレクションで配布されるすべてのタイプのプラグインで機能します。
 
 .. code-block:: yaml
 
@@ -75,7 +75,7 @@ This works for roles or any type of plugin distributed within the collection:
              msg: '{{ lookup("my_namespace.my_collection.lookup1", 'param1')| my_namespace.my_collection.filter1 }}'
 
 
-To avoid a lot of typing, you can use the ``collections`` keyword added in Ansible 2.8:
+多くの入力を回避するには、Ansible 2.8 に追加された ``collections`` キーワードを使用できます。
 
 
 .. code-block:: yaml
@@ -93,16 +93,16 @@ To avoid a lot of typing, you can use the ``collections`` keyword added in Ansib
          - debug:
              msg: '{{ lookup("my_namespace.my_collection.lookup1", 'param1')| my_namespace.my_collection.filter1 }}'
 
-This keyword creates a 'search path' for non namespaced plugin references. It does not import roles or anything else.
-Notice that you still need the FQCN for non-action or module plugins.
+このキーワードは、namespace 以外のプラグイン参照の「検索パス」を作成します。ロールやその他のものはインポートされません。
+非アクションプラグインまたはモジュールプラグインには、引き続き FQCN が必要です。
 
 .. seealso::
 
   :ref:`developing_collections`
-      Develop or modify a collection.
+      コレクションを開発するか、または変更します。
   :ref:`collections_galaxy_meta`
-       Understand the collections metadata structure.
-  `Mailing List <https://groups.google.com/group/ansible-devel>`_
-       The development mailing list
+       コレクションのメタデータ構造を理解します。
+  `メーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       開発メーリングリスト
   `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

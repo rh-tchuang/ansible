@@ -1,44 +1,44 @@
 .. _intro_modules:
 
-Introduction to modules
+モジュールの概要
 =======================
 
-Modules (also referred to as "task plugins" or "library plugins") are discrete units of code that can be used from the command line or in a playbook task. Ansible executes each module, usually on the remote target node, and collects return values.
+モジュール (「タスクプラグイン」または「ライブラリープラグイン」とも呼ばれます) は、コマンドラインまたは Playbook タスクで使用可能なコードの個別単位です。Ansible は、通常のリモートターゲットノードで各モジュールを実行し、戻り値を収集します。
 
-You can execute modules from the command line::
+コマンドラインからモジュールを実行できます。
 
     ansible webservers -m service -a "name=httpd state=started"
     ansible webservers -m ping
     ansible webservers -m command -a "/sbin/reboot -t now"
 
-Each module supports taking arguments.  Nearly all modules take ``key=value``
-arguments, space delimited.  Some modules take no arguments, and the command/shell modules simply
-take the string of the command you want to run.
+各モジュールは引数の取得をサポートします。 ほとんどすべてのモジュールは、``key=value`` 引数を
+スペースで区切って指定します。 一部のモジュールは引数を取らず、
+command/shell モジュールは単に実行するコマンドの文字列を取ります。
 
-From playbooks, Ansible modules are executed in a very similar way::
+Playbook から、Ansible モジュールは同じような方法で実行されます。
 
     - name: reboot the servers
       action: command /sbin/reboot -t now
 
-Which can be abbreviated to::
+これは、以下のように短縮できます。
 
     - name: reboot the servers
       command: /sbin/reboot -t now
 
-Another way to pass arguments to a module is using YAML syntax also called 'complex args' ::
+もしくは、「complex args」とも呼ばれる YAML 構文を使用して、モジュールに引数を渡します。
 
     - name: restart webserver
       service:
         name: httpd
         state: restarted
 
-All modules return JSON format data. This means modules can be written in any programming language. Modules should be idempotent, and should avoid making any changes if they detect that the current state matches the desired final state. When used in an Ansible playbook, modules can trigger 'change events' in the form of notifying 'handlers' to run additional tasks.
+すべてのモジュールは JSON 形式のデータを返します。つまり、モジュールはどのプログラミング言語でも記述できます。モジュールは冪等であるべきで、現在の状態が目的の最終状態と一致することを検出した場合は変更を行わないようにする必要があります。Ansible Playbook で使用すると、モジュールは追加のタスクを実行するように「ハンドラー」に通知する形式で「変更イベント」をトリガーできます。
 
-Documentation for each module can be accessed from the command line with the ansible-doc tool::
+各モジュールのドキュメントは、コマンドラインで ansible-doc ツールを使用してアクセスできます。
 
     ansible-doc yum
 
-For a list of all available modules, see the :ref:`Module Docs <modules_by_category>`, or run the following at a command prompt::
+利用可能なモジュールの一覧は、「:ref:`Module Docs <modules_by_category>`」を参照してください。または、コマンドラインで次のコマンドを実行します。
 
     ansible-doc -l
 
@@ -46,14 +46,14 @@ For a list of all available modules, see the :ref:`Module Docs <modules_by_categ
 .. seealso::
 
    :ref:`intro_adhoc`
-       Examples of using modules in /usr/bin/ansible
+       /usr/bin/ansible におけるモジュールの使用例
    :ref:`working_with_playbooks`
-       Examples of using modules with /usr/bin/ansible-playbook
+       /usr/bin/ansible-playbook でモジュールを使用する例
    :ref:`developing_modules`
-       How to write your own modules
+       独自のモジュールの作成方法
    :ref:`developing_api`
-       Examples of using modules with the Python API
-   `Mailing List <https://groups.google.com/group/ansible-project>`_
-       Questions? Help? Ideas?  Stop by the list on Google Groups
+       Python API でモジュールを使用する例
+   `メーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       _#ansible IRC chat channel

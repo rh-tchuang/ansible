@@ -1,9 +1,9 @@
 :orphan:
 
-Introduction
+はじめに
 ============
 
-Before we start exploring the main components of Ansible -- playbooks, configuration management, deployment, and orchestration -- we'll learn how to get Ansible installed and cover some basic concepts.  We'll also go over how to execute ad-hoc commands in parallel across your nodes using /usr/bin/ansible, and see what modules are available in Ansible's core (you can also write your own, which is covered later).
+Ansible の主要コンポーネント (Playbook、構成管理、デプロイメント、およびオーケストレーション) の使用を開始する前に、Ansible のインストール方法と基本概念を説明します。 また、/usr/bin/ansible を使用してノード間で並列にアドホックコマンドを実行する方法や、Ansible のコアで利用可能なモジュール (自分で作成することもできますが、これは後で説明します) を確認する方法も説明します
 
 .. toctree::
    :maxdepth: 1

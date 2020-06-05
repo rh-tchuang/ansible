@@ -1,4 +1,4 @@
-Windows Support
+Windows サポート
 ===============
 
-This page has been split up and moved to the new section :ref:`windows`.
+本ページは分割し、新しいセクション :ref:`windows` に移動しました。

@@ -1,22 +1,22 @@
 .. _windows_performance:
 
-Windows performance
+Windows パフォーマンス
 ===================
-This document offers some performance optimizations you might like to apply to
-your Windows hosts to speed them up specifically in the context of using Ansible
-with them, and generally.
+本書では、特に Ansible をそのホストで使用するような状況、
+および一般的に使用する状況で高速化するために、
+Windows ホストに適用するパフォーマンスの最適化をいくつか説明します。
 
-Optimise PowerShell performance to reduce Ansible task overhead
+Ansible タスクのオーバーヘッドを軽減するための PowerShell のパフォーマンスの最適化
 ---------------------------------------------------------------
-To speed up the startup of PowerShell by around 10x, run the following
-PowerShell snippet in an Administrator session. Expect it to take tens of
-seconds.
+PowerShell の起動を約 10 倍高速化するには、
+Administrator セッションで以下の PowerShell スニペットを実行します。数十秒かかることが
+予想されます。
 
 .. note::
 
-    If native images have already been created by the ngen task or service, you
-    will observe no difference in performance (but this snippet will at that
-    point execute faster than otherwise).
+    ngen タスクまたはサービスでネイティブイメージがすでに作成されている場合は、
+    パフォーマンスに違いは見られません (ただし、この時点では、
+    他の場合よりも高速に実行されます)。
 
 .. code-block:: powershell
 
@@ -38,21 +38,21 @@ seconds.
       }
     }
     Optimize-PowershellAssemblies
+    
+PowerShell は、すべての Windows Ansible モジュールにより使用されます。この最適化により、
+PowerShell の起動時間を短縮し、呼び出しごとにそのオーバーヘッドを取り除きます。
 
-PowerShell is used by every Windows Ansible module. This optimisation reduces
-the time PowerShell takes to start up, removing that overhead from every invocation.
+このスニペットは、`ネイティブなイメージジェネレーター (ngen) <https://docs.microsoft.com/en-us/dotnet/framework/tools/ngen-exe-native-image-generator#WhenToUse>`_ を使用して、
+PowerShell が依存するアセンブリーのネイティブイメージを事前に作成します。
 
-This snippet uses `the native image generator, ngen <https://docs.microsoft.com/en-us/dotnet/framework/tools/ngen-exe-native-image-generator#WhenToUse>`_
-to pre-emptively create native images for the assemblies that PowerShell relies on.
-
-Fix high-CPU-on-boot for VMs/cloud instances
+仮想マシン/クラウドインスタンスの、システム起動時の高 CPU を修正
 --------------------------------------------
-If you are creating golden images to spawn instances from, you can avoid a disruptive
-high CPU task near startup via `processing the ngen queue <https://docs.microsoft.com/en-us/dotnet/framework/tools/ngen-exe-native-image-generator#native-image-service>`_
-within your golden image creation, if you know the CPU types won't change between
-golden image build process and runtime.
+インスタンスを起動するためのゴールデンイメージを作成する場合は、
+ゴールドイメージ作成内の `ngen キューの処理 <https://docs.microsoft.com/en-us/dotnet/framework/tools/ngen-exe-native-image-generator#native-image-service>`_ を介して、
+起動時の破壊的な高 CPU タスクを回避できます。
+これは、ゴールデンイメージビルドプロセスとランタイム間で CPU の種類が変わらないことが分かっている場合です。
 
-Place the following near the end of your playbook, bearing in mind the factors that can cause native images to be invalidated (`see MSDN <https://docs.microsoft.com/en-us/dotnet/framework/tools/ngen-exe-native-image-generator#native-images-and-jit-compilation>`_).
+Playbook の最後付近に以下を置き、ネイティブイメージが無効になる可能性のある要素に注意してください (`MSDN <https://docs.microsoft.com/en-us/dotnet/framework/tools/ngen-exe-native-image-generator#native-images-and-jit-compilation>`_ を参照)。
 
 .. code-block:: yaml
 

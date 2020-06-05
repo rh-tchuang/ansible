@@ -1,4 +1,4 @@
-Intro to Playbooks
+Playbook の概要
 ==================
 
 .. contents::
@@ -7,62 +7,62 @@ Intro to Playbooks
 .. _about_playbooks:
 .. _playbooks_intro:
 
-About Playbooks
+Playbook について
 ```````````````
 
-Playbooks are a completely different way to use ansible than in ad-hoc task execution mode, and are
-particularly powerful.
+Playbook とは、アドホックタスク実行モードとは完全に異なる方法で Ansible を使用する方法で、
+非常に強力です。
 
-Simply put, playbooks are the basis for a really simple configuration management and multi-machine deployment system,
-unlike any that already exist, and one that is very well suited to deploying complex applications.
+簡単に言えば、Playbook は、既存のものとは異なり、非常にシンプルな構成管理とマルチマシンデプロイメントシステムの基礎となりますが、
+複雑なアプリケーションのデプロイメントに非常に適しています。
 
-Playbooks can declare configurations, but they can also orchestrate steps of
-any manual ordered process, even as different steps must bounce back and forth
-between sets of machines in particular orders.  They can launch tasks
-synchronously or asynchronously.
+Playbook は構成を宣言できますが、
+特定の順序でマシンセット間でさまざまなステップを往復する必要がある場合でも、
+手動で指定したプロセスのステップを調整することもできます。 同期または非同期で、
+タスクを起動できます。
 
-While you might run the main ``/usr/bin/ansible`` program for ad-hoc
-tasks, playbooks are more likely to be kept in source control and used
-to push out your configuration or assure the configurations of your
-remote systems are in spec.
+アドホックタスク用にメインの ``/usr/bin/ansible`` プログラムを実行する場合がありますが、
+Playbook はソース管理に保持され、
+構成をプッシュしたり、
+リモートシステムの構成が仕様どおりであることを確認したりするために使用される可能性が高くなります。
 
-There are also some full sets of playbooks illustrating a lot of these techniques in the
-`ansible-examples repository <https://github.com/ansible/ansible-examples>`_.  We'd recommend
-looking at these in another tab as you go along.
+`ansible-examples repository <https://github.com/ansible/ansible-examples>`_ で、
+これらの手法を多数説明している Playbook の全セットもあります。 先に進む場合は、
+これらを別のタブで確認することが推奨されます。
 
-There are also many jumping off points after you learn playbooks, so hop back to the documentation
-index after you're done with this section.
+ドキュメントの目次からは、いろいろなページに飛べるため、
+このセクションが終了したら、ドキュメントのインデックスに戻ってください。
 
 .. _playbook_language_example:
 
-Playbook Language Example
+Playbook 言語の例
 `````````````````````````
 
-Playbooks are expressed in YAML format (see :ref:`yaml_syntax`) and have a minimum of syntax, which intentionally
-tries to not be a programming language or script, but rather a model of a configuration or a process.
+Playbook は YAML 形式 (:ref:`yaml_syntax` を参照) で表現され、最小限の構文を持っています。
+これは、プログラミング言語やスクリプトではなく、構成またはプロセスのモデルを意図しています。
 
 .. note::
-   Some editors have add-ons that can help you write clean YAML syntax in your playbooks. See :ref:`other_tools_and_programs` for details.
+   一部のエディターには、Playbook でクリーンな YAML 構文の作成に役立つアドオンがあります。詳細は「:ref:`other_tools_and_programs`」を参照してください。
 
 
-Each playbook is composed of one or more 'plays' in a list.
+各 Playbook は、リストにある 1 つ以上の「Plays」から構成されます。
 
-The goal of a play is to map a group of hosts to some well defined roles, represented by
-things ansible calls tasks.  At a basic level, a task is nothing more than a call
-to an ansible module.
+Play の目的は、ホストのグループを、Ansible ではタスクと呼ばれるものに代表される、
+明確に定義されたロールにマッピングすることです。 基本的なレベルでは、
+タスクは ansible モジュールを呼び出します。
 
-By composing a playbook of multiple 'plays', it is possible to
-orchestrate multi-machine deployments, running certain steps on all
-machines in the webservers group, then certain steps on the database
-server group, then more commands back on the webservers group, etc.
+複数の「プレイ」の Playbook を作成することにより、
+マルチマシンデプロイメントを調整して、webservers グループのすべてのマシンで特定のステップを実行し、
+次に database サーバーグループで特定のステップを実行し、
+さらに webservers グループでさらに多くのコマンドを実行できる、というようになります。
 
-"plays" are more or less a sports analogy.  You can have quite a lot of plays that affect your systems
-to do different things.  It's not as if you were just defining one particular state or model, and you
-can run different plays at different times.
+「プレイ」は多かれ少なかれスポーツと似ています。 さまざまなことを行うために、
+システムに影響を与える多くのプレイを持つことができます。 特定の状態またはモデルを定義するだけではなく、
+さまざまなプレイを同時に実行することができます。
 
 .. _apache-playbook:
 
-For starters, here's a playbook, ``verify-apache.yml`` that contains just one play::
+まず、ここに、プレイが 1 つだけ含まれてる ``verify-apache.yml`` という名前の Playbook があります。
 
     ---
     - hosts: webservers
@@ -91,8 +91,8 @@ For starters, here's a playbook, ``verify-apache.yml`` that contains just one pl
             name: httpd
             state: restarted
 
-Playbooks can contain multiple plays. You may have a playbook that targets first
-the web servers, and then the database servers. For example::
+Playbook には複数のプレイを含めることができます。最初に Web サーバーを対象とし、
+次にデータベースサーバーを対象とする Playbook があるとします。例::
 
     ---
     - hosts: webservers
@@ -121,29 +121,29 @@ the web servers, and then the database servers. For example::
           name: postgresql
           state: started
 
-You can use this method to switch between the host group you're targeting,
-the username logging into the remote servers, whether to sudo or not, and so
-forth. Plays, like tasks, run in the order specified in the playbook: top to
-bottom.
+この方法を使用して、対象とするホストグループ、
+リモートサーバーにログインするユーザー名、
+sudoを使用するかどうかなどを切り替えることができます。プレイは、タスクと同様に、
+Playbook で指定された順序で上から下に実行されます。
 
-Below, we'll break down what the various features of the playbook language are.
+以下では、Playbook 言語のさまざまな機能を説明します。
 
 .. _playbook_basics:
 
-Basics
+基本
 ``````
 
 .. _playbook_hosts_and_users:
 
-Hosts and Users
+ホストおよびユーザー
 +++++++++++++++
 
-For each play in a playbook, you get to choose which machines in your infrastructure
-to target and what remote user to complete the steps (called tasks) as.
+Playbook の各プレイについて、インフラストラクチャー内のどのマシンを対象にするか、
+どのリモートユーザーがステップ (タスクと呼ばれる) を完了するかを選択できます。
 
-The ``hosts`` line is a list of one or more groups or host patterns,
-separated by colons, as described in the :ref:`intro_patterns`
-documentation.  The ``remote_user`` is just the name of the user account::
+``hosts`` 行は、
+:ref:`intro_patterns` のドキュメントで説明されているように、
+コロンで区切られた 1 つ以上のグループまたはホストパターンのリストです。 ``remote_user`` は、ユーザーアカウントの名前です。
 
     ---
     - hosts: webservers
@@ -151,9 +151,9 @@ documentation.  The ``remote_user`` is just the name of the user account::
 
 .. note::
 
-    The ``remote_user`` parameter was formerly called just ``user``. It was renamed in Ansible 1.4 to make it more distinguishable from the **user** module (used to create users on remote systems).
+    ``remote_user`` パラメーターは、以前は ``user`` と呼ばれていました。Ansible 1.4 で名前が変更され、**user** モジュール (リモートシステムでユーザーを作成するために使用) との区別がより明確になりました。
 
-Remote users can also be defined per task::
+リモートユーザーは、タスクごとに定義することもできます::
 
     ---
     - hosts: webservers
@@ -163,14 +163,14 @@ Remote users can also be defined per task::
           ping:
           remote_user: yourname
 
-Support for running things as another user is also available (see :ref:`become`)::
+別のユーザーとしての実行に関するサポートも利用可能です (:ref:`become` を参照)。
 
     ---
     - hosts: webservers
       remote_user: yourname
       become: yes
 
-You can also use keyword ``become`` on a particular task instead of the whole play::
+``become`` キーワードを、プレイ全体ではなく特定のタスクで使用することもできます。
 
     ---
     - hosts: webservers
@@ -183,7 +183,7 @@ You can also use keyword ``become`` on a particular task instead of the whole pl
           become_method: sudo
 
 
-You can also login as you, and then become a user different than root::
+また、自身のユーザーとしてログインしてから、root とは別のユーザーになることもできます::
 
     ---
     - hosts: webservers
@@ -191,7 +191,7 @@ You can also login as you, and then become a user different than root::
       become: yes
       become_user: postgres
 
-You can also use other privilege escalation methods, like su::
+su などの他の権限昇格メソッドを使用することもできます。
 
     ---
     - hosts: webservers
@@ -199,95 +199,95 @@ You can also use other privilege escalation methods, like su::
       become: yes
       become_method: su
 
-If you need to specify a password for sudo, run ``ansible-playbook`` with ``--ask-become-pass`` or ``-K``.
-If you run a playbook utilizing ``become`` and the playbook seems to hang, it's probably stuck at the privilege
-escalation prompt and can be stopped using `Control-C`, allowing you to re-execute the playbook adding the
-appropriate password.
+sudo のパスワードを指定する必要がある場合は、``ansible-playbook`` に ``--ask-become-pass`` または ``-K`` を付けて実行します。
+``become`` を使用して Playbook を実行し、Playbook がハングしているように見える場合は、
+おそらく権限昇格のプロンプトでスタックしており、`Control-C` を使用して停止できます。
+これにより、適切なパスワードを追加して Playbook を再実行できます。
 
 .. important::
 
-   When using ``become_user`` to a user other than root, the module
-   arguments are briefly written into a random tempfile in ``/tmp``.
-   These are deleted immediately after the command is executed.  This
-   only occurs when changing privileges from a user like 'bob' to 'timmy',
-   not when going from 'bob' to 'root', or logging in directly as 'bob' or
-   'root'.  If it concerns you that this data is briefly readable
-   (not writable), avoid transferring unencrypted passwords with
-   `become_user` set.  In other cases, ``/tmp`` is not used and this does
-   not come into play. Ansible also takes care to not log password
-   parameters.
+   root 以外のユーザーに対して ``become_user`` を使用すると、
+   モジュールの引数が、``/tmp`` のランダムな一時ファイルに簡単に記述されます。
+   これらは、コマンドの実行直後に削除されます。 これにより、
+   たとえば「bob」ユーザーから「timmy」ユーザーに特権を変更した場合に限り発生させ、
+   「bob」から「root」に変更した場合、
+   または「bob」または「root」として直接ログインした場合には発生させません。 このデータが、
+   一時的に読み取り可能 (書き込み不可) であることが懸念される場合は、
+   `become_user` を設定して暗号化されていないパスワードを転送しないでください。 その他の場合は、``/tmp`` が使用されず、
+   これは機能しません。Ansible は、
+   password パラメーターをログに記録しないようにします。
 
 
 .. _order:
 
 .. versionadded:: 2.4
 
-You can also control the order in which hosts are run. The default is to follow the order supplied by the inventory::
+また、ホストの実行順序を制御することもできます。デフォルトは、インベントリーで指定されている順序に従います。
 
     - hosts: all
       order: sorted
-      gather_facts: False
+      gather_facts:False
       tasks:
         - debug:
             var: inventory_hostname
 
-Possible values for order are:
+順序に使用できる値は以下の通りです。
 
 inventory:
-    The default. The order is 'as provided' by the inventory
+    デフォルトです。インベントリーで「提供されたとおり」の順序になります。
 reverse_inventory:
-    As the name implies, this reverses the order 'as provided' by the inventory
+    名前が示すように、インベントリーで「提供されたとおり」のものと逆の順序になります。
 sorted:
-    Hosts are alphabetically sorted by name
+    ホストの名前をアルファベット順で並べます。
 reverse_sorted:
-    Hosts are sorted by name in reverse alphabetical order
-shuffle:
-    Hosts are randomly ordered each run
+    ホストの名前を
+逆アルファベット順で並べます。
+    ホストは実行ごとにランダムに並べられます
 
 
 .. _tasks_list:
 
-Tasks list
+タスクリスト
 ++++++++++
 
-Each play contains a list of tasks.  Tasks are executed in order, one
-at a time, against all machines matched by the host pattern,
-before moving on to the next task.  It is important to understand that, within a play,
-all hosts are going to get the same task directives.  It is the purpose of a play to map
-a selection of hosts to tasks.
+各プレイにはタスクリストが含まれます。 タスクは、
+次のタスクに進む前に、ホストパターンに一致するすべてのマシンに対して、
+一度に 1 つずつ順番に実行されます。 プレイ内では、
+すべてのホストが同じタスクディレクティブを取得することを理解することが重要です。 プレイの目的は、
+選択したホストをタスクにマップすることです。
 
-When running the playbook, which runs top to bottom, hosts with failed tasks are
-taken out of the rotation for the entire playbook.  If things fail, simply correct the playbook file and rerun.
+上から下に実行される Playbook を実行すると、タスクが失敗したホストは、
+Playbook 全体のローテーションから除外されます。 問題が発生した場合は、Playbook ファイルを修正し、再実行します。
 
-The goal of each task is to execute a module, with very specific arguments.
-Variables can be used in arguments to modules.
+各タスクの目的は、非常に具体的な引数を使用してモジュールを実行することです。
+変数はモジュールの引数で使用できます。
 
-Modules should be idempotent, that is, running a module multiple times
-in a sequence should have the same effect as running it just once. One
-way to achieve idempotency is to have a module check whether its desired
-final state has already been achieved, and if that state has been achieved,
-to exit without performing any actions. If all the modules a playbook uses
-are idempotent, then the playbook itself is likely to be idempotent, so
-re-running the playbook should be safe.
+モジュールは冪等である必要があります。
+つまり、モジュールをシーケンスで複数回実行すると、1 回だけ実行した場合と同じ結果になります。冪等性を達成する 1 つの方法は、
+モジュールに、目的の最終状態がすでに実現しているかどうかを確認し、
+その状態が実現している場合は、
+アクションを実行せずに終了することです。Playbook が使用するすべてのモジュールが冪等である場合は、
+Playbook 自体が冪等である可能性が高いため、
+Playbook を再実行しても安全です。
 
-The **command** and **shell** modules will typically rerun the same command again,
-which is totally ok if the command is something like
-``chmod`` or ``setsebool``, etc.  Though there is a ``creates`` flag available which can
-be used to make these modules also idempotent.
+**command** モジュールと **shell** モジュールは、通常、同じコマンドを再実行します。
+これは、
+``chmod`` または ``setsebool`` などのコマンドの場合は、まったく問題ありません。 これらのモジュールを冪等にするために使用できる ``creates`` 
+フラグが利用できます。
 
-Every task should have a ``name``, which is included in the output from
-running the playbook.   This is human readable output, and so it is
-useful to provide good descriptions of each task step.  If the name
-is not provided though, the string fed to 'action' will be used for
-output.
+すべてのタスクには ``name`` が必要です。
+これは、Playbook の実行からの出力に含まれます。  これは人間が読める形式の出力であるため、
+各タスクステップの適切な説明を提供すると便利です。 ただし、
+名前が指定されていない場合は、
+「action」に渡される文字列が出力に使用されます。
 
-Tasks can be declared using the legacy ``action: module options`` format, but
-it is recommended that you use the more conventional ``module: options`` format.
-This recommended format is used throughout the documentation, but you may
-encounter the older format in some playbooks.
+タスクは、レガシーの ``action: module options`` 形式を使用して宣言できますが、
+より一般的な ``module: options`` 形式を使用することが推奨されます。
+この推奨される形式はドキュメント全体で使用されていますが、
+一部の Playbook では古い形式を使用している場合があります。
 
-Here is what a basic task looks like. As with most modules,
-the service module takes ``key=value`` arguments::
+以下は基本的なタスクです。ほとんどのモジュールの場合と同様、
+サービスモジュールは ``key=value`` 引数を取ります::
 
    tasks:
      - name: make sure apache is running
@@ -295,87 +295,87 @@ the service module takes ``key=value`` arguments::
          name: httpd
          state: started
 
-The **command** and **shell** modules are the only modules that just take a list
-of arguments and don't use the ``key=value`` form.  This makes
-them work as simply as you would expect::
+**command** モジュールおよび **shell** モジュールは、引数のリストを取り、
+``key=value`` 形式を使用しない唯一のモジュールです。 これにより、
+それらは予想どおりに機能します。
 
    tasks:
      - name: enable selinux
        command: /sbin/setenforce 1
 
-The **command** and **shell** module care about return codes, so if you have a command
-whose successful exit code is not zero, you may wish to do this::
+**command** モジュールと **shell** モジュールは戻りコードを処理するため、コマンドがあり、
+その正常な終了コードがゼロでない場合は、以下を行うことができます。
 
    tasks:
      - name: run this command and ignore the result
        shell: /usr/bin/somecommand || /bin/true
 
-Or this::
+または、以下のようになります。
 
    tasks:
      - name: run this command and ignore the result
        shell: /usr/bin/somecommand
-       ignore_errors: True
+       ignore_errors:True
 
 
-If the action line is getting too long for comfort you can break it on
-a space and indent any continuation lines::
+アクション行が長すぎて快適ではなくなった場合は、スペースで改行し、
+継続している行にインデントを追加できます。
 
     tasks:
-      - name: Copy ansible inventory file to client
+      - name:Copy ansible inventory file to client
         copy: src=/etc/ansible/hosts dest=/etc/ansible/hosts
                 owner=root group=root mode=0644
 
-Variables can be used in action lines.   Suppose you defined
-a variable called ``vhost`` in the ``vars`` section, you could do this::
+変数はアクション行で使用できます。  たとえば、
+``vars`` セクションで ``vhost`` という名前の変数を定義したとすると、次のようになります。
 
    tasks:
      - name: create a virtual host file for {{ vhost }}
-       template:
-         src: somefile.j2
-         dest: /etc/httpd/conf.d/{{ vhost }}
+template:
+src: somefile.j2
+dest: /etc/httpd/conf.d/{{ vhost }}
 
-Those same variables are usable in templates, which we'll get to later.
+同じような変数は、後で使用するテンプレートで使用できます。
 
-Now in a very basic playbook all the tasks will be listed directly in that play, though it will usually
-make more sense to break up tasks as described in :ref:`playbooks_reuse`.
+非常に基本的な Playbook では、すべてのタスクがそのプレイに直接リストされますが、
+通常は、:ref:`playbooks_reuse` の説明に従って、タスクを破損させる方が分かりやすくなります。
 
 .. _action_shorthand:
 
-Action Shorthand
+アクション (短縮形表記)
 ````````````````
 
 .. versionadded:: 0.8
 
-Ansible prefers listing modules like this::
+Ansible では、以下のようなモジュールリストが推奨されます。
 
     template:
         src: templates/foo.j2
         dest: /etc/foo.conf
 
-Early versions of Ansible used the following format, which still works::
+Ansible の初期バージョンでは以下の形式が使用されていましたが、これは引き続き動作します。
 
     action: template src=templates/foo.j2 dest=/etc/foo.conf
 
 
 .. _handlers:
 
-Handlers: Running Operations On Change
+ハンドラー: 変更時の操作の実行
 ``````````````````````````````````````
 
-As we've mentioned, modules should be idempotent and can relay when
-they have made a change on the remote system.   Playbooks recognize this and
-have a basic event system that can be used to respond to change.
+前述したように、モジュールは冪等である必要があり、
+リモートシステムに変更を加えたときにリレーできます。  Playbook はこれを認識し、
+変化に対応するために使用できる基本的なイベントシステムを備えています。
 
-These 'notify' actions are triggered at the end of each block of tasks in a play, and will only be
-triggered once even if notified by multiple different tasks.
+これらの「通知」アクションは、プレイのタスクの各ブロックの最後にトリガーされ、
+複数の異なるタスクから通知された場合でも 1 回だけトリガーされます。
 
-For instance, multiple resources may indicate
-that apache needs to be restarted because they have changed a config file,
-but apache will only be bounced once to avoid unnecessary restarts.
+たとえば、複数のリソースが設定ファイルを変更したために Apache を再起動する必要があることを示している場合がありますが、
+不必要な再起動を回避するために、
+Apache は 1 回だけバウンスされます。
 
-Here's an example of restarting two services when the contents of a file
-change, but only if the file changes::
+次に、ファイルの内容が変更されたときに 2 つのサービスを再起動する例を示します。
+ただし、ファイルが変更された場合のみです。
 
    - name: template configuration file
      template:
@@ -385,16 +385,16 @@ change, but only if the file changes::
         - restart memcached
         - restart apache
 
-The things listed in the ``notify`` section of a task are called
-handlers.
+タスクの ``notify`` セクションに挙げられているものは、
+ハンドラーと呼ばれています。
 
-Handlers are lists of tasks, not really any different from regular
-tasks, that are referenced by a globally unique name, and are notified
-by notifiers.  If nothing notifies a handler, it will not
-run.  Regardless of how many tasks notify a handler, it will run only
-once, after all of the tasks complete in a particular play.
+ハンドラーはタスクのリストであり、通常のタスクと違いはなく、
+グローバルに一意の名前で参照され、
+通知機能によって通知されます。 ハンドラーに何も通知しないと、
+実行されません。 ハンドラーに通知するタスクの数に関係なく、
+特定のプレイでタスクがすべて完了すると、ハンドラーは 1 回だけ実行されます。
 
-Here's an example handlers section::
+以下は、ハンドラーセクションの例です::
 
     handlers:
         - name: restart memcached
@@ -406,30 +406,30 @@ Here's an example handlers section::
             name: apache
             state: restarted
 
-You may want your Ansible handlers to use variables. For example, if the name of a service varies slightly by distribution, you want your output to show the exact name of the restarted service for each target machine. Avoid placing variables in the name of the handler. Since handler names are templated early on, Ansible may not have a value available for a handler name like this::
+Ansible ハンドラーが変数を使用することが望ましい場合があります。たとえば、サービスの名前がディストリビューションによって若干異なる場合は、出力で各ターゲットマシンについて再起動したサービスの正確な名前を表示させる必要があります。ハンドラーの名前に変数を配置しないようにします。ハンドラー名は早期にテンプレート化されるため、Ansible には、以下のように、ハンドラー名に使用できる値がない場合があります。
 
     handlers:
     # this handler name may cause your play to fail!
     - name: restart "{{ web_service_name }}"
 
-If the variable used in the handler name is not available, the entire play fails. Changing that variable mid-play **will not** result in newly created handler.
+ハンドラー名で使用される変数が利用できない場合は、プレイ全体が失敗します。この変数を中間のプレイに変更すると、ハンドラーは新たに **作成されません**。
 
-Instead, place variables in the task parameters of your handler. You can load the values using ``include_vars`` like this:
+代わりに、変数をハンドラーの task パラメーターに設定します。以下のような ``include_vars`` を使用して値を読み込むことができます。
 
   .. code-block:: yaml+jinja
 
     tasks:
-      - name: Set host variables based on distribution
+      - name:Set host variables based on distribution
         include_vars: "{{ ansible_facts.distribution }}.yml"
 
-    handlers:
-      - name: restart web service
-        service:
-          name: "{{ web_service_name | default('httpd') }}"
-          state: restarted
+handlers:
+  - name: restart web service
+    service:
+      name: "{{ web_service_name | default('httpd') }}"
+      state: restarted
+    
 
-
-As of Ansible 2.2, handlers can also "listen" to generic topics, and tasks can notify those topics as follows::
+Ansible 2.2 以降、ハンドラーは一般的なトピックを「リッスン」することもでき、タスクは次のようにそれらのトピックに通知できます。
 
     handlers:
         - name: restart memcached
@@ -448,41 +448,41 @@ As of Ansible 2.2, handlers can also "listen" to generic topics, and tasks can n
           command: echo "this task will restart the web services"
           notify: "restart web services"
 
-This use makes it much easier to trigger multiple handlers. It also decouples handlers from their names,
-making it easier to share handlers among playbooks and roles (especially when using 3rd party roles from
-a shared source like Galaxy).
+この使用により、複数のハンドラーをトリガーすることがはるかに簡単になります。また、
+ハンドラーを名前から切り離し、
+Playbook とロールの間でハンドラーを共有しやすくします (特に Galaxy などの共有ソースからサードパーティーのロールを使用する場合)。
 
 .. note::
-   * Notify handlers are always run in the same order they are defined, `not` in the order listed in the notify-statement. This is also the case for handlers using `listen`.
-   * Handler names and `listen` topics live in a global namespace.
-   * Handler names are templatable and `listen` topics are not.
-   * Use unique handler names. If you trigger more than one handler with the same name, the first one(s) get overwritten. Only the last one defined will run.
-   * You cannot notify a handler that is defined inside of an include. As of Ansible 2.1, this does work, however the include must be `static`.
+   * 通知ハンドラーは常に、notify-statement に記載される `順番ではなく`、定義される順序で実行されます。これは、`listen` を使用するハンドラーの場合でも当てはまります。
+   *ハンドラー名と `listen` トピックは、グローバルな名前空間にあります。
+   * ハンドラー名は一時的なものですが、`listen` トピックは一時的ではありません。
+   * 固有のハンドラー名を使用します。同じ名前のハンドラーを複数トリガーすると、最初のハンドラーが上書きされます。定義された最後のもののみが実行されます。
+   * インクルード内で定義されたハンドラーに通知することはできません。Ansible 2.1 の時点では、これは機能しますが、包含は `静的` である必要があります。
 
-Roles are described later on, but it's worthwhile to point out that:
+ロールについては後で説明しますが、次の点に注意してください。
 
-* handlers notified within ``pre_tasks``, ``tasks``, and ``post_tasks`` sections are automatically flushed in the end of section where they were notified,
-* handlers notified within ``roles`` section are automatically flushed in the end of ``tasks`` section, but before any ``tasks`` handlers,
-* handlers are play scoped and as such can be used outside of the role they are defined in.
+* ``pre_tasks`` セクション、``tasks`` セクション、および ``post_tasks`` セクション内で通知されるハンドラーは、通知されたセクションの最後に自動的にフラッシュされます。
+* ``roles`` セクション内で通知されるハンドラーは、``tasks`` セクションの最後ではなく、``tasks`` ハンドラーの前に自動的にフラッシュされます。
+* ハンドラーはスコープのあるプレイであるため、ハンドラーは定義されているロールの外で使用できます。
 
-If you ever want to flush all the handler commands immediately you can do this::
+すべてのハンドラーコマンドをすぐにフラッシュする必要がある場合は、以下を実行できます。
 
     tasks:
        - shell: some tasks go here
        - meta: flush_handlers
        - shell: some other tasks
 
-In the above example any queued up handlers would be processed early when the ``meta``
-statement was reached.  This is a bit of a niche case but can come in handy from
-time to time.
+上記の例では、``meta`` ステートメントに到達したときに、
+キューに入れられたハンドラーが処理されます。 これは少しニッチなケースですが、
+時々役に立ちます。
 
 .. _executing_a_playbook:
 
-Executing A Playbook
+Playbook の実行
 ````````````````````
 
-Now that you've learned playbook syntax, how do you run a playbook?  It's simple.
-Let's run a playbook using a parallelism level of 10::
+これで、Playbook の構文の説明は終わります。では、Playbook はどのように実行するのでしょう。 これは簡単です。
+並列処理レベル 10 を使用して Playbook を実行してみましょう。
 
     ansible-playbook playbook.yml -f 10
 
@@ -491,26 +491,26 @@ Let's run a playbook using a parallelism level of 10::
 Ansible-Pull
 ````````````
 
-Should you want to invert the architecture of Ansible, so that nodes check in to a central location, instead
-of pushing configuration out to them, you can.
+Ansible のアーキテクチャーを反転させて、ノードが設定をプッシュするのではなく、
+中央の場所にチェックインするようにしたい場合は、そうすることができます。
 
-The ``ansible-pull`` is a small script that will checkout a repo of configuration instructions from git, and then
-run ``ansible-playbook`` against that content.
+``ansible-pull`` は、git から設定手順のリポジトリーをチェックアウトし、
+そのコンテンツに対して ``ansible-playbook`` を実行する小さなスクリプトです。
 
-Assuming you load balance your checkout location, ``ansible-pull`` scales essentially infinitely.
+チェックアウトの場所を負荷分散する場合、``ansible-pull`` は基本的に無限にスケーリングを行います。
 
-Run ``ansible-pull --help`` for details.
+詳細は、``ansible-pull --help`` を実行してください。
 
-There's also a `clever playbook <https://github.com/ansible/ansible-examples/blob/master/language_features/ansible_pull.yml>`_ available to configure ``ansible-pull`` via a crontab from push mode.
+また、プッシュモードからの crontab で ``ansible-pull`` を設定する際に利用可能な `clever playbook <https://github.com/ansible/ansible-examples/blob/master/language_features/ansible_pull.yml>`_ もあります。
 
 .. _linting_playbooks:
 
-Linting playbooks
+Playbook の文法チェック
 `````````````````
 
-You can use `ansible-lint <https://docs.ansible.com/ansible-lint/index.html>`_ to run a detail check of your playbooks before you execute them.
+`ansible-lint <https://docs.ansible.com/ansible-lint/index.html>`_ を使用して Playbook の詳細チェックを実行する前に Playbook を実行できます。
 
-For example, if you run ``ansible-lint`` on the :ref:`verify-apache.yml playbook <apache-playbook>` introduced earlier in this section, you'll get the following results:
+たとえば、このセクションですでに説明した :ref:`verify-apache.yml playbook <apache-playbook>` で ``ansible-lint`` を実行すると、以下のような結果が得られます。
 
 .. code-block:: bash
 
@@ -518,43 +518,43 @@ For example, if you run ``ansible-lint`` on the :ref:`verify-apache.yml playbook
     [403] Package installs should not use latest
     verify-apache.yml:8
     Task/Handler: ensure apache is at the latest version
+    
+`ansible-lint のデフォルトルール <https://docs.ansible.com/ansible-lint/rules/default_rules.html>`_ ページでは、各エラーが説明されています。``[403]`` の場合に推奨される修正は、Playbook の ``state: latest`` を ``state: present`` に変更することです。
 
-The `ansible-lint default rules <https://docs.ansible.com/ansible-lint/rules/default_rules.html>`_ page describes each error. For ``[403]``, the recommended fix is to change ``state: latest`` to ``state: present`` in the playbook.
 
-
-Other playbook verification options
+その他の Playbook 検証オプション
 ```````````````````````````````````
-See :ref:`validate-playbook-tools` for a detailed list of tools you can use to verify your playbooks. Here are some others that you should consider:
+Playbook の検証に使用できるツールの詳細なリストは、:ref:`validate-playbook-tools` を参照してください。その他の考慮すべき事項を以下に示します。
 
-* To check the syntax of a playbook, use ``ansible-playbook`` with the ``--syntax-check`` flag. This will run the
-  playbook file through the parser to ensure its included files, roles, etc. have no syntax problems.
+* Playbook の構文を確認するには、``--syntax-check`` フラグを指定して ``ansible-playbook`` を使用します。これにより、
+  パーサーを介して Playbook ファイルが実行され、インクルードファイルやロールなどに構文上の問題がないことが確認されます。
 
-* Look at the bottom of the playbook execution for a summary of the nodes that were targeted
-  and how they performed. General failures and fatal "unreachable" communication attempts are kept separate in the counts.
+* Playbook の実行の下部を見て、
+  対象となったノードの概要とその実行方法を確認します。一般的な障害と、致命的な「到達不能」な通信の試行は、個別にカウントされます。
 
-* If you ever want to see detailed output from successful modules as well as unsuccessful ones,
-  use the ``--verbose`` flag.  This is available in Ansible 0.5 and later.
+* 成功したモジュールだけでなく、失敗したモジュールからの詳細な出力を表示する場合は、
+  ``--verbose`` フラグを使用します。 これは、Ansible 0.5 以降で利用できます。
 
-* To see what hosts would be affected by a playbook before you run it, you
-  can do this::
+* 実行する前に Playbook の影響を受けるホストを確認するには、
+  次のようにします::
 
-      ansible-playbook playbook.yml --list-hosts
+      ansible-playbook playbook.yml --step
 
 .. seealso::
 
-   `ansible-lint <https://docs.ansible.com/ansible-lint/index.html>`_
-       Learn how to test Ansible Playbooks syntax
+   `ansible- <https://docs.ansible.com/ansible-lint/index.html>lint`
+       Ansible Playbook 構文のテスト方法について
    :ref:`yaml_syntax`
-       Learn about YAML syntax
+       YAML 構文について
    :ref:`playbooks_best_practices`
-       Various tips about managing playbooks in the real world
+       実際の Playbook の管理に関するさまざまなヒント
    :ref:`all_modules`
-       Learn about available modules
+       利用可能なモジュールについて
    :ref:`developing_modules`
-       Learn how to extend Ansible by writing your own modules
+       独自のモジュールを作成して Ansible を拡張する方法について
    :ref:`intro_patterns`
-       Learn about how to select hosts
-   `GitHub examples directory <https://github.com/ansible/ansible-examples>`_
-       Complete end-to-end playbook examples
-   `Mailing List <https://groups.google.com/group/ansible-project>`_
-       Questions? Help? Ideas?  Stop by the list on Google Groups
+       ホストの選択方法について
+   `GitHub サンプルディレクトリー <https://github.com/ansible/ansible-examples>`_
+       完全なエンドツーエンド Playbook の例
+   `メーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。

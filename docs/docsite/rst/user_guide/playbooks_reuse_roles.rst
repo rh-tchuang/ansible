@@ -1,18 +1,18 @@
 .. _playbooks_reuse_roles:
 
-Roles
+ロール
 =====
 
-.. contents:: Topics
+.. contents:: トピック
 
 .. versionadded:: 1.2
 
-Roles are ways of automatically loading certain vars_files, tasks, and handlers based on a known file structure.  Grouping content by roles also allows easy sharing of roles with other users.
+ロールは、既知のファイル構造に基づいて特定の vars_files、タスク、およびハンドラーを自動的に読み込む方法です。 ロールでコンテンツをグループ化すると、他のユーザーとのロールの共有が容易になります。
 
-Role Directory Structure
+ロールのディレクトリー構造
 ````````````````````````
 
-Example project structure::
+プロジェクト構造の例:
 
     site.yml
     webservers.yml
@@ -31,17 +31,17 @@ Example project structure::
             defaults/
             meta/
 
-Roles expect files to be in certain directory names. Roles must include at least one of these directories, however it is perfectly fine to exclude any which are not being used. When in use, each directory must contain a ``main.yml`` file, which contains the relevant content:
+ロールは、ファイルが特定のディレクトリー名にあることを想定しています。ロールには上記のディレクトリーのいずれかを含める必要がありますが、使用されていないものは除外しても問題はありません。使用中、それぞれのディレクトリーには、関連するコンテンツが含まれている ``main.yml`` ファイルが含まれている必要があります。
 
-- ``tasks`` - contains the main list of tasks to be executed by the role.
-- ``handlers`` - contains handlers, which may be used by this role or even anywhere outside this role.
-- ``defaults`` - default variables for the role (see :ref:`playbooks_variables` for more information).
-- ``vars`` - other variables for the role (see :ref:`playbooks_variables` for more information).
-- ``files`` - contains files which can be deployed via this role.
-- ``templates`` - contains templates which can be deployed via this role.
-- ``meta`` - defines some meta data for this role. See below for more details.
+- ``tasks`` - このロールによって実行される主なタスクの一覧が含まれます。
+- ``handlers`` - このロールによって使用される可能性のあるハンドラーや、このロールの外でも使用できるハンドラーが含まれます。
+- ``defaults`` - ロールのデフォルト変数です (詳細は :ref:`playbooks_variables` を参照)。
+- ``vars`` - ロールの他の変数 (詳細は :ref:`playbooks_variables` を参照)
+- ``files`` - このロールでデプロイできるファイルが含まれます。
+- ``templates`` - このロールでデプロイできるテンプレートが含まれます。
+- ``meta`` - このロールのメタデータを定義します。詳細は、以下を参照してください。
 
-Other YAML files may be included in certain directories. For example, it is common practice to have platform-specific tasks included from the ``tasks/main.yml`` file::
+他の YAML ファイルは特定のディレクトリーに追加できます。たとえば、一般的に、``tasks/main.yml`` ファイルからプラットフォーム固有のタスクを指定できます。
 
     # roles/example/tasks/main.yml
     - name: added in 2.4, previously you used 'include'
@@ -60,12 +60,12 @@ Other YAML files may be included in certain directories. For example, it is comm
         name: "apache2"
         state: present
 
-Roles may also include modules and other plugin types. For more information, please refer to the :ref:`embedding_modules_and_plugins_in_roles` section below.
+また、ロールにはモジュールおよびその他のプラグインタイプが含まれる場合があります。詳細は、以下の「:ref:`embedding_modules_and_plugins_in_roles`」セクションを参照してください。
 
-Using Roles
+ロールの使用
 ```````````
 
-The classic (original) way to use roles is via the ``roles:`` option for a given play::
+ロールを使用する従来の (元の) 方法は、特定のプレイの ``roles:`` オプションを使用して行います。
 
     ---
     - hosts: webservers
@@ -73,32 +73,32 @@ The classic (original) way to use roles is via the ``roles:`` option for a given
         - common
         - webservers
 
-This designates the following behaviors, for each role 'x':
+これにより、各ロールの「x」に以下の動作が指定されます。
 
-- If roles/x/tasks/main.yml exists, tasks listed therein will be added to the play.
-- If roles/x/handlers/main.yml exists, handlers listed therein will be added to the play.
-- If roles/x/vars/main.yml exists, variables listed therein will be added to the play.
-- If roles/x/defaults/main.yml exists, variables listed therein will be added to the play.
-- If roles/x/meta/main.yml exists, any role dependencies listed therein will be added to the list of roles (1.3 and later).
-- Any copy, script, template or include tasks (in the role) can reference files in roles/x/{files,templates,tasks}/ (dir depends on task) without having to path them relatively or absolutely.
+- roles/x/tasks/main.yml が存在する場合は、一覧表示されているタスクがプレイに追加されます。
+- roles/x/handlers/main.yml が存在する場合は、一覧表示されるハンドラーがプレイに追加されます。
+- roles/x/vars/main.yml が存在する場合は、一覧表示される変数がプレイに追加されます。
+- roles/x/defaults/main.yml が存在する場合は、一覧表示される変数がプレイに追加されます。
+- roles/x/meta/main.yml が存在する場合は、一覧表示されるロールの依存関係はロールのリスト (1.3 以降) に追加されます。
+- コピー、スクリプト、テンプレート、またはインクルードタスク (ロール内) は、相対パスや絶対パスを必要とせずに roles/x/{files,templates,tasks}/ (ディレクトリーはタスクに依存します) のファイルを参照できます。
 
-When used in this manner, the order of execution for your playbook is as follows:
+この方法で使用する場合、Playbook の実行順序は以下のようになります。
 
-- Any ``pre_tasks`` defined in the play.
-- Any handlers triggered so far will be run.
-- Each role listed in ``roles`` will execute in turn. Any role dependencies defined in the roles ``meta/main.yml`` will be run first, subject to tag filtering and conditionals.
-- Any ``tasks`` defined in the play.
-- Any handlers triggered so far will be run.
-- Any ``post_tasks`` defined in the play.
-- Any handlers triggered so far will be run.
-
-.. note::
-    See below for more information regarding role dependencies.
+- プレイで定義されている ``pre_tasks``。
+- これまでにトリガーとなったハンドラーはすべて実行されます。
+- ``roles`` に一覧表示される各ロールは順番に実行されます。ロールの ``meta/main.yml`` で定義されるロール依存関係は、タグのフィルタリングおよび条件に基づいて最初に実行されます。
+- プレイで定義されている ``タスク``。
+- これまでにトリガーとなったハンドラーはすべて実行されます。
+- プレイで定義されている ``post_tasks``。
+- これまでにトリガーとなったハンドラーはすべて実行されます。
 
 .. note::
-    If using tags with tasks (described later as a means of only running part of a playbook), be sure to also tag your pre_tasks, post_tasks, and role dependencies and pass those along as well, especially if the pre/post tasks and role dependencies are used for monitoring outage window control or load balancing.
+    ロールの依存関係に関する詳細は、以下を参照してください。
 
-As of Ansible 2.4, you can now use roles inline with any other tasks using ``import_role`` or ``include_role``::
+.. note::
+    (Playbook の一部のみを実行する手段として後述されている) タスクと共にタグを使用する場合には、pre_tasks、post_tasks、およびロールの依存関係にタグを付け、これらと共に渡すようにしてください。特に、事前または事後のタスクおよびロールの依存関係が停止時のウィンドウ制御または負荷分散の監視に使用される場合に使用します。
+
+Ansible 2.4 では、``import_role`` または ``include_role`` を使用して、他のタスクとインラインでロールを使用できるようになりました。
 
     ---
     - hosts: webservers
@@ -112,19 +112,19 @@ As of Ansible 2.4, you can now use roles inline with any other tasks using ``imp
         - debug:
             msg: "after we ran our role"
 
-When roles are defined in the classic manner, they are treated as static imports and processed during playbook parsing.
+ロールが従来の方法で定義されている場合、ロールは静的なインポートとして処理され、Playbook の解析中に処理されます。
 
 .. note::
-    The ``include_role`` option was introduced in Ansible 2.3. The usage has changed slightly as of Ansible 2.4 to match the include (dynamic) vs. import (static) usage. See :ref:`dynamic_vs_static` for more details.
+    ``include_role`` オプションは、Ansible 2.3 で導入されました。この使用方法は、インクルード (動的) とインポート (静的) の使用で一致するように、Ansible 2.4 で若干変更になりました。詳細は、:ref:`dynamic_vs_static` を参照してください。
 
-The name used for the role can be a simple name (see :ref:`role_search_path` below), or it can be a fully qualified path::
+ロールに使用される名前は、単純な名前 (以下の :ref:`role_search_path` を参照)か、完全修飾パスになります。
 
     ---
     - hosts: webservers
       roles:
         - role: '/path/to/my/roles/common'
 
-Roles can accept other keywords::
+ロールは、他のキーワードを受け入れることができます。
 
     ---
     - hosts: webservers
@@ -133,13 +133,13 @@ Roles can accept other keywords::
         - role: foo_app_instance
           vars:
             dir: '/opt/a'
-            app_port: 5000
+            app_port:5000
         - role: foo_app_instance
           vars:
             dir: '/opt/b'
-            app_port: 5001
+            app_port:5001
 
-Or, using the newer syntax::
+または、新しい構文を使用します。
 
     ---
     - hosts: webservers
@@ -148,10 +148,10 @@ Or, using the newer syntax::
             name: foo_app_instance
           vars:
             dir: '/opt/a'
-            app_port: 5000
+            app_port:5000
       ...
 
-You can conditionally import a role and execute its tasks::
+ロールを条件付きでインポートし、そのタスクを実行できます::
 
     ---
     - hosts: webservers
@@ -162,7 +162,7 @@ You can conditionally import a role and execute its tasks::
 
 
 
-Finally, you may wish to assign tags to the tasks inside the roles you specify. You can do::
+最後に、指定するロール内のタスクにタグを割り当てる場合があります。以下のことができます。
 
     ---
     - hosts: webservers
@@ -173,8 +173,8 @@ Finally, you may wish to assign tags to the tasks inside the roles you specify. 
             - baz
         # using YAML shorthand, this is equivalent to the above:
         - { role: foo, tags: ["bar", "baz"] }
-
-Or, again, using the newer syntax::
+    
+または、もう一度、新しい構文を使用します。
 
     ---
     - hosts: webservers
@@ -186,9 +186,9 @@ Or, again, using the newer syntax::
             - baz
 
 .. note::
-    This *tags all of the tasks in that role with the tags specified*, appending to any tags that are specified inside the role.
+    これにより、*そのロール内のすべてのタスクに指定タグが付けられ*、ロール内で指定されたタグに追加されます。
 
-On the other hand you might just want to tag the import of the role itself::
+一方、ロール自体のインポートをタグ付けする場合があります::
 
     ---
     - hosts: webservers
@@ -198,14 +198,14 @@ On the other hand you might just want to tag the import of the role itself::
           tags:
             - foo
 
-.. note:: The tags in this example will *not* be added to tasks inside an ``include_role``, you can use a surrounding ``block`` directive to do both.
+.. note:: この例のタグは ``include_role`` 内のタスクには *追加されません*。前後の ``block`` ディレクティブを使用して両方を実行できます。
 
-.. note:: There is no facility to import a role while specifying a subset of tags to execute. If you find yourself building a role with lots of tags and you want to call subsets of the role at different times, you should consider just splitting that role into multiple roles.
+.. note:: 実行するタグのサブセットを指定する際にロールをインポートする機能はありません。複数のタグを持つロールを構築し、ロールのサブセットを異なるタイミングで呼び出す場合には、そのロールを複数のロールに分割することを検討する必要があります。
 
-Role Duplication and Execution
+ロールの複製および実行
 ``````````````````````````````
 
-Ansible will only allow a role to execute once, even if defined multiple times, if the parameters defined on the role are not different for each definition. For example::
+Ansible は、ロールに定義されているパラメーターが定義ごとに異ならないときは、ロールが複数回定義されている場合でもロールの実行が許可されるのは 1 回だけです。例::
 
     ---
     - hosts: webservers
@@ -213,14 +213,14 @@ Ansible will only allow a role to execute once, even if defined multiple times, 
         - foo
         - foo
 
-Given the above, the role ``foo`` will only be run once.
+上記の場合、``foo`` ロールは 1 回のみ実行されます。
 
-To make roles run more than once, there are two options:
+ロールを複数回実行するには、2 つのオプションがあります。
 
-1. Pass different parameters in each role definition.
-2. Add ``allow_duplicates: true`` to the ``meta/main.yml`` file for the role.
+1. 各ロール定義に異なるパラメーターを渡します。
+2. ``allow_duplicates: true`` をロールの ``meta/main.yml`` ファイルに追加します。
 
-Example 1 - passing different parameters::
+例 1 - 異なるパラメーターを渡す場合::
 
     ---
     - hosts: webservers
@@ -230,9 +230,9 @@ Example 1 - passing different parameters::
             message: "first"
         - { role: foo, vars: { message: "second" } }
 
-In this example, because each role definition has different parameters, ``foo`` will run twice.
+この例では、各ロール定義には異なるパラメーターがあるため、``foo`` は 2 回実行します。
 
-Example 2 - using ``allow_duplicates: true``::
+例 2 - ``allow_duplicates: true:`` の使用::
 
     # playbook.yml
     ---
@@ -245,23 +245,23 @@ Example 2 - using ``allow_duplicates: true``::
     ---
     allow_duplicates: true
 
-In this example, ``foo`` will run twice because we have explicitly enabled it to do so.
+この例では、明示的に有効にしているため、``foo`` は 2 回実行します。
 
-Role Default Variables
+ロールのデフォルト変数
 ``````````````````````
 
 .. versionadded:: 1.3
 
-Role default variables allow you to set default variables for included or dependent roles (see below). To create
-defaults, simply add a ``defaults/main.yml`` file in your role directory. These variables will have the lowest priority
-of any variables available, and can be easily overridden by any other variable, including inventory variables.
+ロールのデフォルト変数を使用すると、含まれるロールまたは依存するロールのデフォルト変数を設定できます (下記参照)。デフォルトを作成するには、
+``defaults/main.yml`` ファイルをロールディレクトリーに追加します。これらの変数は、使用可能な変数の中で最も優先順位が低く、
+他の変数 (インベントリー変数など) によって簡単に上書きできます。
 
-Role Dependencies
+ロールの依存関係
 `````````````````
 
 .. versionadded:: 1.3
 
-Role dependencies allow you to automatically pull in other roles when using a role. Role dependencies are stored in the ``meta/main.yml`` file contained within the role directory, as noted above. This file should contain a list of roles and parameters to insert before the specified role, such as the following in an example ``roles/myapp/meta/main.yml``::
+ロールの依存関係により、ロールの使用時に自動的に他のロールをプルできます。ロールの依存関係は、上記のようにロールディレクトリーに含まれる ``meta/main.yml`` ファイルに保存されます。このファイルには、指定されたロールの前に挿入するロールとパラメーターのリストが含まれている必要があります (``roles/myapp/meta/main.yml`` など)::
 
     ---
     dependencies:
@@ -277,44 +277,44 @@ Role dependencies allow you to automatically pull in other roles when using a ro
           other_parameter: 12
 
 .. note::
-    Role dependencies must use the classic role definition style.
+    ロールの依存関係は、従来のロール定義スタイルを使用する必要があります。
 
-Role dependencies are always executed before the role that includes them, and may be recursive. Dependencies also follow the duplication rules specified above. If another role also lists it as a dependency, it will not be run again based on the same rules given above. See :ref:`Galaxy role dependencies <galaxy_dependencies>` for more details.
+ロールの依存関係は、それらが含まれるロールの前に常に実行され、再帰的である可能性があります。依存関係も、上記で指定した複製ルールに従います。別のロールもこれを依存関係として一覧表示すると、上記のルールに基づいて再実行されることはありません。詳細は、「:ref:`Galaxy ロールの依存関係 <galaxy_dependencies>`」を参照してください。
 
 .. note::
-    Always remember that when using ``allow_duplicates: true``, it needs to be in the dependent role's ``meta/main.yml``, not the parent.
+    ``allow_duplicates: true`` を使用する場合は、親ではなく依存するロールの ``meta/main.yml`` にある必要があることに注意してください。
 
-For example, a role named ``car`` depends on a role named ``wheel`` as follows::
+たとえば、``car`` という名前のロールは、以下のように ``wheel`` という名前のロールに依存します。
 
     ---
     dependencies:
       - role: wheel
         vars:
-          n: 1
+          n:1
       - role: wheel
         vars:
-          n: 2
+          n:2
       - role: wheel
         vars:
-          n: 3
+          n:3
       - role: wheel
         vars:
-          n: 4
+          n:4
 
-And the ``wheel`` role depends on two roles: ``tire`` and ``brake``. The ``meta/main.yml`` for wheel would then contain the following::
+``wheel`` ロールは、``tire`` と ``brake`` の 2 つのロールに依存します。wheel の ``meta/main.yml`` には以下が含まれます。
 
     ---
     dependencies:
       - role: tire
       - role: brake
 
-And the ``meta/main.yml`` for ``tire`` and ``brake`` would contain the following::
+さらに、``tire`` および ``brake`` の ``meta/main.yml`` には以下が含まれます。
 
     ---
     allow_duplicates: true
 
 
-The resulting order of execution would be as follows::
+その結果作成される実行順序は以下のようになります。
 
     tire(n=1)
     brake(n=1)
@@ -325,27 +325,27 @@ The resulting order of execution would be as follows::
     ...
     car
 
-Note that we did not have to use ``allow_duplicates: true`` for ``wheel``, because each instance defined by ``car`` uses different parameter values.
+``car`` が定義する各インスタンスは異なるパラメーター値を使用するため、``wheel`` には ``allow_duplicates: true`` を使用する必要がないことに注意してください。
 
 .. note::
-   Variable inheritance and scope are detailed in the :ref:`playbooks_variables`.
+   変数継承およびスコープは :ref:`playbooks_variables` で詳細に説明されています。
 
 .. _embedding_modules_and_plugins_in_roles:
 
-Embedding Modules and Plugins In Roles
+ロールでのモジュールおよびプラグインの埋め込み
 ``````````````````````````````````````
 
-This is an advanced topic that should not be relevant for most users.
+これは、ほとんどのユーザーには関係ない高度なトピックです。
 
-If you write a custom module (see :ref:`developing_modules`) or a plugin (see :ref:`developing_plugins`), you may wish to distribute it as part of a role.
-Generally speaking, Ansible as a project is very interested in taking high-quality modules into ansible core for inclusion, so this shouldn't be the norm, but it's quite easy to do.
+カスタムモジュールを作成する場合 (「:ref:`developing_modules`」を参照) またはプラグインを作成する場合 (「:ref:`developing_plugins`」を参照) は、ロールの一部として配布できます。
+通常、プロジェクトとしての Ansible は、高品質のモジュールを Ansible コアに組み込むことに非常に関心があるため、これは標準ではないはずですが、実行は非常に簡単です。
 
-A good example for this is if you worked at a company called AcmeWidgets, and wrote an internal module that helped configure your internal software, and you wanted other
-people in your organization to easily use this module -- but you didn't want to tell everyone how to configure their Ansible library path.
+これの良い例は、AcmeWidgets という名前の会社で働いていて、社内ソフトウェアの設定を支援する内部モジュールを作成していて、
+組織内の他の人がこのモジュールを簡単に使用できるようにする一方で、Ansible ライブラリーパスの設定方法は全員には教えたくない場合です。
 
-Alongside the 'tasks' and 'handlers' structure of a role, add a directory named 'library'.  In this 'library' directory, then include the module directly inside of it.
+ロールの「tasks」および「handlers」の構造と共に、「library」という名前のディレクトリーを追加します。 この「library」ディレクトリーに、モジュールを直接含めます。
 
-Assuming you had this::
+以下があるとします。
 
     roles/
         my_custom_modules/
@@ -353,7 +353,7 @@ Assuming you had this::
                 module1
                 module2
 
-The module will be usable in the role itself, as well as any roles that are called *after* this role, as follows::
+モジュールはロール自体で使用でき、以下のようにこのロールの *後* に呼び出されるロールも利用可能になります。
 
     ---
     - hosts: webservers
@@ -362,9 +362,9 @@ The module will be usable in the role itself, as well as any roles that are call
         - some_other_role_using_my_custom_modules
         - yet_another_role_using_my_custom_modules
 
-This can also be used, with some limitations, to modify modules in Ansible's core distribution, such as to use development versions of modules before they are released in production releases.  This is not always advisable as API signatures may change in core components, however, and is not always guaranteed to work.  It can be a handy way of carrying a patch against a core module, however, should you have good reason for this.  Naturally the project prefers that contributions be directed back to github whenever possible via a pull request.
+これは、いくつかの制限はありますが、Ansible のコアディストリビューションのモジュールを修正するために使用することもできます。たとえば、実稼働リリースで、リリースされる前にモジュールの開発版を使用するなどです。 ただし、コアコンポーネントで API 署名が変更される可能性があるため、これが常に推奨されるわけではなく、常に機能するとは限りません。 これは、コアモジュールに対してパッチを運ぶのに便利な方法ですが、正当な理由がある場合に限ります。 必然的に、プロジェクトでは、プルリクエストを介して、可能な場合はいつでもコントリビューションを github にリダイレクトすることが推奨されます。
 
-The same mechanism can be used to embed and distribute plugins in a role, using the same schema. For example, for a filter plugin::
+同じスキーマを使用して、同じメカニズムを使用してロールにプラグインを埋め込み、配布できます。たとえば、フィルタープラグインの場合は、以下のようになります。
 
     roles/
         my_custom_filter/
@@ -372,50 +372,50 @@ The same mechanism can be used to embed and distribute plugins in a role, using 
                 filter1
                 filter2
 
-They can then be used in a template or a jinja template in any role called after 'my_custom_filter'
+これらは「my_custom_filter」の後に呼び出される任意のロールのテンプレートまたは jinja テンプレートで使用できます。
 
 .. _role_search_path:
 
-Role Search Path
+ロール検索パス
 ````````````````
 
-Ansible will search for roles in the following way:
+Ansible は、以下の方法でロールを検索します。
 
-- A ``roles/`` directory, relative to the playbook file.
-- By default, in ``/etc/ansible/roles``
+- Playbook ファイルへの相対的な ``roles/`` ディレクトリー。
+- デフォルトでは、``/etc/ansible/roles`` にあります。
 
-In Ansible 1.4 and later you can configure an additional roles_path to search for roles.  Use this to check all of your common roles out to one location, and share them easily between multiple playbook projects.  See :ref:`intro_configuration` for details about how to set this up in ansible.cfg.
+Ansible 1.4 以降では、ロールを検索するために追加の roles_path を設定できます。 これを使用して、共通のロールをすべて 1 つの場所にチェックアウトし、複数の Playbook プロジェクト間で簡単に共有します。 ansible.cfg でこの設定を行う方法は、「:ref:`intro_configuration`」を参照してください。
 
 Ansible Galaxy
 ``````````````
 
-`Ansible Galaxy <https://galaxy.ansible.com>`_ is a free site for finding, downloading, rating, and reviewing all kinds of community developed Ansible roles and can be a great way to get a jumpstart on your automation projects.
+`Ansible Galaxy <https://galaxy.ansible.com>`_ は、コミュニティーで開発されたあらゆる種類の Ansible ロールを検索、ダウンロード、評価、およびレビューする無料サイトで、ここで自動化プロジェクトのきっかけを得ることができます。
 
-The client ``ansible-galaxy`` is included in Ansible. The Galaxy client allows you to download roles from Ansible Galaxy, and also provides an excellent default framework for creating your own roles. 
+クライアントの ``ansible-galaxy`` は Ansible に含まれています。Galaxy クライアントを使用すると、Ansible Galaxy からロールをダウンロードでき、独自のロールを作成する優れたデフォルトフレームワークも提供します。 
 
-Read the `Ansible Galaxy documentation <https://galaxy.ansible.com/docs/>`_ page for more information
+詳細は、「`Ansible Galaxy ドキュメンテーション <https://galaxy.ansible.com/docs/>`_」ページを参照してください。
 
 .. seealso::
 
    :ref:`ansible_galaxy`
-       How to create new roles, share roles on Galaxy, role management
+       新規ロールの作成方法、Galaxy でのロールの共有、ロールの管理
    :ref:`yaml_syntax`
-       Learn about YAML syntax
+       YAML 構文について
    :ref:`working_with_playbooks`
-       Review the basic Playbook language features
+       基本的な Playbook 言語機能を確認します。
    :ref:`playbooks_best_practices`
-       Various tips about managing playbooks in the real world
+       実際の Playbook の管理に関するさまざまなヒント
    :ref:`playbooks_variables`
-       All about variables in playbooks
+       Playbook の変数の詳細
    :ref:`playbooks_conditionals`
-       Conditionals in playbooks
+       Playbook の条件
    :ref:`playbooks_loops`
-       Loops in playbooks
+       Playbook のループ
    :ref:`all_modules`
-       Learn about available modules
+       利用可能なモジュールについて
    :ref:`developing_modules`
-       Learn how to extend Ansible by writing your own modules
+       独自のモジュールを作成して Ansible を拡張する方法について
    `GitHub Ansible examples <https://github.com/ansible/ansible-examples>`_
-       Complete playbook files from the GitHub project source
-   `Mailing List <https://groups.google.com/group/ansible-project>`_
-       Questions? Help? Ideas?  Stop by the list on Google Groups
+       Github プロジェクトソースにあるすべての Playbook ファイル
+   `メーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。

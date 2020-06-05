@@ -1,15 +1,15 @@
 .. _playbooks_environment:
 
-Setting the Environment (and Working With Proxies)
+環境の設定 (およびプロキシーの使用)
 ==================================================
 
-.. versionadded:: 1.1
+バージョン 1.1 における新機能
 
-The ``environment`` keyword allows you to set an environment varaible for the action to be taken on the remote target.
-For example, it is quite possible that you may need to set a proxy for a task that does http requests.
-Or maybe a utility or script that are called may also need certain environment variables set to run properly.
+``environment`` キーワードを使用すると、リモートターゲットで行うアクションの環境変数を設定できます。
+たとえば、http 要求を行うタスクのプロキシーの設定が必要になる場合があります。
+または、呼び出されるユーティリティーまたはスクリプトも、適切に実行するように特定の環境変数の設定が必要になる場合があります。
 
-Here is an example::
+以下は例になります。
 
     - hosts: all
       remote_user: root
@@ -24,10 +24,10 @@ Here is an example::
             http_proxy: http://proxy.example.com:8080
 
 .. note::
-   ``environment:`` does not affect Ansible itself, ONLY the context of the specific task action and this does not include
-    Ansible's own configuration settings nor the execution of any other plugins, including lookups, filters, and so on.
+   ``environment:`` は Ansible 自体には影響を与えず、特定のタスクアクションのコンテキストだけでなく、
+    Ansible 自体の設定や、lookup や filter などの他のプラグインの実行は含まれません。
 
-The environment can also be stored in a variable, and accessed like so::
+環境は変数に保存し、以下のようにアクセスすることもできます。
 
     - hosts: all
       remote_user: root
@@ -45,7 +45,7 @@ The environment can also be stored in a variable, and accessed like so::
             state: present
           environment: "{{ proxy_env }}"
 
-You can also use it at a play level::
+これは、プレイレベルでも使用できます。
 
     - hosts: testhost
 
@@ -56,8 +56,8 @@ You can also use it at a play level::
       environment:
         http_proxy: http://proxy.example.com:8080
 
-While just proxy settings were shown above, any number of settings can be supplied.  The most logical place
-to define an environment hash might be a group_vars file, like so::
+上記のプロキシー設定のみを示していますが、任意の数の設定を指定することができます。 環境ハッシュを定義する最も論理的な場所は、
+以下のように group_vars ファイルになる可能性があります。
 
     ---
     # file: group_vars/boston
@@ -69,10 +69,10 @@ to define an environment hash might be a group_vars file, like so::
       https_proxy: http://proxy.bos.example.com:8080
 
 
-Working With Language-Specific Version Managers
+言語固有のバージョンマネージャーの使用
 ===============================================
 
-Some language-specific version managers (such as rbenv and nvm) require environment variables be set while these tools are in use. When using these tools manually, they usually require sourcing some environment variables via a script or lines added to your shell configuration file. In Ansible, you can instead use the environment directive::
+一部の言語固有のバージョンマネージャー (rbenv や NVM など) では、これらのツールを使用している間に環境変数を設定する必要があります。これらのツールを手動で使用する場合は、通常、シェル設定ファイルに追加されたスクリプトまたは行を使用して環境変数の一部を指定する必要があります。Ansible では、代わりに環境ディレクティブを使用できます。
 
     ---
     ### A playbook demonstrating a common npm workflow:
@@ -109,10 +109,10 @@ Some language-specific version managers (such as rbenv and nvm) require environm
         when: packagejson.stat.exists
 
 .. note::
-   ``ansible_env:`` is normally populated by fact gathering (M(gather_facts)) and the value of the variables depends on the user
-   that did the gathering action. If you change remote_user/become_user you might end up using the wrong values for those variables.
+   ``ansible_env:`` 通常、ファクト収集 (M(gather_facts)) によって設定され、
+   変数の値は収集アクションを実行したユーザーにより異なります。remote_user/become_user を変更すると、それらの変数に誤った値が使用される可能性があります。
 
-You might also want to simply specify the environment for a single task::
+また、1 つのタスクに対して環境を指定することも可能です。
 
     ---
     - name: install ruby 2.3.1
@@ -126,12 +126,12 @@ You might also want to simply specify the environment for a single task::
         CONFIGURE_OPTS: '--disable-install-doc'
         RBENV_ROOT: '{{ rbenv_root }}'
         PATH: '{{ rbenv_root }}/bin:{{ rbenv_root }}/shims:{{ rbenv_plugins }}/ruby-build/bin:{{ ansible_env.PATH }}'
-
+    
 .. seealso::
 
    :ref:`playbooks_intro`
-       An introduction to playbooks
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       Playbook の概要
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

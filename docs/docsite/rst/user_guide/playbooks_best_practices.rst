@@ -1,32 +1,32 @@
 .. _playbooks_best_practices:
 
-Best Practices
+ベストプラクティス
 ==============
 
-Here are some tips for making the most of Ansible and Ansible playbooks.
+Ansible と Ansible Playbook を最大限に活用するためのヒントをいくつか紹介します。
 
-You can find some example playbooks illustrating these best practices in our `ansible-examples repository <https://github.com/ansible/ansible-examples>`_.  (NOTE: These may not use all of the features in the latest release, but are still an excellent reference!).
+これらのベストプラクティスを示す Playbook の例は、「`ansible-examples リポジトリー <https://github.com/ansible/ansible-examples>`」を参照してください。 (注記: この例では、最新のリリースではすべての機能を使用しているわけではありませんが、優れたリファレンスになります。
 
-.. contents:: Topics
+.. contents:: トピック
 
 .. _content_organization:
 
-Content Organization
+コンテンツの整理
 ++++++++++++++++++++++
 
-The following section shows one of many possible ways to organize playbook content.
+以下のセクションでは、Playbook コンテンツを整理するさまざまな方法を示します。
 
-Your usage of Ansible should fit your needs, however, not ours, so feel free to modify this approach and organize as you see fit.
+ただし、Ansible の使用はお客様のニーズに合わせる必要があるため、ここで紹介しているアプローチを変更し、必要に応じて整理してください。
 
-One crucial way to organize your playbook content is Ansible's "roles" organization feature, which is documented as part
-of the main playbooks page.  You should take the time to read and understand the roles documentation which is available here: :ref:`playbooks_reuse_roles`.
+Playbook コンテンツを整理する重要な方法の 1 つに、Ansible の「ロール」編成機能があります。
+これは、Playbook のメインページの一部として文書化されています。 :ref:`playbooks_reuse_roles` で利用可能なロールのドキュメントを読み取って理解してください。
 
 .. _directory_layout:
 
-Directory Layout
+ディレクトリーのレイアウト
 ````````````````
 
-The top level of the directory would contain files and directories like so::
+ディレクトリーのトップレベルには、以下のようなファイルおよびディレクトリーが含まれます。
 
     production                # inventory file for production servers
     staging                   # inventory file for staging environment
@@ -71,14 +71,14 @@ The top level of the directory would contain files and directories like so::
         monitoring/           # ""
         fooapp/               # ""
 
-.. note: If you find yourself having too many top level playbooks (for instance you have a playbook you wrote for a specific hotfix, etc), it may make sense to have a playbooks/ directory instead.  This can be a good idea as you get larger.  If you do this, configure your roles_path in ansible.cfg to find your roles location.
+.. 注記:トップレベルの Playbook が多すぎる (たとえば、特定のホットフィックス用に作成した Playbook がある) 場合は、代わりに playbooks/ ディレクトリを使用することが推奨されます。 大きくなるにつれて、この方法が推奨されます。 これを行う場合は、ansible.cfg で roles_path を設定し、ロールの場所を見つけます。
 
 .. _alternative_directory_layout:
 
-Alternative Directory Layout
+代替ディレクトリーレイアウト
 ````````````````````````````
 
-Alternatively you can put each inventory file with its ``group_vars``/``host_vars`` in a separate directory. This is particularly useful if your ``group_vars``/``host_vars`` don't have that much in common in different environments. The layout could look something like this::
+または、``group_vars``/``host_vars`` を含む各インベントリーファイルを別のディレクトリーに置くこともできます。これは、``group_vars``/``host_vars`` に、さまざまな環境で一般的ではない場合に特に便利です。レイアウトは次のようになります。
 
     inventories/
        production/
@@ -113,30 +113,30 @@ Alternatively you can put each inventory file with its ``group_vars``/``host_var
         monitoring/
         fooapp/
 
-This layout gives you more flexibility for larger environments, as well as a total separation of inventory variables between different environments. The downside is that it is harder to maintain, because there are more files.
+このレイアウトにより、大規模な環境でより柔軟になり、異なる環境間でインベントリー変数を完全に分離できます。欠点は、ファイルが多くなるため、メンテナンスが難しくなることです。
 
 .. _use_dynamic_inventory_with_clouds:
 
-Use Dynamic Inventory With Clouds
+クラウドでの動的インベントリーの使用
 `````````````````````````````````
 
-If you are using a cloud provider, you should not be managing your inventory in a static file.  See :ref:`intro_dynamic_inventory`.
+クラウドプロバイダーを使用している場合は、静的ファイルでインベントリーを管理しないでください。 「:ref:`intro_dynamic_inventory`」を参照してください。
 
-This does not just apply to clouds -- If you have another system maintaining a canonical list of systems
-in your infrastructure, usage of dynamic inventory is a great idea in general.
+これは単にクラウドに当てはまるわけではありません。
+インフラストラクチャー内のシステムの正規リストを維持している別のシステムがある場合、動的インベントリーの使用は一般的に素晴らしいアイデアです。
 
 .. _staging_vs_prod:
 
-How to Differentiate Staging vs Production
+ステージング環境と実稼働環境を区別する方法
 ``````````````````````````````````````````
 
-If managing static inventory, it is frequently asked how to differentiate different types of environments.  The following example
-shows a good way to do this.  Similar methods of grouping could be adapted to dynamic inventory (for instance, consider applying the AWS
-tag "environment:production", and you'll get a group of systems automatically discovered named "ec2_tag_environment_production".
+静的インベントリーを管理する場合には、さまざまなタイプの環境をどのように区別するかをよく尋ねられます。 次の例は、
+これを行うための適切な方法を示しています。 同様のグループ化方法を動的インベントリーに適合させることができます。
+たとえば、AWSタグ「environment:production」の適用を検討すると、「ec2_tag_environment_production」という名前のシステムが自動的に検出されます。
 
-Let's show a static inventory example though.  Below, the *production* file contains the inventory of all of your production hosts.
+ただし、静的なインベントリーの例を見てみましょう。 以下の *実稼働* ファイルには、すべての実稼働ホストのインベントリーが含まれます。
 
-It is suggested that you define groups based on purpose of the host (roles) and also geography or datacenter location (if applicable)::
+ホスト (ロール) の目的と、地理的またはデータセンターの場所 (該当する場合) に基づいてグループを定義することが推奨されます。
 
     # file: production
 
@@ -174,59 +174,59 @@ It is suggested that you define groups based on purpose of the host (roles) and 
     [boston:children]
     boston_webservers
     boston_dbservers
-
+    
 .. _groups_and_hosts:
 
-Group And Host Variables
+グループ変数およびホスト変数
 ````````````````````````
 
-This section extends on the previous example.
+本セクションでは、上記の例で説明します。
 
-Groups are nice for organization, but that's not all groups are good for.  You can also assign variables to them!  For instance, atlanta has its own NTP servers, so when setting up ntp.conf, we should use them.  Let's set those now::
+グループは組織には適していますが、すべてのグループが適しているわけではありません。 変数を割り当てることもできます。 たとえば、atlanta に NTP サーバーがあり、ntp.conf を設定する際にそのサーバーを使用する必要があります。 以下でこれらの設定を行います。
 
     ---
     # file: group_vars/atlanta
     ntp: ntp-atlanta.example.com
     backup: backup-atlanta.example.com
 
-Variables aren't just for geographic information either!  Maybe the webservers have some configuration that doesn't make sense for the database servers::
+変数も、地理的情報だけでなく、 Web サーバーには、データベースサーバーにとって意味のない設定があります::
 
     ---
     # file: group_vars/webservers
     apacheMaxRequestsPerChild: 3000
     apacheMaxClients: 900
 
-If we had any default values, or values that were universally true, we would put them in a file called group_vars/all::
+デフォルト値または汎用的に true である値がある場合は、それらを group_vars/all というファイルに配置します::
 
     ---
     # file: group_vars/all
     ntp: ntp-boston.example.com
     backup: backup-boston.example.com
 
-We can define specific hardware variance in systems in a host_vars file, but avoid doing this unless you need to::
+host_vars ファイル内のシステムで特定のハードウェア領域を定義することは可能ですが、以下を実行する必要がない限り回避します::
 
     ---
     # file: host_vars/db-bos-1.example.com
     foo_agent_port: 86
     bar_agent_port: 99
 
-Again, if we are using dynamic inventory sources, many dynamic groups are automatically created.  So a tag like "class:webserver" would load in
-variables from the file "group_vars/ec2_tag_class_webserver" automatically.
+動的インベントリーソースを使用している場合には、多くの動的グループが自動的に作成されます。 したがって、「class:webserver」のようなタグは、
+「group_vars/ec2_tag_class_webserver」ファイルから変数を自動的に読み込みます。
 
 .. _split_by_role:
 
-Top Level Playbooks Are Separated By Role
+トップレベルの Playbook をロールごとに分離
 `````````````````````````````````````````
 
-In site.yml, we import a playbook that defines our entire infrastructure.  This is a very short example, because it's just importing
-some other playbooks::
+site.yml では、インフラストラクチャー全体を定義する Playbook をインポートします。 この例では、
+他のいくつかの Playbook をインポートしているだけの非常に短いものになります::
 
     ---
     # file: site.yml
     - import_playbook: webservers.yml
     - import_playbook: dbservers.yml
 
-In a file like webservers.yml (also at the top level), we map the configuration of the webservers group to the roles performed by the webservers group::
+webservers.yml (これも最上位にあります) のようなファイルで、webservers グループの構成を、webservers グループによって実行されるロールにマッピングします。
 
     ---
     # file: webservers.yml
@@ -235,18 +235,18 @@ In a file like webservers.yml (also at the top level), we map the configuration 
         - common
         - webtier
 
-The idea here is that we can choose to configure our whole infrastructure by "running" site.yml or we could just choose to run a subset by running
-webservers.yml.  This is analogous to the "--limit" parameter to ansible but a little more explicit::
+ここでの考え方は、site.yml を「実行」することでインフラストラクチャー全体を構成することを選択でき、
+または webservers.yml を実行することでサブセットを実行することを選択できるというものです。 これは ansible の 「--limit」パラメーターと似ていますが、より明示的なものになります::
 
    ansible-playbook site.yml --limit webservers
    ansible-playbook webservers.yml
 
 .. _role_organization:
 
-Task And Handler Organization For A Role
+ロールのタスクおよびハンドラーの整理
 ````````````````````````````````````````
 
-Below is an example tasks file that explains how a role works.  Our common role here just sets up NTP, but it could do more if we wanted::
+以下は、ロールの仕組みを記述するタスクファイルの例です。 ここで一般的なロールは NTP を設定するだけですが、必要に応じてさらに多くのことができます。
 
     ---
     # file: roles/common/tasks/main.yml
@@ -272,8 +272,8 @@ Below is an example tasks file that explains how a role works.  Our common role 
         enabled: yes
       tags: ntp
 
-Here is an example handlers file.  As a review, handlers are only fired when certain tasks report changes, and are run at the end
-of each play::
+以下はハンドラーファイルの例です。 確認のために、ハンドラーは特定のタスクが変更を報告したときにのみ起動し、
+各プレイの終わりに実行されます::
 
     ---
     # file: roles/common/handlers/main.yml
@@ -282,43 +282,43 @@ of each play::
         name: ntpd
         state: restarted
 
-See :ref:`playbooks_reuse_roles` for more information.
+詳細は、「:ref:`playbooks_reuse_roles`」を参照してください。
 
 
 .. _organization_examples:
 
-What This Organization Enables (Examples)
+この組織が可能にすること (例)
 `````````````````````````````````````````
 
-Above we've shared our basic organizational structure.
+上記の手順では、基本的な組織構造を共有しています。
 
-Now what sort of use cases does this layout enable?  Lots!  If I want to reconfigure my whole infrastructure, it's just::
+このレイアウトが有効なユースケースにはどんなものがありますか。 たくさんあります。 インフラストラクチャー全体を再設定する場合は、次のようにします::
 
     ansible-playbook -i production site.yml
 
-To reconfigure NTP on everything::
+全面的に NTP を再設定するには、以下を実行します::
 
     ansible-playbook -i production site.yml --tags ntp
 
-To reconfigure just my webservers::
+Web サーバーのみを再設定するには、以下を実行します::
 
     ansible-playbook -i production webservers.yml
 
-For just my webservers in Boston::
+ボストンにある Web サーバーの場合::
 
     ansible-playbook -i production webservers.yml --limit boston
 
-For just the first 10, and then the next 10::
+最初の 10 個の場合、および次の 10 個の場合：
 
     ansible-playbook -i production webservers.yml --limit boston[0:9]
     ansible-playbook -i production webservers.yml --limit boston[10:19]
 
-And of course just basic ad-hoc stuff is also possible::
+もちろん、基本的なアドホックなものも可能です::
 
     ansible boston -i production -m ping
     ansible boston -i production -m command -a '/sbin/reboot'
 
-And there are some useful commands to know::
+以下のような便利なコマンドがあります。
 
     # confirm what task names would be run if I ran this command and said "just ntp tasks"
     ansible-playbook -i production webservers.yml --tags ntp --list-tasks
@@ -328,69 +328,69 @@ And there are some useful commands to know::
 
 .. _dep_vs_config:
 
-Deployment vs Configuration Organization
+デプロイメントと設定組織
 ````````````````````````````````````````
 
-The above setup models a typical configuration topology.  When doing multi-tier deployments, there are going
-to be some additional playbooks that hop between tiers to roll out an application.  In this case, 'site.yml'
-may be augmented by playbooks like 'deploy_exampledotcom.yml' but the general concepts can still apply.
+上記の設定モデルは、標準的な設定トポロジーです。 マルチ層デプロイメントを実行する場合は、
+層を飛び越えてアプリケーションを展開するいくつかの Playbook が追加されます。 この場合の「site.yml」は、
+「deploy_exampledotcom.yml」などの Playbook で拡大できますが、一般的な概念は引き続き適用できます。
 
-Consider "playbooks" as a sports metaphor -- you don't have to just have one set of plays to use against your infrastructure
-all the time -- you can have situational plays that you use at different times and for different purposes.
+「Playbook」をスポーツのメタファーとして考えてください。インフラストラクチャーに対して常に 1 セットのプレイを用意する必要はありません。
+さまざまなタイミングで、さまざまな目的で使用する状況に応じたプレイを行うことができます。
 
-Ansible allows you to deploy and configure using the same tool, so you would likely reuse groups and just
-keep the OS configuration in separate playbooks from the app deployment.
+Ansible を使用すると、同じツールを使用してデプロイと設定を行うことができるため、必要なことはおそらく、グループを再利用し、
+OS 設定をアプリのデプロイとは別のプレイブックに保持するだけです。
 
 .. _staging_vs_production:
 
-Staging vs Production
+ステージと実稼働
 +++++++++++++++++++++
 
-As also mentioned above, a good way to keep your staging (or testing) and production environments separate is to use a separate inventory file for staging and production.   This way you pick with -i what you are targeting.  Keeping them all in one file can lead to surprises!
+前述のように、ステージ環境 (またはテスト環境) と実稼働環境を分離した状態にしておくと、ステージ環境と実稼働環境に別のインベントリーファイルを使用することが推奨されます。  このように、-i を使用してターゲットに選択できます。 それらすべてを 1 つのファイルに保存すると、驚く結果になるかもしれません。
 
-Testing things in a staging environment before trying in production is always a great idea.  Your environments need not be the same
-size and you can use group variables to control the differences between those environments.
+実稼働環境で試す前に、ステージング環境でテストすることは強く推奨されます。 環境は同じサイズである必要はなく、
+グループ変数を使用してこれらの環境の違いを制御できます。
 
 .. _rolling_update:
 
-Rolling Updates
+ローリングアップデート
 +++++++++++++++
 
-Understand the 'serial' keyword.  If updating a webserver farm you really want to use it to control how many machines you are
-updating at once in the batch.
+「serial」キーワードの理解が必要です。 Web サーバーファームを更新する場合は、
+それを使用して、バッチで一度に更新するマシンの数を制御する必要があります。
 
-See :ref:`playbooks_delegation`.
+「:ref:`playbooks_delegation`」を参照してください。
 
 .. _mention_the_state:
 
-Always Mention The State
+状態について常に言及する
 ++++++++++++++++++++++++
 
-The 'state' parameter is optional to a lot of modules.  Whether 'state=present' or 'state=absent', it's always best to leave that
-parameter in your playbooks to make it clear, especially as some modules support additional states.
+「state」パラメーターは、多くのモジュールに対してオプションです。 「state=present」または「state = absent」のいずれの場合でも、
+特に一部のモジュールが追加の状態をサポートしているため、明確にするために常にそのパラメーターを Playbook に残しておくことが最善です。
 
 .. _group_by_roles:
 
-Group By Roles
+ロール別グループ
 ++++++++++++++
 
-We're somewhat repeating ourselves with this tip, but it's worth repeating. A system can be in multiple groups.  See :ref:`intro_inventory` and :ref:`intro_patterns`.   Having groups named after things like
-*webservers* and *dbservers* is repeated in the examples because it's a very powerful concept.
+このヒントで少し繰り返しますが、繰り返す価値があります。システムは複数のグループに置くことができます。 :ref:`intro_inventory` および :ref:`intro_patterns` を参照してください。  *webservers* や *dbservers* などにちなんで名付けられたグループを持つことは、
+非常に強力な概念であるため、例では繰り返されています。
 
-This allows playbooks to target machines based on role, as well as to assign role specific variables
-using the group variable system.
+これにより、Playbook はロールに基づいてマシンをターゲットに設定でき、
+グループ変数システムを使用してロール固有の変数を割り当てることができます。
 
-See :ref:`playbooks_reuse_roles`.
+「:ref:`playbooks_reuse_roles`」を参照してください。
 
 .. _os_variance:
 
-Operating System and Distribution Variance
+異なるオペレーティングシステムとディストリビューション
 ++++++++++++++++++++++++++++++++++++++++++
 
-When dealing with a parameter that is different between two different operating systems, a great way to handle this is
-by using the group_by module.
+2 つの異なるオペレーティングシステム間で異なるパラメーターを処理する場合、これを処理する優れた方法は、
+group_by モジュールを使用することです。
 
-This makes a dynamic group of hosts matching certain criteria, even if that group is not defined in the inventory file::
+これにより、そのグループがインベントリーファイルに定義されていない場合でも、特定の基準に一致するホストの動的グループが作成されます。
 
    ---
 
@@ -408,9 +408,9 @@ This makes a dynamic group of hosts matching certain criteria, even if that grou
       tasks:
         - # tasks that only happen on CentOS go here
 
-This will throw all systems into a dynamic group based on the operating system name.
+これにより、オペレーティングシステム名に基づいてすべてのシステムが動的グループに入れられます。
 
-If group-specific settings are needed, this can also be done. For example::
+グループ固有の設定が必要な場合は、以下を実行することもできます。例::
 
     ---
     # file: group_vars/all
@@ -420,92 +420,92 @@ If group-specific settings are needed, this can also be done. For example::
     # file: group_vars/os_CentOS
     asdf: 42
 
-In the above example, CentOS machines get the value of '42' for asdf, but other machines get '10'.
-This can be used not only to set variables, but also to apply certain roles to only certain systems.
+上記の例では、CentOS マシンは asdf の値「42」を取得しますが、他のマシンは「10」を取得します。
+これは、変数を設定するだけでなく、特定のロールを特定のシステムにのみ適用するために使用できます。
 
-Alternatively, if only variables are needed::
+または、変数のみが必要な場合は、以下を実行します。
 
     - hosts: all
       tasks:
-        - name: Set OS distribution dependent variables
+        - name:Set OS distribution dependent variables
           include_vars: "os_{{ ansible_facts['distribution'] }}.yml"
         - debug:
             var: asdf
 
-This will pull in variables based on the OS name.
+これにより、OS 名に基づいて変数がプルされます。
 
 .. _ship_modules_with_playbooks:
 
-Bundling Ansible Modules With Playbooks
+Playbook での Ansible モジュールのバンドル
 +++++++++++++++++++++++++++++++++++++++
 
-If a playbook has a :file:`./library` directory relative to its YAML file, this directory can be used to add ansible modules that will
-automatically be in the ansible module path.  This is a great way to keep modules that go with a playbook together.  This is shown
-in the directory structure example at the start of this section.
+Playbook に YAML ファイルとの関連で :file:`./library` ディレクトリーがある場合は、このディレクトリーを使用して Ansible モジュールを追加できます。
+ansible モジュールパスには自動的に表示されます。 これは、Playbook と併用するモジュールを維持するのに適した方法です。 これは、
+このセクションの冒頭のディレクトリー構造の例に示されています。
 
 .. _whitespace:
 
-Whitespace and Comments
+空白およびコメント
 +++++++++++++++++++++++
 
-Generous use of whitespace to break things up, and use of comments (which start with '#'), is encouraged.
+空白を使用して項目を分割し、コメントを使用することが推奨されます ('#' で始まります)。
 
 .. _name_tasks:
 
-Always Name Tasks
+常にタスクに名前を付ける
 +++++++++++++++++
 
-It is possible to leave off the 'name' for a given task, though it is recommended to provide a description
-about why something is being done instead.  This name is shown when the playbook is run.
+特定のタスクの「名前」を省略することも可能ですが、
+代わりに何かが行われている理由について説明することが推奨されます。 この名前は、Playbook の実行時に表示されます。
 
 .. _keep_it_simple:
 
-Keep It Simple
+シンプルのままにする
 ++++++++++++++
 
-When you can do something simply, do something simply.  Do not reach
-to use every feature of Ansible together, all at once.  Use what works
-for you.  For example, you will probably not need ``vars``,
-``vars_files``, ``vars_prompt`` and ``--extra-vars`` all at once,
-while also using an external inventory file.
+何かを簡単にできるときは、簡単にしてください。 Ansible のすべての機能を
+同時に使用することはしないでください。 ニーズにあったものを
+使用してください。 たとえば、外部インベントリーファイルを使用するとき、``vars``、
+``vars_files``、``vars_prompt``、および ``--extra-vars`` 
+がすべて必要になることはおそらくないはずです。
 
-If something feels complicated, it probably is, and may be a good opportunity to simplify things.
+何かが複雑に感じられる場合は、おそらく実際に複雑で、単純化する良い機会かもしれません。
 
 .. _version_control:
 
-Version Control
+バージョン制御
 +++++++++++++++
 
-Use version control.  Keep your playbooks and inventory file in git
-(or another version control system), and commit when you make changes
-to them.  This way you have an audit trail describing when and why you
-changed the rules that are automating your infrastructure.
+バージョン制御を使用します。 Playbook およびインベントリーファイルを git (または別のバージョン管理システム) 
+に保存し、
+変更を加えたらコミットします。 このようにして、インフラストラクチャーを自動化するルールをいつ、
+なぜ変更したかを説明する監査証跡を取得できます。
 
 .. _best_practices_for_variables_and_vaults:
 
-Variables and Vaults
+変数および Vault
 ++++++++++++++++++++++++++++++++++++++++
 
-For general maintenance, it is often easier to use ``grep``, or similar tools, to find variables in your Ansible setup. Since vaults obscure these variables, it is best to work with a layer of indirection. When running a playbook, Ansible finds the variables in the unencrypted file and all sensitive variables come from the encrypted file.
+一般的なメンテナンスには、``grep`` または同様のツールを使用して Ansible 設定で変数を見つけることが一般的です。Vault はこれらの変数を可視化するため、間接的な層で作業するのが最適です。Playbook の実行時に、Ansible は非暗号化ファイルで変数を見つけ、機密性の高い変数はすべて暗号化されたファイルから取得します。
 
-A best practice approach for this is to start with a ``group_vars/`` subdirectory named after the group. Inside of this subdirectory, create two files named ``vars`` and ``vault``. Inside of the ``vars`` file, define all of the variables needed, including any sensitive ones. Next, copy all of the sensitive variables over to the ``vault`` file and prefix these variables with ``vault_``. You should adjust the variables in the ``vars`` file to point to the matching ``vault_`` variables using jinja2 syntax, and ensure that the ``vault`` file is vault encrypted.
+そのためのベストプラクティスは、グループの名前が付けられた ``group_vars/`` サブディレクトリーから始めます。このサブディレクトリー内に、``vars`` と ``vault`` という名前のファイルを作成します。``vars`` ファイルで、機密性の高い変数など、必要な変数をすべて定義します。次に、すべての機密変数を ``vault`` ファイルにコピーし、この変数の前に ``vault_`` を付けます。``vars`` ファイルの変数を調整して、jinja2 構文を使用して一致する ``vault_`` 変数を参照し、``vault`` ファイルがvault で暗号化されていることを確認する必要があります。
 
-This best practice has no limit on the amount of variable and vault files or their names.
+このベストプラクティスでは、変数ファイルおよび vault ファイルの量、またはその名前に制限はありません。
 
 
 .. seealso::
 
    :ref:`yaml_syntax`
-       Learn about YAML syntax
+       YAML 構文について
    :ref:`working_with_playbooks`
-       Review the basic playbook features
+       基本的な Playbook 機能の確認
    :ref:`all_modules`
-       Learn about available modules
+       利用可能なモジュールについて
    :ref:`developing_modules`
-       Learn how to extend Ansible by writing your own modules
+       独自のモジュールを作成して Ansible を拡張する方法について
    :ref:`intro_patterns`
-       Learn about how to select hosts
-   `GitHub examples directory <https://github.com/ansible/ansible-examples>`_
-       Complete playbook files from the github project source
-   `Mailing List <https://groups.google.com/group/ansible-project>`_
-       Questions? Help? Ideas?  Stop by the list on Google Groups
+       ホストの選択方法について
+   `GitHub サンプルディレクトリー <https://github.com/ansible/ansible-examples>`_
+       Github プロジェクトソースから 完全な Playbook ファイル
+   `メーリングリスト <https://groups.google.com/group/ansible-project>`_
+       ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。

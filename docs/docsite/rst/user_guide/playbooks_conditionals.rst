@@ -1,29 +1,29 @@
 .. _playbooks_conditionals:
 
-Conditionals
+条件 (Conditional)
 ============
 
-.. contents:: Topics
+.. contents:: トピック
 
 
-Often the result of a play may depend on the value of a variable, fact (something learned about the remote system), or previous task result.
-In some cases, the values of variables may depend on other variables.
-Additional groups can be created to manage hosts based on whether the hosts match other criteria. This topic covers how conditionals are used in playbooks.
+多くの場合、プレイの結果は変数の値、ファクト (リモートシステムに関するもの)、または以前のタスク結果に依存する場合があります。
+変数の値が他の変数に依存する場合があります。
+ホストが他の基準に合致するかどうかに基づいてホストを管理するために、追加のグループを作成できます。このトピックでは、Playbook で条件がどのように使用されているかを説明します。
 
-.. note:: There are many options to control execution flow in Ansible. More examples of supported conditionals can be located here: http://jinja.pocoo.org/docs/dev/templates/#comparisons.
+.. note:: Ansible で実行フローを制御するオプションは多数あります。サポートされるその他の条件の例は、http://jinja.pocoo.org/docs/dev/templates/#comparisons を参照してください。
 
 
 .. _the_when_statement:
 
-The When Statement
+When ステートメント
 ``````````````````
 
-Sometimes you will want to skip a particular step on a particular host.
-This could be something as simple as not installing a certain package if the operating system is a particular version,
-or it could be something like performing some cleanup steps if a filesystem is getting full.
+特定のホストで特定のステップをスキップしたい場合があります。
+これは、オペレーティングシステムが特定のバージョンである場合に、特定のパッケージをインストールしないという単純なものである場合もあれば、
+または、ファイルシステムがいっぱいになった場合にクリーンアップ手順を実行するようなものかもしれません。
 
-This is easy to do in Ansible with the `when` clause, which contains a raw Jinja2 expression without double curly braces (see :ref:`group_by_module`).
-It's actually pretty simple::
+これは、Ansible で `when` 句を使用して簡単に実行できます。これには、二重中括弧のない生の Jinja2 式が含まれます (:ref:`group_by_module`を参照)。
+これは実際には単純なものです。
 
     tasks:
       - name: "shut down Debian flavored systems"
@@ -31,7 +31,7 @@ It's actually pretty simple::
         when: ansible_facts['os_family'] == "Debian"
         # note that all variables can be used directly in conditionals without double curly braces
 
-You can also use parentheses to group conditions::
+括弧を使用して、条件をグループ化することもできます。
 
     tasks:
       - name: "shut down CentOS 6 and Debian 7 systems"
@@ -39,7 +39,7 @@ You can also use parentheses to group conditions::
         when: (ansible_facts['distribution'] == "CentOS" and ansible_facts['distribution_major_version'] == "6") or
               (ansible_facts['distribution'] == "Debian" and ansible_facts['distribution_major_version'] == "7")
 
-Multiple conditions that all need to be true (a logical 'and') can also be specified as a list::
+すべてが true である必要のある複数の条件 (論理的「and」) もリストとして指定できます。
 
     tasks:
       - name: "shut down CentOS 6 systems"
@@ -48,9 +48,9 @@ Multiple conditions that all need to be true (a logical 'and') can also be speci
           - ansible_facts['distribution'] == "CentOS"
           - ansible_facts['distribution_major_version'] == "6"
 
-A number of Jinja2 "tests" and "filters" can also be used in when statements, some of which are unique
-and provided by Ansible.  Suppose we want to ignore the error of one statement and then
-decide to do something conditionally based on success or failure::
+多くの Jinja2 の「テスト」と「フィルター」も、when ステートメントで使用できます。
+その一部は一意で、Ansible によって提供されます。 1 つのステートメントのエラーを無視して、
+成功か失敗かに基づいて、条件付きで何かを行うことを決定するとします。
 
     tasks:
       - command: /bin/false
@@ -68,41 +68,41 @@ decide to do something conditionally based on success or failure::
         when: result is skipped
 
 
-.. note:: both `success` and `succeeded` work (`fail`/`failed`, etc).
+.. note:: `success` と `succeeded` の両方 (`fail`/`failed` など) が有効です。
 
 
-To see what facts are available on a particular system, you can do the following in a playbook::
+特定のシステムで利用可能なファクトを確認するには、Playbook で以下を実行できます。
 
     - debug: var=ansible_facts
 
 
-Tip: Sometimes you'll get back a variable that's a string and you'll want to do a math operation comparison on it.  You can do this like so::
+ヒント: 場合によっては、文字列である変数を取得し、それに対して数学演算の比較を行いたいことがあります。 これは、以下のように実行できます。
 
     tasks:
       - shell: echo "only on Red Hat 6, derivatives, and later"
         when: ansible_facts['os_family'] == "RedHat" and ansible_facts['lsb']['major_release']|int >= 6
 
-.. note:: the above example requires the lsb_release package on the target host in order to return the 'lsb major_release' fact.
+.. note:: 上記の例では、「lsb major_release」ファクトを返すために、ターゲットホストで lsb_release パッケージが必要になります。
 
-Variables defined in the playbooks or inventory can also be used, just make sure to apply the `|bool` filter to non boolean variables (ex: string variables with content like 'yes', 'on', '1', 'true').  An example may be the execution of a task based on a variable's boolean value::
+Playbook またはインベントリーで定義される変数も使用できます。`|bool` フィルターをブール値以外の変数に適用してください (文字列変数「yes」、「on」、「1」、「true」など）。 たとえば、変数のブール値に基づいてタスクを実行する例を示します。
 
     vars:
       epic: true
       monumental: "yes"
 
-Then a conditional execution might look like::
+条件の実行は以下のようになります。
 
     tasks:
         - shell: echo "This certainly is epic!"
           when: epic or monumental|bool
 
-or::
+または::
 
     tasks:
         - shell: echo "This certainly isn't epic!"
           when: not epic
 
-If a required variable has not been set, you can skip or fail using Jinja2's `defined` test. For example::
+必要な変数が設定されていない場合は、省略するか、Jinja2 の `定義済み` テストを使用して失敗します。例::
 
     tasks:
         - shell: echo "I've got '{{ foo }}' and am not afraid to use it!"
@@ -111,41 +111,41 @@ If a required variable has not been set, you can skip or fail using Jinja2's `de
         - fail: msg="Bailing out. this play requires 'bar'"
           when: bar is undefined
 
-This is especially useful in combination with the conditional import of vars files (see below).
-As the examples show, you don't need to use `{{ }}` to use variables inside conditionals, as these are already implied.
+これは、特に vars ファイルの条件付きインポートと組み合わせると役に立ちます (下記参照)。
+例のように、変数はすでに暗示されているため、条件内で変数を使用する `{{ }}` は必要ありません。
 
 .. _loops_and_conditionals:
 
-Loops and Conditionals
+ループおよび条件
 ``````````````````````
-Combining `when` with loops (see :ref:`playbooks_loops`), be aware that the `when` statement is processed separately for each item. This is by design::
+`when` をループと組み合わせる (:ref:`playbooks_loops`を参照) と、各項目について `when` ステートメントが個別に処理されることに注意してください。これは、以下のように設計されます。
 
     tasks:
         - command: echo {{ item }}
           loop: [ 0, 2, 4, 6, 8, 10 ]
           when: item > 5
 
-If you need to skip the whole task depending on the loop variable being defined, used the `|default` filter to provide an empty iterator::
+定義されたループ変数に応じてタスク全体を省略する必要がある場合は、`|default` フィルターを使用して空のイテレーターを指定します。
 
         - command: echo {{ item }}
           loop: "{{ mylist|default([]) }}"
           when: item > 5
 
 
-If using a dict in a loop::
+ループで dict を使用している場合は、以下のようになります。
 
         - command: echo {{ item.key }}
           loop: "{{ query('dict', mydict|default({})) }}"
           when: item.value > 5
-
+    
 .. _loading_in_custom_facts:
 
-Loading in Custom Facts
+カスタムファクトでの読み込み
 ```````````````````````
 
-It's also easy to provide your own facts if you want, which is covered in :ref:`developing_modules`.  To run them, just
-make a call to your own custom fact gathering module at the top of your list of tasks, and variables returned
-there will be accessible to future tasks::
+また、必要に応じて独自のファクトを指定することも簡単です。これについては「:ref:`developing_modules`」で説明します。 そのようなファクトを実行する場合は、
+タスクリストの一番上にある独自のカスタムファクト収集モジュールを呼び出すだけで、
+そこに返される変数に将来のタスクからアクセスできるようになります。
 
     tasks:
         - name: gather site specific fact data
@@ -155,30 +155,30 @@ there will be accessible to future tasks::
 
 .. _when_roles_and_includes:
 
-Applying 'when' to roles, imports, and includes
+「When」のロール、インポート、およびインクルードへの適用
 ```````````````````````````````````````````````
 
-Note that if you have several tasks that all share the same conditional statement, you can affix the conditional
-to a task include statement as below.  All the tasks get evaluated, but the conditional is applied to each and every task::
+複数のタスクがすべて同じ条件ステートメントを共有する場合は、
+以下のように条件をタスクインクルードステートメントに付加できることに注意してください。 すべてのタスクが評価されますが、条件はすべてのタスクに適用されます。
 
     - import_tasks: tasks/sometasks.yml
       when: "'reticulating splines' in output"
 
-.. note:: In versions prior to 2.0 this worked with task includes but not playbook includes.  2.0 allows it to work with both.
+.. note:: 2.0 よりも前のバージョンでは、これはタスクインクルードで機能しましたが、Playbook のインクルードでは機能しません。 2.0 では、両方で機能します。
 
-Or with a role::
+またはロールで使用します。
 
     - hosts: webservers
       roles:
          - role: debian_stock_config
            when: ansible_facts['os_family'] == 'Debian'
 
-You will note a lot of 'skipped' output by default in Ansible when using this approach on systems that don't match the criteria.
-In many cases the :ref:`group_by module <group_by_module>` can be a more streamlined way to accomplish the same thing; see
-:ref:`os_variance`.
+この条件に一致しないシステムでこのアプローチを使用すると、Ansible ではデフォルトで「skipped」出力が多数記録されます。
+多くの場合、:ref:`group_by モジュール <group_by_module>` は、同じことを実現するより効率的な方法です。
+「:ref:`os_variance`」を参照してください。
 
-When a conditional is used with ``include_*`` tasks instead of imports, it is applied `only` to the include task itself and not
-to any other tasks within the included file(s). A common situation where this distinction is important is as follows::
+インポートの代わりに ``include_*`` タスクで条件が使用される場合、これはインクルードタスク自体に `のみ` 適用され、
+インクルードファイルに含まれるその他のタスクには適用されません。この区別が重要な状況は、以下のとおりです。
 
     # We wish to include a file to define a variable when it is not
     # already defined
@@ -193,7 +193,7 @@ to any other tasks within the included file(s). A common situation where this di
     - debug:
         var: x
 
-This expands at include time to the equivalent of::
+これは、インクルード時に、次と同じように展開されます::
 
     - set_fact:
         x: foo
@@ -202,23 +202,23 @@ This expands at include time to the equivalent of::
         var: x
       when: x is not defined
 
-Thus if ``x`` is initially undefined, the ``debug`` task will be skipped.  By using ``include_tasks`` instead of ``import_tasks``,
-both tasks from ``other_tasks.yml`` will be executed as expected.
+``x`` が最初に定義されていないと、``debug`` タスクはスキップされます。 ``import_tasks`` の代わりに ``include_tasks`` を使用することにより、
+``other_tasks.yml`` からの両方のタスクが期待どおりに実行されます。
 
-For more information on the differences between ``include`` v ``import`` see :ref:`playbooks_reuse`.
+``include`` と ``import`` の相違点は、:ref:`playbooks_reuse` を参照してください。
 
 .. _conditional_imports:
 
-Conditional Imports
+条件付きインポート
 ```````````````````
 
-.. note:: This is an advanced topic that is infrequently used.
+.. note:: これは、頻繁に使用されない高度なトピックです。
 
-Sometimes you will want to do certain things differently in a playbook based on certain criteria.
-Having one playbook that works on multiple platforms and OS versions is a good example.
+特定の基準に基づいて Playbook で特定の動作が異なる場合があります。
+複数のプラットフォームおよび OS バージョンで動作する Playbook がある方がよい例です。
 
-As an example, the name of the Apache package may be different between CentOS and Debian,
-but it is easily handled with a minimum of syntax in an Ansible Playbook::
+たとえば、Apache パッケージの名前は CentOS と Debian の間で異なる場合があります。
+ただし、Ansible Playbook では、最小限の構文で簡単に処理されます。
 
     ---
     - hosts: all
@@ -231,35 +231,35 @@ but it is easily handled with a minimum of syntax in an Ansible Playbook::
         service: name={{ apache }} state=started
 
 .. note::
-   The variable "ansible_facts['os_family']" is being interpolated into
-   the list of filenames being defined for vars_files.
+   変数「ansible_facts['os_family']」は、
+   vars_files に定義されているファイル名のリストに挿入されています。
 
-As a reminder, the various YAML files contain just keys and values::
+各種の YAML ファイルにはキーと値のみが含まれます。
 
     ---
     # for vars/RedHat.yml
     apache: httpd
     somethingelse: 42
 
-How does this work?  For Red Hat operating systems ('CentOS', for example), the first file Ansible tries to import
-is 'vars/RedHat.yml'. If that file does not exist, Ansible attempts to load 'vars/os_defaults.yml'. If no files in
-the list were found, an error is raised.
+どのように機能しますか。 Red Hat オペレーティングシステム (「CentOS」など) の場合は、
+Ansible がインポートしようとする最初のファイルは「vars/RedHat.yml」です。そのファイルが存在しない場合、Ansible は「vars/os_defaults.yml」の読み込みを試みます。リストにファイルが見つからなかった場合は、
+エラーが発生します。
 
-On Debian, Ansible first looks for 'vars/Debian.yml' instead of 'vars/RedHat.yml', before
-falling back on 'vars/os_defaults.yml'.
+Debian では、
+Ansible は最初に「'vars/RedHat.yml」ではなく「'vars/Debian.yml」を探してから、「vars/os_defaults.yml」に戻ります。
 
-Ansible's approach to configuration -- separating variables from tasks, keeping your playbooks
-from turning into arbitrary code with nested conditionals - results in more streamlined and auditable configuration rules because there are fewer decision points to track.
+Ansible の設定アプローチ - 変数をタスクから分離し、
+Playbook がネストされた条件付きの任意のコードにならないようにします。追跡する決定ポイントが少ないため、より単純で監査可能な構成ルールが得られます。
 
-Selecting Files And Templates Based On Variables
+変数に基づくファイルとテンプレートの選択
 ````````````````````````````````````````````````
 
-.. note:: This is an advanced topic that is infrequently used.  You can probably skip this section.
+.. note:: これは、頻繁に使用されない高度なトピックです。 このセクションは、おそらく読み飛ばすことができます。
 
-Sometimes a configuration file you want to copy, or a template you will use may depend on a variable.
-The following construct selects the first available file appropriate for the variables of a given host, which is often much cleaner than putting a lot of if conditionals in a template.
+コピーする設定ファイルや使用するテンプレートが変数に依存する場合があります。
+以下のコンストラクトは、特定ホストの変数に適した使用可能な最初のファイルを選択します。これにより、テンプレートに if 条件が多数ある場合よりも分かりやすくなります。
 
-The following example shows how to template out a configuration file that was very different between, say, CentOS and Debian::
+以下の例は、CentOS と Debian で大きく異なる設定ファイルをテンプレート化する方法を示しています。
 
     - name: template a file
       template:
@@ -271,17 +271,17 @@ The following example shows how to template out a configuration file that was ve
           - "{{ansible_facts['distribution']}}.conf"
           -  default.conf
         mypaths: ['search_location_one/somedir/', '/opt/other_location/somedir/']
-
-Register Variables
+    
+登録変数
 ``````````````````
 
-Often in a playbook it may be useful to store the result of a given command in a variable and access
-it later.  Use of the command module in this way can in many ways eliminate the need to write site specific facts, for
-instance, you could test for the existence of a particular program.
+Playbook では、特定のコマンドの結果を変数に保存して、
+後でアクセスすると便利な場合があります。 この方法でコマンドモジュールを使用すると、多くの点でサイト固有のファクトを記述する必要がなくなります。
+たとえば、特定のプログラムが存在するかどうかをテストできます。
 
-.. note:: Registration happens even when a task is skipped due to the conditional. This way you can query the variable for `` is skipped`` to know if task was attempted or not.
+.. note:: 登録は、条件によりタスクが省略された場合でも行われます。これにより、``is skipped`` の変数をクエリーして、タスクが試行されたかどうかを判断します。
 
-The 'register' keyword decides what variable to save a result in.  The resulting variables can be used in templates, action lines, or *when* statements.  It looks like this (in an obviously trivial example)::
+「register」 キーワードは、結果を保存する変数を決定します。 生成される変数は、テンプレート、アクション行、または *when* ステートメントで使用できます。 これは、以下のようになります (簡単な例の場合)::
 
     - name: test play
       hosts: all
@@ -294,11 +294,11 @@ The 'register' keyword decides what variable to save a result in.  The resulting
           - shell: echo "motd contains the word hi"
             when: motd_contents.stdout.find('hi') != -1
 
-As shown previously, the registered variable's string contents are accessible with the 'stdout' value.
-The registered result can be used in the loop of a task if it is converted into
-a list (or already is a list) as shown below.  "stdout_lines" is already available on the object as
-well though you could also call "home_dirs.stdout.split()" if you wanted, and could split by other
-fields::
+前述のように、登録した変数の文字列の内容は、「stdout」の値でアクセスできます。
+登録した結果は、以下のようにリストに変換されている (またはすでにリストになっている) 場合、タスクのループで使用できます。
+「stdout_lines」は、
+すでにオブジェクトでも使用できますが、
+必要に応じて「home_dirs.stdout.split()」を呼び出し、他のフィールドで分割することもできます::
 
     - name: registered variable usage as a loop list
       hosts: all
@@ -315,10 +315,10 @@ fields::
             state: link
           loop: "{{ home_dirs.stdout_lines }}"
           # same as loop: "{{ home_dirs.stdout.split() }}"
+    
 
-
-As shown previously, the registered variable's string contents are accessible with the 'stdout' value.
-You may check the registered variable's string contents for emptiness::
+前述のように、登録した変数の文字列の内容は、「stdout」の値でアクセスできます。
+登録された変数の文字列の内容が空かどうかを確認できます::
 
     - name: check registered variable for emptiness
       hosts: all
@@ -334,17 +334,17 @@ You may check the registered variable's string contents for emptiness::
               msg: "Directory is empty"
             when: contents.stdout == ""
 
-Commonly Used Facts
+一般的に使用されるファクト
 ```````````````````
 
-The following Facts are frequently used in Conditionals - see above for examples.
+以下のファクトは条件で頻繁に使用されます。例については、上記を参照してください。
 
 .. _ansible_distribution:
 
 ansible_facts['distribution']
 -----------------------------
 
-Possible values (sample, not complete list)::
+使用できる値 (関連リストではなく一部です):
 
     Alpine
     Altlinux
@@ -367,21 +367,21 @@ Possible values (sample, not complete list)::
     Ubuntu
     VMwareESX
 
-.. See `OSDIST_LIST`
+..「`OSDIST_LIST`」を参照してください。
 
 .. _ansible_distribution_major_version:
 
 ansible_facts['distribution_major_version']
 -------------------------------------------
 
-This will be the major version of the operating system. For example, the value will be `16` for Ubuntu 16.04.
+これは、オペレーティングシステムのメジャーバージョンになります。たとえば、Ubuntu 16.04 の場合は、値が `16` になります。
 
 .. _ansible_os_family:
 
 ansible_facts['os_family']
 --------------------------
 
-Possible values (sample, not complete list)::
+使用できる値 (関連リストではなく一部です):
 
     AIX
     Alpine
@@ -400,19 +400,19 @@ Possible values (sample, not complete list)::
     Suse
     Windows
 
-.. Ansible checks `OS_FAMILY_MAP`; if there's no match, it returns the value of `platform.system()`.
+..Ansible は、`OS_FAMILY_MAP` を確認します。一致するものがない場合は、`platform.system()` の値を返します。
 
 .. seealso::
 
    :ref:`working_with_playbooks`
-       An introduction to playbooks
+       Playbook の概要
    :ref:`playbooks_reuse_roles`
-       Playbook organization by roles
+       ロール別の Playbook の組織
    :ref:`playbooks_best_practices`
-       Best practices in playbooks
+       Playbook のベストプラクティス
    :ref:`playbooks_variables`
-       All about variables
-   `User Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Have a question?  Stop by the google group!
+       変数の詳細
+   `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

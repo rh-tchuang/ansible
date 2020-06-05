@@ -1,11 +1,11 @@
 .. _playbooks_special_topics:
 
-Advanced Playbooks Features
+Playbook の高度な機能
 ===========================
 
-Here are some playbook features that not everyone may need to learn, but can be quite useful for particular applications.
-Browsing these topics is recommended as you may find some useful tips here, but feel free to learn the basics of Ansible first
-and adopt these only if they seem relevant or useful to your environment.
+誰もが学習する必要があるわけではありませんが、特定のアプリケーションで非常に便利な Playbook 機能をいくつか紹介します。
+このトピックを参照することが推奨されますが、最初に Ansible の基本を理解してから、
+お使いの環境に関連または有用であると思われる場合に限りお試しください。
 
 .. toctree::
    :maxdepth: 1
