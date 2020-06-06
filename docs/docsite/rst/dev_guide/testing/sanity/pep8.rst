@@ -1,6 +1,6 @@
 pep8
 ====
 
-Python static analysis for PEP 8 style guideline compliance.
+PEP 8 スタイルのガイドラインコンプライアンスに対する Python 静的分析。
 
-See :ref:`testing_pep8` for more information.
+詳細は、:ref:`testing_pep8` を参照してください。

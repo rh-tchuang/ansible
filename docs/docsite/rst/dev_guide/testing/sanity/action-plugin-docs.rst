@@ -1,4 +1,4 @@
 action-plugin-docs
 ==================
 
-Each action plugin should have a matching module of the same name to provide documentation.
+各アクションプラグインには、ドキュメントを提供するモジュールと同じ名前のモジュールが必要です。

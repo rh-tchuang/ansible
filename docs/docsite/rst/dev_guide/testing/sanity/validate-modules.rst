@@ -1,6 +1,6 @@
 validate-modules
 ================
 
-Analyze modules for common issues in code and documentation.
+コードおよびドキュメントの一般的な問題についてモジュールを分析します。
 
-See :ref:`testing_validate-modules` for more information.
+詳細は、:ref:`testing_validate-modules` を参照してください。

@@ -3,4 +3,4 @@
 deprecated-config
 =================
 
-``DOCUMENTATION`` config is scheduled for removal
+``DOCUMENTATION`` 設定は削除されることが予定されています。

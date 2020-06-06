@@ -1,17 +1,17 @@
 metaclass-boilerplate
 =====================
 
-Most Python files should include the following boilerplate at the top of the file, right after the
-comment header and ``from __future__ import``:
+ほとんどの Python ファイルには、
+ファイルの上部、コメントヘッダーの直後、および ``from __future__ import`` からの次の boilerplate を含める必要があります。
 
 .. code-block:: python
 
     __metaclass__ = type
 
 
-Python 2 has "new-style classes" and "old-style classes" whereas Python 3 only has new-style classes.
-Adding the ``__metaclass__ = type`` boilerplate makes every class defined in that file into
-a new-style class as well.
+Python 2 には「新スタイルのクラス」および「旧スタイルのクラス」がありますが、Python 3 には新スタイルのクラスのみがあります。
+boilerplate ``__metaclass__ = type`` を追加すると、
+そのファイルで定義されているすべてのクラスも新しいスタイルのクラスになります。
 
 .. code-block:: python
 
@@ -20,4 +20,4 @@ a new-style class as well.
 
     class Foo:
         # This is a new-style class even on Python 2 because of the __metaclass__
-        pass
+    pass

@@ -1,4 +1,4 @@
 pslint
 ======
 
-PowerShell static analysis for common programming errors using `PSScriptAnalyzer <https://github.com/PowerShell/PSScriptAnalyzer/>`_.
+`PSScriptAnalyzer <https://github.com/PowerShell/PSScriptAnalyzer/>`_ を使用した一般的なプログラミングエラーに関する PowerShell の静的な分析。

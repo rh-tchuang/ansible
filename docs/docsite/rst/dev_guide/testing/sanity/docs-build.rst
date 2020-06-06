@@ -1,4 +1,4 @@
 docs-build
 ==========
 
-Verifies that ``make singlehtmldocs`` in ``docs/docsite/`` completes without errors.
+``docs/docsite/`` の ``make singlehtmldocs`` が、エラーなしで完了するかどうかを検証します。

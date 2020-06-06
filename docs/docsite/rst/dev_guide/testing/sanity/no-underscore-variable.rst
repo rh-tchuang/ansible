@@ -3,15 +3,15 @@
 no-underscore-variable
 ======================
 
-In the future, Ansible may use the identifier ``_`` to internationalize its
-message strings.  To be ready for that, we need to make sure that there are
-no conflicting identifiers defined in the code base.
+今後、Ansibleは、識別子 ``_`` を使用して、
+メッセージ文字列を国際化することができます。 そのためには、
+コードベースで定義されている競合する識別子がないようにする必要があります。
 
-In common practice, ``_`` is frequently used as a dummy variable (a variable
-to receive a value from a function where the value is useless and never used).
-In Ansible, we're using the identifier ``dummy`` for this purpose instead.
+一般的な慣例では、``_`` はダミー変数 (値が役に立たず、
+決して使用されない関数から値を受け取る変数) として頻繁に使用されます。
+Ansible では、代わりにこの目的のために ``dummy`` の識別子を使用しています。
 
-Example of unfixed code:
+未修正コードの例:
 
 .. code-block:: python
 
@@ -20,7 +20,7 @@ Example of unfixed code:
         if success:
             break
 
-Example of fixed code:
+修正したコードの例:
 
 .. code-block:: python
 

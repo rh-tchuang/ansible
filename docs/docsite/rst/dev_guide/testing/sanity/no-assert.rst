@@ -1,16 +1,16 @@
-no-assert
+assert は使用しない
 =========
 
-Do not use ``assert`` in production Ansible python code. When running Python
-with optimizations, Python will remove ``assert`` statements, potentially
-allowing for unexpected behavior throughout the Ansible code base.
+実稼働用の Ansible python コードで ``assert`` を使用しないでください。Python を最適化して実行すると、
+Python は ``assert`` ステートメントを削除し、
+Ansible コードベース全体で予期しない動作が発生する可能性があります。
 
-Instead of using ``assert`` you should utilize simple ``if`` statements,
-that result in raising an exception. There is a new exception called
-``AnsibleAssertionError`` that inherits from ``AnsibleError`` and
-``AssertionError``. When possible, utilize a more specific exception
-than ``AnsibleAssertionError``.
+``assert`` を使用する代わりに、単純な ``if`` ステートメントを使用する必要があります。
+これにより例外が生じます。``AnsibleError`` および 
+``AssertionError`` を継承する 
+``AnsibleAssertionError`` という新しい例外があります。可能な場合は、
+``AnsibleAssertionError`` よりも具体的な例外を使用します。
 
-Modules will not have access to ``AnsibleAssertionError`` and should instead
-raise ``AssertionError``, a more specific exception, or just use
-``module.fail_json`` at the failure point.
+モジュールは ``AnsibleAssertionError`` にアクセスできず、
+代わりに、より具体的な例外である ``AssertionError`` を発生させるか、
+障害点で ``module.fail_json`` を使用する必要があります。

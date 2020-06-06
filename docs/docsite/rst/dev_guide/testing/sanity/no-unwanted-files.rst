@@ -1,11 +1,11 @@
-no-unwanted-files
+不要なファイルは使用しない
 =================
 
-Specific file types are allowed in certain directories:
+特定のファイルタイプは、特定のディレクトリーで許可されます。
 
-- ``lib`` - All content must reside in the ``lib/ansible`` directory.
+- ``lib`` - すべてのコンテンツが ``lib/ansible`` ディレクトリーに存在する必要があります。
 
-- ``lib/ansible`` - Only source code with one of the following extensions is allowed:
+- ``lib/ansible`` - 以下の拡張機能のいずれかを持つソースコードのみが許可されます。
 
   - ``*.cs`` - C#
   - ``*.ps1`` - PowerShell

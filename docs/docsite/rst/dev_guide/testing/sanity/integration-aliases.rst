@@ -1,17 +1,17 @@
 integration-aliases
 ===================
 
-Integration tests are executed by ``ansible-test`` and reside in directories under ``test/integration/targets/``.
-Each test MUST have an ``aliases`` file to control test execution.
+統合テストは ``ansible-test`` によって実行され、``test/integration/targets/`` 配下のディレクトリーに置かれます。
+各テストには、テストの実行を制御する ``aliases`` ファイルが必要です。
 
-Aliases are explained in the following sections. Each alias must be on a separate line in an ``aliases`` file.
+エイリアスについては、以下のセクションで説明します。各エイリアスは、``aliases`` ファイルの別々の行に指定する必要があります。
 
-Groups
+グループ
 ------
 
-Tests must be configured to run in exactly one group. This is done by adding the appropriate group to the ``aliases`` file.
+テストは、必ず 1 つのグループで実行するように設定する必要があります。これは、``aliases`` ファイルに適切なグループを追加することによって行います。
 
-The following are examples of some of the available groups:
+利用可能な一部のグループの例を以下に示します。
 
 - ``shippable/posix/group1``
 - ``shippable/windows/group2``
@@ -19,138 +19,138 @@ The following are examples of some of the available groups:
 - ``shippable/aws/group1``
 - ``shippable/cloud/group1``
 
-Groups are used to balance tests across multiple CI jobs to minimize test run time.
-They also improve efficiency by keeping tests with similar requirements running together.
+グループは、複数の CI ジョブ間でテストのバランスを取り、テストのランタイムを最小限にするために使用します。
+同様の要件が一緒に実行されるテストを維持することで、効率性も向上します。
 
-When selecting a group for a new test, use the same group as existing tests similar to the one being added.
-If more than one group is available, select one randomly.
+新規テスト用にグループを選択する場合は、追加するテストと同様のグループを使用します。
+複数のグループが利用可能な場合は、ランダムに 1 つのグループを選択します。
 
-Setup
+設定
 -----
 
-Aliases can be used to execute setup targets before running tests:
+エイリアスは、テストを実行する前に設定ターゲットを実行するのに使用できます。
 
-- ``setup/once/TARGET`` - Run the target ``TARGET`` before the first target that requires it.
-- ``setup/always/TARGET`` - Run the target ``TARGET`` before each target that requires it.
+- ``setup/once/TARGET`` - ターゲット ``TARGET`` を必要とする最初のターゲットの前に実行します。
+- ``setup/always/TARGET`` - 必要な各ターゲットの前にターゲット ``TARGET`` を実行します。
 
-Requirements
+要件
 ------------
 
-Aliases can be used to express some test requirements:
+エイリアスを使用すると、一部のテスト要件を表現することができます。
 
-- ``needs/privileged`` - Requires ``--docker-privileged`` when running tests with ``--docker``.
-- ``needs/root`` - Requires running tests as ``root`` or with ``--docker``.
-- ``needs/ssh`` - Requires SSH connections to localhost (or the test container with ``--docker``) without a password.
-- ``needs/httptester`` - Requires use of the http-test-container to run tests.
+- ``needs/privileged`` - ``--docker`` を使用したテストの実行時に ``--docker-privileged`` を必要とします。
+- ``needs/root`` - ``root`` または ``--docker`` でテストを実行する必要があります。
+- ``needs/ssh`` - パスワードなしで localhost (または ``--docker`` を使用したテストコンテナー) への SSH 接続を必要とします。
+- ``needs/httptester`` - テストを実行するために http-test-container を使用する必要があります。
 
-Dependencies
+依存関係
 ------------
 
-Some test dependencies are automatically discovered:
+一部のテスト依存関係は自動的に検出されます。
 
-- Ansible role dependencies defined in ``meta/main.yml`` files.
-- Setup targets defined with ``setup/*`` aliases.
-- Symbolic links from one target to a file in another target.
+- ``meta/main.yml`` ファイルで定義される Ansible ロールの依存関係。
+- ``setup/*`` エイリアスで定義されたターゲットのセットアップ。
+- あるターゲットから別のターゲットのファイルへのシンボリックリンク。
 
-Aliases can be used to declare dependencies that are not handled automatically:
+エイリアスを使用すると、自動的に処理されない依存関係を宣言できます。
 
-- ``needs/target/TARGET`` - Requires use of the test target ``TARGET``.
-- ``needs/file/PATH`` - Requires use of the file ``PATH`` relative to the git root.
+- ``needs/target/TARGET`` - テストターゲット ``TARGET`` を使用する必要があります。
+- ``needs/file/PATH`` - git root に対して相対的なファイル ``PATH`` を使用する必要があります。
 
-Skipping
+スキップ
 --------
 
-Aliases can be used to skip platforms using one of the following:
+エイリアスを使用すると、以下のいずれかを使用してプラットフォームをスキップできます。
 
-- ``skip/freebsd`` - Skip tests on FreeBSD.
-- ``skip/osx`` - Skip tests on macOS.
-- ``skip/rhel`` - Skip tests on RHEL.
-- ``skip/docker`` - Skip tests when running in a Docker container.
+- ``skip/freebsd`` - FreeBSD でのテストをスキップ。
+- ``skip/osx`` - macOS でのテストをスキップ。
+- ``skip/rhel`` - RHEL でのテストをスキップ。
+- ``skip/docker`` - Docker コンテナーで実行される場合のテストをスキップ。
 
-Platform versions, as specified using the ``--remote`` option with ``/`` removed, can also be skipped:
+``--remote`` オプションで ``/`` を削除して指定したプラットフォームバージョンもスキップできます。
 
-- ``skip/freebsd11.1`` - Skip tests on FreeBSD 11.1.
-- ``skip/rhel7.6`` - Skip tests on RHEL 7.6.
+- ``skip/FreeBSD11.1`` - FreeBSD 11.1 でのテストをスキップ。
+- ``skip/rhel7.6`` - RHEL 7.6 でのテストをスキップ。
 
-Windows versions, as specified using the ``--windows`` option can also be skipped:
+``--windows`` オプションを使用して指定する Windows バージョンもスキップできます。
 
-- ``skip/windows/2008`` - Skip tests on Windows Server 2008.
-- ``skip/windows/2012-R2`` - Skip tests on Windows Server 2012 R2.
+- ``skip/windows/2008`` - Windows Server 2008 でのテストをスキップ。
+- ``skip/windows/2012-R2`` - Windows Server 2012 R2 でのテストをスキップ。
 
-Aliases can be used to skip Python major versions using one of the following:
+エイリアスを使用すると、以下のいずれかを使用して Python のメジャーバージョンをスキップできます。
 
-- ``skip/python2`` - Skip tests on Python 2.x.
-- ``skip/python3`` - Skip tests on Python 3.x.
+- ``skip/python2`` - Python 2.x でのテストをスキップ。
+- ``skip/python3`` - Python 3.x でのテストをスキップ。
 
-For more fine grained skipping, use conditionals in integration test playbooks, such as:
+より詳細なスキップを行うには、インテグレーションテストの Playbook で条件を使用します。以下に例を示します。
 
 .. code-block:: yaml
 
    when: ansible_distribution in ('Ubuntu')
 
 
-Miscellaneous
+その他
 -------------
 
-There are several other aliases available as well:
+その他にも利用できるエイリアスがあります。
 
-- ``destructive`` - Requires ``--allow-destructive`` to run without ``--docker`` or ``--remote``.
-- ``hidden`` - Target is ignored. Usable as a dependency. Automatic for ``setup_`` and ``prepare_`` prefixed targets.
+- ``destructive`` - ``--docker`` または ``--remote`` なしで実行するには ``--allow-destructive`` が必要です。
+- ``hidden`` - 対象は無視されます。依存関係として使用できます。``setup_`` および ``prepare_`` の接頭辞が付いた場合は自動です。
 
 Unstable
 --------
 
-Tests which fail sometimes should be marked with the ``unstable`` alias until the instability has been fixed.
-These tests will continue to run for pull requests which modify the test or the module under test.
+安定性が修正されるまで、``unstable`` エイリアスのマークが付けられる必要があるテスト。
+これらのテストは、そのテストの下にあるテストまたはモジュールを変更するプル要求に対して実行を継続します。
 
-This avoids unnecessary test failures for other pull requests, as well as tests on merge runs and nightly CI jobs.
+これにより、他のプル要求に対する不要なテストの失敗や、マージの実行および毎夜の CI ジョブのテストも回避されます。
 
-There are two ways to run unstable tests manually:
+不安定なテストを手動で実行する方法は 2 つあります。
 
-- Use the ``--allow-unstable`` option for ``ansible-test``
-- Prefix the test name with ``unstable/`` when passing it to ``ansible-test``.
+- ``ansible-test`` に ``--allow-unstable`` オプションを使用します。
+- テストを ``ansible-test`` に渡す際に、テスト名の前に ``unstable/`` を付けます。
 
-Tests will be marked as unstable by a member of the Ansible Core Team.
-GitHub issues_ will be created to track each unstable test.
+テストは、Ansible Core Team のメンバーによって不安定としてマークされます。
+GitHub issue_ が作成され、それぞれの不安定なテストを追跡します。
 
 Disabled
 --------
 
-Tests which always fail should be marked with the ``disabled`` alias until they can be fixed.
+常に失敗するテストでは、修正されるまで、``disabled`` なエイリアスでマークされる必要があります。
 
-Disabled tests are automatically skipped.
+無効にされたテストは自動的に省略されます。
 
-There are two ways to run disabled tests manually:
+無効にされたテストを手動で実行する方法は 2 つあります。
 
-- Use the ``--allow-disabled`` option for ``ansible-test``
-- Prefix the test name with ``disabled/`` when passing it to ``ansible-test``.
+- ``ansible-test`` に ``--allow-disabled`` オプションを使用します。
+- テストを ``ansible-test`` に渡す際に、テスト名の前に ``disabled/`` を付けます。
 
-Tests will be marked as disabled by a member of the Ansible Core Team.
-GitHub issues_ will be created to track each disabled test.
+テストは、Ansible Core Team のメンバーによって無効とマークされます。
+GitHub issue_ が作成され、無効にされた各テストを追跡します。
 
 Unsupported
 -----------
 
-Tests which cannot be run in CI should be marked with the ``unsupported`` alias.
-Most tests can be supported through the use of simulators and/or cloud plugins.
+CI で実行できないテストには、``unsupported`` エイリアスのマークを付ける必要があります。
+ほとんどのテストはシミュレーターやクラウドプラグインを使用することでサポートされます。
 
-However, if that is not possible then marking a test as unsupported will prevent it from running in CI.
+ただし、テストが使用できない場合は、サポート対象外としてテストをマークすると、CI でテストを実行できなくなります。
 
-There are two ways to run unsupported tests manually:
+サポートされないテストを手動で実行する方法は 2 つあります。
 
-* Use the ``--allow-unsupported`` option for ``ansible-test``
-* Prefix the test name with ``unsupported/`` when passing it to ``ansible-test``.
+* ``ansible-test`` に ``--allow-unsupported`` オプションを使用します。
+* テストを ``ansible-test`` に渡す際に、テスト名の前に ``unsupported/`` を付けます。
 
-Tests will be marked as unsupported by the contributor of the test.
+テストは、テストの貢献者によって unsupported とマークされます。
 
-Cloud
+クラウド
 -----
 
-Tests for cloud services and other modules that require access to external APIs usually require special support for testing in CI.
+通常、外部 API へのアクセスを必要とするクラウドサービスおよびその他のモジュールのテストには、CI でのテストに特別なサポートが必要です。
 
-These require an additional alias to indicate the required test plugin.
+これらには、必要なテストプラグインを指定するために追加のエイリアスが必要です。
 
-Some of the available aliases are:
+利用可能なエイリアスには、以下のものがあります。
 
 - ``cloud/aws``
 - ``cloud/azure``
@@ -160,23 +160,23 @@ Some of the available aliases are:
 - ``cloud/tower``
 - ``cloud/vcenter``
 
-Untested
+未テスト
 --------
 
-Every module and plugin should have integration tests, even if the tests cannot be run in CI.
+テストを CI で実行できない場合でも、すべてのモジュールおよびプラグインにインテグレーションテストが含まれる必要があります。
 
-Issues
+問題
 ------
 
-Tests that are marked as unstable_ or disabled_ will have an issue created to track the status of the test.
-Each issue will be assigned to one of the following projects:
+unstable_ または disabled_ としてマークされているテストには、テストのステータスを追跡する問題が作成されます。
+それぞれの問題は以下のプロジェクトのいずれかに割り当てられます。
 
 - `AWS <https://github.com/ansible/ansible/projects/21>`_
 - `Azure <https://github.com/ansible/ansible/projects/22>`_
 - `Windows <https://github.com/ansible/ansible/projects/23>`_
 - `General <https://github.com/ansible/ansible/projects/25>`_
 
-Questions
+ご質問はございますか。
 ---------
 
-For questions about integration tests reach out to @mattclay or @gundalow on GitHub or ``#ansible-devel`` on IRC.
+インテグレーションテストに関する質問は、GitHub で @mattclay または @gundalow 、または IRC で ``#ansible-devel`` にお問い合わせください。

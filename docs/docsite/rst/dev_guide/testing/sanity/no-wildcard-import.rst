@@ -1,14 +1,14 @@
 :orphan:
 
-no-wildcard-import
+ワイルドカードの import は使用しない
 ==================
 
-Using :code:`import *` is a bad habit which pollutes your namespace, hinders
-debugging, and interferes with static analysis of code.  For those reasons, we
-do want to limit the use of :code:`import *` in the ansible code.  Change our
-code to import the specific names that you need instead.
+:code:`import *` の使用は、名前空間を汚染し、
+デバッグを妨害し、コードの静的分析を妨害する悪い習慣です。 このような理由から、
+Ansible コードでは、:code:`import *` の使用を制限する必要があります。 代わりに、
+必要な特定の名前をインポートするようにコードを変更してください。
 
-Examples of unfixed code:
+未修正コードの例:
 
 .. code-block:: python
 
@@ -19,7 +19,7 @@ Examples of unfixed code:
     from ansible.module_utils.basic import *
     module = AnsibleModule()
 
-Examples of fixed code:
+修正されたコードの例:
 
 .. code-block:: python
 

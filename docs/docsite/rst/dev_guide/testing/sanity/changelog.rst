@@ -1,9 +1,9 @@
 changelog
 =========
 
-Basic linting of changelog fragments with yamllint and rstcheck.
+yamllint および rstcheck を使用した changelog フラグメントの基本的な文法チェック。
 
-One or more of the following sections are required:
+以下のセクションが 1 つ以上必要です。
 
 - major_changes
 - minor_changes
@@ -12,4 +12,4 @@ One or more of the following sections are required:
 - bugfixes
 - known_issues
 
-New modules and plugins must not be included in changelog fragments.
+新しいモジュールおよびプラグインは、changelog フラグメントに含めることはできません。

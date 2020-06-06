@@ -1,11 +1,11 @@
-no-basestring
+basestring は使用しない
 =============
 
-Do not use ``isinstance(s, basestring)`` as basestring has been removed in
-Python3.  You can import ``string_types``, ``binary_type``, or ``text_type``
-from ``ansible.module_utils.six`` and then use ``isinstance(s, string_types)``
-or ``isinstance(s, (binary_type, text_type))`` instead.
+Python3 ではベースストリングが削除されているため、
+``isinstance(s, basestring)`` は使用しないでください。 ``string_types``、``binary_type``、``text_type`` を、
+``ansible.module_utils.six`` からインポートして、代わりに ``isinstance(s, string_types)``、
+または ``isinstance(s, (binary_type, text_type))`` を使用します。
 
-If this is part of code to convert a string to a particular type,
-``ansible.module_utils._text`` contains several functions that may be even
-better for you: ``to_text``, ``to_bytes``, and ``to_native``.
+これが文字列を特定の型に変換するコードの一部である場合、
+``ansible.module_utils._text`` には、
+``to_text``、``to_bytes``、``to_native`` などの適した関数がいくつか含まれています。

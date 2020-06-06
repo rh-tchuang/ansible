@@ -1,4 +1,4 @@
-line-endings
+行末
 ============
 
-All files must use ``\n`` for line endings instead of ``\r\n``.
+すべてのファイルは、``\r\n`` ではなく、行末に ``\n`` を使用する必要があります。

@@ -1,5 +1,5 @@
 required-and-default-attributes
 ===============================
 
-Use only one of ``default`` or ``required`` with ``FieldAttribute``.
+``FieldAttribute`` で、``default`` または ``required`` のいずれか 1 つのみを使用してください。
 

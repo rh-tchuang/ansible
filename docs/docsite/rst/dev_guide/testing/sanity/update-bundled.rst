@@ -3,29 +3,29 @@
 update-bundled
 ==============
 
-Check whether any of our known bundled code needs to be updated for a new upstream release.
+既知のバンドルされたコードが新しいアップストリームリリース用に更新する必要があるかどうかを確認します。
 
-This test can error in the following ways:
+このテストは以下の方法でエラーが発生する可能性があります。
 
-* The bundled code is out of date with regard to the latest release on pypi.  Update the code
-  to the new version and update the version in _BUNDLED_METADATA to solve this.
+* バンドルされたコードは、PyPI の最新リリースとは関係ありません。 これを解決するには、コードを新しいバージョンに更新し、
+  _BUNDLED_METADATA のバージョンを更新します。
 
-* The code is lacking a _BUNDLED_METADATA variable.  This typically happens when a bundled version
-  is updated and we forget to add a _BUNDLED_METADATA variable to the updated file.  Once that is
-  added, this error should go away.
+* このコードには _BUNDLED_METADATA 変数がありません。 これは通常、バンドルバージョンが更新され、
+  更新されたファイルに _BUNDLED_METADATA 変数を追加し忘れた場合に発生します。 これを追加すると、
+  このエラーは解消されます。
 
-* A file has a _BUNDLED_METADATA variable but the file isn't specified in
-  :file:`test/sanity/code-smell/update-bundled.py`.  This typically happens when a new bundled
-  library is added.  Add the file to the `get_bundled_libs()` function in the `update-bundled.py`
-  test script to solve this error.
+* ファイルには _BUNDLED_METADATA 変数がありますが、
+  :file:`test/sanity/code-smell/update-bundled.py` ではそのファイルは指定されません。 これは通常、
+  新しいバンドルライブラリーが追加されたときに発生します。 このエラーを解決するには、
+  このファイルを `update-bundled.py` テストスクリプトの 
 
-_BUNDLED_METADATA has the following fields:
+`get_bundled_libs()` 関数に追加します。
 
-:pypi_name: Name of the bundled package on pypi
+:pypi_name: PyPI でバンドルされたパッケージの名前
 
-:version: Version of the package that we are including here
+:version: ここに含めるパッケージのバージョン
 
-:version_constraints: Optional PEP440 specifier for the version range that we are bundling.
-                      Currently, the only valid use of this is to follow a version that is
-                      compatible with the Python stdlib when newer versions of the pypi package
-                      implement a new API.
+:version_constraints: バンドルしているバージョン範囲のオプションの PEP440 指定子。
+                      現在、この唯一の有効な使用法は、
+                      pypi パッケージの新しいバージョンが新しい API を実装するときに、
+                      Python stdlib と互換性のあるバージョンに従うことです。

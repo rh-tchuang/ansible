@@ -1,4 +1,4 @@
 replace-urlopen
 ===============
 
-Use ``open_url`` from ``module_utils`` instead of ``urlopen``.
+``urlopen`` ではなく、``module_utils`` の ``open_url`` を使用します。

@@ -1,5 +1,5 @@
 configure-remoting-ps1
 ======================
 
-The file ``examples/scripts/ConfigureRemotingForAnsible.ps1`` is required and must be a regular file.
-It is used by external automated processes and cannot be moved, renamed or replaced with a symbolic link.
+``examples/scripts/ConfigureRemotingForAnsible.ps1`` ファイルが必要で、通常のファイルである必要があります。
+これは外部の自動化プロセスによって使用され、移動したり、名前を変更したり、シンボリックリンクに置き換えたりすることはできません。

@@ -1,4 +1,4 @@
-no-smart-quotes
+スマート引用符は使用しない
 ===============
 
-Smart quotes (``”“‘’``) should not be used.  Use plain ascii quotes (``"'``) instead.
+スマート引用符 (``”“‘’``) は使用しないでください。 代わりに、標準の ascii 引用符 (``"'``) を使用します。

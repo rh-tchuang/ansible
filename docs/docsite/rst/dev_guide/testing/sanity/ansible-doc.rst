@@ -1,4 +1,4 @@
 ansible-doc
 ===========
 
-Verifies that ``ansible-doc`` can parse module documentation on all supported Python versions.
+``ansible-doc`` が、サポートされているすべての Python バージョンでモジュールドキュメントを解析できることを確認します。

@@ -1,4 +1,4 @@
 yamllint
 ========
 
-Check YAML files for syntax and formatting issues.
+YAML ファイルで構文およびフォーマットの問題を確認します。

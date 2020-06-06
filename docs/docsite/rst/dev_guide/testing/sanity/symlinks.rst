@@ -1,6 +1,6 @@
 symlinks
 ========
 
-Symbolic links are only permitted for files that exist to ensure proper tarball generation during a release.
+シンボリックリンクは、リリース中に適切な tarball 生成を保証するファイルにのみ許可されます。
 
-If other types of symlinks are needed for tests they must be created as part of the test.
+テストに他のシンボリックリンクが必要な場合は、テストの一部として作成する必要があります。

@@ -1,9 +1,9 @@
 empty-init
 ==========
 
-The ``__init__.py`` files under the following directories must be empty.  For some of these (modules
-and tests), ``__init__.py`` files with code won't be used.  For others (module_utils), we want the
-possibility of using Python namespaces which an empty ``__init__.py`` will allow for.
+以下のディレクトリー下の ``__init__.py`` ファイルは空である必要があります。 これらの一部 (モジュールおよびテスト) では、
+コードを含む ``__init__.py`` ファイルは使用されません。 その他 (module_utils) では、
+空の ``__init__.py`` で許可される Python 名前空間を使用できるようにしたいと考えています。
 
 - ``lib/ansible/modules/``
 - ``lib/ansible/module_utils/``

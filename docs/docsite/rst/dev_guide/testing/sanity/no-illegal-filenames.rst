@@ -1,14 +1,14 @@
-no-illegal-filenames
+不正なファイル名は使用しない
 ====================
 
-Files and directories should not contain illegal characters or names so that
-Ansible can be checked out on any Operating System.
+ファイルとディレクトリーには、Ansible をどのオペレーティングシステムでもチェックアウトできるように、
+不正な文字や名前を含めないでください。
 
-Illegal Characters
+不正な文字
 ------------------
 
-The following characters are not allowed to be used in any part of the file or
-directory name;
+以下の文字は、
+ファイルまたはディレクトリーの名前には使用できません。
 
 * ``<``
 * ``>``
@@ -19,19 +19,19 @@ directory name;
 * ``|``
 * ``?``
 * ``*``
-* Any characters whose integer representations are in the range from 0 through to 31 like ``\n``
+* 整数表示が 0 から 31 までの文字 (例: ``\n``)
 
-The following characters are not allowed to be used as the last character of a
-file or directory;
+次の文字は、
+ファイルまたはディレクトリーの最後の文字には使用できません。
 
 * ``.``
-* ``" "`` (just the space character)
+* ``" "`` (空白文字のみ)
 
-Illegal Names
+不正な名前
 -------------
 
-The following names are not allowed to be used as the name of a file or
-directory excluding the extension;
+以下の名前は、
+拡張子を除くファイルまたはディレクトリーの名前には使用できません。
 
 * ``CON``
 * ``PRN``
@@ -56,6 +56,6 @@ directory excluding the extension;
 * ``LPT8``
 * ``LPT9``
 
-For example, the file ``folder/COM1``, ``folder/COM1.txt`` are illegal but
-``folder/COM1-file`` or ``folder/COM1-file.txt`` is allowed.
+たとえば、``folder/COM1``、``folder/COM1.txt`` ファイルは不正なファイルですが、
+``folder/COM1-file`` または ``folder/COM1-file.txt`` は使用できます。
 

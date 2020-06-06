@@ -3,6 +3,6 @@
 pylint-ansible-test
 ===================
 
-Python static analysis for common programming errors.
+一般的なプログラミングエラーに対する Python の静的分析。
 
-A more strict set of rules applied to ``ansible-test``.
+``ansible-test`` に適用されるより厳格なルールセットです。

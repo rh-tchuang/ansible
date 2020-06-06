@@ -1,12 +1,12 @@
-no-main-display
+main-display は使用しない
 ===============
 
-As of Ansible 2.8, ``Display`` should no longer be imported from ``__main__``.
+Ansible 2.8 では、``Display`` は、``__main__`` からインポートされなくなりました。
 
-``Display`` is now a singleton and should be utilized like the following::
+``Display`` はシングルトンで、以下のように使用する必要があります。
 
    from ansible.utils.display import Display
    display = Display()
 
-There is no longer a need to attempt ``from __main__ import display`` inside
-a ``try/except`` block.
+``try/except`` ブロック内の ``from __main__ import display`` 
+から試行する必要がなくなりました。

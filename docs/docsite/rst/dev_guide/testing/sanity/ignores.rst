@@ -1,99 +1,99 @@
-ignores
+ignore
 =======
 
-Sanity tests for individual files can be skipped, and specific errors can be ignored.
+個々のファイルの健全性テストはスキップでき、特定のエラーを無視できます。
 
-When to Ignore Errors
+エラーを無視するタイミング
 ---------------------
 
-Sanity tests are designed to improve code quality and identify common issues with content.
-When issues are identified during development, those issues should be corrected.
+健全性テストは、コードの品質を改善し、コンテンツに関する典型的な問題を特定するように設計されています。
+開発中に問題を特定する際に、問題を修正する必要があります。
 
-As development of Ansible continues, sanity tests are expanded to detect issues that previous releases could not.
-To allow time for existing content to be updated to pass newer tests, ignore entries can be added.
-New content should not use ignores for existing sanity tests.
+Ansible の開発が続いていくと、以前のリリースにはなかった問題を検出するために健全性テストが拡張されていきます。
+既存のコンテンツを更新して新しいテストにパスする時間を許可するには、ignore エントリーを追加できます。
+新しいコンテンツでは、既存の健全性テストで ignore を使用しないでください。
 
-When code is fixed to resolve sanity test errors, any relevant ignores must also be removed.
-If the ignores are not removed, this will be reported as an unnecessary ignore error.
-This is intended to prevent future regressions due to the same error recurring after being fixed.
+コードが修正されて健全性テストエラーを解決する場合には、関連する ignore も削除する必要があります。
+ignore が削除されないと、不要な ignore エラーが報告されます。
+これは、修正後に同じエラーが繰り返し発生するため、今後のリグレッションを防ぐことを目的としています。
 
-When to Skip Tests
+テストをスキップするタイミング
 ------------------
 
-Although rare, there are reasons for skipping a sanity test instead of ignoring the errors it reports.
+頻繁には起こりませんが、報告されたエラーを無視する代わりに、健全性テストをスキップする場合があります。
 
-If a sanity test results in a traceback when processing content, that error cannot be ignored.
-If this occurs, open a new `bug report <https://github.com/ansible/ansible/issues/new?template=bug_report.md>`_ for the issue so it can be fixed.
-If the traceback occurs due to an issue with the content, that issue should be fixed.
-If the content is correct, the test will need to be skipped until the bug in the sanity test is fixed.
+コンテンツの処理時に健全性テストでトレースバックが発生すると、そのエラーは無視できません。
+この問題が発生した場合は、`バグレポート <https://github.com/ansible/ansible/issues/new?template=bug_report.md>`_ を新規作成して修正してください。
+コンテンツの問題が原因でトレースバックが発生した場合は、その問題を解決する必要があります。
+コンテンツが正しい場合は、健全性テストのバグが修正されるまでテストをスキップする必要があります。
 
-    Caution should be used when skipping sanity tests instead of ignoring them.
-    Since the test is skipped entirely, resolution of the issue will not be automatically detected.
-    This will prevent prevent regression detection from working once the issue has been resolved.
-    For this reason it is a good idea to periodically review skipped entries manually to verify they are required.
+    健全性テストを無視するのではなくスキップする場合は注意が必要です。
+    テストは完全にスキップされるため、問題の解決は自動的に検出されません。
+    これにより、問題が解決すると回帰検出が機能しなくなります。
+    このため、スキップしたエントリーを定期的に手動で確認して、そのエントリーが必要かどうかを確認することが推奨されます。
 
-Ignore File Location
+ignore ファイルの場所
 --------------------
 
-The location of the ignore file depends on the type of content being tested.
+ignore ファイルの場所は、テストするコンテンツの種類によって異なります。
 
-Ansible Collections
+Ansible コレクション
 ~~~~~~~~~~~~~~~~~~~
 
-Since sanity tests change between Ansible releases, a separate ignore file is needed for each Ansible major release.
+健全性テストは Ansible リリース間で異なるため、Ansible メジャーリリースごとに個別の ignore ファイルが必要です。
 
-The filename is ``tests/sanity/ignore-X.Y.txt`` where ``X.Y`` is the Ansible release being used to test the collection.
+ファイル名は ``tests/sanity/ignore-X.Y.txt`` です。``X.Y`` はコレクションをテストするために使用される Ansible リリースです。
 
-Maintaining a separate file for each Ansible release allows a collection to pass tests for multiple versions of Ansible.
+Ansible リリースごとに個別のファイルを維持すると、コレクションが Ansible の複数のバージョンのテストに合格できるようになります。
 
 Ansible
 ~~~~~~~
 
-When testing Ansible, all ignores are placed in the ``test/sanity/ignore.txt`` file.
+Ansible をテストする際、すべての ignore は ``test/sanity/ignore.txt`` ファイルに配置されます。
 
-Only a single file is needed because ``ansible-test`` is developed and released as a part of Ansible itself.
+``ansible-test`` が作成され、Ansible 自体の一部としてリリースされるため、単一のファイルのみが必要になります。
 
-Ignore File Format
+ignore ファイル形式
 ------------------
 
-The ignore file contains one entry per line.
-Each line consists of two columns, separated by a single space.
-Comments may be added at the end of an entry, started with a hash (``#``) character, which can be proceeded by zero or more spaces.
-Blank and comment only lines are not allowed.
+ignore ファイルでは、1 行に 1 つのエントリーが含まれます。
+各行は、1 つのスペースで区切られた 2 つの列で構成されます。
+コメントはエントリーの末尾に追加できます。先頭にハッシュ (``#``) 文字を付けて、空白をゼロ以上追加できます。
+空白とコメントのみの行は使用できません。
 
-The first column specifies the file path that the entry applies to.
-File paths must be relative to the root of the content being tested.
-This is either the Ansible source or an Ansible collection.
-File paths cannot contain a space or the hash (``#``) character.
+最初の列は、エントリーが適用されるファイルパスを指定します。
+ファイルパスは、テストするコンテンツのルートに対する相対パスでなければなりません。
+これは Ansible ソースまたは Ansible コレクションのいずれかです。
+ファイルパスには、空白文字またはハッシュ文字 (``#``) を含めることはできません。
 
-The second column specifies the sanity test that the entry applies to.
-This will be the name of the sanity test.
-If the sanity test is specific to a version of Python, the name will include a dash (``-``) and the relevant Python version.
-If the named test uses error codes then the error code to ignore must be appended to the name of the test, separated by a colon (``:``).
+2 列目は、エントリーが適用される健全性テストを指定します。
+これが健全性テストの名前になります。
+Python のバージョンに固有な健全性テストを使用する場合は、名前にダッシュ (``-``) と関連する Python バージョンが含まれます。
+名前付きテストがエラーコードを使用する場合は、無視するエラーコードをコロン (``:``) で区切ってテストの名前に追加する必要があります。
 
-Below are some example ignore entries for an Ansible collection::
+以下の例は、Ansible コレクションのエントリーを無視します。
 
     roles/my_role/files/my_script.sh shellcheck:SC2154 # ignore undefined variable
     plugins/modules/my_module.py validate-modules:E105 # ignore license check
     plugins/modules/my_module.py import-3.8 # needs update to support collections.abc on Python 3.8+
 
-It is also possible to skip a sanity test for a specific file.
-This is done by adding ``!skip`` after the sanity test name in the second column.
-When this is done, no error code is included, even if the sanity test uses error codes.
+特定ファイルの健全性テストをスキップすることもできます。
+これは、2 番目のコラムの健全性テスト名の後に ``!skip`` を追加することで行います。
+これを行うと、健全性テストでエラーコードを使用しても、エラーコードは含まれません。
 
-Below are some example skip entries for an Ansible collection::
+以下は、Ansible コレクションのエントリーをスキップする例です。
 
     plugins/module_utils/my_util.py validate-modules!skip # waiting for bug fix in module validator
     plugins/lookup/my_plugin.py compile-2.6!skip # Python 2.6 is not supported on the controller
 
-Ignore File Errors
+ignore ファイルエラー
 ------------------
 
-There are various errors that can be reported for the ignore file itself:
+ignore ファイル自体について報告できるさまざまなエラーがあります。
 
-- syntax errors parsing the ignore file
-- references a file path that does not exist
-- references to a sanity test that does not exist
-- ignoring an error that does not occur
-- ignoring a file which is skipped
-- duplicate entries
+- ignore ファイルを解析する構文エラー
+- 存在しないファイルパスを参照
+- 存在しない健全性テストへの参照
+- 発生しないエラーを無視する
+- 省略されるファイルを無視する
+- 重複エントリー

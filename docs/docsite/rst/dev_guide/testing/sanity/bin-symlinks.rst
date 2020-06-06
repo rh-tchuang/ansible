@@ -1,11 +1,11 @@
 bin-symlinks
 ============
 
-The ``bin/`` directory in Ansible must contain only symbolic links to executable files.
-These files must reside in the ``lib/ansible/`` or ``test/lib/ansible_test/`` directories.
+Ansible の ``bin/`` ディレクトリーには、実行ファイルへのシンボリックリンクのみが含まれている必要があります。
+これらのファイルは、``lib/ansible/`` ディレクトリーまたは ``test/lib/ansible_test/`` ディレクトリーに存在する必要があります。
 
-This is required to allow ``ansible-test`` to work with containers and remote hosts when running from an installed version of Ansible.
+これは、インストール済みバージョンの Ansible から実行する際に、``ansible-test`` がコンテナーおよびリモートホストで動作できるようにするために必要です。
 
-Symlinks for each entry point in ``bin/`` must also be present in ``test/lib/ansible_test/_data/injector/``.
-Each symlink should point to the ``python.py`` script in the same directory.
-This facilitates running with the correct Python interpreter and enabling code coverage.
+``bin/`` の各エントリーポイントのシンボリックリンクも ``test/lib/ansible_test/_data/injector/`` に存在する必要があります。
+各シンボリックリンクは、同じディレクトリーの ``python.py`` スクリプトを参照する必要があります。
+これにより、正しい Python インタープリターを使用して実行し、コード対象を有効にすることができます。

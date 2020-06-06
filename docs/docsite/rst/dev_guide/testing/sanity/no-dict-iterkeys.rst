@@ -1,7 +1,7 @@
-no-dict-iterkeys
+dict-iterkeys は使用しない
 ================
 
-The ``dict.iterkeys`` method has been removed in Python 3. Use the following instead:
+``dict.iterkeys`` メソッドは、Python 3 で削除されました。代わりに次のコマンドを使用します。
 
 .. code-block:: python
 

@@ -1,4 +1,4 @@
 test-constraints
 ================
 
-Constraints for test requirements should be in ``test/runner/requirements/constraints.txt``.
+テスト要件の制約は、``test/runner/requirements/constraints.txt`` にあります。

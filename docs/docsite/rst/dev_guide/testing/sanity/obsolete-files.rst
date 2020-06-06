@@ -1,14 +1,14 @@
-obsolete-files
+陳腐化したファイル
 ==============
 
-Directories in the Ansible source tree are sometimes made obsolete.
-Files should not exist in these directories.
-The new location (if any) is dependent on which directory has been made obsolete.
+Ansible ソースツリーのディレクトリーは廃止されることがあります。
+ファイルはこれらのディレクトリーには存在すべきではありません。
+新しい場所 (存在する場合) は廃止されたディレクトリーによって異なります。
 
-Below are some of the obsolete directories and their new locations:
+古いディレクトリーとその新しい場所を以下に示します。
 
-- All of ``test/runner/`` is now under ``test/lib/ansible_test/`` instead. The organization of files in the new directory has changed.
-- Most subdirectories of ``test/sanity/`` (with some exceptions) are now under ``test/lib/ansible_test/_data/sanity/`` instead.
+- ``test/runner/`` は、すべて ``test/lib/ansible_test/`` の下に置かれます。新しいディレクトリーのファイルの編成が変更になりました。
+- ``test/sanity/`` (例外あり) のサブディレクトリーのほとんどは、代わりに ``test/lib/ansible_test/_data/sanity/`` の下にあります。
 
-This error occurs most frequently for open pull requests which add or modify files in directories which are now obsolete.
-Make sure the branch you are working from is current so that changes can be made in the correct location.
+このエラーは、現在古くなったディレクトリーのファイルを追加または変更するオープンプル要求に対して最も頻繁に発生します。
+正しい場所で変更できるように、作業しているブランチが現在の状態であることを確認します。

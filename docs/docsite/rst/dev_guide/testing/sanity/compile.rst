@@ -1,4 +1,4 @@
 compile
 =======
 
-See :ref:`testing_compile` for more information.
+詳細は、:ref:`testing_compile` を参照してください。

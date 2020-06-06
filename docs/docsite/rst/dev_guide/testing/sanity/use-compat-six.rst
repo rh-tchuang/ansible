@@ -1,4 +1,4 @@
 use-compat-six
 ==============
 
-Use ``six`` from ``module_utils`` instead of ``six``.
+``six`` ではなく、``module_utils`` の ``six`` を使用してください。

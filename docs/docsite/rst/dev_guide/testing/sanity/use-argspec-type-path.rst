@@ -1,10 +1,10 @@
 use-argspec-type-path
 =====================
 
-The AnsibleModule argument_spec knows of several types beyond the standard python types.  One of
-these is ``path``.  When used, type ``path`` ensures that an argument is a string and expands any
-shell variables and tilde characters.
+AnsibleModule の argument_spec は、標準の python タイプ以外のタイプを認識します。 そのうちの 1 つは
+``path`` です。 使用する際は、``path`` と入力すると、
+引数が文字列になり、シェル変数とチルド文字が展開されます。
 
-This test looks for use of :func:`os.path.expanduser <python:os.path.expanduser>` in modules.  When found, it tells the user to
-replace it with ``type='path'`` in the module's argument_spec or list it as a false positive in the
-test.
+このテストは、モジュールの :func:`os.path.expanduser <python:os.path.expanduser>` の使用を検索します。 検出された場合は、モジュールの argument_spec で ``type='path'`` に置き換えるか、
+テストで誤検出としてリストするように、
+ユーザーに指示します。

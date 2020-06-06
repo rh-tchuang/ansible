@@ -1,4 +1,4 @@
 botmeta
 =======
 
-Verifies that ``./github/BOTMETA.yml`` is valid.
+``./github/BOTMETA.yml`` が有効であることを確認します。

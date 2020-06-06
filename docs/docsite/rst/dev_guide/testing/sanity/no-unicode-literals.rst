@@ -1,16 +1,16 @@
 no-unicode_literals
 ===================
 
-The use of :code:`from __future__ import unicode_literals` has been deemed an anti-pattern.  The
-problems with it are:
+:code:`from __future__ import unicode_literals` の使用はアンチパターンとなります。 これには、
+以下のような問題があります。
 
-* It makes it so one can't jump into the middle of a file and know whether a bare literal string is
-  a byte string or text string.  The programmer has to first check the top of the file to see if the
-  import is there.
-* It removes the ability to define native strings (a string which should be a byte string on python2
-  and a text string on python3) via a string literal.
-* It makes for more context switching.  A programmer could be reading one file which has
-  `unicode_literals` and know that bare string literals are text strings but then switch to another
-  file (perhaps tracing program execution into a third party library) and have to switch their
-  understanding of what bare string literals are.
+* これにより、ファイルの途中に移動して、
+  未指定のリテラル文字列がバイト文字列かテキスト文字列かを理解することができなくなります。 プログラマーは最初にファイルの先頭をチェックして、
+  インポートがあるかどうかを確認する必要があります。
+* これにより、
+  文字列リテラルを介してネイティブ文字列 (python2 ではバイト文字列、python3 ではテキスト文字列である必要がある文字列) を定義する機能が削除されます。
+* これは、コンテキストの切り替えに役に立ちます。 プログラマーは、
+  `unicode_literals` がある 1 つのファイルを読み取り、未指定の文字列リテラルがテキスト文字列であること認識していますが、
+  (おそらくプログラム実行をサードパーティのライブラリにトレースする) 別のファイルに切り替え、
+  未指定の文字列リテラルとは何かについての理解を切り替える必要があります。
 

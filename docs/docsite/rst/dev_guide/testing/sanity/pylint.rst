@@ -1,4 +1,4 @@
 pylint
 ======
 
-Python static analysis for common programming errors.
+一般的なプログラミングエラーに対する Python の静的分析。

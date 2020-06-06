@@ -1,7 +1,7 @@
-no-dict-iteritems
+dict-iteritems は使用しない
 =================
 
-The ``dict.iteritems`` method has been removed in Python 3. There are two recommended alternatives:
+``dict.iteritems`` メソッドは、Python 3 で削除されました。推奨される方法には、以下の 2 つがあります。
 
 .. code-block:: python
 

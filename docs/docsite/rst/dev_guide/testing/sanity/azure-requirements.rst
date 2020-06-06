@@ -1,7 +1,7 @@
 azure-requirements
 ==================
 
-Update the Azure integration test requirements file when changes are made to the Azure packaging requirements file:
+Azure パッケージ化の要件ファイルに変更が加えられると、Azure 統合テスト要件ファイルを更新します。
 
 .. code-block:: bash
 

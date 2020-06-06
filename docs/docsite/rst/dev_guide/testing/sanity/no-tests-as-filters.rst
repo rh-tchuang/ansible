@@ -1,12 +1,12 @@
 :orphan:
 
-no-tests-as-filters
+テストをフィルターとして使用しない
 ===================
 
-Using Ansible provided Jinja2 tests as filters will be removed in Ansible 2.9.
+Ansible が提供する Jinja2 テストをフィルターとして使用することは、Ansible 2.9 で削除されます。
 
-Prior to Ansible 2.5, Jinja2 tests included within Ansible were most often used as filters. The large difference in use is that filters are referenced as ``variable | filter_name`` while Jinja2 tests are referenced as ``variable is test_name``.
+Ansible 2.5 よりも前のバージョンでは、Ansible 内に含まれる Jinja2 テストは最も頻繁にフィルターとして使用されていました。使用における大きな違いは、フィルターが ``variable | filter_name`` として参照され、Jinja2 テストは ``variable is test_name`` として参照される点です。
 
-Jinja2 tests are used for comparisons, whereas filters are used for data manipulation, and have different applications in Jinja2. This change is to help differentiate the concepts for a better understanding of Jinja2, and where each can be appropriately used.
+Jinja2 テストは比較に使用されますが、フィルターはデータ操作に使用され、Jinja2 ではアプリケーションが異なります。この変更は、Jinja2 をよりよく理解するために概念を区別し、それぞれを適切に使用できるようにするためのものです。
 
-As of Ansible 2.5 using an Ansible provided Jinja2 test with filter syntax will display a deprecation error.
+Ansible 2.5 以降では、Ansible が提供する Jinja2 テストをフィルター構文で使用すると、非推奨エラーが表示されます。
