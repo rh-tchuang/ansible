@@ -1,89 +1,89 @@
 
-Trademark Usage
+商標の使用方法
 ``````````````````````````````````````
-Why is it important to use the TM, SM, and ® for our registered marks?
+登録商標に TM、SM、および ® を使用することが重要な理由
 
-Before a trademark is registered with the United States Patent and Trademark Office it is appropriate to use the TM or SM symbol depending whether the product is for goods or services. It is important to use the TM or SM as it is notification to the public that Ansible claims rights to the mark even though it has not yet been registered. 
+商標が米国特許商標局に登録される前に、TM または SM の記号を使用することは、製品が商品用かサービス用かによって異なります。TM または SM は、登録される前から、Ansible がそのマークに対する権利を主張していることを公に通知するため、TM または SM を使用することが重要です。 
 
-Once the trademark is registered, it is appropriate to use the symbol in place of the TM or SM. The symbol designation must be used in conjunction with the trademark if Ansible is to fully protect its rights. If we don't protect these marks, we run the risk of losing them in the way of Aspirin or Trampoline or Escalator.
+商標が登録されたら、TM または SM の代わりにシンボルを使用することが適切です。Ansible がその権利を完全に保護する場合は、シンボルと商標を組み合わせて使用する必要があります。これらのマークを保護しないと、アスピリン、トランポリン、エスカレーターなどのように、権利を失う場合があります。
 
-General Rules: 
+一般的なルール:
 +++++++++++++++
 
-Trademarks should be used on 1st references on a page or within a section.
+商標は、ページ内またはセクション内で最初に参照する際に使用する必要があります。
 
-Use Red Hat® Ansible Tower® or Ansible®, on first reference when referring to products.
+製品を最初に参照する際に、Red Hat® Ansible Tower® または Ansible® のように使用してください。
  
-Use "Ansible" alone as the company name, as in "Ansible announced quarterly results," which is not marked.
+「Ansible」を会社名として使用する場合は、「Ansible announced quarterly results」(Ansible 四半期決算発表) のように、マークを付けずに使用します。
 
-Also add the trademark disclaimer.
-* When using Ansible trademarks in the body of written text, you should use the following credit line in a prominent place, usually a footnote.
+商標の免責事項も追加します。
+* 文章の本文に Ansible 商標を使用する場合は、目立つ場所、通常は脚注に次のような行を追加する必要があります。
 
-    For Registered Trademarks:
+    登録商標の場合:
     - [Name of Trademark] is a registered trademark of Red Hat, Inc. in the United States and other countries.
     
-    For Unregistered Trademarks (TMs/SMs):
+    未登録商標 (TM/SM) の場合:
     - [Name of Trademark] is a trademark of Red Hat, Inc. in the United States and other countries.
 
-    For registered and unregistered trademarks:
+    登録商標および未登録商標の場合:
     - [Name of Trademark] is a registered trademark and [Name of Trademark] is a trademark of Red Hat, Inc. in the United States and other countries.
 
-Guidelines for the proper use of trademarks:
+商標の適切な使用に関するガイドライン:
 +++++++++++++++++++++++++++++++++++++++++++++
  
- Always distinguish trademarks from surround text with at least initial capital letters or in all capital letters.
+ 商標を、周囲のテキストと区別するために、少なくとも頭文字を大文字にするか、すべての文字を大文字にします。
 
-Always use proper trademark form and spelling.
+常に適切な商標の形式とスペルを使用してください。
 
-Never use a trademark as a noun. Always use a trademark as an adjective modifying the noun.
+商標は、名詞として使用しないでください。商標は、常に名詞を修飾する形容詞として使用してください。
 
-    Correct:
+    正しい形: 
     Red Hat® Ansible Tower® system performance is incredible.
 
-    Incorrect:
+    誤った形: 
     Ansible's performance is incredible.
     
-Never use a trademark as a verb. Trademarks are products or services, never actions.
+商標は、動詞として使用しないでください。商標は製品またはサービスであり、動作ではありません。
 
-    Correct:
+    正しい形: 
     "Orchestrate your entire network using Red Hat® Ansible Tower®."
     
-    Incorrect:
+    誤った形: 
     "Ansible your entire network."
 
-Never modify a trademark to a plural form. Instead, change the generic word from the singular to the plural.
+商標を複数形に変更しないでください。代わりに、一般的な単語を単数形から複数形に変更します。
 
-    Correct:
+    正しい形: 
     "Corporate demand for Red Hat® Ansible Tower® configuration software is surging."
 
-    Incorrect:
+    誤った形: 
     "Corporate demand for Ansible is surging."
     
-Never modify a trademark from its possessive form, or make a trademark possessive. Always use it in the form it has been registered.
+商標を所有格から変更したり、商標を所有格にしたりしないでください。必ず登録した形を使用してください。
 
-Never translate a trademark into another language.
+商標を別の言語に翻訳しないでください。
 
-Never use trademarks to coin new words or names.
+商標を使用して新しい単語や名前を作成しないでください。
 
-Never use trademarks to create a play on words.
+商標を使用して言葉遊びを作成しないでください。
 
-Never alter a trademark in any way including through unapproved fonts or visual identifiers.
+未承認のフォントや視覚的な識別子など、いかなる方法でも商標を変更しないでください。
 
-Never abbreviate or use any Ansible trademarks as an acronym.
+Ansible の商標を省略したり、頭文字だけ使用しないでください。
 
-The importance of Ansible trademarks
+Ansible 商標の重要性
 ++++++++++++++++++++++++++++++++++++++++++++++++
 
-The Ansible trademark and the "A" logo in a shaded circle are our most valuable assets. The value of these trademarks encompass the Ansible Brand. Effective trademark use is more than just a name, it defines the level of quality the customer will receive and it ties a product or service to a corporate image. A trademark may serve as the basis for many of our everyday decisions and choices. The Ansible Brand is about how we treat customers and each other. In order to continue to build a stronger more valuable Brand we must use it in a clear and consistent manner.
+Ansible 商標と、影付きの円で囲まれた「A」のロゴは、私たちの最も貴重な資産です。これらの商標の価値には、Ansible ブランドが含まれます。商標の効果的な使用は単なる名前ではなく、お客様が受け取る品質のレベルを定義し、製品またはサービスを企業イメージに結び付けます。商標は、私たちが日常行う多くの判断や選択の基準になることがあります。Ansible ブランドは、私たちがお客様、そして互いをどのように対応しているかを示しています。より強力でより価値のあるブランドを構築し続けるためには、明確で一貫した方法でそれを使用する必要があります。
 
-The mark consists of the letter "A" in a shaded circle. As of 5/11/15, this was a pending trademark (registration in process).
+このマークは、影付きの円で囲まれた文字「A」で構成されています。2015 年 5 月 11 日の時点で、この商標は係属中 (登録手続き中) でした。
 
-Common Ansible Trademarks
+一般的な Ansible の商標
 +++++++++++++++++++++++++++++++++++++++
 * Ansible®
 * Ansible Tower®
 
-Other Common Trademarks and Resource Sites:
+その他の一般的な商標およびリソースのサイト:
 ++++++++++++++++++++++++++++++++++++++++++++++++
 - Linux is a registered trademark of Linus Torvalds.
 - UNIX® is a registered trademark of The Open Group.

@@ -1,8 +1,8 @@
-Resources
+リソース
 ````````````````
-* Follow the style of the :ref:`Ansible Documentation<ansible_documentation>`
-* Ask for advice on IRC, on the ``#ansible-devel`` Freenode channel
-* Review these online style guides:
+* 「:ref:`Ansible ドキュメント<ansible_documentation>`」のスタイルに従ってください。
+* Freenode チャンネル ``#ansible-devel`` の IRC で質問してください。
+* オンラインのスタイルガイドを確認してください。
 
   * `AP Stylebook <https://www.apstylebook.com>`_
   * `Chicago Manual of Style <https://www.chicagomanualofstyle.org/home.html>`_

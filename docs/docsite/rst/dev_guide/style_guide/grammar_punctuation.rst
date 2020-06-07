@@ -1,38 +1,38 @@
 
-Grammar and Punctuation 
+文法および句読点
 ``````````````````````````````````````
 
-Common Styles and Usage, and Common Mistakes
+一般的なスタイルおよび使用方法、ならびに一般的な間違い
 ----------------------------------------------------
 
 Ansible
 ~~~~~~~~~
-* Write "Ansible." Not "Ansible, Inc." or "AnsibleWorks The only exceptions to this rule are when we're writing legal or financial statements.
+* "Ansible" と書きます。 「Ansible, Inc.」または「AnsibleWorks」にはしないでください。このルールの唯一の例外は、法的文書または財務諸表を作成する場合です。
 
-* Never use the logotype by itself in body text. Always keep the same font you are using the rest of the sentence.
+* ロゴマークは、本文で使用しないでください。その他の文章で使用しているフォントを常に使用します。
 
-* A company is singular in the US. In other words, Ansible is an "it," not a "they."
+* 米国では、会社は単数形で使用します。つまり、Ansible は、「they」ではなく「it」になります。
 
 
-Capitalization
+大文字
 ~~~~~~~~~~~~~~
-If it's not a real product, service, or department at Ansible, don't capitalize it. Not even if it seems important. Capitalize only the first letter of the first word in headlines.
+Ansible の実際の製品、サービス、または部門ではない場合には、大文字にしないでください。重要に思えてもです。見出しの最初の単語の最初の文字だけを大文字にします。
 
-Colon
+コロン
 ~~~~~~~~~~~~~~~~~
-A colon is generally used before a list or series:
+通常、コロンは、リストまたは一連の要素の前に使用されます。
 - The Triangle Area consists of three cities: Raleigh, Durham, and Chapel Hill.
 
-But not if the list is a complement or object of an element in the sentence:
+ただし、リストが、文内の要素の補語または目的語の場合は、以下のようにします。
 - Before going on vacation, be sure to (1) set the alarm, (2) cancel the newspaper, and (3) ask a neighbor to collect your mail.
 
-Use a colon after "as follows" and "the following" if the related list comes immediately after:
-wedge The steps for changing directories are as follows:
+直後に関連するリストを追加する場合は、「as follows」および「the following」(次のとおり) の後にコロンを使用します。
+「The steps for changing directories are as follows:」(ディレクトリーを変更する手順は次のとおりです。)
 
-    1. Open a terminal.
-    2. Type cd...
+    1.Open a terminal.
+    2.Type cd...
 
-Use a colon to introduce a bullet list (or dash, or icon/symbol of your choice):
+コロンを使用して、箇条書きリスト (ダッシュ、アイコンまたは記号を使用) 追加します。
 
     In the Properties dialog box, you'll find the following entries:
     
@@ -41,41 +41,41 @@ Use a colon to introduce a bullet list (or dash, or icon/symbol of your choice):
     - Cost per item
 
 
-Commas
+コンマ
 ~~~~~~~~~~~
-Use serial commas, the comma before the "and" in a series of three or more items: 
+3 つ以上の項目が続く場合は、「and」の前にコンマを使用します。 
 
-- "Item 1, item 2, and item 3."
+- 「Item 1, item 2, and item 3.」
 
    
-It's easier to read that way and helps avoid confusion. The primary exception to this you will see is in PR, where it is traditional not to use serial commas because it is often the style of journalists.
+こうすれば読みやすくなり、混乱を避けることができます。これに対する主な例外は PR です。PR では、多くの場合ジャーナリスト向けのスタイルにより、このようなコンマは使用しません。
 
-Commas are always important, considering the vast difference in meanings of the following two statements.
+次の 2 つの文章の意味が大きく異なることを考えると、コンマは常に重要です。
 
 - Let's eat, Grandma
 - Let's eat Grandma.
 
-Correct punctuation could save Grandma's life.
+正しい句読点により、おばあさんの命を救うことができます。
 
-If that does not convince you, maybe this will:
+もしくは、以下の例をご覧ください。
 
 .. image:: images/commas-matter.jpg
 
 
-Contractions
+縮約
 ~~~~~~~~~~~~~
-Do not use contractions in Ansible documents.
+Ansible ドキュメントで縮約は使用しないでください。
 
-Em dashes
+エムダッシュ (－)
 ~~~~~~~~~~
-When possible, use em-dashes with no space on either side. When full em-dashes aren't available, use double-dashes with no spaces on either side--like this.
+可能な場合は、両側にスペースを入れずにエムダッシュ (－) を使用します。エムダッシュ (－) が利用できない場合は、両側に空白を入れずに二重ダッシュを使用します。
 
-A pair of em dashes can be used in place of commas to enhance readability. Note, however, that dashes are always more emphatic than commas.
+読みやすくするために、コンマの代わりにエムダッシュをペアにして使用できます。ただし、ダッシュはコンマよりも常に強調されることに注意してください。
 
-A pair of em dashes can replace a pair of parentheses. Dashes are considered less formal than parentheses; they are also more intrusive. If you want to draw attention to the parenthetical content, use dashes. If you want to include the parenthetical content more subtly, use parentheses.
+エムダッシュのペアは、括弧のペアの代わりに使用することもできます。ダッシュは括弧よりも形式的ではないと見なされ、押しつけがましく感じることもあります。括弧内のコンテンツに注意を引きたい場合は、ダッシュを使用します。括弧内のコンテンツにあまり注意を引きたくない場合は、括弧を使用します。
 
 .. note::
-    When dashes are used in place of parentheses, surrounding punctuation should be omitted. Compare the following examples.
+    括弧の代わりにダッシュを使用する場合は、前後の句読点を省略してください。次の例を比較してください。
 
 ::
 
@@ -84,7 +84,7 @@ A pair of em dashes can replace a pair of parentheses. Dashes are considered les
     Upon discovering the errors—all 124 of them—the publisher immediately recalled the books.
 
 
-When used in place of parentheses at the end of a sentence, only a single dash is used.
+文末に括弧の代わりに使用する場合は、ダッシュを 1 つだけに使用します。
 
 ::
 
@@ -93,26 +93,26 @@ When used in place of parentheses at the end of a sentence, only a single dash i
     After three weeks on set, the cast was fed up with his direction—or, rather, lack of direction.
 
 
-Exclamation points (!)
+感嘆符 (!)
 ~~~~~~~~~~~~~~~~~~~~~~~
-Do not use them at the end of sentences. An exclamation point can be used when referring to a command, such as the bang (!) command.
+文末には使用しないでください。感嘆符は、bang (!) などのコマンドを参照する場合に使用できます。
 
-Gender References
+性別の参照
 ~~~~~~~~~~~~~~~~~~
-Do not use gender-specific pronouns in documentation. It is far less awkward to read a sentence that uses "they" and "their" rather than "he/she" and "his/hers." 
+ドキュメンテーションでは、性別固有の代名詞は使用しないでください。「he/she」や「his/hers」ではなく「they」および「their」を使用する文を読む方が適切です。 
 
-It is fine to use "you" when giving instructions and "the user," "new users," etc. in more general explanations. 
+指示を示す場合は「you」と使用し、より一般的な説明では「the user」、「new users」などを使用すると良いでしょう。 
 
-Never use "one" in place of "you" when writing technical documentation. Using "one" is far too formal.
+テクニカルドキュメントを作成する際は、「You」 の代わりに「one」は使用しないでください。「one」を使用すると堅苦しくなります。
 
-Never use "we" when writing. "We" aren't doing anything on the user side. Ansible's products are doing the work as requested by the user.
+作成時に「we」は使用しないでください。「We」はユーザー側では何も行われていません。Ansible の製品は、ユーザーの要求に応じて作業を行っています。
 
 
-Hyphen
+ハイフン
 ~~~~~~~~~~~~~~
-The hyphen's primary function is the formation of certain compound terms. Do not use a hyphen unless it serves a purpose. If a compound adjective cannot be misread or, as with many psychological terms, its meaning is established, a hyphen is not necessary.
+このハイフンの主な機能は、特定の複合用語の特徴です。目的が満たされない限り、ハイフンは使用しないでください。複合形容詞が間違って解釈されない場合、または多くの心理学用語と同じ様に、その意味が確立されている場合、ハイフンは必要ありません。
 
-Use hyphens to avoid ambiguity or confusion:
+ハイフンは、あいまいさや混乱を避けるためにを使用します。
 
 ::
 
@@ -132,70 +132,70 @@ Use hyphens to avoid ambiguity or confusion:
 
 .. image:: images/hyphen-funny.jpg
 
-In professionally printed material (particularly books, magazines, and newspapers), the hyphen is used to divide words between the end of one line and the beginning of the next. This allows for an evenly aligned right margin without highly variable (and distracting) word spacing.
+適切な編集が必要な出版物 (特に本、雑誌、新聞) では、単語が行をまたがる場合にハイフンを使用します。これにより、単語の間隔が大きく変わる (そして気が散る) ことなく、右マージンを均等に揃えることができます。
 
 
-Lists
+リスト
 ~~~~~~~
-Keep the structure of bulleted lists equivalent and consistent. If one bullet is a verb phrase, they should all be verb phrases. If one is a complete sentence, they should all be complete sentences, etc.
+箇条書きリストの構造を同等で一貫性のあるものにします。1 つの箇条書きを動詞句にした場合は、残りもすべて動詞句にする必要があります。1 つの箇条書きを文にした場合は、残りもすべて文にする必要があります。
 
-Capitalize the first word of each bullet. Unless it is obvious that it is just a list of items, such as a list of items like:
+箇条書きでは、それぞれ最初の単語を大文字にします。次のような項目のリストなど、単に項目のリストであることが明らかである場合は除きます。
 * computer
 * monitor
 * keyboard
 * mouse
 
-When the bulleted list appears within the context of other copy, (unless it's a straight list like the previous example) add periods, even if the bullets are sentence fragments. Part of the reason behind this is that each bullet is said to complete the original sentence.
+箇条書きに他の文章が含まれる場合は、(上の例のような単純なリストでない限り) 箇条書きが完全な文になっていなくてもピリオドを追加します。この理由の 1 つは、各箇条書きが元の文を完了すると言われているためです。
 
-In some cases where the bullets are appearing independently, such as in a poster or a homepage promotion, they do not need periods.
+箇条書きがポスターやホームページのプロモーションなどのように独立して示される場合は、ピリオドは必要ありません。
 
-When giving instructional steps, use numbered lists instead of bulleted lists.
+手順を説明するときは、箇条書きの代わりに番号付きリストを使用してください。
 
 
-Months and States
+月および州
 ~~~~~~~~~~~~~~~~~~~~
-Abbreviate months and states according to AP. Months are only abbreviated if they are used in conjunction with a day. Example: "The President visited in January 1999." or "The President visited Jan. 12."
+AP スタイルブックに従って、月と州の名前を省略します。月は、日付と組み合わせて使用される場合に限り省略されます。たとえば、「The President visited in January 1999.」または「The President visited Jan. 12.」です。
 
-Months: Jan., Feb., March, April, May, June, July, Aug., Sept., Nov., Dec.
+月: Jan.、Feb.、March、April、May、June、July、Aug.、Sept.、Nov.、Dec.
 
-States: Ala., Ariz., Ark., Calif., Colo., Conn., Del., Fla., Ga., Ill., Ind., Kan., Ky., La., Md., Mass., Mich., Minn., Miss., Mo., Mont., Neb., Nev., NH, NJ, NM, NY, NC, ND, Okla., Ore., Pa., RI, SC, SD, Tenn., Vt., Va., Wash., W.Va., Wis., Wyo.
+州: Ala.、Ariz.、Ark.、Calif.、Colo.、Conn.、Del.、Fla.、Ga.、Ill.、Ind.、Kan.、Ky.、La.、Md.、Mass.、Mich.、Minn.、Miss.、Mo.、Mont.、Neb.、Nev.、NH、NJ、NM、NY、NC、ND、Okla.、Ore.、Pa.、RI、SC、SD、Tenn.、Vt.、Va.、Wash.、W.Va.、Wis.、Wyo.
 
-Numbers
+数字
 ~~~~~~~~~
-Numbers between one and nine are written out. 10 and above are numerals. The exception to this is writing "4 million" or "4 GB." It's also acceptable to use numerals in tables and charts.
+1 から 9 までの数字が使用されます。10 以上の値は数字を使用します。「4 million」または「4 GB」などは例外となります。 また、表やチャートでは数値を使用することもできます。
 
-Phone Numbers
+電話番号
 +++++++++++++++
 
-Phone number style: 1 (919) 555-0123 x002 and 1 888-GOTTEXT
+電話番号の形式: 1 (919) 555-0123 x002 および 1 888-GOTTEXT
 
 
-Quotations (Using Quotation Marks and Writing Quotes)
+引用 (引用符の使用と引用の記述)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      "Place the punctuation inside the quotes," the editor said.
 
-Except in rare instances, use only "said" or "says" because anything else just gets in the way of the quote itself, and also tends to editorialize.
+まれな場合を除いて、「said」または「say」だけを使用してください。それ以外は、引用の邪魔になり、編集される傾向があるためです。
 
-Place the name first right after the quote:
+引用の直後に名前を追加します。
      "I like to write first-person because I like to become the character I'm writing," Wally Lamb said. 
 
-Not:
+以下のようにはしないでください。
        "I like to write first-person because I like to become the character I'm writing," said Wally Lamb. 
 
 
-Semicolon
+セミコロン
 ~~~~~~~~~~~~~~~
-Use a semicolon to separate items in a series if the items contain commas:
+項目にコンマが含まれている場合は、セミコロンを使用して項目を区切ります。
 
 - Everyday I have coffee, toast, and fruit for breakfast; a salad for lunch; and a peanut butter sandwich, cookies, ice cream, and chocolate cake for dinner.
 
-Use a semicolon before a conjunctive adverb (however, therefore, otherwise, namely, for example, etc.):
-- I think; therefore, I am.
+接続詞副詞 (however、therefore、otherwise、namely、for example) の前にセミコロンを使用します。
+「I think; therefore, I am.」のようにします。
 
-Spacing after sentences
+文の後のスペース
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Use only a single space after a sentence.
+文の後には、シングルスペースのみを使用してください。
 
-Time
+時間
 ~~~~~~~~
-* Time of day is written as "4 p.m."
+* 時刻は「4 p.m」とします。

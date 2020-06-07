@@ -1,67 +1,67 @@
 .. _styleguide_basic:
 
-Basic rules
+基本ルール
 ===========
 .. contents::
   :local:
 
-Use standard American English
+標準的なアメリカ英語の使用
 -----------------------------
-Ansible uses Standard American English. Watch for common words that are spelled differently in American English (color vs colour, organize vs organise, etc.).
+Ansible は標準的なアメリカ英語を使用します。アメリカ英語では綴りが異なる一般的な単語に注意してください (color と colour、organize と organise など)。
 
-Write for a global audience
+世界中の読者に向けて書く
 ---------------------------
-Everything you say should be understandable by people of different backgrounds and cultures. Avoid idioms and regionalism and maintain a neutral tone that cannot be misinterpreted. Avoid attempts at humor.
+記載される内容は、生い立ちや文化が違っても理解できるものでなければなりません。イディオムや地域主義は使用せず、誤って解釈されない中立的な表現を使用します。ユーモアな表現は使用しないでください。
 
-Follow naming conventions
+命名規則に従う
 -------------------------
-Always follow naming conventions and trademarks.
+命名規則と商標には常に従ってください。
 
-.. good place to link to an Ansible terminology page
+.. Ansible の用語ページへのリンクを追加するのに適した場所
 
-Use clear sentence structure
+明確な文構造を使用する
 ----------------------------
-Clear sentence structure means:
+明確な文法構造とは、以下のようになります。
 
-- Start with the important information first.
-- Avoid padding/adding extra words that make the sentence harder to understand.
-- Keep it short - Longer sentences are harder to understand.
+- 重要な情報を最初に示します。
+- 文章の理解が難しくなるような単語は使用しないでください。
+- 文章は短くします。文章が長くなればなるほど、理解が難しくなります。
 
-Some examples of improving sentences:
+たとえば、以下のように改善できます。
 
-Bad:
-    The unwise walking about upon the area near the cliff edge may result in a dangerous fall and therefore it is recommended that one remains a safe distance to maintain personal safety.
+問題がある文章: 
+    The unwise walking about upon the area near the cliff edge may result in a dangerous fall and therefore it is recommended that one remains a safe distance to maintain personal safety. (崖の端近くを歩き回ると、下に落ちる危険があります。安全を維持するために安全な距離を保つことをお勧めします。)
 
-Better:
-    Danger! Stay away from the cliff.
+改善例: 
+    Danger! Stay away from the cliff. (危険です。崖から離れてください。)
 
-Bad:
-    Furthermore, large volumes of water are also required for the process of extraction.
+問題がある文章: 
+    Furthermore, large volumes of water are also required for the process of extraction. (また、抜歯のプロセスには、水が大量に必要になります。)
 
-Better:
-    Extraction also requires large volumes of water.
+改善例: 
+    Extraction also requires large volumes of water. (抜歯には、大量の水が必要です。)
 
-Avoid verbosity
+冗長を避ける
 ---------------
-Write short, succinct sentences. Avoid terms like:
+短く簡潔な文章を書きます。以下のような用語は使用しないでください。
 
-- "...as has been said before,"
-- "..each and every,"
-- "...point in time,"
-- "...in order to,"
+- 「...as has been said before」
+- 「...each and every」
+- 「...point in time」
+- 「...in order to」
 
-Highlight menu items and commands
+メニュー項目およびコマンドを強調表示する
 ---------------------------------
-When documenting menus or commands, it helps to **bold** what is important.
+メニューまたはコマンドを文書化する場合は、重要な内容を **太字** にすると役立ちます。
 
-For menu procedures, bold the menu names, button names, etc to help the user find them on the GUI:
+メニュー手順では、メニュー名、ボタン名などを太字にして、GUI でその文字を見つけられるようにします。
 
-1. On the **File** menu, click **Open**.
-2. Type a name in the **User Name** field.
-3. In the **Open** dialog box, click **Save**.
-4. On the toolbar, click the **Open File** icon.
+1. **ファイル** メニューで、**開く** をクリックします。
+2. **ユーザー名** フィールドに名前を入力します。
+3. **開く** ダイアログボックスで、**保存** をクリックします。
+4. ツールバーで、**ファイルを開く** アイコンをクリックします。
 
-For code or command snippets, use the RST `code-block directive <https://www.sphinx-doc.org/en/1.5/markup/code.html#directive-code-block>`_::
+コードまたはコマンドスニペットについては、RST `code-block directive <https://www.sphinx-doc.org/en/1.5/markup/code.html#directive-code-block>`_ を参照してください。::
 
    .. code-block:: bash
 

@@ -1,20 +1,20 @@
 
-Voice Style
+態のスタイル
 `````````````````````
-The essence of the Ansible writing style is short sentences that flow naturally together. Mix up sentence structures. Vary sentence subjects. Address the reader directly. Ask a question. And when the reader adjusts to the pace of shorter sentences, write a longer one.
+Ansible ライティングスタイルの特長は、自然に一緒に流れる短い文です。文法構造は混在させます。文の主題を変化させます。読者に直接話しかけます。質問します。読者が短い文章のペースに順応したら、長い文章を書いてください。
 
-- Write how real people speak...
-- ...but try to avoid slang and colloquialisms that might not translate well into other languages.
-- Say big things with small words.
-- Be direct. Tell the reader exactly what you want them to do.
-- Be honest.
-- Short sentences show confidence.
-- Grammar rules are meant to be bent, but only if the reader knows you are doing this.
-- Choose words with fewer syllables for faster reading and better understanding.
-- Think of copy as one-on-one conversations rather than as a speech. It's more difficult to ignore someone who is speaking to you directly.
-- When possible, start task-oriented sentences (those that direct a user to do something) with action words. For example: Find software... Contact support... Install the media.... and so forth.
+- 実際のユーザーが話すように記述します。
+- ...ただし、他言語に適切に翻訳できない可能性のある俗語や口語表現は避けるようにしてください。
+- 小さなことばで大きなことを説明します。
+- 直接的な表現を使用してください。読み手が実行する必要がある内容を正確に指示します。
+- 誠実に表現します。
+- 短い文章は自信を示しています。
+- 文法規則は、何を説明しているかを読者が理解している場合に限り組み込まれることが意図されています。
+- 読みやすく、理解を深めるために、音節が少ない単語を選んでください。
+- コピーは、聴衆に対するスピーチではなく、1 対 1 の対話と考えてください。直接話しかけている人を無視するのはより困難です。
+- 可能な場合は、タスク指向の文章 (ユーザーによる作業を指示する項目) は、動作を示す用語で開始します。たとえば、「Find software...」、「Contact support...」、「Install the media...」などです。
 
-Active Voice
+能動態
 ------------------
-Use the active voice ("Start Linuxconf by typing...") rather than passive ("Linuxconf can be started by typing...") whenever possible. Active voice makes for more lively, interesting reading.
-Also avoid future tense (or using the term "will") whenever possible For example, future tense ("The screen will display...") does not read as well as an active voice ("The screen displays"). Remember, the users you are writing for most often refer to the documentation while they are using the system, not after or in advance of using the system.
+可能な限り、受動態 (「"Linuxconf can be started by typing...」) ではなく、能動態 (「Start Linuxconf by typing...」) を使用します。能動態の方がより生き生きとした、注意を引き付ける文章になります。
+また、未来時制 (または「will」の使用) は可能な限り使用しないでください。たとえば、未来時制 (「The screen will display...」) と能動態 (「The screen displays」) では、ニュアンスが異なります。ほとんどの場合、読者は、そのシステムの使用前または使用後ではなく、使用中にドキュメントを参照する点に注意してください。

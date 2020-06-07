@@ -1,327 +1,327 @@
-Spelling - Word Usage - Common Words and Phrases to Use and Avoid
+スペル、単語の使用、およびに使用または回避する一般的な単語とフレーズ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Acronyms
+略語
 ++++++++++++++++
 
-Always uppercase. An acronym is a word formed from the initial letters of a name, such as ROM for Read-only memory,
-SaaS for Software as a Service, or by combining initial letters or part of a series of words, such as LILO for LInux
-LOader.
+常に大文字になります。略語とは、「Read-only memory」の代わりに「ROM」を使用するなど、名前の最初の文字を組み合わせた単語です。
+最初の文字 (「Software as a Service」を「SaaS」) を組み合わせたもの、
+または一連の単語の一部 (「LInux LOader」を「LILO」にするなど) を組み合わせたものがあります。
 
-Spell out the acronym before using it in alone text, such as "The Embedded DevKit (EDK)..."
+略語は、単独で使用する前に、「The Embedded devkit(EDK)...」のように文字を略さずに書いて使用します。
 
-Applications
+アプリケーション
 +++++++++++++++++++
-When used as a proper name, use the capitalization of the product, such as GNUPro, Source-Navigator, and Ansible Tower. When used as a command, use lowercase as appropriate, such as "To start GCC, type ``gcc``."
+固有名詞として使用する場合は、GNUPro、Source-Navigator、Ansible Tower のように製品の大文字を使用します。コマンドとして使用する場合は、「To start GCC, type ``gcc``」(GCC を起動する場合は、``gcc`` を入力します。)のように、適切な小文字を使用します。
 
 .. note::
 
-    "vi" is always lowercase.
+    「vi」は常に小文字です。
 
 As
 ++++++++
-This is often used to mean "because", but has other connotations, for example, parallel or simultaneous actions. If you mean "because", say "because".
+これは、原因を示す場合によく使用されますが、並列または同時の操作など、他の意味もあります。「原因」を意味する場合は、「because」を使用してください。
 
 Asks for
 ++++++++++++++++
-Use "requests" instead.
+代わりに「requests」を使用してください。
 
 Assure/Ensure/Insure
 ++++++++++++++++++++++++++++
-Assure implies a sort of mental comfort. As in "I assured my husband that I would eventually bring home beer."
+「assure」は、一種の精神的な安心さを意味します。たとえば、「I assured my husband that I would eventually bring home beer. (私は夫に最終的に家のビールを持ってくることを保証しました。)」のように使います。
 
-Ensure means "to make sure."
+「ensure」は、「確実に」を意味します。
 
-Insure relates to monetary insurance.
+「insure」は、金銭的な保険に関係があります。
 
 
 Back up
 ++++++++++++++
-This is a verb. You "back up" files; you do not "backup" files.
+これは動詞です。ファイルを「バックアップ」するときは、「backup」ではなく、「back up」と記載します (You back up files)。
 
 Backup
 ++++++++++
-This is a noun. You create "backup" files; you do not create "back up" files.
+これは名詞です。「バックアップ」ファイルを作成するときは、「back up」ではなく、「backup」と記載します (You create backup files)。
 
 Backward
 ++++++++++++++
-Correct. Avoid using backwards unless you are stating that something has "backwards compatibility."
+適切です。「backwards compatibility」(後方互換性) 以外の説明に、「backward」という単語を使用しないでください。
 
 Backwards compatibility
 ++++++++++++++++++++++++
-Correct as is.
+そのまま使用します。
 
 By way of
 ++++++++++++++++++
-Use "using" instead.
+代わりに「using」を使用してください。
 
 Can/May
 ++++++++++++++
-Use "can" to describe actions or conditions that are possible. Use "may" only to describe situations where permission is being given. If either "can," "could," or "may" apply, use "can" because it's less tentative.
+「can」は、可能な操作や条件を説明するのに使用します。許可が必要な状況を説明するには、「may」を使用します。「can」、「could」、または「may」のいずれかが当てはまる場合は、「can」を使用します (暫定的な意味合いが少ないため)。
 
-CD or cd
+CD または cd
 +++++++++++++++
-When referring to a compact disk, use CD, such as "Insert the CD into the CD-ROM drive." When referring to the change directory command, use cd. 
+コンパクトディスクを参照する場合は、CD を使用します。たとえば、「Insert the CD into the CD-ROM drive.」(CD を CD-ROM ドライブに挿入します。) とします。 ディレクトリーを変更する change directory コマンドを示す場合は、cd を使用します。 
 
 CD-ROM
 +++++++++++++
-Correct. Do not use "cdrom," "CD-Rom," "CDROM," "cd-rom" or any other variation. When referring to the drive, use CD-ROM drive, such as "Insert the CD into the CD-ROM drive." The plural is "CD-ROMs."
+適切です。「cdrom」、「CD-Rom」、「CDROM」、「cd-rom」などは使用しないでください。ドライブを参照する場合は、「CD-ROM drive」を使用します。たとえば、「Insert the CD into the CD-ROM drive.」(CD を CD-ROM ドライブに挿入します。) となります。 複数形は「CD-ROMs」です。
 
 
 Command line
 +++++++++++++++++++
-Correct. Do not use "command-line" or "commandline." 
+適切です。「command-line」または「commandline」は使用しないでください。 
 
-Use to describes where to place options for a command, but not where to type the command. Use "shell prompt" instead to describe where to type commands. The line on the display screen where a command is expected. Generally, the command line is the line that contains the most recently displayed command prompt.
+コマンドオプションの場所を記述するために使用しますが、コマンドを入力する場所を示す場合は使用しません。コマンドを入力する場所を説明する場合は、代わりに「shell prompt」を使用します。コマンドが期待される画面上の行です。通常、コマンドラインは、最後に表示されるコマンドプロンプトを含む行です。
 
 
 Daylight saving time (DST)
 +++++++++++++++++++++++++++++++
 
-Correct. Do not use daylight savings time. Daylight Saving Time (DST) is often misspelled "Daylight Savings", with an "s" at the end. Other common variations are "Summer Time"and "Daylight-Saving Time". (https://www.timeanddate.com/time/dst/daylight-savings-time.html)
+適切です。「daylight savings time」は使用しないでください。「Daylight Saving Time (DST)」は、「Daylight Savings」のように、最後に s が付いている場合がありますが、これは間違いです。その他の一般的な表記法には、「Summer Time」および「Daylight-Saving Time」(https://www.timeanddate.com/time/dst/daylight-savings-time.html) があります。
 
 
 Download
 ++++++++++++++++
-Correct. Do not use "down load" or "down-load."
+適切です。「down load」または「down-load」は使用しないでください。
 
 e.g.
 ++++++++++
-Spell it out: "For example."
+省略せずに「For example」とします。
 
 Failover
 +++++++++++++++
-When used as a noun, a failover is a backup operation that automatically switches to a standby database, server or network if the primary system fails or is temporarily shut down for servicing. Failover is an important fault tolerance function of mission-critical systems that rely on constant accessibility. Failover automatically and transparently to the user redirects requests from the failed or down system to the backup system that mimics the operations of the primary system.
+名詞として使用する場合、フェイルオーバーは、プライマリーシステムに障害が発生した場合、またはサービスが一時的にシャットダウンした場合に、スタンバイデータベース、サーバー、またはネットワークに自動的に切り替わるバックアップ操作です。フェイルオーバーは、持続するアクセシビリティーが必要なミッションクリティカルなシステムにおける重要な耐障害性機能です。自動的かつ透過的にフェイルオーバーすると、障害が発生したシステムまたはダウンしたシステムから、プライマリーシステムの動作を模倣するバックアップシステムに要求がリダイレクトされます。
 
 Fail over
 ++++++++++++
-When used as a verb, fail over is two words since there can be different tenses such as failed over.
+動詞として使用する場合は、時制を変えられるように (failed over など)、2 つの単語にします。
 
 Fewer
 +++++++++++++++++++
-Fewer is used with plural nouns. Think things you could count.  Time, money, distance, and weight are often listed as exceptions to the traditional "can you count it" rule, often thought of a singular amounts (the work will take less than 5 hours, for example).
+fewer は、複数形の名詞で使用します。数を数えることができるものに使用します。 時間、お金、距離、および重量は、従来の「数えることができるか」ルールの例外として挙げられることが多く、通常は 1 つの量と見なされます。たとえば、「the work will take less than 5 hours」(作業にかかる時間は 5 時間未満です)。
 
 File name
 +++++++++++++
-Correct. Do not use "filename."
+適切です。「filename」は使用しないでください。
 
 File system
 +++++++++++++++++++
-Correct. Do not use "filesystem." The system that an operating system or program uses to organize and keep track of files. For example, a hierarchical file system is one that uses directories to organize files into a tree structure. Although the operating system provides its own file management system, you can buy separate file management systems. These systems interact smoothly with the operating system but provide more features, such as improved backup procedures and stricter file protection.
+適切です。「filesystem」は使用しないでください。 オペレーティングシステムまたはプログラムがファイルを整理し、追跡するために使用するシステム。たとえば、階層ファイルシステムは、ディレクトリーを使用してファイルをツリー構造に編成するものです。オペレーティングシステムは独自のファイル管理システムを提供していますが、別のファイル管理システムを購入することもできます。このようなシステムはオペレーティングシステムとスムーズに対話しますが、バックアップ手順の改善やファイル保護の強化など、より多くの機能を提供します。
 
 For instance
 ++++++++++++++
-For example," instead.
+代わりに「For example」を使用します。
 
 For further/additional/whatever information
 ++++++++++++++++++++++++++++++++++++++++++++++
-Use "For more information"
+「For more information」を使用します。
 
 For this reason
 ++++++++++++++++++
-Use "therefore".
+「therefore」を使用します。
 
 Forward
 ++++++++++++++
-Correct. Avoid using "forwards."
+適切です。「forwards」は使用しないでください。
 
 Gigabyte (GB)
 ++++++++++++++
-2 to the 30th power (1,073,741,824) bytes. One gigabyte is equal to 1,024 megabytes. Gigabyte is often abbreviated as G or GB.
+2 の 30 乗 (1,073,741,824) バイト。1 ギガバイトは 1,024 メガバイトに相当します。ギガバイトは多くの場合は、G または GB として省略されます。
 
 Got
 ++++++++++++++
-Avoid. Use "must" instead.
+使用しないでください。代わりに「must」を使用してください。
 
 High-availability
 ++++++++++++++++++
-Correct. Do not use "high availability."
+適切です。「hight availability」は使用しないでください。
 
 Highly available
 ++++++++++++++++++
-Correct. Do not use highly-available."
+適切です。「highly-available」は使用しないでください。
 
 Hostname
 +++++++++++++++++
-Correct. Do not use host name.
+適切です。ホスト名は使用しないでください。
 
 i.e.
 ++++++++++++++
-Spell it out: "That is."
+「That is」を使用してください。
 
 Installer
 ++++++++++++++
-Avoid. Use "installation program" instead.
+使用しないでください。代わりに「インストールプログラム」を使用してください。
 
-It's and its
+It's および its
 ++++++++++++++
-"It's" is a contraction for "it is;" use "it is" instead of "it's." Use "its" as a possessive pronoun (for example, "the store is known for its low prices").
+「It's」は「it is」の短縮形です。「it's」ではなく「it is」を使用します。 所有代名詞は「its」と使用します。たとえば「the store is known for its low prices」(この店は低価格で知られています) となります。
 
 Less
 ++++++++++++
-Less is used with singular nouns. For example "View less details" wouldn't be correct but "View less detail" works. Use fewer when you have plural nouns (things you can count).
+Less は単数名詞で使用されます。たとえば、「View less details」は間違っていますが、「View less detail」は適切です。複数名詞 (数えられる物) には、「fewer」を使用します。
 
 Linux
 ++++++++++++++
-Correct. Do not use "LINUX" or "linux" unless referring to a command, such as "To start Linux, type linux." Linux is a registered trademark of Linus Torvalds.
+適切です。コマンドを参照している場合 (たとえば「To start Linux, type linux」(Linux を起動する場合は、linux と入力します)) を除き、「LINUX」または「linux」を使用しないでください。 Linux は、Linus Torvalds の登録商標です。
 
 Login
 ++++++++++++++
-A noun used to refer to the login prompt, such as "At the login prompt, enter your username."
+ログインプロンプトを示すために使用している名詞。たとえば、「At the login prompt, enter your username.」(ログインプロンプトでユーザー名を入力してください。) とします。
 
 Log in
 ++++++++++++++
-A verb used to refer to the act of logging in. Do not use "login," "loggin," "logon," and other variants. For example, "When starting your computer, you are requested to log in..."
+ログインの動作を参照するために使用される動詞。「login」、「loggin」、「loggin」などの形は使用しないでください。たとえば、「When starting your computer, you are requested to log in...」(コンピューターを起動すると、ログインを要求されます...) と表示されます。
 
 Log on
 ++++++++++++++
-To make a computer system or network recognize you so that you can begin a computer session. Most personal computers have no log-on procedure -- you just turn the machine on and begin working. For larger systems and networks, however, you usually need to enter a username and password before the computer system will allow you to execute programs.
+コンピューターセッションを開始できるように、コンピューターシステムまたはネットワークにユーザーを認識させること。ほとんどのコンピューターにはログオン手順がありません。マシンの電源を入れれば動きます。ただし、大規模システムやネットワークの場合には、通常、コンピュータシステムでプログラムを実行する前に、ユーザー名とパスワードを入力する必要があります。
 
 Lots of
 ++++++++++++++
-Use "Several" or something equivalent instead.
+代わりに「Several」などの単語を使用してください。
 
 Make sure
 ++++++++++++++
-This means "be careful to remember, attend to, or find out something." For example, "...make sure that the rhedk group is listed in the output."
-Try to use verify or ensure instead.
+これは、「何かを覚えたり、注意したり、見つけたりするように注意する」という意味です。 たとえば、「...make sure that the rhedk group is listed in the output.」(rhedk グループが出力の一覧に含まれていることを確認してください。) となります。
+代わりに verify や ensure を使用してください。
 
 Manual/man page
 ++++++++++++++++++
-Correct. Two words. Do not use "manpage"
+適切です。2 つの単語になります。「manpage」は使用しないでください。
 
 MB
 ++++++++
-(1) When spelled MB, short for megabyte (1,000,000 or 1,048,576 bytes, depending on the context).
-(2) When spelled Mb, short for megabit.
+(1) MB は、メガバイト (状況に応じて 1,000,000 バイトまたは 1,048,576 バイト) の略語です。
+(2) Mb は、メガビットの略語です。
 
 MBps
 ++++++++++++++
-Short for megabytes per second, a measure of data transfer speed. Mass storage devices are generally measured in MBps.
+1 秒あたりのメガバイトの略語で、データ転送速度の測定単位です。通常、大容量ストレージデバイスは、MBps で表されます。
 
 MySQL
 ++++++++++++++
-Common open source database server and client package. Do not use "MYSQL" or "mySQL."
+一般的なオープンソースデータベースサーバーおよびクライアントパッケージ。「MYSQL」または「mySQL」は使用しないでください。
 
 Need to
 ++++++++++++++
-Avoid. Use "must" instead.
+使用しないでください。代わりに「must」を使用してください。
 
 Read-only
 ++++++++++++
-Correct. Use when referring to the access permissions of files or directories.
+適切です。ファイルまたはディレクトリーのアクセスパーミッションを参照する場合に使用します。
 
 Real time/real-time
 ++++++++++++++++++++++
-Depends. If used as a noun, it is the actual time during which something takes place. For example, "The computer may partly analyze the data in real time (as it comes in) -- R. H. March." If used as an adjective, "real-time" is appropriate. For example, "XEmacs is a self-documenting, customizable, extensible, real-time display editor."
+状況によります。名詞として使用する場合は、何かが行われる実際の時間になります。たとえば、「The computer may partly analyze the data in real time (as it comes in) -- R. H. March」(コンピュータはデータをリアルタイムで部分的に分析する場合があります (R. H.マーチ)) となります。 形容詞として使用する場合は、「real-time」が適切です。たとえば、「XEmacs is a self-documenting, customizable, extensible, real-time display editor.」(XEmacs は、自己文書化を行う、カスタマイズ可能で、拡張可能な、リアルタイムディスプレイエディターです。) となります。
 
 Refer to
 ++++++++++++++
-Use to indicate a reference (within a manual or website) or a cross-reference (to another manual or documentation source).
+参照 (マニュアルまたは Web サイト内) または相互参照 (別のマニュアルまたはドキュメントソース) を示すために使用します。
 
 See
 ++++++++++++++
-Don't use. Use "Refer to" instead.
+使用しないでください。代わりに「Refer to」を使用してください。
 
 Since
 ++++++++
-This is often used to mean "because", but "since" has connotations of time, so be careful. If you mean "because", say "because".
+この単語は「原因」を意味するためによく使用されますが、「since」には時間の意味合いがあるため、注意してください。「原因」を意味する場合は、「because」を使用してください。
 
 Tells
 ++++++++++++++
-Use "Instructs" instead.
+代わりに「Instructs」を使用してください。
 
 That/which
 ++++++++++++++
-"That" introduces a restrictive clause-a clause that must be there for the sentence to make sense. A restrictive clause often defines the noun or phrase preceding it. "Which" introduces a non-restrictive, parenthetical clause-a clause that could be omitted without affecting the meaning of the sentence. For example: The car was travelling at a speed that would endanger lives. The car, which was traveling at a speed that would endanger lives, swerved onto the sidewalk. Use "who" or "whom," rather than "that" or "which," when referring to a person.
+「That」は、制限節、つまり文が意味を成すために必要な条項を追加します。制限節は、多くの場合、その前にある名詞または句を定義します。「Which」は、文の意味に影響を及ぼさずに省略できる、非制限の、挿入節を追加します。たとえば、「The car was travelling at a speed that would endanger lives.」(人命を危険にさらす速度で車が走行していました。) と、「The car, which was traveling at a speed that would endanger lives, swerved onto the sidewalk.」(人命を危険にさらす速度で走行していた車は歩道にのり上げました。) です。人を指す場合は、「that」または「which」ではなく「who」または「whom」を使用します。
 
 Then/than
 ++++++++++++++
- "Then" refers to a time in the past or the next step in a sequence. "Than" is used for comparisons.
+ 「Then」は、ひと続きのものの中から、シーケンスの過去のステップまたは次のステップの時間を指します。比較には「Than」が使用されます。
 
 .. image:: images/thenvsthan.jpg
 
 Third-party
-++++++++++++++ 
-Correct. Do not use "third party".
+++++++++++++++
+適切です。「third party」を使用しないでください。
 
 Troubleshoot
 ++++++++++++++
-Correct. Do not use "trouble shoot" or "trouble-shoot." To isolate the source of a problem and fix it. In the case of computer systems, the term troubleshoot is usually used when the problem is suspected to be hardware -related. If the problem is known to be in software, the term debug is more commonly used.
+適切です。「trouble shoot」または「trouble-shoot」は使用しないでください。 問題の原因を特定して修正するためのものです。コンピューターシステムの場合、トラブルシューティングという用語は通常、問題がハードウェア関連であると疑われる場合に使用されます。問題がソフトウェアにあることが分かっている場合、より一般的に使用されるのは「debug」です。
 
 UK
 ++++++++++++++
-Correct as is, no periods.
+このとおりに使用します。ピリオドは付けません。
 
 UNIX®
 ++++++++++++++
-Correct. Do not use "Unix" or "unix." UNIX® is a registered trademark of The Open Group.
+適切です。「Unix」または「unix」は使用しないでください。 UNIX®は、The Open Group の登録商標です。
 
 Unset
 ++++++++++++++
-Don't use. Use Clear.
+使用しないでください。「Clear」を使用します。
 
 US
 ++++++++++++++
-Correct as is, no periods.
+このとおりに使用します。ピリオドは付けません。
 
 User
 ++++++++++++++
-When referring to the reader, use "you" instead of "user." For example, "The user must..." is incorrect. Use "You must..." instead. If referring to more than one user, calling the collection "users" is acceptable, such as "Other users may wish to access your database."
+読み手を示す場合は、「user」ではなく「you」を使用します。 たとえば、「The user must...」は正しくありません。代わりに「You must...」を使用してください。複数のユーザーを示す場合は、その集合体を「users」と呼ぶことが可能です。たとえば、「Other users may to access your database.」(その他のユーザーがデータベースにアクセスすることを望む可能性があります。) です。
 
 Username
 ++++++++++++++
-Correct. Do not use "user name."
+適切です。「user name」は使用しないでください。
 
 View
 ++++++++++++++
-When using as a reference ("View the documentation available online."), do not use View. Use "Refer to" instead.
+参照として使用する場合、たとえば (「View the documentation available online.」(オンラインで使用可能なドキュメントを参照してください。) とする場合、「View」は使用しないでください。代わりに「Refer to」を使用してください。
 
 Within
 ++++++++++++++
-Don't use to refer to a file that exists in a directory. Use "In".
+ディレクトリーにあるファイルを参照する場合は使用しないでください。「In」を使用します。
 
 World Wide Web
 ++++++++++++++
-Correct. Capitalize each word. Abbreviate as "WWW" or "Web."
+適切です。各単語を大文字にします。省略形は「WWW」または「Web」を使用します。
 
 Webpage
 ++++++++++++++
-Correct. Do not use "web page" or "Web page."
+適切です。「web page」または「Web page」は使用しないでください。
 
 Web server
 ++++++++++++++
-Correct. Do not use "webserver". For example, "The Apache HTTP Server is the default Web server..."
+適切です。「webserver」は使用しないでください。たとえば、「The Apache HTTP Server is the default Web server...」(Apache HTTP サーバーはデフォルトの Web サーバー...) です。
  
 Website
 ++++++++++++++
-Correct. Do not use "web site" or "Web site." For example, "The Ansible website contains ..."
+適切です。「web site」または「Web site」は使用しないでください。 たとえば、「The Ansible website contains ...」(Ansible web サイトに...含まれます。) となります。
 
 Who/whom
 ++++++++++++++
-Use the pronoun "who" as a subject. Use the pronoun "whom" as a direct object, an indirect object, or the object of a preposition. For example: Who owns this? To whom does this belong?
+主語には、代名詞「who」を使用します。直接目的語、間接目的語、または前置詞の目的語には、代名詞の目的格「whom」を使用します。たとえば、「Who owns this?」(これは誰が所有していますか?) や、「To whom does this belong?」(これは誰のものですか?) となります。
 
 Will
 ++++++++++++++
-Do not use future tense unless it is absolutely necessary. For instance, do not use the sentence, "The next section will describe the process in more detail." Instead, use the sentence, "The next section describes the process in more detail."
+絶対に必要な場合を除いて、未来時制は使用しないでください。たとえば、「The next section will describe the process in more detail.」(次のセクションでプロセスを詳しく説明します。) ではなく、 「The next section describes the process in more detail.」とします。
 
 Wish
 ++++++++++++++
-Use "need" instead of "desire" and "wish." Use "want" when the reader's actions are optional (that is, they may not "need" something but may still "want" something).
+「desire」および「wish」の代わりに「need」を使用します。 読者の操作が任意の場合 (つまり、何かを「必要としない」かもしれないが、それでも何かを「望んでいる」可能性がある場合) は「want」を使用します。
 
 x86
 ++++++++++++++
-Correct. Do not capitalize the "x."
+適切です。「x」を大文字にしないでください。
 
 x86_64
 ++++++++++++++
-Do not use. Do not use "Hammer". Always use "AMD64 and Intel® EM64T" when referring to this architecture.
+使用しないでください。「Hammer」を使用しないでください。このアーキテクチャーを参照する場合は必ず「AMD64 and Intel® EM64T」としてください。
 
 You
 ++++++++++++++
-Correct. Do not use "I," "he," or "she."
+適切です。「I」、「he」、「she」は使用しないでください。
 
 You may
 ++++++++++++++
-Try to avoid using this. For example, "you may" can be eliminated from this sentence "You may double-click on the desktop..."
+この表現は使用しないようにしてください。たとえば、「You may double-click on the desktop...」(あなたはデスクトップ上でダブルクリックすることができます...) という意味の文からは「you man」を省くことができます。
 

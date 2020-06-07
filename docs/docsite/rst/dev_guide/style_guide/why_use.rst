@@ -1,22 +1,22 @@
 :orphan:
 
-Why Use a Style Guide?
+スタイルガイドを使用する理由
 `````````````````````````````````
 
-Style guides are important because they ensure consistency in the content, look, and feel of a book or a website.
+スタイルガイドは、ドキュメントまたは Web サイトのコンテンツおよびルックアンドフィールの一貫性を確保するために重要です。
 
-Remember, a style guide is only useful if it is used, updated, and enforced.  Style Guides are useful for engineering-related documentation, sales and marketing materials, support docs, community contributions, and more.
+スタイルガイドは、使用、更新、および実施される場合にのみ役立つことに注意してください。 スタイルガイドは、エンジニアリング関連のドキュメント、営業およびマーケティング用資料、サポートドキュメント、コミュニティーへの貢献などに役立ちます。
 
-As changes are made to the overall Ansible site design, be sure to update this style guide with those changes. Or, should other resources listed below have major revisions, consider including company information here for ease of reference.
+Ansible サイトのデザイン全体に変更が加えられた場合は、その変更に合わせて本スタイルガイドも更新してください。または、以下に記載されているその他の資料に大幅な改訂がある場合は、参照しやすいようにここに会社情報を含めることを検討してください。
 
-This style guide incorporates current Ansible resources and information so that overall site and documentation consistency can be met.
+このスタイルガイドには、現在の Ansible リソースと情報が組み込まれているため、サイトとドキュメント全体の一貫性を保つことができます。
 
 .. raw:: html
 
    <blockquote class="note info">
 
-   "If you don't find it in the index, look very carefully through the entire catalogue."
-    ― Sears, Roebuck and Co., 1897 Sears Roebuck & Co. Catalogue
+   「目次で見つからない場合は、カタログ全体をよく調べてください。」
+    Sears Roebuck &amp; Co. Catalogue (1897 年 Roebuck Sears and Co.) より
 
 .. raw:: html
 

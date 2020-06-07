@@ -1,67 +1,67 @@
 .. _style_guide:
 
 *******************
-Ansible style guide
+Ansible スタイルガイド
 *******************
 
-Welcome to the Ansible style guide!
-To create clear, concise, consistent, useful materials on docs.ansible.com, follow these guidelines:
+Ansible スタイルガイドにようこそ!
+docs.ansible.com に、明確および簡潔で、一貫性のある有用なドキュメントを作成するために、以下のガイドラインが指定されています。
 
 .. contents::
    :local:
 
-Linguistic guidelines
+言語のガイドライン
 =====================
 
-We want the Ansible documentation to be:
+Ansible ドキュメントでは、以下を目標にしています。
 
-* clear
-* direct
-* conversational
-* easy to translate
+* 明確な
+* 直接的な
+* 会話的な
+* 翻訳が容易な
 
-We want reading the docs to feel like having an experienced, friendly colleague
-explain how Ansible works.
+Ansible が提供するドキュメントは、
+経験豊富で友好的な同僚に Ansible の仕組みを説明してもらっていると感じられるようなものにすることを目標にしています。
 
-Stylistic cheat-sheet
+文体の早見表
 ---------------------
 
-This cheat-sheet illustrates a few rules that help achieve the "Ansible tone":
+以下の早見表は、「Ansibleのトーン」を実現するのに役立つルールを示しています。
 
 +-------------------------------+------------------------------+----------------------------------------+
-| Rule                          | Good example                 | Bad example                            |
+| ルール                          | 良い例                 | 悪い例                            |
 +===============================+==============================+========================================+
-| Use active voice              | You can run a task by        | A task can be run by                   |
+| 能動態を使用              | You can run a task by        | A task can be run by                   |
 +-------------------------------+------------------------------+----------------------------------------+
-| Use the present tense         | This command creates a       | This command will create a             |
+| 現在時制を使用         | This command creates a       | This command will create a             |
 +-------------------------------+------------------------------+----------------------------------------+
-| Address the reader            | As you expand your inventory | When the number of managed nodes grows |
+| 読者へ呼びかける            | As you expand your inventory | When the number of managed nodes grows |
 +-------------------------------+------------------------------+----------------------------------------+
-| Use standard English          | Return to this page          | Hop back to this page                  |
+| 標準英語を使用          | Return to this page          | Hop back to this page                  |
 +-------------------------------+------------------------------+----------------------------------------+
-| Use American English          | The color of the output      | The colour of the output               |
+| アメリカ英語を使用          | The color of the output      | The colour of the output               |
 +-------------------------------+------------------------------+----------------------------------------+
 
-Header case
+ヘッダーの書式
 -----------
 
-Headers should be written in sentence case. For example, this section's title is
-``Header case``, not ``Header Case`` or ``HEADER CASE``.
+ヘッダーは文で使用される書式で記述する必要があります。たとえば、このセクションのタイトルは、
+「``Header case``」とします (``Header Case`` や ``HEADER CASE`` にはしません)。
 
 
-Avoid using Latin phrases
+ラテン語のフレーズを使用しない
 -------------------------
 
-Latin words and phrases like ``e.g.`` or ``etc.``
-are easily understood by English speakers.
-They may be harder to understand for others and are also tricky for automated translation.
+``e.g.`` や ``etc.`` などのラテン語およびフレーズは、
+英語話者であれば簡単に理解できます。
+ただし、その他の人にとっては理解が難しい場合もあり、自動翻訳の際にも注意が必要になります。
 
-Use the following English terms in place of Latin terms or abbreviations: 
+したがって、ラテン語の用語または略語の代わりに、英語の用語を使用します。 
 
 +-------------------------------+------------------------------+
-| Latin                         | English                      | 
+| ラテン語                         | 英語                      |
 +===============================+==============================+
-| i.e                           | in other words               | 
+| i.e                           | in other words               |
 +-------------------------------+------------------------------+
 | e.g.                          | for example                  |
 +-------------------------------+------------------------------+
@@ -73,22 +73,22 @@ Use the following English terms in place of Latin terms or abbreviations:
 +-------------------------------+------------------------------+
 
 
-reStructuredText guidelines
+reStructuredText のガイドライン
 ===========================
 
-The Ansible documentation is written in reStructuredText and processed by Sphinx.
-We follow these technical or mechanical guidelines on all rST pages:
+Ansible ドキュメントは reStructuredText で記述され、Sphinx によって処理されます。
+すべての rST ページに対して、以下の技術的または機械的なガイドラインが指定されています。
 
-Header notation
+ヘッダーの表記法
 ---------------
 
-`Section headers in reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html#sections>`_
-can use a variety of notations.
-Sphinx will 'learn on the fly' when creating a hierarchy of headers.
-To make our documents easy to read and to edit, we follow a standard set of header notations.
-We use:
+`Section headers in reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html#sections>`_ 
+は、さまざまな表記を使用できます。
+Sphinx は、ヘッダーの階層を作成するときに「オンザフライで学習」します。
+ドキュメントを読みやすく、編集できるようにするために、標準のヘッダー表記法に従います。
+以下を使用します。
 
-* ``###`` with overline, for parts:
+* ``###`` 上線付き (各部分の場合)
 
 .. code-block:: rst
 
@@ -96,36 +96,36 @@ We use:
       Developer guide
       ###############
 
-* ``***`` with overline, for chapters:
+* ``***`` 上線付き (章の場合)
 
 .. code-block:: rst
 
       *******************
-      Ansible style guide
+      Ansible スタイルガイド
       *******************
 
-* ``===`` for sections:
+* ``===`` セクションの場合
 
 .. code-block:: rst
 
       Mechanical guidelines
       =====================
 
-* ``---`` for subsections:
+* ``---`` サブセクションの場合
 
 .. code-block:: rst
 
       Internal navigation
       -------------------
 
-* ``^^^`` for sub-subsections:
+* ``^^`` サブサブセクションの場合
 
 .. code-block:: rst
 
       Adding anchors
       ^^^^^^^^^^^^^^
 
-* ``"""`` for paragraphs:
+* ``"""`` パラグラフの場合
 
 .. code-block:: rst
 
@@ -133,71 +133,71 @@ We use:
       """"""""""""""""""""""""""""
 
 
-Internal navigation
+内部ナビゲーション
 -------------------
 
-`Anchors (also called labels) and links <https://www.sphinx-doc.org/en/master/usage/restructuredtext/roles.html#ref-role>`_
-work together to help users find related content.
-Local tables of contents also help users navigate quickly to the information they need.
-All internal links should use the ``:ref:`` syntax.
-Every page should have at least one anchor to support internal ``:ref:`` links.
-Long pages, or pages with multiple levels of headers, can also include a local TOC.
+`アンカー (ラベルとも呼ばれます) およびリンク <https://www.sphinx-doc.org/en/master/usage/restructuredtext/roles.html#ref-role>`_
+は、ユーザーが関連コンテンツを見つけるのに役立つように機能します。
+また、ページ内の目次は、必要な情報にすばやく移動するのに役立ちます。
+内部リンクはすべて ``:ref:`` 構文を使用する必要があります。
+すべてのページには、内部の ``:ref:`` リンクをサポートするアンカーが少なくとも 1 つ必要です。
+長いページ、または複数レベルのヘッダーを持つページには、ページ内の目次を追加できます。
 
-Adding anchors
+アンカーの追加
 ^^^^^^^^^^^^^^
 
-* Include at least one anchor on every page
-* Place the main anchor above the main header
-* If the file has a unique title, use that for the main page anchor::
+* すべてのページに少なくとも 1 つのアンカーを含める
+* メインヘッダーの上にメインアンカーを配置する。
+* このファイルに一意のタイトルがある場合は、メインページのアンカーに使用する。
 
    .. _unique_page::
 
-* You may also add anchors elsewhere on the page
+* ページにアンカーを追加することも可能。
 
-Adding internal links
+内部リンクの追加
 ^^^^^^^^^^^^^^^^^^^^^
 
-* All internal links must use ``:ref:`` syntax. These links both point to the anchor defined above:
+* すべての内部リンクには ``:ref:`` 構文を使用する必要があります。これらのリンクは共に、上で定義したアンカーを指定します。
 
 .. code-block:: rst
 
    :ref:`unique_page`
    :ref:`this page <unique_page>`
 
-The second example adds custom text for the link.
+2 つ目の例は、リンクのカスタムテキストを追加します。
 
-Adding links to modules and plugins
+モジュールおよびプラグインへのリンクの追加
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* Module links use the module name followed by ``_module`` for the anchor.
-* Plugin links use the plugin name followed by the plugin type. For example, :ref:`enable become plugin <enable_become>`).
+* モジュールリンクはモジュール名に続けて、アンカーに ``_module`` を使用します。
+* プラグインリンクは、プラグイン名に続けてプラグインタイプを使用します。たとえば、:ref:`enable become plugin <enable_become>` を使用します。
 
 .. code-block:: rst
 
-   :ref:`this module <this_module>``
-   :ref:`that connection plugin <that_connection>`
+   :ref:`unique_page`
+   :ref:`this page <unique_page>`
 
-Adding local TOCs
+ページ内目次の追加
 ^^^^^^^^^^^^^^^^^
 
-The page you're reading includes a `local TOC <http://docutils.sourceforge.net/docs/ref/rst/directives.html#table-of-contents>`_.
-If you include a local TOC:
+本ページには、`ページ内目次 <http://docutils.sourceforge.net/docs/ref/rst/directives.html#table-of-contents>` が含まれています。
+ページ内目次を追加する場合は、以下のようにします。
 
-* place it below, not above, the main heading and (optionally) introductory text
-* use the ``:local:`` directive so the page's main header is not included
-* do not include a title
+* 目次の下に、主要な見出しと (任意で) 紹介文を追加する。
+* そのページの主要なヘッダーが含まれないように ``:local:`` ディレクティブを使用する。
+* タイトルは除外する。
 
-The syntax is:
+構文は以下のようになります。
 
 .. code-block:: rst
 
    .. contents::
       :local:
 
-More resources
+参考資料
 ==============
 
-These pages offer more help with grammatical, stylistic, and technical rules for documentation.
+以下のページでは、ドキュメントに関する文法、スタイル、および技術的なルールを紹介しています。
 
 .. toctree::
   :maxdepth: 1
@@ -212,8 +212,8 @@ These pages offer more help with grammatical, stylistic, and technical rules for
 .. seealso::
 
    :ref:`community_documentation_contributions`
-       How to contribute to the Ansible documentation
+       Ansible ドキュメントへの貢献方法
    :ref:`testing_documentation_locally`
-       How to build the Ansible documentation
+       Ansible ドキュメントのビルド方法
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible-docs IRC chat channel
