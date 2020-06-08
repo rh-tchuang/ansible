@@ -1,60 +1,60 @@
 .. _OpenStack_module_development:
 
-OpenStack Ansible Modules
+OpenStack Ansible モジュール
 =========================
 
-These are a set of modules for interacting with OpenStack as either an admin
-or an end user. If the module does not begin with ``os_``, it's either deprecated
-or soon to be. This document serves as developer coding guidelines for
-modules intended to be here.
+これらは、管理者またはエンドユーザーとして、
+OpenStack と対話するためのモジュールセットです。モジュールの名前が ``os_`` で始まらない場合は、非推奨になっているか、
+まもなく非推奨になります。本ガイドは、
+ここにあるモジュールの開発者向けコーディングガイドラインとなるように作成されています。
 
 .. contents::
    :local:
 
-Naming
+命名規則
 ------
 
-* All module names should start with ``os_``
-* Name any module that a cloud consumer would expect to use after the logical resource it manages: ``os_server`` not ``os_nova``. This naming convention acknowledges that the end user does not care which service manages the resource - that is a deployment detail. For example cloud consumers may not know whether their floating IPs are managed by Nova or Neutron.
-* Name any module that a cloud admin would expect to use with the service and the resource: ``os_keystone_domain``.
-* If the module is one that a cloud admin and a cloud consumer could both use,
-  the cloud consumer rules apply.
+* すべてのモジュール名は ``os_`` で始めることができます。
+* クラウドコンシューマーが管理する論理リソースの後に使用する予定のモジュールに、``os_nova`` ではなく ``os_server`` という名前を付けます。この命名規則は、エンドユーザーがどのサービスがリソースを管理するか (つまり、デプロイメントの詳細) を気にしないことを理解しています。たとえば、クラウドコンシューマーが、フローティング IP が Nova と Neutron のどちらによって管理されているかを知らない場合があります。
+* クラウド管理者がサービスおよびリソースで使用する予定のモジュールに名前を付けます (``os_keystone_domain``)。
+* モジュールがクラウド管理とクラウドコンシューマーの両方で使用できる場合は、
+  クラウドのコンシューマールールが適用されます。
 
-Interface
+インターフェース
 ---------
 
-* If the resource being managed has an id, it should be returned.
-* If the resource being managed has an associated object more complex than
-  an id, it should also be returned.
+* 管理されているリソースに ID がある場合は、その ID が返されます。
+* 管理されているリソースに、
+  ID よりも複雑なオブジェクトが関連付けられている場合は、それも返す必要があります。
 
-Interoperability
+相互運用性
 ----------------
 
-* It should be assumed that the cloud consumer does not know a bazillion
-  details about the deployment choices their cloud provider made, and a best
-  effort should be made to present one sane interface to the Ansible user
-  regardless of deployer insanity.
-* All modules should work appropriately against all existing known public
-  OpenStack clouds.
-* It should be assumed that a user may have more than one cloud account that
-  they wish to combine as part of a single Ansible-managed infrastructure.
+* クラウドコンシューマーは、
+  クラウドプロバイダーが行ったデプロイメントの選択に関する膨大な詳細を顧客が知らないと想定して、
+  デプロイ担当者がむちゃくちゃなことをしても、
+  1 つの適切なインターフェースを Ansible ユーザーに提示するように最善の努力をする必要があります。
+* すべてのモジュールは、
+  既存で、既知の全パブリック OpenStack クラウドに対して適切に機能するはずです。
+* 複数のクラウドアカウントがあり、
+  1 つの Ansible 管理インフラストラクチャーとしてまとめたい可能性があると想定する必要があります。
 
-Libraries
+ライブラリー
 ---------
 
-* All modules should use ``openstack_full_argument_spec`` to pick up the
-  standard input such as auth and ssl support.
-* All modules should include ``extends_documentation_fragment: openstack``.
-* All complex cloud interaction or interoperability code should be housed in
-  the `openstacksdk <https://git.openstack.org/cgit/openstack/openstacksdk>`_
-  library.
-* All OpenStack API interactions should happen via the openstacksdk and not via
-  OpenStack Client libraries. The OpenStack Client libraries do no have end
-  users as a primary audience, they are for intra-server communication.
+* すべてのモジュールは、``openstack_full_argument_spec`` を使用して、
+  auth や ssl サポートなどの標準入力を取得する必要があります。
+* すべてのモジュールには ``extends_documentation_fragment: openstack`` が含まれている必要があります。
+* すべての複雑なクラウドインタラクションまたは相互運用性コードはすべて、
+  `openstacksdk <https://git.openstack.org/cgit/openstack/openstacksdk>`_ 
+  ライブラリーに保存する必要があります。
+* すべての OpenStack API 対話は、
+  OpenStack クライアントライブラリーではなく、openstacksdk を介して行われる必要があります。OpenStack Client ライブラリーには、
+  主要な対象ユーザーとしてのエンドユーザーはなく、サーバー内通信用です。
 
-Testing
+テスト
 -------
 
-* Integration testing is currently done in `OpenStack's CI system <https://git.openstack.org/cgit/openstack/openstacksdk/tree/openstack/tests/ansible>`_
-* Testing in openstacksdk produces an obvious chicken-and-egg scenario. Work is under
-  way to trigger from and report on PRs directly.
+* 統合テストは現在 `OpenStack の CI システム <https://git.openstack.org/cgit/openstack/openstacksdk/tree/openstack/tests/ansible>`_ で行われています。
+* openstacksdk でテストすると、鶏と卵のシナリオが理解できます。PRを発生させて、
+  直接報告するための作業が進行中です。

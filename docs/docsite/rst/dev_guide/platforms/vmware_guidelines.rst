@@ -1,58 +1,58 @@
 .. _VMware_module_development:
 
 ****************************************
-Guidelines for VMware module development
+VMware モジュール開発のガイドライン
 ****************************************
 
-The VMware modules and these guidelines are maintained by the VMware Working Group. For
-further information see the `team community page <https://github.com/ansible/community/wiki/VMware>`_.
+VMware モジュールおよびこれらのガイドラインは、VMware Working Group が管理しています。たとえば、
+`チームのコミュニティーページ <https://github.com/ansible/community/wiki/VMware>`_ を参照してください。
 
 .. contents::
    :local:
 
-Testing with govcsim
+govcsim を使用したテスト
 ====================
 
-Most of the existing modules are covered by functional tests. The tests are located in the :file:`test/integration/targets/`.
+既存のモジュールのほとんどは、機能テストで対応しています。テストは :file:`test/integration/targets/` にあります。
 
-By default, the tests run against a vCenter API simulator called `govcsim <https://github.com/vmware/govmomi/tree/master/vcsim>`_. ``ansible-test`` will automatically pull a `govcsim container <https://quay.io/repository/ansible/vcenter-test-container>` and use it to set-up the test environment.
+デフォルトでは、テストは `govcsim <https://github.com/vmware/govmomi/tree/master/vcsim>`_ という名前の vCenter API シミュレーターに対して実行されます。``ansible-test`` は、`govcsim コンテナー <https://quay.io/repository/ansible/vcenter-test-container>` を自動的にプルし、これを使用してテスト環境を設定します。
 
-You can trigger the test of a module manually with the ``ansible-test`` command. For example, to trigger ``vcenter_folder`` tests:
+``ansible-test`` コマンドを使用して、モジュールのテストを手動でトリガーできます。たとえば、``vcenter_folder`` テストをトリガーするには、以下を使用します。
 
 .. code-block:: shell
 
     source hacking/env-setup
     ansible-test integration --python 3.7 vcenter_folder
 
-``govcsim`` is handy because it's much more fast that than a regular test environment. However, it does not
-support all the ESXi or vCenter features.
+``govcsim`` は、通常のテスト環境よりも高速なため便利です。ただし、
+ESXi または vCenter のすべての機能に対応しているわけではありません。
 
 .. note::
 
-   Do not confuse ``govcsim`` with ``vcsim``. It's old outdated version of vCenter simulator whereas govcsim is new and written in go lang
+   ``govcsim`` と ``vcsim`` を混同しないようにしてください。vcsim は古いバージョンの vCenterシミュレーターですが、govcsim は新しく、Go 言語で書かれています
 
-Testing with your own infrastructure
+独自のインフラストラクチャーでのテスト
 ====================================
 
-You can also target a regular VMware environment. This paragraph explains step by step how you can run the test-suite yourself.
+通常の VMware 環境を対象とすることもできます。この段落では、テストスイートを自分で実行する方法について順を追って説明します。
 
-Requirements
+要件
 ------------
 
-- 2 ESXi hosts (6.5 or 6.7)
-   - with 2 NIC, the second ones should be available for the test
-- a VCSA host
-- a NFS server
-- Python dependencies:
+- 2 台の ESXi ホスト (6.5 または 6.7)
+   - 2 つの NIC (テスト用に 2 番目の NIC が利用可能)
+- VCSA ホスト
+- NFS サーバー
+- Python の依存関係:
     - `pyvmomi <https://github.com/vmware/pyvmomi/tree/master/pyVmomi>`
-    - `requests <https://2.python-requests.org/en/master/>`.
+    - `requests <https://2.python-requests.org/en/master/>`
 
-If you want to deploy your test environment in a hypervisor, both VMware or Libvirt <https://github.com/goneri/vmware-on-libvirt> work well.
+ハイパーバイザーにテスト環境をデプロイする場合は、VMware と Libvirt (<https://github.com/goneri/vmware-on-libvirt>) の両方が正常に機能します。
 
-NFS server configuration
+NFS サーバーの設定
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Your NFS server must expose the following directory structure:
+NFS サーバーでは、以下のディレクトリー構造を公開する必要があります。
 
 .. code-block:: shell
 
@@ -65,7 +65,7 @@ Your NFS server must expose the following directory structure:
     └── vms
     2 directories, 3 files
 
-On a Linux system, you can expose the directory over NFS with the following export file:
+Linux システムでは、次のエクスポートファイルを使用して、NFS 経由でディレクトリーを公開できます。
 
 .. code-block:: shell
 
@@ -74,23 +74,23 @@ On a Linux system, you can expose the directory over NFS with the following expo
 
 .. note::
 
-    With this configuration all the new files will be owned by the user with the UID and GID 1000/1000.
-    Adjust the configuration to match your user's UID/GID.
+    この設定では、UID 1000 および GID 1000 のユーザーが、新しいファイルをすべてが所有します。
+    ユーザーの UID および GID に合わせて設定を調整してください。
 
-The service can be enabled with:
+このサービスは以下で有効にできます。
 
 .. code-block:: shell
 
    $ sudo systemctl enable --now nfs-server
 
 
-Configure your installation
+インストールの設定
 ---------------------------
 
-Prepare a configuration file that describes your set-up. The file
-should be called :file:`test/integration/cloud-config-vcenter.ini` and based on
-:file:`test/lib/ansible_test/config/cloud-config-vcenter.ini.template`. For instance, if you've deployed your lab with
-`vmware-on-libvirt <https://github.com/goneri/vmware-on-libvirt>`:
+セットアップを記述する設定ファイルを準備します。ファイルの名前は、
+:file:`test/lib/ansible_test/config/cloud-config-vcenter.ini.template` で、
+:file:`test/integration/cloud-config-vcenter.ini` を呼び出してからベースにする必要があります。たとえば、`VMware-on-libvirt` <https://github.com/goneri/vmware-on-libvirt> を使用してラボをデプロイしている場合は、
+次を使用します。
 
 .. code-block:: ini
 
@@ -106,65 +106,65 @@ should be called :file:`test/integration/cloud-config-vcenter.ini` and based on
     esxi2_hostname: test2.test
     esxi2_password: root
 
-If you use an HTTP proxy
+HTTP プロキシーを使用する場合
 -------------------------
-Support for hosting test infrastructure behind an HTTP proxy is currently in development. See the following pull requests for more information:
+HTTP プロキシーの背後でテストインフラストラクチャーをホストするためのサポートは現在開発中です。詳細は、以下のプル要求を参照してください。
 
-- ansible-test: vcenter behind an HTTP proxy <https://github.com/ansible/ansible/pull/58208>
-- pyvmomi: proxy support <https://github.com/vmware/pyvmomi/pull/799>
-- VMware: add support for HTTP proxy in connection API <https://github.com/ansible/ansible/pull/52936>
+- ansible-test: HTTP プロキシーの背後にある vcenter (<https://github.com/ansible/ansible/pull/58208>)
+- pyvmkko: proxy サポート (<https://github.com/vmware/pyvmomi/pull/799>)
+- VMware: 接続 API に HTTP プロキシーのサポートを追加 (<https://github.com/ansible/ansible/pull/52936>)
 
-Once you have incorporated the code from those PRs, specify the location of the proxy server with the two extra keys:
+これらの PR からコードを組み込んだら、別の 2 つのキーでプロキシーサーバーの場所を指定します。
 
 .. code-block:: ini
 
     vmware_proxy_host: esxi1-gw.ws.testing.ansible.com
     vmware_proxy_port: 11153
 
-In addition, you may need to adjust the variables of the following file to match the configuration of your lab:
-:file:`test/integration/targets/prepare_vmware_tests/vars/real_lab.yml`. If you use `vmware-on-libvirt <https://github.com/goneri/vmware-on-libvirt>` to prepare you lab, you don't have anything to change.
+さらに、以下のファイルの変数をラボの設定に合わせて調整しないといけない場合があります。
+:file:`test/integration/targets/prepare_vmware_tests/vars/real_lab.yml`.`vmware-on-libvirt <https://github.com/goneri/vmware-on-libvirt>` を使用してラボを準備する場合は、変更することができません。
 
-Run the test-suite
+テストスイートの実行
 ------------------
 
-Once your configuration is ready, you can trigger a run with the following command:
+設定の準備ができたら、以下のコマンドで実行をトリガーできます。
 
 .. code-block:: shell
 
     source hacking/env-setup
     VMWARE_TEST_PLATFORM=static ansible-test integration --python 3.7 vmware_host_firewall_manager
 
-``vmware_host_firewall_manager`` is the name of the module to test.
+``vmware_host_firewall_manager`` は、テストするモジュールの名前です。
 
-``vmware_guest`` is much larger than any other test role and is rather slow. You can enable or disable some of its test playbooks in
-:file:`test/integration/targets/vmware_guest/defaults/main.yml`.
+``vmware_guest`` は、他のテストロールよりもはるかに大きく、速度もかなり遅くなります。一部のテスト Playbook を、
+:file:`test/integration/targets/vmware_guest/defaults/main.yml` で有効または無効にできます。
 
 
-Unit-test
+ユニットテスト
 =========
 
-The VMware modules have limited unit-test coverage. You can run the test suite with the
-following commands:
+VMware モジュールでは、ユニットテストの対象範囲が限られています。テストスイートは、
+次のコマンドで実行できます。
 
 .. code-block:: shell
 
     source hacking/env-setup
     ansible-test units --tox --python 3.7 '.*vmware.*'
 
-Code style and best practice
+コードスタイルおよびベストプラクティス
 ============================
 
-datacenter argument with ESXi
+ESXi での datacenter 引数
 -----------------------------
 
-The ``datacenter`` parameter should not use ``ha-datacenter`` by default. This is because the user may
-not realize that Ansible silently targets the wrong data center.
+``datacenter`` パラメーターでは、デフォルトで ``ha-datacenter`` を使用していないはずです。これは、Ansible が誤って間違ったデータセンターを対象としていることに、
+ユーザーが気付かない可能性があるためです。
 
-esxi_hostname should not be mandatory
+esxi_hostname は必須ではない
 -------------------------------------
 
-Depending upon the functionality provided by ESXi or vCenter, some modules can seamlessly work with both. In this case,
-``esxi_hostname`` parameter should be optional.
+ESXi または vCenter が提供する機能に応じて、一部のモジュールは両方でシームレスに動作します。この場合、
+``ESXi_hostname`` パラメーターは任意である必要があります。
 
 .. code-block:: python
 
@@ -178,17 +178,17 @@ Depending upon the functionality provided by ESXi or vCenter, some modules can s
     if self.host is None:
         self.module.fail_json(msg="Failed to find host system.")
 
-Functional tests
+機能テスト
 ----------------
 
-Writing new tests
+新規テストの作成
 ~~~~~~~~~~~~~~~~~
 
-If you are writing a new collection of integration tests, there are a few VMware-specific things to note beyond
-the standard Ansible :ref:`integration testing<testing_integration>` process.
+統合テストの新しいコレクションを作成する場合は、
+標準の Ansible :ref:`統合テスト<testing_integration>` プロセス以外に、VMware 固有の注意点がいくつかあります。
 
-The test-suite uses a set of common, pre-defined vars located in the :file:`test/integration/targets/prepare_vmware_tests/` role.
-The resources defined there are automatically created by importing that role at the start of your test:
+テストスイートは、:file:`test/integration/targets/prepare_vmware_tests/` ロールにある一般的な事前定義済みの変数のセットを使用します。
+ここに定義されたリソースは、テストの開始時にそのロールをインポートして自動的に作成されます。
 
 .. code-block:: yaml
 
@@ -197,31 +197,31 @@ The resources defined there are automatically created by importing that role at 
     vars:
       setup_datacenter: true
 
-This will give you a ready to use cluster, datacenter, datastores, folder, switch, dvswitch, ESXi hosts, and VMs.
+これにより、クラスター、データセンター、データストア、ディレクトリー、スイッチ、dvSwitch、ESXi ホスト、および仮想マシンを使用する準備が整います。
 
-No need to create too much resources
+リソースを過剰に作成する必要なし
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Most of the time, it's not necessary to use ``with_items`` to create multiple resources. By avoiding it,
-you speed up the test execution and you simplify the clean up afterwards.
+ほとんどの場合、複数のリソースを作成するために ``with_items`` を使用する必要はありません。これを回避することで、
+テストの実行を迅速化し、その後のクリーンアップを簡素化します。
 
-VM names should be predictable
+仮想マシン名は、名前で内容が予測できるものにする必要があります。
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you need to create a new VM during your test, you can use ``test_vm1``, ``test_vm2`` or ``test_vm3``. This
-way it will be automatically clean up for you.
+テスト中に新しい仮想マシンを作成する必要がある場合は、``test_vm1``、``test_vm2``、または ``test_vm3`` を使用できます。これにより、
+自動的にクリーンアップされます。
 
 
-Typographic convention
+表記規則
 ======================
 
-Nomenclature
+命名法
 ------------
 
-We try to enforce the following rules in our documentation:
+Ansible のドキュメントでは、次のルールを適用しています。
 
-- VMware, not VMWare or vmware
-- ESXi, not esxi or ESXI
-- vCenter, not vcenter or VCenter
+- VMware (VMWare または vmware ではありません)
+- ESXi (esxi または ESXI ではありません)
+- vCenter (vcenter または VCenter ではない)
 
-We also refer to vcsim's Go implementation with ``govcsim``. This to avoid any confusion with the outdated implementation.
+また、``govcsim`` を使用した vcsim の Go 実装も参照します。これは、古い実装との混乱を回避するためのものです。

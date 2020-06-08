@@ -1,63 +1,63 @@
 .. _oVirt_module_development:
 
-oVirt Ansible Modules
+oVirt Ansible モジュール
 =====================
 
-This is a set of modules for interacting with oVirt/RHV. This document
-serves as developer coding guidelines for creating oVirt/RHV modules.
+これは、oVirt/RHV と対話するためのモジュールセットです。本ガイドは、
+oVirt/RHV モジュールを作成するための開発者コーディングガイドラインとして役立ちます。
 
 .. contents::
    :local:
 
-Naming
+命名規則
 ------
 
--  All modules should start with an ``ovirt_`` prefix.
--  All modules should be named after the resource it manages in singular
-   form.
--  All modules that gather information should have a ``_info``
-   suffix.
+-  すべてのモジュールは、``ovirt_`` 接頭辞で開始する必要があります。
+-  すべてのモジュールは、
+   管理するリソースにちなんで単数形で名前を付ける必要があります。
+-  情報を収集するすべてのモジュールには、
+   ``_info`` 接尾辞が必要です。
 
-Interface
+インターフェース
 ---------
 
--  Every module should return the ID of the resource it manages.
--  Every module should return the dictionary of the resource it manages.
--  Never change the name of the parameter, as we guarantee backward
-   compatibility. Use aliases instead.
--  If a parameter can't achieve idempotency for any reason, please
-   document it.
+-  すべてのモジュールは、管理するリソースの ID を返す必要があります。
+-  すべてのモジュールは、管理するリソースのディレクトリーを返す必要があります。
+-  後方互換性を保証するため、
+   パラメーターの名前は変更しないでください。代わりにエイリアスを使用してください。
+-  パラメーターが何らかの理由で冪等性を実現できない場合は、
+   それを文書化してください。
 
-Interoperability
+相互運用性
 ----------------
 
--  All modules should work against all minor versions of
-   version 4 of the API. Version 3 of the API is not supported.
+-  すべてのモジュールは、
+   API のバージョン 4 のすべてのマイナーバージョンに対して機能します。API のバージョン 3 には対応していません。
 
-Libraries
+ライブラリー
 ---------
 
--  All modules should use ``ovirt_full_argument_spec`` or
-   ``ovirt_info_full_argument_spec`` to pick up the standard input (such
-   as auth and ``fetch_nested``).
--  All modules should use ``extends_documentation_fragment``: ovirt to go
-   along with ``ovirt_full_argument_spec``.
--  All info modules should use ``extends_documentation_fragment``:
-   ``ovirt_info`` to go along with ``ovirt_info_full_argument_spec``.
--  Functions that are common to all modules should be implemented in the
-   ``module_utils/ovirt.py`` file, so they can be reused.
--  Python SDK version 4 must be used.
+-  すべてのモジュールは、``ovirt_full_argument_spec`` または 
+   ``ovirt_info_full_argument_spec`` を使用して標準入力を選択します (
+   auth、``fetch_nested`` など)。
+-  すべてのモジュールは、``extends_documentation_fragment``: ovirt を、
+   ``ovirt_full_argument_spec`` とともに使用する必要があります。
+-  すべての情報モジュールは、``extends_documentation_fragment`` を使用する必要があります。
+   ``ovirt_info`` は、``ovirt_info_full_argument_spec`` とともに使用します。
+-  すべてのモジュールに共通する関数は、
+   再使用できるように ``module_utils/ovirt.py`` ファイルに実装する必要があります。
+-  Python SDK バージョン 4 を使用する必要があります。
 
-New module development
+新しいモジュール開発
 ----------------------
 
-Please read :ref:`developing_modules`,
-first to know what common properties, functions and features every module must
-have.
+:ref:`developing_modules` ファイルを最初に読んで、
+すべてのモジュールに共通のプロパティー、
+関数、および機能を把握してください。
 
-In order to achieve idempotency of oVirt entity attributes, a helper class
-was created. The first thing you need to do is to extend this class and override a few
-methods:
+oVirt エンティティー属性の冪等性を実現するために、
+ヘルパークラスが作成されました。最初に行う必要があるのは、
+このクラスを拡張していくつかのメソッドをオーバーライドすることです。
 
 .. code:: python
 
@@ -97,9 +97,9 @@ methods:
                 and equal(self.param('description'), entity.description)
             )
 
-The code above handle the check if the entity should be updated, so we
-don't update the entity if not needed and also it construct the needed
-entity of the SDK.
+上記のコードは、エンティティーを更新する必要があるかどうかのチェックを処理するため、
+不要な場合はエンティティーを更新せず、
+必要な SDK のエンティティーを構築します。
 
 .. code:: python
 
@@ -174,10 +174,10 @@ entity of the SDK.
         # parameter:
         connection.close(logout=auth.get('token') is None)
 
-If your module must support action handling (for example,
-virtual machine start) you must ensure that you handle the states of the
-virtual machine correctly, and document the behavior of the
-module:
+モジュールがアクション処理 (たとえば、仮想マシンの起動) 
+に対応する必要がある場合は、
+仮想マシンの状態を正しく処理し、
+モジュールの動作を文書化する必要があります。
 
 .. code:: python
 
@@ -202,20 +202,20 @@ module:
                 # ...
             )
 
-As you can see from the preceding example, the ``action`` method accepts the ``action_condition`` and
-``wait_condition``, which are methods which accept the virtual machine
-object as a parameter, so you can check whether the virtual
-machine is in a proper state before the action. The rest of the
-parameters are for the ``start`` action. You may also handle pre-
-or post- action tasks by defining ``pre_action`` and ``post_action``
-parameters.
+前述の例から分かるように、``action`` メソッドでは、``action_condition`` および 
+``wait_condition`` を使用できます。
+これは、仮想マシンオブジェクトをパラメーターとして受け入れるメソッドであるため、
+アクションの前に仮想マシンが適切な状態にあるかどうかを確認できます。パラメーターの残りの部分は、
+``start`` アクション用です。``pre_action`` パラメーターおよび ``post_action`` 
+パラメーターを定義して、
+アクション前またはアクション後のタスクを処理することもできます。
 
-Testing
+テスト
 -------
 
--  Integration testing is currently done in oVirt's CI system
-   `on Jenkins <https://jenkins.ovirt.org/view/All/job/ovirt-system-tests_ansible-suite-master/>`__
-   and
-   `on GitHub <https://github.com/oVirt/ovirt-system-tests/tree/master/ansible-suite-master/>`__.
--  Please consider using these integration tests if you create a new module or add a new feature to an existing
-   module.
+-  統合テストは現在、
+   `Jenkins <https://jenkins.ovirt.org/view/All/job/ovirt-system-tests_ansible-suite-master/>`__ 
+   および
+   `GitHub <https://github.com/oVirt/ovirt-system-tests/tree/master/ansible-suite-master/>`__ の oVirt の CI システムで行われています。
+-  新しいモジュールを作成する場合、または既存のモジュールに新しい機能を追加する場合は、
+   この統合テストの使用を検討してください。
