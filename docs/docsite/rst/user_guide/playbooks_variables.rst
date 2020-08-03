@@ -720,11 +720,11 @@ Playbook の動作を特定のバージョンの Ansible に適用するには�
 以下のように変数 ansible_version が利用できます。
 
     "ansible_version": {
-        "full":"2.0.0.2",
-        "major":2,
-        "minor":0,
-        "revision":0,
-        "string":"2.0.0.2"
+        "full": "2.0.0.2",
+        "major": 2,
+        "minor": 0,
+        "revision": 0,
+        "string": "2.0.0.2"
     }
 
 .. _fact_caching:
@@ -1033,10 +1033,10 @@ JSON ファイルまたは YAML ファイルの変数::
 
 .. rubric:: 注記
 
-.. [1] 各ロールのタスクには、独自のロールのデフォルトが表示されます。ロールの外部で定義されたタスクには、最後のロールのデフォルトが表示されます。
-.. [2] インベントリーファイルで定義される変数、または動的インベントリーで指定される変数。
-.. [3] 「vars plugins」および Ansible に同梱されるデフォルトの vars プラグインにより追加される host_vars および group_vars が含まれます。
-.. [4] set_facts のキャッシュ可能なオプションを使用して作成すると、変数がプレイで優先されます。
+..[1] 各ロールのタスクには、独自のロールのデフォルトが表示されます。ロールの外部で定義されたタスクには、最後のロールのデフォルトが表示されます。
+..[2] インベントリーファイルで定義される変数、または動的インベントリーで指定される変数。
+..[3] 「vars plugins」および Ansible に同梱されるデフォルトの vars プラグインにより追加される host_vars および group_vars が含まれます。
+..[4] set_facts のキャッシュ可能なオプションを使用して作成すると、変数がプレイで優先されます。
        ただし、キャッシュからのホストのファクトと同様に優先されます。
 
 .. note:: 任意のセクションで、変数を再定義すると、以前のインスタンスが上書きされます。
@@ -1057,7 +1057,7 @@ JSON ファイルまたは YAML ファイルの変数::
 
  - hosts: myhost
    tasks:
-    - command:I'll connect as ramon still
+    - command: I'll connect as ramon still
       remote_user: lola
 
 ``remote_user`` の値はインベントリーの ``ansible_user`` によって上書きされます。
@@ -1081,7 +1081,7 @@ host_var として指定される ``ansible_user`` よりも優先されます�
       vars:
         ansible_user: lola
       tasks:
-        - command:I'll connect as lola!
+        - command: I'll connect as lola!
 
 .. _variable_scopes:
 
@@ -1232,4 +1232,4 @@ UI または API からの :ref:`ansible_tower` などで定義できます。
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       \#ansible IRC chat channel
+       IRC チャットチャンネル #ansible

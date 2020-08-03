@@ -1,142 +1,74 @@
 .. _code_of_conduct:
 
 *************************
-Community Code of Conduct
+コミュニティーの行動規範
 *************************
 
-.. contents:: Topics
+.. contents:: トピック
 
-Every community can be strengthened by a diverse variety of viewpoints, insights,
-opinions, skillsets, and skill levels. However, with diversity comes the potential for
-disagreement and miscommunication. The purpose of this Code of Conduct is to ensure that
-disagreements and differences of opinion are conducted respectfully and on their own
-merits, without personal attacks or other behavior that might create an unsafe or
-unwelcoming environment.
+すべてのコミュニティーは、多様な視点、洞察力、意見、スキルセット、スキルレベルの多様性によって強化されます。しかし、多様性には、意見の相違や誤解が生じる可能性があります。この行動規範の目的は、意見の不一致や相違が、個人的な攻撃やその他の不安定な環境や歓迎されない環境を作り出すような行動をせずに、敬意を持って、各自の利点に基づいて行われるようにすることです。
 
-These policies are not designed to be a comprehensive set of Things You Cannot Do. We ask
-that you treat your fellow community members with respect and courtesy, and in general,
-Don't Be A Jerk. This Code of Conduct is meant to be followed in spirit as much as in
-letter and is not exhaustive.
+これらの方針は、「やってはいけないこと」を網羅したものではありません。コミュニティーメンバーに敬意と礼儀をもって接するようにお願いしています。この行動規範は、心構えをできる限り示すことを目的としており、すべてを網羅しているわけではありません。
 
-All Ansible events and participants therein are governed by this Code of Conduct and
-anti-harassment policy. We expect organizers to enforce these guidelines throughout all events,
-and we expect attendees, speakers, sponsors, and volunteers to help ensure a safe
-environment for our whole community. Specifically, this Code of Conduct covers
-participation in all Ansible-related forums and mailing lists, code and documentation
-contributions, public IRC channels, private correspondence, and public meetings.
+Ansible イベントとその参加者はすべて、この行動規範とハラスメント防止ポリシーに従う必要があります。主催者は、常にこのガイドラインに沿ってイベントを開催することが期待されます。また、参加者、講演者、スポンサー、およびボランティアの皆様には、コミュニティー全体の安全な環境を確保するためにご協力いただくことが期待されます。具体的には、この行動規範は、Ansible 関連のフォーラムやメーリングリストへの参加、コードやドキュメントへの貢献、公開 IRC チャンネルへの参加、プライベートなやり取り、公開会議への参加が対象となります。
 
-Ansible community members are...
+Ansible コミュニティーのメンバーには、以下が期待されます。
 
-**Considerate**
+**思いやりをもつ**
 
-Contributions of every kind have far-ranging consequences. Just as your work depends on
-the work of others, decisions you make surrounding your contributions to the Ansible
-community will affect your fellow community members. You are strongly encouraged to take
-those consequences into account while making decisions.
+あらゆる種類の貢献が、広範囲に影響を及ぼします。自分の仕事が他の人の仕事に依存しているのと同じように、Ansible コミュニティーへの貢献についてあなたが下した決定は、コミュニティーメンバーに影響を及ぼします。意思決定を行う際には、このような結果を考慮に入れることが強く推奨されます。
 
-**Patient**
+**寛大になる**
 
-Asynchronous communication can come with its own frustrations, even in the most responsive
-of communities. Please remember that our community is largely built on volunteered time,
-and that questions, contributions, and requests for support may take some time to receive
-a response. Repeated "bumps" or "reminders" in rapid succession are not good displays of
-patience. Additionally, it is considered poor manners to ping a specific person with
-general questions. Pose your question to the community as a whole, and wait patiently for
-a response.
+非同期のコミュニケーションは、どんなに反応の良いコミュニティーであっても、それなりにフラストレーションが溜まってしまうことがあります。コミュニティーは主にボランティアの時間で成り立っていることを覚えておいてください。質問、貢献、サポートのリクエストには返事が返ってくるまでに時間がかかることがあります。何度も「スレッド作成 (bump)」や「リマインダー」を繰り返すのは、忍耐力を示す優れた方法ではありません。さらに、一般的な質問を特定の人にするのはマナー違反です。コミュニティー全体に向けて質問し、辛抱強く返事を待ちましょう。
 
-**Respectful**
+**相手を尊重する**
 
-Every community inevitably has disagreements, but remember that it is
-possible to disagree respectfully and courteously. Disagreements are never an excuse for
-rudeness, hostility, threatening behavior, abuse (verbal or physical), or personal attacks.
+どのようなコミュニティーでも意見の相違は避けられませんが、異議を唱えるときは敬意を持って礼儀正しく行う必要があることを覚えておいてください。意見の相違は、失礼、敵意、脅迫、虐待 (言葉や身体的)、個人的な攻撃の言い訳にはなりません。
 
-**Kind**
+**親切にする**
 
-Everyone should feel welcome in the Ansible community, regardless of their background.
-Please be courteous, respectful and polite to fellow community members. Do not make or
-post offensive comments related to skill level, gender, gender identity or expression,
-sexual orientation, disability, physical appearance, body size, race, or religion.
-Sexualized images or imagery, real or implied violence, intimidation, oppression,
-stalking, sustained disruption of activities, publishing the personal information of
-others without explicit permission to do so, unwanted physical contact, and unwelcome
-sexual attention are all strictly prohibited.  Additionally, you are encouraged not to
-make assumptions about the background or identity of your fellow community members.
+Ansible コミュニティーでは、各自の経歴に関係なく誰もが歓迎されていると感じるようにならなければなりません。コミュニティーメンバーに対しては、礼儀正しく、敬意を払って接してください。スキルレベル、性別、性自認、性表現、性的指向、障害、容姿、体格、人種、宗教に関する攻撃的なコメントをしたり、投稿したりしないでください。性的画像、明示的または暗示的な暴力、脅迫、抑圧、ストーカー行為、活動の継続的な妨害、明示的な許可なく個人情報を公開すること、望まれない身体的接触、歓迎されない性的注目は、すべて固く禁じられています。さらに、コミュニティーメンバーの経歴や身元を推測しないようにしてください。
 
-**Inquisitive**
+**探求心を持つ**
 
-The only stupid question is the one that does not get asked. We
-encourage our users to ask early and ask often. Rather than asking whether you can ask a
-question (the answer is always yes!), instead, simply ask your question. You are
-encouraged to provide as many specifics as possible. Code snippets in the form of Gists or
-other paste site links are almost always needed in order to get the most helpful answers.
-Refrain from pasting multiple lines of code directly into the IRC channels - instead use
-gist.github.com or another paste site to provide code snippets.
+取るに足らない質問とは、質問されない質問だけです。コミュニティーメンバーは、早めに質問し、頻繁に質問することが推奨されます。質問ができるかどうかを尋ねるのではなく (その答えは常にイエスとなるため)、質問したい内容を尋ねてください。できるだけ具体的な情報を提供することが推奨されます。最も有益な回答を得るためには、Gist などのサイトへのリンクを貼り付ける形でのコードスニペットが必要になります。IRC チャンネルに、複数行のコードを直接貼り付けないようにしてください。代わりに gist.github.com などのサイトを使用してコードスニペットを提供してください。
 
-**Helpful**
+**助けになること**
 
-The Ansible community is committed to being a welcoming environment for all users,
-regardless of skill level. We were all beginners once upon a time, and our community
-cannot grow without an environment where new users feel safe and comfortable asking questions.
-It can become frustrating to answer the same questions repeatedly; however, community
-members are expected to remain courteous and helpful to all users equally, regardless of
-skill or knowledge level. Avoid providing responses that prioritize snideness and snark over
-useful information. At the same time, everyone is expected to read the provided
-documentation thoroughly. We are happy to answer questions, provide strategic guidance,
-and suggest effective workflows, but we are not here to do your job for you.
+Ansible コミュニティーは、スキルレベルに関係なく、誰にとっても歓迎されていると感じる環境であることを約束します。すべての人は皆、最初は初心者でした。新しいユーザーが安心して質問できる環境でなければコミュニティーは成長しません。同じ質問に何度も答えることにもどかしさを感じることもありますが、スキルや知識のレベルに関係なく、すべてのユーザーに対して平等に礼儀正しく、親切に対応することが求められます。有益な情報よりも、中傷や悪口を優先するような回答は避けてください。同時に、誰もが提供された文書を十分に読むことが期待されています。コミュニティーメンバーは、質問に答えたり、戦略的なガイダンスを提供したり、効果的なワークフローを提案したりすることは喜んで行いますが、質問者の代わりに作業をするために存在しているわけではありません。
 
-Anti-harassment policy
+ハラスメント防止ポリシー
 ======================
 
-Harassment includes (but is not limited to) all of the following behaviors:
+ハラスメントには、以下のすべての行為が含まれます (ただし、これに限定されません)。
 
-- Offensive comments related to gender (including gender expression and identity), age, sexual orientation, disability, physical appearance, body size, race, and religion
-- Derogatory terminology including words commonly known to be slurs
-- Posting sexualized images or imagery in public spaces
-- Deliberate intimidation
-- Stalking
-- Posting others' personal information without explicit permission
-- Sustained disruption of talks or other events
-- Inappropriate physical contact
-- Unwelcome sexual attention
+- 性別 (性表現や性自認を含む)、年齢、性的指向、障害、容姿、体格、人種、宗教に関する攻撃的なコメント
+- 一般的に中傷であると知られている言葉を含む中傷的な用語
+- 公共の場に性的な画像を投稿すること
+- 意図的な脅迫
+- ストーカー行為
+- 明示的な許可なく他のユーザーの個人情報を投稿すること
+- 会話やその他のイベントの継続的な中断
+- 不適切な身体的接触
+- 歓迎されない性的注目
 
-Participants asked to stop any harassing behavior are expected to comply immediately.
-Sponsors are also subject to the anti-harassment policy. In particular, sponsors should
-not use sexualized images, activities, or other material. Meetup organizing staff and
-other volunteer organizers should not use sexualized attire or otherwise create a
-sexualized environment at community events.
+ハラスメント行為を止めるように求められた参加者は、直ちにこれに応じることが求められます。スポンサーも、ハラスメント防止ポリシーの対象となります。特に、スポンサーは性的な画像、活動、その他の素材を使用してはなりません。また、Meetup の主催者やボランティアスタッフは、コミュニティーイベントで性的な恰好をしたり、性的な環境を作らないようにしてください。
 
-In addition to the behaviors outlined above, continuing to behave a certain way after you
-have been asked to stop also constitutes harassment, even if that behavior is not
-specifically outlined in this policy. It is considerate and respectful to stop doing
-something after you have been asked to stop, and all community members are expected to
-comply with such requests immediately.
+上記の行動に加えて、ここで明記されていなくても、やめるように言われた後にそのような行動を続けることも、ハラスメントに該当します。やめるように言われた後に何かをやめることは、思いやりと敬意を表す行動であり、コミュニティーの全メンバーは、そのような要求に直ちに従うことが求められます。
 
-Policy violations
+ポリシー違反
 =================
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by
-contacting `codeofconduct@ansible.com <mailto:codeofconduct@ansible.com>`_, to any channel
-operator in the community IRC channels, or to the local organizers of an event. Meetup
-organizers are encouraged to prominently display points of contact for reporting unacceptable
-behavior at local events.
+虐待、嫌がらせ、その他の容認できない行為があった場合は、`codeofconduct@ansible.com <mailto:codeofconduct@ansible.com>`_、コミュニティーの IRC チャンネルのチャンネル運営者、各地のイベント主催者に連絡してください。Meetup の主催者は、各地のイベントで容認されない行動を報告する連絡先を目立つところに表示することが推奨されます。
 
-If a participant engages in harassing behavior, the meetup organizers may take any action
-they deem appropriate. These actions may include but are not limited to warning the
-offender, expelling the offender from the event, and barring the offender from future
-community events.
+Meetup 主催者は、参加者が嫌がらせ行為を行った場合、適切と判断した措置を取ることができます。このような措置には、加害者への警告、イベントからの退出、今後のコミュニティーイベントへの参加禁止などが含まれますが、これらに限定されません。
 
-Organizers will be happy to help participants contact security or local law enforcement,
-provide escorts to an alternate location, or otherwise assist those experiencing
-harassment to feel safe for the duration of the meetup. We value the safety and well-being
-of our community members and want everyone to feel welcome at our events, both online and
-offline.
+主催者は、参加者が警備員や地元の警察に連絡したり、別の場所に案内したり、ハラスメントを経験した人が Meetup の間安心して過ごせるように、喜んで支援します。コミュニティーは、コミュニティーメンバーの安全と幸福を大切にし、オンラインとオフラインの両方で開催されるイベントですべての人が歓迎されていると感じてほしいと願っています。
 
-We expect all participants, organizers, speakers, and attendees to follow these policies at
-all of our event venues and event-related social events.
+すべての参加者、主催者、講演者、参加者は、コミュニティーのイベント会場およびイベント関連のソーシャルイベントにおいて、これらのポリシーに従うことを期待しています。
 
-The Ansible Community Code of Conduct is licensed under the Creative Commons
-Attribution-Share Alike 3.0 license. Our Code of Conduct was adapted from Codes of Conduct
-of other open source projects, including:
+Ansible コミュニティ行動規範は、Creative Commons Attribution-Share Alike 3.0 ライセンスの認可を受けています。私たちの行動規範は、以下のような他のオープンソースプロジェクトの行動規範を参考にしています。
 
 * Contributor Covenant
 * Elastic

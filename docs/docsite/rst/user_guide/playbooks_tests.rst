@@ -124,8 +124,8 @@ Ansible には、同様に動作する ``contains`` テストが含まれます�
     vars:
       lacp_groups:
         - master: lacp0
-          network:10.65.100.0/24
-          gateway:10.65.100.1
+          network: 10.65.100.0/24
+          gateway: 10.65.100.1
           dns4:
             - 10.65.100.10
             - 10.65.100.11
@@ -134,8 +134,8 @@ Ansible には、同様に動作する ``contains`` テストが含まれます�
             - em2
 
         - master: lacp1
-          network:10.65.120.0/24
-          gateway:10.65.120.1
+          network: 10.65.120.0/24
+          gateway: 10.65.120.1
           dns4:
             - 10.65.100.10
             - 10.65.100.11
@@ -264,4 +264,4 @@ Ansible には、同様に動作する ``contains`` テストが含まれます�
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

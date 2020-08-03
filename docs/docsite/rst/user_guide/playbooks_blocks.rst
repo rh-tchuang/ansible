@@ -50,21 +50,21 @@ Block は、タスクの論理グループおよびプレイのエラー処理�
 
 .. _block_rescue:
 .. code-block:: YAML
- :emphasize-lines: 3,10
- :caption: Block error handling example
+:emphasize-lines: 3,10
+:caption: ブロックエラーの処理例
 
   tasks:
-  - name: Handle the error
+  - name:Handle the error
     block:
       - debug:
-          msg: 'I execute normally'
+          msg:'I execute normally'
       - name: i force a failure
         command: /bin/false
       - debug:
-          msg: 'I never execute, due to the above task failing, :-('
+          msg:'I never execute, due to the above task failing, :-('
     rescue:
       - debug:
-          msg: 'I caught an error, can do stuff here to fix it, :-)'
+          msg:'I caught an error, can do stuff here to fix it, :-)'
 
 これにより、実行に失敗したタスクのステータスが「取り消され」、成功したかのように再生が続行されます。
 
@@ -72,20 +72,20 @@ Block は、タスクの論理グループおよびプレイのエラー処理�
 
 .. _block_always:
 .. code-block:: YAML
- :emphasize-lines: 2,9
- :caption: Block with always section
+:emphasize-lines: 2,9
+:caption: always セクションのあるブロック
 
-  - name: Always do X
+  - name:Always do X
     block:
       - debug:
-          msg: 'I execute normally'
+          msg:'I execute normally'
       - name: i force a failure
         command: /bin/false
       - debug:
-          msg: 'I never execute :-('
+          msg:'I never execute :-('
     always:
       - debug:
-          msg: "This always executes, :-)"
+          msg:"This always executes, :-)"
 
 これをすべて一緒に追加して、複雑なエラー処理を実行できます。
 
@@ -122,8 +122,8 @@ Block は、タスクの論理グループおよびプレイのエラー処理�
 別の例として、エラーが発生した後にハンドラーを実行する方法があります。
 
 .. code-block:: YAML
- :emphasize-lines: 6,10
- :caption: Block run handlers in error handling
+ :emphasize-lines:6,10
+ :caption: エラー処理におけるブロック実行ハンドラー
 
 
   tasks:
@@ -143,7 +143,7 @@ Block は、タスクの論理グループおよびプレイのエラー処理�
          msg: 'This handler runs even on error'
 
 
-バージョン 2.1 における新機能
+.. versionadded:: 2.1
 
 また、Ansible は、ブロックの ``rescue`` 部分にタスクの変数をいくつか提供します。
 
@@ -162,4 +162,4 @@ ansible_failed_result
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

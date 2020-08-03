@@ -7,7 +7,7 @@
 
 Ansible は、インベントリーと呼ばれるリスト、またはリストのグループを使用して、インフラストラクチャーにある複数の管理ノードまたは「ホスト」に対して同時に機能します。インベントリーが定義されたら、:ref:`パターン<intro_patterns>` を使用して Ansible で実行するホストまたはグループを選択します。
 
-インベントリーのデフォルトの場所は、``/etc/ansible/hosts`` ファイルです。``-i <path>`` オプションを使用して、コマンドラインで別のインベントリーファイルを指定できます。また、:ref:`intro_dynamic_inventory` で説明されているように、複数のインベントリーファイルを同時に使用したり、動的またはクラウドのソースまたは異なる形式 (YAML、ini など) から複数のインベントリーを取得 (プル) することもできます。
+インベントリーのデフォルトの場所は、``/etc/ansible/hosts`` ファイルです。``-i <path>`` オプションを使用して、コマンドラインで別のインベントリーファイルを指定できます。また、「:ref:`intro_dynamic_inventory`」で説明されているように、複数のインベントリーファイルを同時に使用したり、動的またはクラウドのソースまたは異なる形式 (YAML、ini など) から複数のインベントリーを取得 (プル) することもできます。
 バージョン 2.4 で導入された Ansible には、この柔軟でカスタマイズ可能な :ref:`inventory_plugins` があります。
 
 .. contents::
@@ -62,7 +62,7 @@ Ansible は、インベントリーと呼ばれるリスト、またはリスト
 
 デフォルトグループは ``all`` および ``ungrouped`` です。``all`` グループにはすべてのホストが含まれます。
 ``ungrouped`` グループには、``all`` 以外のグループがないすべてのホストが含まれます。
-すべてのホストは常に 2 つ以上のグループに所属します (``all`` と、``ungrouped`` または ``all`` などのグループ)。``all`` および ``ungrouped`` は常に存在しますが、暗黙的であり、``group_names`` のようなグループ一覧に表示されない場合があります。
+すべてのホストは常に 2 つ以上のグループに所属します (``all`` と ``ungrouped``、または ``all`` とその他のグループ)。``all`` および ``ungrouped`` は常に存在しますが、暗黙的であり、``group_names`` のようなグループ一覧に表示されない場合があります。
 
 .. _host_multiple_groups:
 
@@ -200,11 +200,11 @@ YAML の場合は、以下のようになります。
 
     atlanta:
       host1:
-        http_port:80
-        maxRequestsPerChild:808
+        http_port: 80
+        maxRequestsPerChild: 808
       host2:
-        http_port:303
-        maxRequestsPerChild:909
+        http_port: 303
+        maxRequestsPerChild: 909
 
 非標準の SSH ポートなどの一意な値は、ホスト変数として機能します。コロンを使用してポート番号をホスト名の後に追加することで、ホスト変数として Ansible インベントリーに追加できます。
 
@@ -350,9 +350,9 @@ YAML の場合は、以下のようになります。
                   host3:
             vars:
               some_server: foo.southeast.example.com
-              halon_system_timeout:30
-              self_destruct_countdown:60
-              escape_pods:2
+              halon_system_timeout: 30
+              self_destruct_countdown: 60
+              escape_pods: 2
           northeast:
           northwest:
           southwest:
@@ -412,7 +412,7 @@ git リポジトリー (または他のバージョン管理) でインベント
 変数をマージする方法
 ========================
 
-デフォルトでは、変数は、プレイの実行前に特定ホストにマージまたはフラット化されます。これにより、Ansible はホストとタスクに焦点を当てたままになるため、グループはインベントリーとホストの一致以外では生き残れません。デフォルトでは、Ansible はグループやホストに定義された変数を含む変数を上書きします (:ref:`DEFAULT_HASH_BEHAVIOUR<DEFAULT_HASH_BEHAVIOUR>` を参照)。順序/優先順位は (最低から最高へ) です。
+デフォルトでは、変数は、プレイの実行前に特定ホストにマージまたはフラット化されます。これにより、Ansible はホストとタスクに焦点を当てたままになるため、グループはインベントリーとホストの一致以外では残れません。デフォルトでは、Ansible はグループやホストに定義された変数を含む変数を上書きします (:ref:`DEFAULT_HASH_BEHAVIOUR<DEFAULT_HASH_BEHAVIOUR>` を参照)。順序/優先順位は「最低から最高へ」です。
 
 - すべてのグループ (他のすべてのグループの「親」であるため)
 - 親グループ
@@ -574,7 +574,7 @@ ansible_shell_type
 
 ansible_python_interpreter
     ターゲットホストの Python のパス。これは、複数の Python があるシステム、
-    または *BSD などの :command:`/usr/bin/python` にないシステム、または :command:`/usr/bin/python` が 
+    または \*BSD などの :command:`/usr/bin/python` にないシステム、または :command:`/usr/bin/python` が 
     2.X シリーズの Python 以外のシステムに役に立ちます。 :command:`/usr/bin/env` メカニズムは使用しません。
     リモートユーザーのパスを正しく設定する必要があり、また :program:`python` 実行ファイルの名前が python であることを前提としています。
     実行ファイルの名前は、:program:`python2.6` のようになります。
@@ -583,7 +583,7 @@ ansible_*_interpreter
     ruby や perl などのあらゆるもので動作し、:ref:`ansible_python_interpreter<ansible_python_interpreter>` と同じように機能します。
     これは、そのホストで実行するモジュールのシバンに代わるものです。
 
-バージョン 2.1 における新機能
+.. versionadded:: 2.1
 
 .. _ansible_shell_executable:
 
@@ -653,7 +653,7 @@ ansible_docker_extra_args
 
 利用可能なプラグインとサンプルの一覧は、:ref:`connection_plugin_list` を参照してください。
 
-.. note:: ドキュメントを最初から読んでいる場合、これが Ansibleプレイブックの初めての例になるかもしれません。これはインベントリーファイルではありません。
+.. note:: ドキュメントを最初から読んでいる場合は、これが Ansibleプレイブックの初めての例になるかもしれません。これはインベントリーファイルではありません。
           Playbook については、ドキュメントで後ほど詳細に説明します。
 
 .. _inventory_setup_examples:
@@ -670,7 +670,7 @@ ansible_docker_extra_args
 インベントリーごとに 1 つの環境のホストのみを定義することが推奨されます。これにより、
 実際に、
 「ステージング」サーバーを更新する必要がある場合などに、
-「テスト」環境内のノードの状態を誤って変更するのが難しくなります。
+「テスト」環境内のノードの状態を誤って変更する可能性が減ります。
 
 上記の例では、
 :file:`inventory_test` ファイルを使用できます。
@@ -723,9 +723,9 @@ Playbook またはロール内でファイアウォールルールを定義で�
     tasks:
     - name: allow access from 10.0.0.1
       iptables:
-        chain:INPUT
-        jump:ACCEPT
-        source:10.0.0.1
+        chain: INPUT
+        jump: ACCEPT
+        source: 10.0.0.1
 
 .. _inventory_setup-per_location:
 
@@ -763,4 +763,4 @@ Playbook またはロール内でファイアウォールルールを定義で�
    `メーリングリスト <https://groups.google.com/group/ansible-project>`_
        ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

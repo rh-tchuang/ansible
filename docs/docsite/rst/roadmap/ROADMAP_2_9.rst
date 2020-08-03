@@ -5,35 +5,35 @@ Ansible 2.9
 .. contents::
    :local:
 
-Release Schedule
+リリーススケジュール
 ----------------
 
-Expected
+予定
 ========
 
-PRs must be raised well in advance of the dates below to have a chance of being included in this Ansible release.
+PR は、希望する Ansible リリースに含まれる可能性を高めるために、以下の期日に間に合うように、十分な余裕をもって提案してください。
 
-.. note:: There is no Alpha phase in 2.9.
+.. note:: 2.9 には、Alpha フェーズはありません。
 
-- 2019-08-29 Beta 1 **Feature freeze**
-  No new functionality (including modules/plugins) to any code
+- 2019-08-29 Beta 1 **機能フリーズ**
+  どのコードにも新しい機能 (モジュール、プラグイン など) はありません
 
-- 2019-09-19 Release Candidate 1
-- 2019-10-03 Release Candidate 2
-- 2019-10-10 Release Candidate 3
-- 2019-10-17 Release Candidate 4 (if needed)
-- 2019-10-24 Release Candidate 5 (if needed)
-- 2019-10-31 Release
+- 2019-09-19 リリースの候補 1
+- 2019-10-03 リリースの候補 2
+- 2019-10-10 リリースの候補 3
+- 2019-10-17 リリースの候補 4 (必要な場合)
+- 2019-10-24 リリースの候補 5 (必要な場合)
+- 2019-10-31 リリース
 
 
 
-Release Manager
+リリースマネージャー
 ---------------
 TBD
 
-Temporarily, Matt Davis (@nitzmahone) or Matt Clay (@mattclay) on IRC or github.
+IRC または github については、一時的に Matt Davis (@nitzmahone) または Matt Clay (@mattclay) が担当しています。
 
-Planned work
+予定される作業
 ============
 
-See the `Ansible 2.9 Project Board <https://github.com/ansible/ansible/projects/34>`_
+「`Ansible 2.9 Project Board <https://github.com/ansible/ansible/projects/34>`_」を参照してください。

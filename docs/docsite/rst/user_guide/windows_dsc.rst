@@ -6,7 +6,7 @@ Desired State Configuration
 
 Desired State Configuration とは
 ````````````````````````````````````
-Desired State Configuration (DSC )は、PowerShell に同梱されているツールで、
+Desired State Configuration (DSC) は、PowerShell に同梱されているツールで、
 コードを使用して Windows ホストのセットアップを定義するのに使用されます。DSC の全般的な目的は Ansible と同じになりますが、
 実行方法が異なります。Ansible 2.4 以降では、
 ``win_dsc`` モジュールが追加され、
@@ -27,7 +27,7 @@ DSC を使用する理由
 ````````````
 DSC および Ansible モジュールには、
 リソースの状態を定義して保証するという共通の目標があります。このため、
-DSC の `ファイルリソース<https://docs.microsoft.com/en-us/powershell/scripting/dsc/reference/resources/windows/fileresource>`_ や、
+DSC の `ファイルリソース <https://docs.microsoft.com/en-us/powershell/scripting/dsc/reference/resources/windows/fileresource>`_ や、
 Ansible の ``win_file`` などのリソースを使用して、同じ結果を得ることができます。どちらを使用するかは、
 シナリオによって異なります。
 
@@ -99,7 +99,7 @@ Ansible の ``win_dsc`` オプションを区別しやすくなるため、大�
         ValueName:TestValue
         ValueData:TestData
 
-Ansible 2.8 以降、``win_dsc``モジュールは DSC 定義を使用して、
+Ansible 2.8 以降、``win_dsc`` モジュールは DSC 定義を使用して、
 Ansible からの入力オプションを自動的に検証します。つまり、オプション名が正しくない場合、必須オプションが設定されていない場合、
 または値が有効な選択肢ではない場合は、
 Ansible が失敗します。詳細レベル 3 以上 
@@ -242,7 +242,7 @@ Ansible で簡単なアレイを定義するには、以下のようにします
     - entry3
 
     # [UInt32[]]
-    ReturnCode: 0,3010
+    ReturnCode:0,3010
     ReturnCode:
     - 0
     - 3010
@@ -255,14 +255,14 @@ Ansible で簡単なアレイを定義するには、以下のようにします
     # [CimInstance[]]BindingInfo == MSFT_xWebBindingInformation
     BindingInfo:
     - Protocol: https
-      Port:443
-      CertificateStoreName:My
-      CertificateThumbprint:C676A89018C4D5902353545343634F35E6B3A659
-      HostName:DSCTest
+      Port: 443
+      CertificateStoreName: My
+      CertificateThumbprint: C676A89018C4D5902353545343634F35E6B3A659
+      HostName: DSCTest
       IPAddress: '*'
-      SSLFlags:1
+      SSLFlags: 1
     - Protocol: http
-      Port:80
+      Port: 80
       IPAddress: '*'
 
 上記の例は、`MSFT_xWebBindingInformation <https://github.com/PowerShell/xWebAdministration/blob/dev/DSCResources/MSFT_xWebsite/MSFT_xWebsite.schema.mof>`_ クラスの値を 2 つ持つアレイです。
@@ -271,7 +271,7 @@ Ansible で簡単なアレイを定義するには、以下のようにします
 
 DateTime
 ++++++++
-``[DateTime]`` オブジェクトは、`ISO 8601 ```_ の日時形式で、
+``[DateTime]`` オブジェクトは、`ISO 8601 <https://www.w3.org/TR/NOTE-datetime>`_ の日時形式で、
 日付と時刻を表す DateTime文字列です。文字列が、
 Windows ホストに適切にシリアル化されるようにするには、
 ``[DateTime]`` フィールドの値を YAML で引用する必要があります。たとえば、Ansibleで ``[DateTime]`` 値を定義する場合は、
@@ -384,35 +384,35 @@ zip ファイルの抽出
 
 .. code-block:: yaml+jinja
 
-  - name:Extract a zip file
+  - name: Extract a zip file
     win_dsc:
-      resource_name:Archive
-      Destination:C:\\temp\\output
-      Path:C:\\temp\\zip.zip
-      Ensure:Present
+      resource_name: Archive
+      Destination: C:\temp\output
+      Path: C:\temp\zip.zip
+      Ensure: Present
 
 ディレクトリーの作成
 ------------------
 
 .. code-block:: yaml+jinja
 
-    - name:Create file with some text
+    - name: Create file with some text
       win_dsc:
-        resource_name:File
-        DestinationPath:C:\temp\file
+        resource_name: File
+        DestinationPath: C:\temp\file
         Contents: |
             Hello
             World
-        Ensure:Present
-        Type:File
+        Ensure: Present
+        Type: File
 
-    - name:Create directory that is hidden is set with the System attribute
+    - name: Create directory that is hidden is set with the System attribute
       win_dsc:
-        resource_name:File
-        DestinationPath:C:\temp\hidden-directory
-        Attributes:Hidden,System
-        Ensure:Present
-        Type:Directory
+        resource_name: File
+        DestinationPath: C:\temp\hidden-directory
+        Attributes: Hidden,System
+        Ensure: Present
+        Type: Directory
 
 Azure の操作
 -------------------
@@ -502,4 +502,4 @@ IIS Web サイトのセットアップ
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-project>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

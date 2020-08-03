@@ -52,7 +52,7 @@ Playbook のインポート
     # or
     - include_tasks: common_tasks.yml
 
-You can also pass variables into imports and includes::
+import および include に変数を渡すこともできます::
 
     tasks:
     - import_tasks: wordpress.yml

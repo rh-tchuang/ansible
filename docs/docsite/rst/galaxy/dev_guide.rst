@@ -1,11 +1,11 @@
 .. _developing_galaxy:
 
 **********************
-Galaxy Developer Guide
+Galaxy 開発者ガイド
 **********************
 
-You can host collections and roles on Galaxy to share with the Ansible community. Galaxy content is formatted in pre-packaged units of work such as `roles <playbooks_reuse_roles>`_, and new in Galaxy 3.2, `collections <collections>`_.
-You can create roles for provisioning infrastructure, deploying applications, and all of the tasks you do everyday. Taking this a step further, you can create collections which provide a comprehensive package of automation that may include multiple playbooks, roles, modules, and plugins.
+Ansible コミュニティーと共有するには、Galaxy でコレクションおよびロールをホストできます。Galaxy のコンテンツは、`ロール <playbooks_reuse_roles>`_ などの事前にパッケージ化された作業単位でフォーマットされ、Galaxy 3.2 では `コレクション <collections>`_ が新たに提供されました。
+インフラストラクチャーのプロビジョニング、アプリケーションのデプロイ、および日々の作業を行うすべてのタスクにロールを作成できます。これに加えて、複数の Playbook、ロール、モジュール、およびプラグインを含む、自動化の包括的なパッケージを提供するコレクションを作成できます。
 
 .. contents::
    :local:
@@ -13,27 +13,27 @@ You can create roles for provisioning infrastructure, deploying applications, an
 
 .. _creating_collections_galaxy:
 
-Creating collections for Galaxy
+Galaxy のコレクションの作成
 ===============================
 
-Collections are a distribution format for Ansible content. You can use collections to package and distribute playbooks, roles, modules, and plugins.
-You can publish and use collections through `Ansible Galaxy <https://galaxy.ansible.com>`_.
+コレクションは、Ansible コンテンツのディストリビューション形式です。コレクションを使用して Playbook、ロール、モジュール、プラグインをパッケージ化および配布できます。
+`Ansible Galaxy` <https://galaxy.ansible.com>_ を使用してコレクションを公開および使用できます。
 
-See :ref:`developing_collections` for details on how to create collections.
+コレクションの作成方法は、「:ref:`developing_collections`」を参照してください。
 
 .. _creating_roles_galaxy:
 
 
-Creating roles for Galaxy
+Galaxy のロールの作成
 =========================
 
-Use the ``init`` command to initialize the base structure of a new role, saving time on creating the various directories and main.yml files a role requires
+``init`` コマンドを使用して新規ロールの基本構造を初期化し、ロールに必要なさまざまなディレクトリーおよび main.yml ファイルを作成する際の時間を短縮します。
 
 .. code-block:: bash
 
    $ ansible-galaxy init role_name
 
-The above will create the following directory structure in the current working directory:
+上記により、現在の作業ディレクトリーに以下のディレクトリー構造が作成されます。
 
 .. code-block:: text
 
@@ -54,53 +54,53 @@ The above will create the following directory structure in the current working d
        vars/
            main.yml
 
-If you want to create a repository for the role the repository root should be `role_name`.
+ロールのリポジトリーを作成する場合、リポジトリーのルートは `role_name` である必要があります。
 
 Force
 -----
 
-If a directory matching the name of the role already exists in the current working directory, the init command will result in an error. To ignore the error
-use the *--force* option. Force will create the above subdirectories and files, replacing anything that matches.
+ロール名に一致するディレクトリーが現在の作業ディレクトリーに存在する場合は、init コマンドによりエラーが発生します。エラーを無視するには、
+*--force* オプションを使用します。上記のサブディレクトリーとファイルを強制的に作成し、一致するものをすべて置き換えます。
 
 Container enabled
 -----------------
 
-If you are creating a Container Enabled role, pass ``--type container`` to ``ansible-galaxy init``. This will create the same directory structure as above, but populate it
-with default files appropriate for a Container Enabled role. For instance, the README.md has a slightly different structure, the *.travis.yml* file tests
-the role using `Ansible Container <https://github.com/ansible/ansible-container>`_, and the meta directory includes a *container.yml* file.
+Container Enabled ロールを作成する場合は、``--type container`` を ``ansible-galaxy init`` に渡します。これにより、上記と同じディレクトリー構造が作成されますが、
+Container Enabled ロールに適したデフォルトファイルが置かれます。たとえば、README.md の構造は少し異なり、*.travis.yml* ファイルテストは、
+`Ansible Container <https://github.com/ansible/ansible-container>`_ を使用するロールをテストし、メタディレクトリーには *container.yml* ファイルが含まれます。
 
-Using a custom role skeleton
+カスタムロールのスケルトンの使用
 ----------------------------
 
-A custom role skeleton directory can be supplied as follows:
+カスタムロールのスケルトンディレクトリーは、以下のように指定できます。
 
 .. code-block:: bash
 
    $ ansible-galaxy init --role-skeleton=/path/to/skeleton role_name
 
-When a skeleton is provided, init will:
+スケルトンを指定すると init は以下のことを行います。
 
-- copy all files and directories from the skeleton to the new role
-- any .j2 files found outside of a templates folder will be rendered as templates. The only useful variable at the moment is role_name
-- The .git folder and any .git_keep files will not be copied
+- すべてのファイルおよびディレクトリーをスケルトンから新しいロールにコピーします。
+- templates ディレクトリー外で見つかった .j2 ファイルは、すべてテンプレートとして表示されます。現時点で唯一有用な変数は role_name です。
+- .git ディレクトリーおよび .git_keep ファイルはコピーされません。
 
-Alternatively, the role_skeleton and ignoring of files can be configured via ansible.cfg
+または、role_skeleton とファイルの無視は、ansible.cfgで設定できます
 
 .. code-block:: text
 
   [galaxy]
   role_skeleton = /path/to/skeleton
-  role_skeleton_ignore = ^.git$,^.*/.git_keep$
+  role_skeleton_ignore = ^.git$,^.\*/.git_keep$
 
-Authenticate with Galaxy
+Galaxy での認証
 ------------------------
 
-Using the ``import``, ``delete`` and ``setup`` commands to manage your roles on the Galaxy website requires authentication, and the ``login`` command
-can be used to do just that. Before you can use the ``login`` command, you must create an account on the Galaxy website.
+Galaxy Web サイトでロールを管理するために ``import`` コマンド、``delete`` コマンド、および ``setup`` コマンドを使用するには認証が必要ですが、
+そのためには、``login`` コマンドを使用できます。``login`` コマンドを使用する前に、Galaxy の Web サイトにアカウントを作成する必要があります。
 
-The ``login`` command requires using your GitHub credentials. You can use your username and password, or you can create a `personal access token <https://help.github.com/articles/creating-an-access-token-for-command-line-use/>`_. If you choose to create a token, grant minimal access to the token, as it is used just to verify identify.
+``login`` コマンドでは、GitHub の認証情報を使用する必要があります。ユーザー名とパスワードを使用するか、`個人用アクセストークン` <https://help.github.com/articles/creating-an-access-token-for-command-line-use/>_ を作成できます。トークンの作成を選択した場合は、識別の検証のみに使用されるため、トークンに最小限のアクセス権限を付与します。
 
-The following shows authenticating with the Galaxy website using a GitHub username and password:
+以下は、GitHub のユーザー名とパスワードを使用した Galaxy Web サイトでの認証を示しています。
 
 .. code-block:: text
 
@@ -116,25 +116,25 @@ The following shows authenticating with the Galaxy website using a GitHub userna
    Password for dsmith:
    Successfully logged into Galaxy as dsmith
 
-When you choose to use your username and password, your password is not sent to Galaxy. It is used to authenticates with GitHub and create a personal access token.
-It then sends the token to Galaxy, which in turn verifies that your identity and returns a Galaxy access token. After authentication completes the GitHub token is
-destroyed.
+ユーザー名とパスワードの使用を選択すると、パスワードは Galaxy に送信されません。これは、GitHub で認証し、個人用アクセストークンを作成するために使用されます。
+次にトークンを Galaxy に送信し、Galaxy は ID を確認し、Galaxy アクセストークンを返します。認証が完了すると、
+GitHub トークンは破棄されます。
 
-If you do not wish to use your GitHub password, or if you have two-factor authentication enabled with GitHub, use the *--github-token* option to pass a personal access token that you create.
+GitHub パスワードを使用しない場合や、GitHub で 2 段階認証を有効にしている場合は、*--github-token* オプションを使用して、作成する個人用アクセストークンを渡します。
 
 
-Import a role
+ロールのインポート
 -------------
 
-The ``import`` command requires that you first authenticate using the ``login`` command. Once authenticated you can import any GitHub repository that you own or have been granted access.
+``import`` コマンドには、最初に ``login`` コマンドを使用して認証する必要があります。認証後、所有またはアクセス権が付与された GitHub リポジトリーをインポートできます。
 
-Use the following to import to role:
+以下を使用してロールにインポートします。
 
 .. code-block:: bash
 
   $ ansible-galaxy import github_user github_repo
 
-By default the command will wait for Galaxy to complete the import process, displaying the results as the import progresses:
+デフォルトでは、コマンドは Galaxy がインポートプロセスを完了するまで待機し、インポートが進行するにつれて結果を表示します。
 
 .. code-block:: text
 
@@ -151,55 +151,55 @@ By default the command will wait for Galaxy to complete the import process, disp
       Import completed
       Status SUCCESS : warnings=0 errors=0
 
-Branch
+ブランチ
 ^^^^^^
 
-Use the *--branch* option to import a specific branch. If not specified, the default branch for the repo will be used.
+*--branch* オプションを使用して、特定のブランチをインポートします。指定されていない場合は、リポジトリーのデフォルトブランチが使用されます。
 
-Role name
+ロール名
 ^^^^^^^^^
 
-By default the name given to the role will be derived from the GitHub repository name. However, you can use the *--role-name* option to override this and set the name.
+デフォルトでは、ロールに指定される名前は GitHub リポジトリー名から作成されます。ただし、*--role-name* オプションを使用してこれを上書きし、名前を設定できます。
 
-No wait
+待機なし
 ^^^^^^^
 
-If the *--no-wait* option is present, the command will not wait for results. Results of the most recent import for any of your roles is available on the Galaxy web site by visiting *My Imports*.
+*--no-wait* オプションを指定すると、コマンドは結果を待ちません。ロールに関する最新のインポート結果は、Galaxy Web サイトで *My Imports* に移動して利用できます。
 
-Delete a role
+ロールの削除
 -------------
 
-The ``delete`` command requires that you first authenticate using the ``login`` command. Once authenticated you can remove a role from the Galaxy web site. You are only allowed to remove roles where you have access to the repository in GitHub.
+``delete`` コマンドには、最初に ``login`` コマンドを使用して認証する必要があります。認証後、Galaxy Web サイトからロールを削除できます。GitHub のリポジトリーにアクセスできるロールのみを削除できます。
 
-Use the following to delete a role:
+ロールを削除するには、以下を使用します。
 
 .. code-block:: bash
 
   $ ansible-galaxy delete github_user github_repo
 
-This only removes the role from Galaxy. It does not remove or alter the actual GitHub repository.
+これは、Galaxy からロールを削除するだけです。実際の GitHub リポジトリーを削除したり、変更したりしません。
 
 
-Travis integrations
+Travis 統合
 -------------------
 
-You can create an integration or connection between a role in Galaxy and `Travis <https://travis-ci.org>`_. Once the connection is established, a build in Travis will
-automatically trigger an import in Galaxy, updating the search index with the latest information about the role.
+Galaxy と `Travis <https://travis-ci.org>`_ のロールの間に統合またはコネクションを作成できます。接続が確立されると、
+Travis でのビルドは自動的に Galaxy でのインポートをトリガーし、そのロールに関する最新情報で検索インデックスを更新します。
 
-You create the integration using the ``setup`` command, but before an integration can be created, you must first authenticate using the ``login`` command; you will
-also need an account in Travis, and your Travis token. Once you're ready, use the following command to create the integration:
+``setup`` コマンドを使用して統合を作成しますが、統合を作成する前に、最初に ``login`` コマンドを使用して認証する必要があります。
+Travis のアカウントおよび Travis トークンも必要になります。準備が整ったら、次のコマンドを使用して統合を作成します。
 
 .. code-block:: bash
 
   $ ansible-galaxy setup travis github_user github_repo xxx-travis-token-xxx
 
-The setup command requires your Travis token, however the token is not stored in Galaxy. It is used along with the GitHub username and repo to create a hash as described
-in `the Travis documentation <https://docs.travis-ci.com/user/notifications/>`_. The hash is stored in Galaxy and used to verify notifications received from Travis.
+setup コマンドには Travis トークンが必要ですが、トークンは Galaxy に保存されません。これは、
+「`Travis ドキュメント <https://docs.travis-ci.com/user/notifications/>`_」で説明されたとおりにハッシュを作成するために、GitHub のユーザー名およびリポジトリーと共に使用されます。ハッシュは Galaxy に保存され、Travis から受け取った通知の検証に使用されます。
 
-The setup command enables Galaxy to respond to notifications. To configure Travis to run a build on your repository and send a notification, follow the
-`Travis getting started guide <https://docs.travis-ci.com/user/getting-started/>`_.
+setup コマンドは、Galaxy が通知に応答できるようにします。Travis を設定してリポジトリーでビルドを実行し、通知を送信するには、
+「`Travis getting started guide <https://docs.travis-ci.com/user/getting-started/>`_」の手順に従ってください。
 
-To instruct Travis to notify Galaxy when a build completes, add the following to your .travis.yml file:
+ビルドの完了時に Galaxy に通知するように Travis に指示するには、.travis.yml ファイルに以下を追加します。
 
 .. code-block:: text
 
@@ -207,10 +207,10 @@ To instruct Travis to notify Galaxy when a build completes, add the following to
         webhooks: https://galaxy.ansible.com/api/v1/notifications/
 
 
-List Travis integrations
+Travis 統合の一覧表示
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Use the *--list* option to display your Travis integrations:
+*--list* オプションを使用して、Travis 統合を表示します。
 
 .. code-block:: bash
 
@@ -223,24 +223,24 @@ Use the *--list* option to display your Travis integrations:
       1          travis     github_user/github_repo
 
 
-Remove Travis integrations
+Travis 統合の削除
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Use the *--remove* option to disable and remove a Travis integration:
+*--remove* オプションを使用して、Travis 統合を無効化および削除します。
 
   .. code-block:: bash
 
     $ ansible-galaxy setup --remove ID
 
-Provide the ID of the integration to be disabled. You can find the ID by using the *--list* option.
+無効にする統合の ID を指定します。*--list* オプションを使用して ID を見つけることができます。
 
 
 .. seealso::
   :ref:`collections`
-    Shareable collections of modules, playbooks and roles
+    モジュール、Playbook、およびロールの共有可能なコレクション
   :ref:`playbooks_reuse_roles`
-    All about ansible roles
-  `Mailing List <https://groups.google.com/group/ansible-project>`_
-    Questions? Help? Ideas?  Stop by the list on Google Groups
+    Ansible ロールに関するすべて
+  `メーリングリスト <https://groups.google.com/group/ansible-project>`_
+    ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
   `irc.freenode.net <http://irc.freenode.net>`_
-    #ansible IRC chat channel
+    #ansible IRC チャットチャンネル

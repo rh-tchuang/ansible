@@ -22,7 +22,7 @@ Ansible を使用してソフトウェアをインストールできる主な方
   代わりに、``source`` オプションを設定して使用します。
 
 * ``win_package`` モジュールを使用する。これにより、
-  ローカル/ネットワークパスまたは URL から MSI または .exe インストーラーを使用してソフトウェアがインストールされます。
+  ローカル/ネットワークパスまたは URL から、MSI または .exe インストーラーを使用してソフトウェアがインストールされます。
 
 * ``win_command`` モジュールまたは ``win_shell`` モジュールを使用して手動でインストーラーを実行する。
 
@@ -119,19 +119,19 @@ Ansible は、ホスト上でインタラクティブに実行されたかのよ
 
 .. code-block:: yaml+jinja
 
-    - name:Download KB3172729 for Server 2012 R2
+    - name: Download KB3172729 for Server 2012 R2
       win_get_url:
         url: http://download.windowsupdate.com/d/msdownload/update/software/secu/2016/07/windows8.1-kb3172729-x64_e8003822a7ef4705cbb65623b72fd3cec73fe222.msu
-        dest:C:\temp\KB3172729.msu
+        dest: C:\temp\KB3172729.msu
 
-    - name:Install hotfix
+    - name: Install hotfix
       win_hotfix:
-        hotfix_kb:KB3172729
-        source:C:\temp\KB3172729.msu
+        hotfix_kb: KB3172729
+        source: C:\temp\KB3172729.msu
         state: present
       register: hotfix_result
 
-    - name:Reboot host if required
+    - name: Reboot host if required
       win_reboot:
       when: hotfix_result.reboot_required
 
@@ -243,28 +243,28 @@ Ansible が通常使用するラッパーがないため、``become``、``async`
 
 .. code-block:: yaml+jinja
 
-    - name: Run a command under PowerShell
-      win_shell: Get-Service -Name service | Stop-Service
+    - name:Run a command under PowerShell
+      win_shell:Get-Service -Name service | Stop-Service
 
-    - name: Run a command under cmd
+    - name:Run a command under cmd
       win_shell: mkdir C:\temp
       args:
         executable: cmd.exe
 
-    - name: Run a multiple shell commands
+    - name:Run a multiple shell commands
       win_shell: |
         New-Item -Path C:\temp -ItemType Directory
         Remove-Item -Path C:\temp -Force -Recurse
         $path_info = Get-Item -Path C:\temp
         $path_info.FullName
 
-    - name: Run an executable using win_command
+    - name:Run an executable using win_command
       win_command: whoami.exe
 
-    - name: Run a cmd command
+    - name:Run a cmd command
       win_command: cmd.exe /c mkdir C:\temp
 
-    - name: Run a vbs script
+    - name:Run a vbs script
       win_command: cscript.exe script.vbs
 
 .. Note:: ``mkdir``、``del``、``copy`` などの一部のコマンドは、
@@ -282,11 +282,11 @@ Ansible が通常使用するラッパーがないため、``become``、``async`
 * 引数は二重引用符 (``"``) で囲むことができます。これらの引用符内のすべては、
   空白が含まれている場合でも、単一の引数として解釈されます。
 
-* バックスラッシュ ```` が前に付いた二重引用符は、
+* バックスラッシュ ``\`` が前に付いた二重引用符は、
   単なる二重引用符 ``"`` として解釈され、引数の区切り文字として解釈されません。
 
 * バックスラッシュは、二重引用符の直前にない限り、
-  文字どおりに解釈されます (```` == ```` および ``\"`` == ``"`` など)。
+  文字どおりに解釈されます (``\`` == ``\`` および ``\"`` == ``"`` など)。
 
 * 偶数個のバックスラッシュの後に二重引用符が続く場合は、
   すべてのペアの引数で 1 つのバックスラッシュが使用され、
@@ -294,9 +294,9 @@ Ansible が通常使用するラッパーがないため、``become``、``async`
 
 * 奇数のバックスラッシュの後に二重引用符が続く場合は、
   各ペアの引数で 1 つのバックスラッシュが使用され、
-  二重引用符はエスケープされ、
+  二重引用符はエスケープされ、引数でリテラルの二重引用符が作成されます。
 
-引数でリテラルの二重引用符が作成されます。
+これらのルールを念頭に置いて、引用の例をいくつか示します。
 
 .. code-block:: yaml+jinja
 
@@ -321,7 +321,7 @@ Ansible が通常使用するラッパーがないため、``become``、``async`
     argv[1] = C:\no\space\path
     argv[2] = arg with end \ before end quote\"
     
-詳細は「`escaping arguments <https://msdn.microsoft.com/en-us/library/17w5ykft(v=vs.85).aspx>`\_」を参照してください。
+詳細は「`引数のエスケープ <https://msdn.microsoft.com/en-us/library/17w5ykft(v=vs.85).aspx>`_」を参照してください。
 
 スケジュールされたタスクの作成と実行
 -------------------------------------
@@ -365,7 +365,7 @@ Ansible バージョン 2.5 では、Windows でスケジュールされたタ�
 Windows のパスのフォーマット
 ```````````````````````````
 Windows は、多くの点で従来の POSIX オペレーティングシステムとは異なります。主な変更点の 1 つは、
-パス区切り文字としての ``/`` から ```` へのシフトです。```` は POSIX システムでエスケープ文字として使用されることが多いため、
+パス区切り文字としての ``/`` から ``\`` へのシフトです。``\`` は POSIX システムでエスケープ文字として使用されることが多いため、
 これは、
 Playbook の作成方法に大きな問題を引き起こす可能性があります。
 
@@ -391,15 +391,16 @@ YAML スタイル
 YAML 仕様では、`次のエスケープシーケンス <https://yaml.org/spec/current.html#id2517668>`_ が考慮されます。
 
 * ``\0``, ``\\``, ``\"``, ``\_``, ``\a``, ``\b``, ``\e``, ``\f``, ``\n``, ``\r``, ``\t``,
-  ``\v``, ``\L``, ``\N`` and ``\P`` -- 1 文字のエスケープ
+  ``\v``, ``\L``, ``\N`` and ``\P`` - 1 文字のエスケープ
 
-* ``<TAB>``, ``<SPACE>``, ``<NBSP>``, ``<LNSP>``, ``<PSP>`` -- 特殊文字
+* ``<TAB>``、``<SPACE>``、``<NBSP>``、``<LNSP>``、``<PSP>`` 
+  - 特殊文字
 
-* ``\x..`` -- 2 桁の 16 進エスケープ
+* ``\x..`` - 2 桁の 16 進エスケープ
 
-* ``\u....`` -- 4 桁の 16 進エスケープ
+* ``\u....`` - 4 桁の 16 進エスケープ
 
-* ``\U........`` -- 8 桁の 16 進エスケープ
+* ``\U........`` - 8 桁の 16 進エスケープ
 
 Windows パスの記述方法の例を次に示します。
 
@@ -425,7 +426,7 @@ Windows パスの記述方法の例を次に示します。
 この例は、必要な場合の単一引用符の使用を示しています。
 
     ---
-    - name:Copy tomcat config
+    - name: Copy tomcat config
       win_copy:
         src: log4j.xml
         dest: '{{tc_home}}\lib\log4j.xml'
@@ -439,19 +440,19 @@ Playbook でこのスタイルを使用することは推奨されません。Pl
 引用符 (単一と二重の両方) は、
 Ansible による解析方法に影響を与えません。
 
-Ansible の key=value パーサー parse\_kv() は、
+Ansible の key=value パーサー parse_kv() は、
 次のエスケープシーケンスを考慮します。
 
 * ``\``, ``'``, ``"``, ``\a``, ``\b``, ``\f``, ``\n``, ``\r``, ``\t``、および 
-  ``\v`` -- 1 文字のエスケープ
+  ``\v`` - 1 文字のエスケープ
 
-* ``\x..`` -- 2 桁の 16 進エスケープ
+* ``\x..`` - 2 桁の 16 進エスケープ
 
-* ``\u....`` -- 4 桁の 16 進エスケープ
+* ``\u....`` - 4 桁の 16 進エスケープ
 
-* ``\U........`` -- 8 桁の 16 進エスケープ
+* ``\U........`` - 8 桁の 16 進エスケープ
 
-* ``\N{...}`` -- 名前による Unicode 文字
+* ``\N{...}`` - 名前による Unicode 文字
 
 これは、バックスラッシュが一部のシーケンスのエスケープ文字であることを意味します。
 通常、この形式ではバックスラッシュをエスケープする方が安全です。
@@ -489,7 +490,7 @@ key=value スタイルで Windows パスを使用する例を次に示します�
 
 * WinRM リスナーとの対話
 
-WinRM は通常の対話中にオンラインで実行されているサービスに依存しているため、PowerShell をアップグレードしたり、Ansible で WinRM リスナーと対話することはできません。このアクションにより、接続が失敗します。これは技術的には ``async`` またはスケジュールされたタスクを使用することで回避できますが、そのようなメソッドは、実行するプロセスがAnsible が使用する基本的な接続を中断する場合は脆弱であり、
+WinRM は通常の対話中にオンラインで実行されているサービスに依存しているため、PowerShell をアップグレードしたり、Ansible で WinRM リスナーと対話することはできません。このアクションにより、接続が失敗します。これは技術的には ``async`` またはスケジュールされたタスクを使用することで回避できますが、そのようなメソッドは、実行するプロセスが Ansible が使用する基本的な接続を中断する場合は脆弱であり、
 ブートストラッププロセスまたはイメージが作成される前に残されるのが最適です。
 
 Windows モジュールの開発

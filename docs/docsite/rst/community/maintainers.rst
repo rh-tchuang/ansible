@@ -1,73 +1,73 @@
 .. _maintainers:
 
 ****************************
-Module Maintainer Guidelines
+モジュールメンテナーのガイドライン
 ****************************
 
-.. contents:: Topics
+.. contents:: トピック
 
-Thank you for being a maintainer of part of Ansible's codebase. This guide provides module maintainers an overview of their responsibilities, resources for additional information, and links to helpful tools.
+Ansible のコードベースのメンテナーになっていただきありがとうございます。本ガイドでは、モジュールメンテナーの責任の概要、追加情報のリソース、役立つツールへのリンクを紹介します。
 
-In addition to the information below, module maintainers should be familiar with:
+以下の情報に加えて、モジュールメンテナーは以下について理解しておく必要があります。
 
-* :ref:`General Ansible community development practices <ansible_community_guide>`
-* Documentation on :ref:`module development <developing_modules>`
+* :ref:`Ansible コミュニティー開発に関する一般的なプラクティス <ansible_community_guide>`
+* :ref:`モジュール開発 <developing_modules>` に関するドキュメント
 
 
-Maintainer responsibilities
+メンテナーの役割
 ===========================
 
-When you contribute a new module to the `ansible/ansible <https://github.com/ansible/ansible>`_ repository, you become the maintainer for that module once it has been merged. Maintainership empowers you with the authority to accept, reject, or request revisions to pull requests on your module -- but as they say, "with great power comes great responsibility."
+新しいモジュールを `ansible/ansible <https://github.com/ansible/ansible>`_ リポジトリーに提供し、それがマージされると、モジュールのメンテナーになります。メンテナンスは、モジュールに対してプル要求を行うための改訂を許可、拒否、または要求する権限を持ちますが、「権限が大きくなると責任も大きくなる」とも言えます。
 
-Maintainers of Ansible modules are expected to provide feedback, responses, or actions on pull requests or issues to the module(s) they maintain in a reasonably timely manner.
+Ansible モジュールのメンテナーは、保守を行っているモジュールへのプル要求や問題に対するフィードバック、応答、アクションを合理的なタイミングで提供することが期待されます。
 
-It is also recommended that you occasionally revisit the `contribution guidelines <https://github.com/ansible/ansible/blob/devel/.github/CONTRIBUTING.md>`_, as they are continually refined. Occasionally, you may be requested to update your module to move it closer to the general accepted standard requirements. We hope for this to be infrequent, and will always be a request with a fair amount of lead time (ie: not by tomorrow!).
+また、「`貢献のガイドライン <https://github.com/ansible/ansible/blob/devel/.github/CONTRIBUTING.md>`_」は常に改善されているため、時々見直すことが推奨されます。場合によっては、モジュールが一般的に受け入れられている標準的な要件に近づけるために、モジュールを更新するように要求されることがあります。このようなことは頻繁には怒らず、(たとえば「明日までに」ではなく) 常にかなりのリードタイムをかけた要求となることが期待されます。
 
-Finally, following the `ansible-devel <https://groups.google.com/forum/#!forum/ansible-devel>`_ mailing list can be a great way to participate in the broader Ansible community, and a place where you can influence the overall direction, quality, and goals of Ansible and its modules. If you're not on this relatively low-volume list, please join us here: https://groups.google.com/forum/#!forum/ansible-devel
+最後に、`ansible-devel <https://groups.google.com/forum/#!forum/ansible-devel>`_ メーリングリストをフォローすることは、より広範な Ansible コミュニティーに参加するための素晴らしい方法であり、Ansible とそのモジュールの全体的な方向性、品質、目標に影響を及ぼすことができる場所でもあります。比較的ボリュームの少ないこのメーリングリストに参加していない場合は、https://groups.google.com/forum/#!forum/ansible-devel からご参加ください。
 
-The Ansible community hopes that you will find that maintaining your module is as rewarding for you as having the module is for the wider community.
+Ansible コミュニティーは、モジュールを保守することが、より大きなコミュニティーでモジュールを保守することと同じくらいやりがいを感じることを願っています。
 
-Pull requests, issues, and workflow
+プル要求、問題、およびワークフロー
 ===================================
 
-Pull requests
+プル要求
 -------------
 
-Module pull requests are located in the `main Ansible repository <https://github.com/ansible/ansible/pulls>`_.
+モジュールのプル要求は、`メインの Ansible リポジトリー <https://github.com/ansible/ansible/pulls>`_ にあります。
 
-Because of the high volume of pull requests, notification of PRs to specific modules are routed by an automated bot to the appropriate maintainer for handling. It is recommended that you set an appropriate notification process to receive notifications which mention your GitHub ID.
+プル要求の量が多いため、特定のモジュールへの PR の通知は自動ボットによって適切なメンテナーに送られて処理されます。自身の GitHub ID に関する通知を受け取るために、適切な通知プロセスを設定することが推奨されます。
 
-Issues
+問題
 ------
 
-Issues for modules, including bug reports, documentation bug reports, and feature requests, are tracked in the `ansible repository <https://github.com/ansible/ansible/issues>`_.
+バグレポート、ドキュメントのバグレポート、機能要求などのモジュールの問題は、`Ansible リポジトリー <https://github.com/ansible/ansible/issues>`_ で追跡されます。
 
-Issues for modules are routed to their maintainers by an automated process. This process is still being refined, and currently depends upon the issue creator to provide adequate details (specifically, providing the proper module name) in order to route it correctly. If you are a maintainer of a specific module, it is recommended that you periodically search module issues for issues which mention your module's name (or some variation on that name), as well as setting an appropriate notification process for receiving notification of mentions of your GitHub ID.
+モジュールの問題は、自動化プロセスによりメンテナーに送られます。このプロセスは現在も改良中であり、現時点では、問題が正しく送信されるようにするには、問題の作成者が適切な詳細を提供すること (具体的には適切なモジュール名を指定すること) に依存しています。特定のモジュールのメンテナーになっている場合は、定期的にモジュールの問題を検索して、メンテナーとなっているモジュールの名前 (または類似する名前) が記載されている問題を見つけ、自身の GitHub ID が記載されている場合に通知を受け取るための適切な通知プロセスを設定することが推奨されます。
 
-PR workflow
+PR ワークフロー
 -----------
 
-Automated routing of pull requests is handled by a tool called `Ansibot <https://github.com/ansible/ansibullbot>`_.
+プル要求の自動ルーティングは、`Ansibot <https://github.com/ansible/ansibullbot>`_ と呼ばれるツールによって処理されます。
 
-Being moderately familiar with how the workflow behind the bot operates can be helpful to you, and -- should things go awry -- your feedback can be helpful to the folks that continually help Ansibullbot to evolve.
+ボットの背後にあるワークフローがどのように起動するかをある程度理解しておくと、問題が発生した場合に、提供されるフィードバックが、Ansibullbot の進化を継続的に支援しているユーザーに役に立つ可能性があります。
 
-A detailed explanation of the PR workflow can be seen in the :ref:`community_development_process`.
+PR ワークフローの詳細な説明は、「:ref:`community_development_process`」を参照してください。
 
-Maintainers (BOTMETA.yml)
+メンテナー (BOTMETA.yml)
 -------------------------
 
-The full list of maintainers is located in `BOTMETA.yml <https://github.com/ansible/ansible/blob/devel/.github/BOTMETA.yml>`_.
+メンテナーの一覧は、`BOTMETA.yml <https://github.com/ansible/ansible/blob/devel/.github/BOTMETA.yml>`_ にあります。
 
-Adding and removing maintainers
+メンテナーの追加と削除
 ===============================
 
-Communities change over time, and no one maintains a module forever. If you'd like to propose an additional maintainer for your module, please submit a PR to ``BOTMETA.yml`` with the GitHub username of the new maintainer.
+コミュニティーは時間とともに変化し、誰かがモジュールを永久に維持するというわけではありません。自身のモジュールにメンテナーの追加を提案したい場合は、新しいメンテナーの GitHub ユーザー名を指定して、``BOTMETA.yml`` に PR を提出してください。
 
-If you'd like to step down as a maintainer, please submit a PR to the ``BOTMETA.yml`` removing your GitHub ID from the module in question. If that would leave the module with no maintainers, put "ansible" as the maintainer.  This will indicate that the module is temporarily without a maintainer, and the Ansible community team will search for a new maintainer.
+メンテナーを辞めたい場合は、該当するモジュールから GitHub ID を削除する PR を ``BOTMETA.yml`` に送信してください。これによりモジュールからメンテナーがいなくなる場合は、「ansible」をメンテナーにします。これは、モジュールにメンテナーが一時的にいないことを示し、Ansible コミュニティーチームが新しいメンテナーを探していることを示します。
 
-Tools and other Resources
+ツールおよびその他のリソース
 =========================
 
-* `PRs in flight, organized by directory <https://ansible.sivel.net/pr/byfile.html>`_
+* `ディレクトリーごとに整理された進行中の PR <https://ansible.sivel.net/pr/byfile.html>`_
 * `Ansibullbot <https://github.com/ansible/ansibullbot>`_
 * :ref:`community_development_process`

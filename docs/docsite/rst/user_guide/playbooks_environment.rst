@@ -3,7 +3,7 @@
 環境の設定 (およびプロキシーの使用)
 ==================================================
 
-バージョン 1.1 における新機能
+.. versionadded:: 1.1
 
 ``environment`` キーワードを使用すると、リモートターゲットで行うアクションの環境変数を設定できます。
 たとえば、http 要求を行うタスクのプロキシーの設定が必要になる場合があります。
@@ -134,4 +134,4 @@
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

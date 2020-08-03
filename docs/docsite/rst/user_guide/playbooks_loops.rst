@@ -1,7 +1,7 @@
 .. _playbooks_loops:
 
 *****
-Loop
+ループ
 *****
 
 タスクを複数回繰り返す場合があります。コンピュータープログラミングでは、これはループと呼ばれます。一般的な Ansible ループには、:ref:`ファイルモジュール<file_module>` を使用して複数のファイルやディレクトリーの所有権の変更が含まれます。これにより、:ref:`ユーザーモジュール <user_module>` で複数のユーザーを作成し、
@@ -21,7 +21,7 @@ Loop
 * ``with_<lookup>`` キーワードは、:ref:`lookup_plugins` に依存します。さらに、``items`` は lookup です。
 * ``loop`` キーワードは ``with_list`` と同等で、単純なループに最適です。
 * ``loop`` キーワードは文字列を入力として受け付けません。「:ref:`query_vs_lookup`」を参照してください。
-* 通常、:ref:`migrating_to_loop` で対応している ``with_*`` を使用すると、``loop`` を使用するように更新できます。
+* 通常、「:ref:`migrating_to_loop`」で対応している ``with_*`` を使用すると、``loop`` を使用するように更新できます。
 * ``with_items`` は暗黙的な単一レベルのフラット処理を実行するため、``with_items`` を ``loop`` に変更する場合は注意してください。正確な結果に一致するために、``loop`` で ``flatten(1)`` の使用が必要になる場合があります。たとえば、同じような出力を取得するには、以下を使用します。
 
 .. code-block:: yaml
@@ -41,7 +41,7 @@ Loop
 
   loop: "{{ lookup('fileglob', '*.txt', wantlist=True) }}"
 
-it's cleaner to keep::
+保持する方が見た目がすっきりします::
 
   with_fileglob: '*.txt'
 
@@ -436,4 +436,4 @@ with_X から loop への移行
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

@@ -34,7 +34,7 @@ Jinja2 が提供するもののほかに、Ansible には独自のフィルタ�
     {{ some_variable | to_nice_yaml(indent=8) }}
     
 
-``to_yaml`` フィルターおよび ``to_nice_yaml`` フィルターは、デフォルトの 80 の記号文字列の長さ制限のある `PyYAML library`_ を使用します。これにより、80 番目のシンボルの後に予期しない改行が破損します (80 番目の記号の後に空白がある場合)。
+``to_yaml`` フィルターおよび ``to_nice_yaml`` フィルターは、記号文字列の長さ制限 (デフォルトで 80 ) のある `PyYAML library`_ を使用します。これにより、たとえば 80 番目の記号の後に空白がある場合、80 番目以降に予期しない改行が発生します。
 このような動作を回避し、長い行を生成するには、``width`` オプションを使用できます。
 
     {{ some_variable | to_yaml(indent=8, width=1337) }}
@@ -359,11 +359,11 @@ zip フィルターおよび zip_longest フィルター
 
 ``loop`` でこのフィルターを使用する例::
 
-    - name:Set authorized ssh key, extracting just that data from 'users'
+    - name: Set authorized ssh key, extracting just that data from 'users'
       authorized_key:
         user: "{{ item.0.name }}"
-    key: "{{ lookup('file', item.1) }}"
-  loop: "{{ users | subelements('authorized') }}"
+        key: "{{ lookup('file', item.1) }}"
+      loop: "{{ users | subelements('authorized') }}"
     
 .. _random_mac_filter:
 
@@ -1152,7 +1152,7 @@ URL Split フィルター
     {{ hosts | map('regex_replace', '(.*)', '\\1:80') | list }}
 
 .. note:: Ansible 2.0 よりも前のバージョンでは、(「key=value」の引数を簡単にするのではなく)「regex_replace」フィルターが YAML 引数内の変数で使用された場合は、
-   次に、2 つの (````) ではなく、4 つのバックスラッシュ (``\``) で逆参照 (``\1`` など) をエスケープする必要があります。
+   次に、2 つのバックスラッシュ (```` ) ではなく、4 つのバックスラッシュ (``\`` ) で逆参照 (``\1`` など) をエスケープする必要があります。
 
 .. versionadded:: 2.0
 
@@ -1305,7 +1305,7 @@ vars_prompt から文字列を「True」として入力し、
     # Get total amount of seconds between two dates. Default date format is %Y-%m-%d %H:%M:%S but you can pass your own format
     {{ (("2016-08-14 20:00:12" | to_datetime) - ("2015-12-25" | to_datetime('%Y-%m-%d'))).total_seconds()  }}
 
-# Get remaining seconds after delta has been calculated. NOTE: This does NOT convert years, days, hours, etc to seconds. For that, use total_seconds()
+    # Get remaining seconds after delta has been calculated. NOTE: This does NOT convert years, days, hours, etc to seconds. For that, use total_seconds()
     {{ (("2016-08-14 20:00:12" | to_datetime) - ("2016-08-14 18:00:00" | to_datetime)).seconds  }}
     # This expression evaluates to "12" and not "132". Delta is 2 hours, 12 seconds
 
@@ -1329,7 +1329,7 @@ vars_prompt から文字列を「True」として入力し、
     {{ '%Y-%m-%d' | strftime(0) }}          # => 1970-01-01
     {{ '%Y-%m-%d' | strftime(1441357287) }} # => 2015-09-04
 
-.. note:: 文字列のすべての可能性を取得するには、https://docs.python.org/2/library/time.html#time.strftime を確認します。
+.. note:: 文字列のすべての可能性を取得するには、https://docs.python.org/2/library/time.html\#time.strftime を確認します。
 
 組み合わせフィルター
 ````````````````````
@@ -1347,7 +1347,7 @@ vars_prompt から文字列を「True」として入力し、
       debug:
         msg: "{{ [1,2,3,4,5] | permutations(3) | list }}"
 
-Combinations always require a set size::
+組み合わせには常にセットサイズが必要です::
 
     - name: give me combinations for sets of two
       debug:
@@ -1400,7 +1400,7 @@ Playbook をテストして、タスクで適切なサイズ形式を使用し�
 
 例::
 
-  - name: "Human Readable"
+  - name:"Human Readable"
     assert:
       that:
         - '"1.00 Bytes" == 1|human_readable'
@@ -1468,4 +1468,4 @@ Playbook をテストして、タスクで適切なサイズ形式を使用し�
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル \#ansible

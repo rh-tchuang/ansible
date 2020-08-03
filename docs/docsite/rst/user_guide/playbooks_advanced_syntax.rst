@@ -14,7 +14,7 @@
 安全でない文字列または raw 文字列
 =====================
 
-Ansible は、変数値を「安全ではない」として宣言する内部データタイプを提供します。つまり、変数値内に保持されるデータは安全ではない状態で処理される必要があり、安全ではない文字置換や情報の公開を防ぎます。
+Ansible は、変数値を「安全ではない」と宣言する内部データタイプを提供します。つまり、変数値内に保持されるデータは安全ではない状態で処理される必要があり、安全ではない文字置換や情報の公開を防ぎます。
 
 Jinja2 にはエスケープの機能が含まれ、``{% raw %} ... {% endraw %}`` などの機能を使用してデータをテンプレート化しないように Jinja2 に指示しますが、これにより、より包括的な実装を使用して値がテンプレート化されないようにします。
 
@@ -58,7 +58,7 @@ yaml アンカーおよびエイリアス: 変数値の共有
         app1:
             jvm: &jvm_opts
                 opts: '-Xms1G -Xmx2G'
-                port: 1000
+                port:1000
                 path: /usr/lib/app1
         app2:
             jvm:
@@ -67,7 +67,7 @@ yaml アンカーおよびエイリアス: 変数値の共有
     ...
 
 ここでは、``app1`` および ``app2`` は、アンカー ``&jvm_opts`` およびエイリアス ``*jvm_opts`` を使用して、``opts`` および ``port`` の値を共有します。
-``path`` の値は、``<<`` または `マージオペレーター<https://yaml.org/type/merge.html>`_ でマージされます。
+``path`` の値は、``<<`` または `マージオペレーター <https://yaml.org/type/merge.html>`_ でマージされます。
 
 アンカーとエイリアスを使用すると、ネストされた変数を含む変数値の複雑なセットを共有することもできます。別の変数の値が含まれる変数値がある場合は、個別に定義できます。
 
@@ -87,7 +87,7 @@ yaml アンカーおよびエイリアス: 変数値の共有
 これで、``custom_name`` の値の ``app_version`` の値を再利用し、テンプレートで出力を使用できます::
 
     ---
-    - name: Using values nested inside dictionary
+    - name:Using values nested inside dictionary
       hosts: localhost
       vars:
         webapp:
@@ -96,9 +96,9 @@ yaml アンカーおよびエイリアス: 変数値の共有
                 - "ToDo_App"
                 - *my_version
       tasks:
-      - name: Using Anchor value
+      - name:Using Anchor value
         debug:
-            msg: My app is called "{{ webapp.custom_name | join('-') }}".
+            msg:My app is called "{{ webapp.custom_name | join('-') }}".
 
 ``version`` の値に ``&my_version`` アンカーを付けてアンカーを作成し、``*my_version`` エイリアスで再利用しました。アンカーとエイリアスを使用すると、ディクショナリー内のネストされた値にアクセスできます。
 
@@ -109,4 +109,4 @@ yaml アンカーおよびエイリアス: 変数値の共有
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-project>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

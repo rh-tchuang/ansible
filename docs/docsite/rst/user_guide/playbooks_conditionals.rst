@@ -8,7 +8,7 @@
 
 多くの場合、プレイの結果は変数の値、ファクト (リモートシステムに関するもの)、または以前のタスク結果に依存する場合があります。
 変数の値が他の変数に依存する場合があります。
-ホストが他の基準に合致するかどうかに基づいてホストを管理するために、追加のグループを作成できます。このトピックでは、Playbook で条件がどのように使用されているかを説明します。
+ホストが他の基準に合致するかどうかに基づいてホストを管理するため、追加のグループを作成できます。このトピックでは、Playbook で条件がどのように使用されているかを説明します。
 
 .. note:: Ansible で実行フローを制御するオプションは多数あります。サポートされるその他の条件の例は、http://jinja.pocoo.org/docs/dev/templates/#comparisons を参照してください。
 
@@ -22,7 +22,7 @@ When ステートメント
 これは、オペレーティングシステムが特定のバージョンである場合に、特定のパッケージをインストールしないという単純なものである場合もあれば、
 または、ファイルシステムがいっぱいになった場合にクリーンアップ手順を実行するようなものかもしれません。
 
-これは、Ansible で `when` 句を使用して簡単に実行できます。これには、二重中括弧のない生の Jinja2 式が含まれます (:ref:`group_by_module`を参照)。
+これは、Ansible で `when` 句を使用して簡単に実行できます。これには、二重中括弧のない生の Jinja2 式が含まれます (:ref:`group_by_module` を参照)。
 これは実際には単純なものです。
 
     tasks:
@@ -118,7 +118,7 @@ Playbook またはインベントリーで定義される変数も使用でき�
 
 ループおよび条件
 ``````````````````````
-`when` をループと組み合わせる (:ref:`playbooks_loops`を参照) と、各項目について `when` ステートメントが個別に処理されることに注意してください。これは、以下のように設計されます。
+`when` をループと組み合わせる (:ref:`playbooks_loops` を参照) と、各項目について `when` ステートメントが個別に処理されることに注意してください。これは、以下のように設計されます。
 
     tasks:
         - command: echo {{ item }}
@@ -234,7 +234,7 @@ Playbook またはインベントリーで定義される変数も使用でき�
    変数「ansible_facts['os_family']」は、
    vars_files に定義されているファイル名のリストに挿入されています。
 
-各種の YAML ファイルにはキーと値のみが含まれます。
+各種の YAML ファイルにはキーと値のみが含まれます::
 
     ---
     # for vars/RedHat.yml
@@ -246,7 +246,7 @@ Ansible がインポートしようとする最初のファイルは「vars/RedH
 エラーが発生します。
 
 Debian では、
-Ansible は最初に「'vars/RedHat.yml」ではなく「'vars/Debian.yml」を探してから、「vars/os_defaults.yml」に戻ります。
+Ansible は最初に「vars/RedHat.yml」ではなく「vars/Debian.yml」を探してから、「vars/os_defaults.yml」に戻ります。
 
 Ansible の設定アプローチ - 変数をタスクから分離し、
 Playbook がネストされた条件付きの任意のコードにならないようにします。追跡する決定ポイントが少ないため、より単純で監査可能な構成ルールが得られます。
@@ -415,4 +415,4 @@ ansible_facts['os_family']
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

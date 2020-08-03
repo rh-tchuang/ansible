@@ -1,67 +1,62 @@
 .. _community_documentation_contributions:
 
 *****************************************
-Contributing to the Ansible Documentation
+Ansible ドキュメントへの貢献
 *****************************************
 
-Ansible has a lot of documentation and a small team of writers. Community support helps us keep up with new features, fixes, and changes.
+Ansible ではドキュメントが多数提供されていますが、ドキュメントを作成するチームは小規模です。新機能、修正、および変更の情報を常に最新に保つには、コミュニティーによるサポートが重要です。
 
-Improving the documentation is an easy way to make your first contribution to the Ansible project. You don't have to be a programmer, since our documentation is written in YAML (module documentation) or `reStructuredText <http://docutils.sourceforge.net/rst.html>`_ (rST). If you're using Ansible, you already use YAML in your playbooks. And rST is mostly just text. You don't even need git experience, if you use the ``Edit on GitHub`` option.
+ドキュメントへの改善は、Ansible プロジェクトへの最初の貢献として適しています。本ガイドは YAML (モジュールドキュメント) または `reStructuredText <http://docutils.sourceforge.net/rst.html>`_ (rST) で記述されているため、貢献者がプログラマーである必要はありません。Ansible を使用している場合は、Playbook ですでに YAML を使用しています。そして、rST はほとんどがテキストです。``Edit on GitHub`` オプションを使用すれば、git の経験も必要ではありません。
 
-If you find a typo, a broken example, a missing topic, or any other error or omission on this documentation website, let us know. Here are some ways to support Ansible documentation:
+このドキュメントの Web サイトで、タイポやサンプルの間違い、不足しているトピックなどのエラーや脱落を見つけたら、私たちに知らせてください。Ansible ドキュメントをサポートする方法は次のとおりです。
 
 .. contents::
    :local:
 
-Editing docs directly on GitHub
+GitHub でドキュメントを直接編集
 ===============================
 
-For typos and other quick fixes, you can edit the documentation right from the site. Look at the top right corner of this page. That ``Edit on GitHub`` link is available on every page in the documentation. If you have a GitHub account, you can submit a quick and easy pull request this way.
+入力ミスやその他の簡単な修正は、サイトから直接ドキュメントを編集できます。このページの右上を見てください。``Edit on GitHub`` リンクは、ドキュメント内のすべてのページで利用できます。GitHub アカウントがある場合は、この方法で迅速かつ簡単なプル要求を送信できます。
 
-To submit a documentation PR from docs.ansible.com with ``Edit on GitHub``:
+``Edit on GitHub`` で docs.ansible.com からドキュメントの PR を送信するには、以下を行います。
 
-#. Click on ``Edit on GitHub``.
-#. If you don't already have a fork of the ansible repo on your GitHub account, you'll be prompted to create one.
-#. Fix the typo, update the example, or make whatever other change you have in mind.
-#. Enter a commit message in the first rectangle under the heading ``Propose file change`` at the bottom of the GitHub page. The more specific, the better. For example, "fixes typo in my_module description". You can put more detail in the second rectangle if you like. Leave the ``+label: docsite_pr`` there.
-#. Submit the suggested change by clicking on the green "Propose file change" button. GitHub will handle branching and committing for you, and open a page with the heading "Comparing Changes".
-#. Click on ``Create pull request`` to open the PR template.
-#. Fill out the PR template, including as much detail as appropriate for your change. You can change the title of your PR if you like (by default it's the same as your commit message). In the ``Issue Type`` section, delete all lines except the ``Docs Pull Request`` line.
-#. Submit your change by clicking on ``Create pull request`` button.
-#. Be patient while Ansibot, our automated script, adds labels, pings the docs maintainers, and kicks off a CI testing run.
-#. Keep an eye on your PR - the docs team may ask you for changes.
+#. ``Edit on GitHub`` をクリックします。#. GitHub アカウントで ansible リポジトリーのフォークを所有していない場合は、作成するように促されます。
+#. タイプミスを修正したり、例文を更新したり、その他の変更を加えたりします。
+#. GitHub ページの一番下にある ``Propose file change`` という見出しの下にある最初の四角い部分にコミットメッセージを入力します。より具体的な方が望ましいです。たとえば「fixes typo in my_module description (my_module の説明にあるタイポを修正)」といった具合です。2 つの目の四角い部分に詳細を記入することもできます。ここで、``+label: docsite_pr`` はそのままにしておきます。#. 緑色の「Propose file change」ボタンをクリックして変更を提案します。GitHub がブランチ作成とコミットを行い、「Comparing Changes」という見出しのページを開きます。
+#. ``Create pull request`` をクリックして PR テンプレートを開きます。#. PR テンプレートには、変更に適した詳細などを記入します。PR のタイトルは、必要に応じて変更できます (デフォルトでは、コミットメッセージと同じタイトルになっています)。``Issue Type`` セクションで、``Docs Pull Request`` 行を除くすべての行を削除します。#. ``Create pull request`` ボタンをクリックして、変更内容を送信します。
+#. Ansibot という名前の自動スクリプトがラベルを追加し、ドキュメントのメンターに通知を送り、CI テストが開始されるのをお待ちください。
+#. 送信した PR に注意を払い続けてください。ドキュメントチームから変更を依頼される場合があります。
 
-Reviewing open PRs and issues
+PR および問題の確認
 =============================
 
-You can also contribute by reviewing open documentation `issues <https://github.com/ansible/ansible/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3Adocs>`_ and `PRs <https://github.com/ansible/ansible/pulls?utf8=%E2%9C%93&q=is%3Apr+is%3Aopen+label%3Adocs>`_. To add a helpful review, please:
+開いているドキュメントの `問題 (issue) <https://github.com/ansible/ansible/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3Adocs>`_ および `PR <https://github.com/ansible/ansible/pulls?utf8=%E2%9C%93&q=is%3Apr+is%3Aopen+label%3Adocs>`_ を確認して、貢献することもできます。役に立つレビューを追加するには、以下を参照してください。
 
-- Include a comment - "looks good to me" only helps if we know why.
-- For issues, reproduce the problem.
-- For PRs, test the change.
+- 「looks good to me (私には良さそうに見える)」というコメントは、他の人にもその理由が明らかな場合にのみ使用してください。
+- 問題がある場合は、問題を再現してください。
+- PR については、変更をテストしてください。
 
-Opening a new issue and/or PR
+新しい問題または PR を開く
 =============================
 
-If the problem you've noticed is too complex to fix with the ``Edit on GitHub`` option, and no open issue or PR already documents the problem, please open an issue and/or a PR on the ``ansible/ansible`` repo.
+気づいた問題が複雑すぎて ``Edit on GitHub`` オプションでは修正できず、その問題が報告されていなかったり、PR が作成されていない場合は、``ansible/ansible`` で問題 (issue) や PR を作成してください。
 
-A great documentation GitHub issue or PR includes:
+GitHub の問題や PR には、以下のような内容を追加してください。
 
-- a specific title
-- a detailed description of the problem (even for a PR - it's hard to evaluate a suggested change unless we know what problem it's meant to solve)
-- links to other information (related issues/PRs, external documentation, pages on docs.ansible.com, and so on.)
+- 特定のタイトル
+- 問題の詳細な説明 (何が問題なのか分からないと変更案の評価が困難になるため、PR の場合でも同様)
+- その他の情報 (関連する問題や PR、外部ドキュメント、docs.ansible.com のページなど) へのリンク
 
-Before you open a complex documentation PR
+複雑なドキュメントの PR を作成する前に
 ==========================================
 
-If you make multiple changes to the documentation, or add more than a line to it, before you open a pull request, please:
+ドキュメントに複数の変更を加えたり、それに複数の行を追加したりする場合は、プル要求を開始する前に、以下を行います。
 
-#. Check that your text follows our :ref:`style_guide`.
-#. Test your changes for rST errors.
-#. Build the page, and preferably the entire documentation site, locally.
+#. 記述した内容が、`style_guide` に従っていることを確認してください。
+#. 変更した内容が rST のエラーになっていないかテストしてください。
+#. ページ、できればドキュメントサイト全体をローカルでビルドします。
 
-To work with documentation on your local machine, you need to have python-3.5 or greater and the
-following packages installed:
+ローカルマシンでドキュメントを扱うには、python-3.5 以降と、以下のパッケージがインストールされている必要があります。
 
 - gcc
 - jinja2
@@ -77,110 +72,106 @@ following packages installed:
 
 .. note::
 
-    On macOS with Xcode, you may need to install ``six`` and ``pyparsing`` with ``--ignore-installed`` to get versions that work wth ``sphinx``.
+    Xcode を使用する macOS に、``--ignore-installed` を使用して ``six`` および ``pyparsing`` をインストールして、``sphinx`` に対応するバージョンを取得する必要がある場合があります。
 
 .. _testing_documentation_locally:
 
-Testing the documentation locally
+ドキュメントのローカルでのテスト
 ---------------------------------
 
-To test an individual file for rST errors:
+rST エラーに対して個別のファイルをテストするには、以下を行います。
 
 .. code-block:: bash
 
    rstcheck changed_file.rst
 
-Building the documentation locally
+ローカルでのドキュメントのビルド
 ----------------------------------
 
-Building the documentation is the best way to check for errors and review your changes. Once `rstcheck` runs with no errors, navigate to ``ansible/docs/docsite`` and then build the page(s) you want to review.
+ドキュメントのビルドは、エラーと変更を確認するのに最適な方法です。エラーなしで `rstcheck` を実行したら、``ansible/docs/docsite`` に移動し、確認するページをビルドします。
 
-Building a single rST page
+単一の rST ページのビルド
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To build a single rST file with the make utility:
+make ユーティリティーで単一の RST ファイルをビルドするには、以下を実行します。
 
 .. code-block:: bash
 
    make htmlsingle rst=path/to/your_file.rst
 
-For example:
+たとえば、以下のようになります。
 
 .. code-block:: bash
 
    make htmlsingle rst=community/documentation_contributions.rst
 
-This process compiles all the links but provides minimal log output. If you're writing a new page or want more detailed log output, refer to the instructions on :ref:`build_with_sphinx-build`
+このプロセスはすべてのリンクをコンパイルしますが、ログ出力は最小限になります。新しいページを作成する場合や、より詳細なログ出力が必要な場合は、「:ref:`build_with_sphinx-build`」の説明を参照してください。
 
 .. note::
 
-    ``make htmlsingle`` adds ``rst/`` to the beginning of the path you provide in ``rst=``, so you can't type the filename with autocomplete. Here are the error messages you will see if you get this wrong:
+    ``make htmlsingle`` は、``rst=`` で提供されるパスの先頭に ``rst/`` を追加するため、自動補完でファイル名を入力することができません。これが間違っている場合は、以下のようにエラーメッセージが表示されます。
 
-      - If you run ``make htmlsingle`` from the ``docs/docsite/rst/`` directory: ``make: *** No rule to make target `htmlsingle'.  Stop.``
-      - If you run ``make htmlsingle`` from the ``docs/docsite/`` directory with the full path to your rST document: ``sphinx-build: error: cannot find files ['rst/rst/community/documentation_contributions.rst']``.
+      - ``docs/docsite/rst/`` ディレクトリーから ``make htmlsingle`` を実行した場合は、*** No rule to make target `htmlsingle' Stop.`` メッセージが表示されます。
+      - rST ドキュメントへの完全パスを使用して ``docs/docsite/`` ディレクトリーから ``make htmlsingle`` を実行した場合は、``sphinx-build: error: cannot find files ['rst/rst/community/documentation_contributions.rst']`` メッセージが表示されます。
 
 
-Building all the rST pages
+すべての rST ページのビルド
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To build all the rST files without any module documentation:
+モジュールのドキュメント以外のすべての rST ファイルをビルドするには、以下を実行します。
 
 .. code-block:: bash
 
    MODULES=none make webdocs
 
-Building module docs and rST pages
+モジュールドキュメントと rST ページのビルド
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To build documentation for a few modules plus all the rST files, use a comma-separated list:
+いくつかのモジュールとすべての rST ファイルを使用してドキュメントをビルドするには、コンマ区切りリストを使用します。
 
 .. code-block:: bash
 
    MODULES=one_module,another_module make webdocs
 
-To build all the module documentation plus all the rST files:
+すべてのモジュールドキュメントとすべての rST ファイルをビルドするには、以下を実行します。
 
 .. code-block:: bash
 
-   make webdocs
+   webdocs の作成
 
 .. _build_with_sphinx-build:
 
-Building rST files with ``sphinx-build``
+``sphinx-build`` で rST ファイルのビルド
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Advanced users can build one or more rST files with the sphinx utility directly. ``sphinx-build`` returns misleading ``undefined label`` warnings if you only build a single page, because it does not create internal links. However, ``sphinx-build`` returns more extensive syntax feedback, including warnings about indentation errors and ``x-string without end-string`` warnings. This can be useful, especially if you're creating a new page from scratch. To build a page or pages with ``sphinx-build``:
+上級ユーザーは、sphinx ユーティリティーを使用して 1 つ以上の rST ファイルを直接ビルドすることができます。``sphinx-build`` は、内部リンクが作成たれないため、1 ページのみをビルドする場合は、誤解を招く ``undefined label`` 警告を返します。ただし、``sphinx-build`` は、インデントエラーや ``x-string without end-string`` 警告など、より広範な構文のフィードバックを返します。これは特に、ゼロから新しいページを作成している場合に役に立ちます。``sphinx-build`` でページをビルドするには、以下のようにします。
 
 .. code-block:: bash
 
   sphinx-build [options] sourcedir outdir [filenames...]
 
-You can specify filenames, or ``–a`` for all files, or omit both to compile only new/changed files.
+ファイル名を指定することもできますし、すべてのファイルに ``–a`` を指定することもできます。もしくは、両方を省略して新しいまたは変更されたファイルだけをコンパイルすることもできます。
 
-For example:
+たとえば、以下のようになります。
 
 .. code-block:: bash
 
   sphinx-build -b html -c rst/ rst/dev_guide/ _build/html/dev_guide/ rst/dev_guide/developing_modules_documenting.rst
 
-Running the final tests
+最終テストの実行
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-When you submit a documentation pull request, automated tests are run. Those same tests can be run locally. To do so, navigate to the repository's top directory and run:
+ドキュメントのプル要求を送信すると、自動化されたテストが実行します。同じテストをローカルで実行できます。これを行うには、リポジトリーのトップディレクトリーに移動して以下を実行します。
 
 .. code-block:: bash
 
-  make clean &&
-  bin/ansible-test sanity --test docs-build &&
-  bin/ansible-test sanity --test rstcheck
+  make clean && bin/ansible-test sanity --test docs-build && bin/ansible-test sanity --test rstcheck
 
-Unfortunately, leftover rST-files from previous document-generating can occasionally confuse these tests. It is therefore safest to run them on a clean copy of the repository, which is the purpose of ``make clean``. If you type these three lines one at a time and manually check the success of each, you do not need the ``&&``.
+ただし、以前ドキュメントを生成した時の rST ファイルが残っていると、このテストを混乱させることがあります。そのために、リポジトリーのクリーンコピー上で実行するのが最も安全です。これは、``make clean`` の目的でもあります。この 3 つの行を一度に 1 行ずつ入力して、各行が成功したことを手動で確認する場合、``&&`` は必要ありません。
 
-Joining the documentation working group
+ドキュメントワーキンググループへの参加
 =======================================
 
-The Documentation Working Group is just getting started, please visit the `community repo <https://github.com/ansible/community>`_ for more information.
+ドキュメントワーキンググループは始まったばかりです。詳細は「`community repo <https://github.com/ansible/community>`_」を参照してください。
 
-.. seealso::
-   :ref:`More about testing module documentation <testing_module_documentation>`
-   :ref:`More about documenting modules <module_documenting>`
+.. seealso:: 「:ref:`モジュールドキュメントのテストの詳細 <testing_module_documentation>`」および「:ref:`モジュールの文書化の詳細 <module_documenting>`」

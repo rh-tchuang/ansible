@@ -17,21 +17,21 @@ Playbook を実行するとき、ユーザーに特定の入力を求めるこ�
       vars_prompt:
 
         - name: username
-          prompt:"What is your username?"
+          prompt: "What is your username?"
           private: no
 
         - name: password
-          prompt:"What is your password?"
+          prompt: "What is your password?"
 
       tasks:
 
         - debug:
-            msg:'Logging in as {{ username }}'
+            msg: 'Logging in as {{ username }}'
 
 ユーザー入力はデフォルトでは表示されませんが、``private: no`` を設定することで表示できます。
 
 .. note::
-    個別の ``vars_prompt`` 変数の入力を求めるプロンプトは、コマンドラインの ``--extra-vars`` オプションですでに定義されている変数や、非対話的なセッション (cron や Ansible Tower など) から実行する場合に省略されます。/Variables/ の章の :ref:`passing_variables_on_the_command_line` を参照してください。
+    個別の ``vars_prompt`` 変数の入力を求めるプロンプトは、コマンドラインの ``--extra-vars`` オプションですでに定義されている変数や、非対話的なセッション (cron や Ansible Tower など) から実行する場合に省略されます。/Variables/ の章の「:ref:`passing_variables_on_the_command_line`」を参照してください。
 
 まれにしか変更しない変数がある場合は、
 上書きできるデフォルト値を指定できます。これは、
@@ -79,7 +79,7 @@ vars_prompt は、入力値を暗号化して、たとえばユーザーモジ�
 独自の「salt」を使用できます。何も指定しないと、
 サイズ 8 の「salt」が生成されます。
 
-バージョン 2.7 における新機能
+.. versionadded:: 2.7
 
 Passlib がインストールされていない場合は、`crypt <https://docs.python.org/2/library/crypt.html>`_ ライブラリーがフォールバックとして使用されます。
 プラットフォームに応じて、最大で次の暗号化スキームがサポートされます。
@@ -89,7 +89,7 @@ Passlib がインストールされていない場合は、`crypt <https://docs.
 - *sha256_crypt* - SHA-256 Crypt
 - *sha512_crypt* - SHA-512 Crypt
 
-バージョン 2.8 における新機能
+.. versionadded:: 2.8
 
 テンプレートエラーを作成する特殊文字 (つまり `{%`) を配置する必要がある場合は、``unsafe`` オプションを使用します。
 
@@ -110,4 +110,4 @@ Passlib がインストールされていない場合は、`crypt <https://docs.
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

@@ -1,59 +1,59 @@
 .. _communication:
 
 *************
-Communicating
+コミュニケーション
 *************
 
 .. contents::
    :local:
 
-Code of Conduct
+行動規範
 ===============
 
-Please read and understand the :ref:`code_of_conduct`.
+:ref:`code_of_conduct` を読んで理解してください。
 
-Mailing list information
+メーリングリストの情報
 ========================
 
-Ansible has several mailing lists.  Your first post to the mailing list will be moderated (to reduce spam), so please allow up to a day or so for your first post to appear.
+Ansible にはいくつかのメーリングリストがあります。メーリングリストへの最初の投稿は (スパムを減らすため) 調整されます。そのため、最初の投稿が表示されるまで最大 1 日ほどかかります。
 
-* `Ansible Announce list <https://groups.google.com/forum/#!forum/ansible-announce>`_ is a read-only list that shares information about new releases of Ansible, and also rare infrequent event information, such as announcements about an upcoming AnsibleFest, which is our official conference series. Worth subscribing to!
-* `Ansible AWX List <https://groups.google.com/forum/#!forum/awx-project>`_ is for `Ansible AWX <https://github.com/ansible/awx>`_ the upstream version of `Red Hat Ansible Tower <https://www.ansible.com/products/tower>`_
-* `Ansible Container List <https://groups.google.com/forum/#!forum/ansible-container>`_ is for users and developers of the Ansible Container project.
-* `Ansible Development List <https://groups.google.com/forum/#!forum/ansible-devel>`_ is for learning how to develop on Ansible, asking about prospective feature design, or discussions about extending ansible or features in progress.
-* `Ansible Lockdown List <https://groups.google.com/forum/#!forum/ansible-lockdown>`_ is for all things related to Ansible Lockdown projects, including DISA STIG automation and CIS Benchmarks.
-* `Ansible Outreach List <https://groups.google.com/forum/#!forum/ansible-outreach>`_ help with promoting Ansible and `Ansible Meetups <https://ansible.meetup.com/>`_
-* `Ansible Project List <https://groups.google.com/forum/#!forum/ansible-project>`_ is for sharing Ansible tips, answering questions, and general user discussion.
-* `Molecule List <https://groups.google.com/forum/#!forum/molecule-users>`_ is designed to aid with the development and testing of Ansible roles with Molecule.
+* `Ansible Announce list <https://groups.google.com/forum/#!forum/ansible-announce>`_ は、Ansible の新規リリースに関する情報を共有する読み取り専用リストです。Ansible の公式カンファレンスシリーズである AnsibleFest に関するアナウンスなど、不定期に開催されるイベント情報を共有します。サブスクライブする価値があります。
+* `Ansible AWX List <https://groups.google.com/forum/#!forum/awx-project>`_ は、`Red Hat Ansible Tower <https://www.ansible.com/products/tower>`_ のアップストリームバージョンである `Ansible AWX <https://github.com/ansible/awx>`_ 用のリストです。
+* `Ansible Container List <https://groups.google.com/forum/#!forum/ansible-container>`_ は Ansible Container プロジェクトのユーザーおよび開発者向けのリストです。
+* `Ansible Development List <https://groups.google.com/forum/#!forum/ansible-devel>`_ は、Ansible での開発方法を学ぶため、将来の機能設計について質問するため、あるいは進行中の Ansible または機能の拡張について議論するためのリストです。
+* `Ansible Lockdown List <https://groups.google.com/forum/#!forum/ansible-lockdown>`_ は、DISA STIG オートメーションや CIS ベンチマークなど、Ansible Lockdown プロジェクトに関連するものを対象としています。
+* `Ansible Outreach List <https://groups.google.com/forum/#!forum/ansible-outreach>`_ は、Ansible および `Ansible Meetup <https://ansible.meetup.com/>`_ のプロモーションを支援します。
+* `Ansible Project List <https://groups.google.com/forum/#!forum/ansible-project>`_ は、Ansible のヒントを共有したり、質問に答えたり、一般的なユーザーディスカッションを行うためのものです。
+* `Molecule List <https://groups.google.com/forum/#!forum/molecule-users>`_ は、Molecule を使用した Ansible ロールの開発とテストを支援するために設計されています。
 
-To subscribe to a group from a non-Google account, you can send an email to the subscription address requesting the subscription. For example: ``ansible-devel+subscribe@googlegroups.com``
+Google 以外のアカウントからグループをサブスクライブするには、サブスクリプションを要求するメールをサブスクリプションのアドレスに送信します。たとえば、``ansible-devel+subscribe@googlegroups.com`` です。
 
-IRC channels
+IRC チャネル
 ============
 
-Ansible has several IRC channels on `Freenode <https://freenode.net/>`_.
+Ansible には、`Freenode <https://freenode.net/>`_ に複数の IRC チャネルがあります。
 
-Our IRC channels may require you to register your nickname. If you receive an error when you connect, see `Freenode's Nickname Registration guide <https://freenode.net/kb/answer/registration>`_ for instructions.
+この IRC チャネルでは、ニックネームの登録が必要になる場合があります。接続時にエラーが発生する場合は、「`Freenode's Nickname Registration guide <https://freenode.net/kb/answer/registration>`_」を参照してください。
 
-General channels
+一般的なチャンネル
 ----------------
 
-- ``#ansible`` - For general use questions and support.
-- ``#ansible-devel`` - For discussions on developer topics and code related to features or bugs.
-- ``#ansible-meeting`` - For public community meetings. We will generally announce these on one or more of the above mailing lists. See the `meeting schedule and agenda page <https://github.com/ansible/community/blob/master/meetings/README.md>`_
+- ``#ansible`` - 一般的な使い方の質問やサポートに使用。
+- ``#ansible-devel`` - 開発者のトピックや機能やバグに関連するコードについて議論する場。
+- ``#ansible-meeting`` - コミュニティーの公開ミーティング用。通常は、上記のメーリングリストで告知されます。「`ミーティングのスケジュールと議題ページ <https://github.com/ansible/community/blob/master/meetings/README.md>`_」を参照してください。
 
 .. _working_group_list:
 
-Working groups
+ワーキンググループ
 --------------
 
-Many of our community `Working Groups <https://github.com/ansible/community/wiki#working-groups>`_ meet on Freenode IRC channels. If you want to get involved in a working group, join the channel where it meets or comment on the agenda.
+コミュニティーの `ワーキンググループ <https://github.com/ansible/community/wiki#working-groups>`_ の多くは、Freenode IRC チャンネルで活動しています。ワーキンググループに参加したい場合には、そのワーキンググループが活動しているチャンネルに参加したり、議題にコメントしたりしてください。
 
 - `Amazon (AWS) Working Group <https://github.com/ansible/community/wiki/AWS>`_ - ``#ansible-aws``
-- `Ansible Lockdown Working Group <https://github.com/ansible/community/wiki/Lockdown>`_ | `gh/ansible/ansible-lockdown <https://github.com/ansible/ansible-lockdown>`_ - ``#ansible-lockdown``- Security playbooks/roles
-- `AWX Working Group <https://github.com/ansible/awx>`_ - ``#ansible-awx`` - Upstream for Ansible Tower
+- `Ansible Lockdown Working Group <https://github.com/ansible/community/wiki/Lockdown>`_ | `gh/ansible/ansible-lockdown <https://github.com/ansible/ansible-lockdown>`_ - ``#ansible-lockdown`` - セキュリティー Playbooks およびロール
+- `AWX Working Group <https://github.com/ansible/awx>`_ - ``#ansible-awx`` - Ansible Tower のアップストリーム
 - `Azure Working Group <https://github.com/ansible/community/wiki/Azure>`_ - ``#ansible-azure``
-- `Community Working Group <https://github.com/ansible/community/wiki/Community>`_ - ``#ansible-community`` - Including Meetups
+- `Community Working Group <https://github.com/ansible/community/wiki/Community>`_ - ``#ansible-community`` - Meetup を含みます。
 - `Container Working Group <https://github.com/ansible/community/wiki/Container>`_ - ``#ansible-container``
 - `Contributor Experience Working Group <https://github.com/ansible/community/wiki/Contributor-Experience>`_ - ``#ansible-community``
 - `Docker Working Group <https://github.com/ansible/community/wiki/Docker>`_ - ``#ansible-devel``
@@ -61,35 +61,33 @@ Many of our community `Working Groups <https://github.com/ansible/community/wiki
 - `Galaxy Working Group <https://github.com/ansible/community/wiki/Galaxy>`_ - ``#ansible-galaxy``
 - `JBoss Working Group <https://github.com/ansible/community/wiki/JBoss>`_ - ``#ansible-jboss``
 - `Kubernetes Working Group <https://github.com/ansible/community/wiki/Kubernetes>`_ - ``#ansible-kubernetes``
-- `Lightbulb Training <https://github.com/ansible/lightbulb>`_ - ``#ansible-lightbulb`` - Ansible training
+- `Lightbulb Training <https://github.com/ansible/lightbulb>`_ - ``#ansible-lightbulb`` - Ansible トレーニング
 - `Linode Working Group <https://github.com/ansible/community/wiki/Linode>`_ - ``#ansible-linode``
-- `Molecule Working Group <https://github.com/ansible/community/wiki/Molecule>`_ | `molecule.io <https://molecule.readthedocs.io>`_ - ``#ansible-molecule`` - testing platform for Ansible playbooks and roles
+- `Molecule Working Group <https://github.com/ansible/community/wiki/Molecule>`_ | `molecule.io <https://molecule.readthedocs.io>`_ - ``#ansible-molecule`` - Ansible Playbook およびロール用テストプラットフォーム
 - `Network Working Group <https://github.com/ansible/community/wiki/Network>`_ - ``#ansible-network``
 - `Remote Management Working Group <https://github.com/ansible/community/issues/409>`_ - ``#ansible-devel``
-- `Testing Working Group <https://github.com/ansible/community/wiki/Testing>`_  - ``#ansible-devel``
+- `Testing Working Group <https://github.com/ansible/community/wiki/Testing>`_ - ``#ansible-devel``
 - `VMware Working Group <https://github.com/ansible/community/wiki/VMware>`_ - ``#ansible-vmware``
 - `Windows Working Group <https://github.com/ansible/community/wiki/Windows>`_ - ``#ansible-windows``
 
-Want to `form a new Working Group <https://github.com/ansible/community/blob/master/WORKING-GROUPS.md>`_?
+`新しいワーキンググループを作りたい <https://github.com/ansible/community/blob/master/WORKING-GROUPS.md>`_ ですか。
 
-Regional and Language-specific channels
+地域および言語固有のチャンネル
 ---------------------------------------
 
-- ``#ansible-es`` - Channel for Spanish speaking Ansible community.
-- ``#ansibleu`` - Channel for the European Ansible Community.
-- ``#ansible-fr`` - Channel for French speaking Ansible community.
-- ``#ansiblezh`` - Channel for Zurich/Swiss Ansible community.
+- ``#ansible-es`` - スペイン語の Ansible コミュニティー向けチャンネル。
+- ``#ansibleu`` - ヨーロッパの Ansible コミュニティー向けのチャンネル。
+- ``#ansible-fr`` - フランス語の Ansible コミュニティー向けのチャンネル。
+- ``#ansiblezh`` - チューリッヒ/スイスの Ansible コミュニティー向けのチャンネル。
 
-IRC meetings
+IRC ミーティング
 ------------
 
-The Ansible community holds regular IRC meetings on various topics, and anyone who is interested is invited to
-participate. For more information about Ansible meetings, consult the `meeting schedule and agenda page <https://github.com/ansible/community/blob/master/meetings/README.md>`_.
+Ansible コミュニティーは、さまざまなトピックに関する定期的な IRC ミーティングを開いており、興味のある人は誰でも参加することができます。Ansible ミーティング詳細は、`ミーティングのスケジュールを議題のページ <https://github.com/ansible/community/blob/master/meetings/README.md>`_ を参照してください。
 
-Ansible Tower support questions
+Ansible Tower のサポートに関する質問
 ===============================
 
-Red Hat Ansible `Tower <https://www.ansible.com/products/tower>`_ is a UI, Server, and REST endpoint for Ansible.
-The Red Hat Ansible Automation subscription contains support for Ansible, Ansible Tower, Ansible Automation for Networking, and more.
+Red Hat Ansible `Tower <https://www.ansible.com/products/tower>`_ は、Ansible の UI、サーバー、および REST エンドポイントです。Red Hat Ansible Automation サブスクリプションには、Ansible、Ansible Tower、Ansible Automation for Networking などのサポートが含まれます。
 
-If you have a question about Ansible Tower, visit `Red Hat support <https://access.redhat.com/products/ansible-tower-red-hat/>`_ rather than using the IRC channel or the general project mailing list.
+Ansible Tower に関するご質問は、IRC チャンネルまたは一般的なプロジェクトメーリングリストではなく、`Red Hat サポート <https://access.redhat.com/products/ansible-tower-red-hat/>`_ にお問い合わせください。

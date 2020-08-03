@@ -56,4 +56,4 @@ Playbook から、Ansible モジュールは同じような方法で実行され
    `メーリングリスト <https://groups.google.com/group/ansible-project>`_
        ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       _#ansible IRC chat channel
+       IRC チャットチャンネル #ansible

@@ -1,82 +1,56 @@
 .. _release_managers:
 
 **************************
-Release Manager Guidelines
+リリースマネージャーのガイドライン
 **************************
 
-.. contents:: Topics
+.. contents:: トピック
 
-The release manager's purpose is to ensure a smooth release.  To achieve that goal, they need to
-coordinate between:
+リリースマネージャーの目的は、スムーズなリリースを確保することです。この目的を達成するには、以下について調整する必要があります。
 
-* Developers with commit privileges on the `Ansible GitHub repository <https://github.com/ansible/ansible/>`_
-* Contributors without commit privileges
-* The community
-* Ansible documentation team
-* Ansible Tower team
+* `Ansible GitHub リポジトリー <https://github.com/ansible/ansible/>`_ でコミット権限を持つ開発者
+* コミット権限のない貢献者
+* コミュニティー
+* Ansible ドキュメントチーム
+* Ansible Tower チーム
 
-Pre-releases: what and why
+プレリリース: 何を/なぜ
 ==========================
 
-Pre-releases exist to draw testers. They give people who don't feel comfortable running from source
-control a means to get an early version of the code to test and give us feedback. To ensure we get
-good feedback about a release, we need to make sure all major changes in a release are put into
-a pre-release. Testers must be given time to test those changes before the final release. Ideally we
-want there to be sufficient time between pre-releases for people to install and test one version for
-a span of time. Then they can spend more time using the new code than installing the latest
-version.
+プレリリース版はテスターを集めるために存在します。プレリリースは、ソース管理からの実行に不安を感じているユーザーに、初期バージョンのコードを手に入れてテストをしたり、フィードバックを行う手段を提供します。リリースに関する適切なフィードバックを確実に得るには、リリースに対する主要な変更がすべてプレリリースに組み込まれているようにする必要があります。テスト担当者には、最終リリースの前にこれらの変更をテストする時間が与えられる必要があります。プレリリースとプレリリースの間に、1 つのバージョンをインストールしてテストするのに十分な時間を確保するのが理想的です。そうすれば、最新バージョンをインストールするよりも、新しいコードを使用することに多くの時間を費やすことができます。
 
-The right length of time for a tester is probably around two weeks. However, for our three-to-four month
-development cycle to work, we compress this down to one week; any less runs the risk
-of people spending more time installing the code instead of running it. However, if there's a time
-crunch (with a release date that cannot slip), it is better to release with new changes than to hold
-back those changes to give people time to test between. People cannot test what is not released, so
-we have to get those tarballs out there even if people feel they have to install more frequently.
+テスターにとって適切な期間は、おそら 2 週間程度です。ただし、3 ~ 4か月の開発サイクルを機能させるには、この期間を 1 週間に短縮します。これより短くなると、コードを実行する代わりにコードのインストールに多くの時間を費やしてしまう可能性があります。ただし、時間的な制約がある場合は (リリース日がずれないようにするには)、ユーザーにテストする時間を与えるために変更を保留するよりも、新しい変更を加えてリリースする方が良いでしょう。リリースされていないものはテストできないため、たとえより頻繁にインストールしなければならないと思われる場合でも、その tarball は公開すべきです。
 
 
-Beta releases
+ベータリリース
 -------------
 
-In a beta release, we know there are still bugs.  We will continue to accept fixes for these.
-Although we review these fixes, sometimes they can be invasive or potentially destabilize other
-areas of the code.
+ベータリリースでは、バグが存在していることが認識されています。これらの修正は今後も受け入れていきます。私たちはこれらの修正を確認しますが、場合によっては侵襲的であったり、コードの他の領域を不安定にする可能性があります。
 
-During the beta, we will no longer accept feature submissions.
+ベータ版では、機能の提出は受け付けなくなります。
 
 
-Release candidates
+Release Candidate (リリースの候補)
 ------------------
 
-In a release candidate, we've fixed all known blockers. Any remaining bugfixes are
-ones that we are willing to leave out of the release. At this point we need user testing to
-determine if there are any other blocker bugs lurking.
+リリース候補では、既知のすべてのブロッカーを修正しました。残っているバグ修正は、リリースから除外しても構わないと考えています。この時点で、他にもブロッカーバグが潜んでいないかどうかを判断するために、ユーザーテストを行う必要があります。
 
-Blocker bugs generally are those that cause significant problems for users. Regressions are
-more likely to be considered blockers because they will break present users' usage of Ansible.
+ブロッカーバグとは、一般的にユーザーに重大な問題を引き起こすバグのことです。リグレッションは、現在のユーザーの Ansible の使用方法に支障をきたすため、ブロッカーと見なされる可能性が高くなります。
 
-The Release Manager will cherry-pick fixes for new release blockers. The release manager will also
-choose whether to accept bugfixes for isolated areas of the code or defer those to the next minor
-release. By themselves, non-blocker bugs will not trigger a new release; they will only make it
-into the next major release if blocker bugs require that a new release be made.
+リリースマネージャーは、新しいリリースのブロッカーの修正を選択します。また、リリースマネージャーは、コードの孤立した部分のバグ修正を受け入れるか、次のマイナーリリースに延期するかを選択します。単独では、ブロッカー以外のバグは新しいリリースのトリガーにはなりません。ブロッカーのバグにより新しいリリースを作成する必要がある場合にのみ、次のメジャーリリースになります。
 
-The last RC should be as close to the final as possible. The following things may be changed:
+最後の RC は可能な限り最終版に近いものにしてください。以下の点が変更される可能性があります。
 
-    * Version numbers are changed automatically and will differ as the pre-release tags are removed from
-      the versions.
-    * Tests and :file:`docs/docsite/` can differ if really needed as they do not break runtime.
-      However, the release manager may still reject them as they have the potential to cause
-      breakage that will be visible during the release process.
+    * バージョン番号が自動的に変更され、
+      プレリリースのタグが削除されるとバージョンが異なります。
+    * テストおよび :file:`docs/docsite/` はランタイムを破損しないため、本当に必要であれば変更しても構いません。
+      ただし、リリースプロセス時に目に見える破損を引き起こす可能性がある場合は、
+      リリースマネージャーが拒否する可能性があります。
 
-.. note:: We want to specifically emphasize that code (in :file:`bin/`, :file:`lib/ansible/`, and
-    :file:`setup.py`) must be the same unless there are extraordinary extenuating circumstances.  If
-    there are extenuating circumstances, the Release Manager is responsible for notifying groups
-    (like the Tower Team) which would want to test the code.
+.. note:: 特別な事情がない限り、(:file:`bin/`、:file:`lib/ansible/`、および :file:`setup.py` の) コードは同じでなければなりません。特別な事情がある場合、リリースマネージャーは、コードをテストしたいグループ (Tower チームなど) に通知する責任があります。
 
 
-Ansible release process
+Ansible リリースプロセス
 =======================
 
-The release process is kept in a `separate document
-<https://docs.google.com/document/d/10EWLkMesi9s_CK_GmbZlE_ZLhuQr6TBrdMLKo5dnMAI/edit#heading=h.ooo3izcel3cz>`_
-so that it can be easily updated during a release.  If you need access to edit this, please ask one
-of the current release managers to add you.
+リリースプロセスは、リリース中に簡単に更新できるように、`別のドキュメント <https://docs.google.com/document/d/10EWLkMesi9s_CK_GmbZlE_ZLhuQr6TBrdMLKo5dnMAI/edit#heading=h.ooo3izcel3cz>`_ に保存されています。これを編集するためのアクセス権が必要な場合は、現在のリリースマネージャーに追加を依頼してください。

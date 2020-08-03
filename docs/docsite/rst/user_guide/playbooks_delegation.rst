@@ -11,11 +11,11 @@ Ansible は、最初からマルチ層デプロイメント用に設計されて
 
 追加機能により、完了する順序を調整し、ローリングアップデート時に一度に処理するマシン数に対してバッチウインドウサイズを割り当てることができます。
 
-本セクションでは、この機能をすべて説明します。 使用中の項目の例は、`please see the ansible-examples repository <https://github.com/ansible/ansible-examples/>`_ を参照してください。さまざまなアプリケーションのゼロダウンタイム更新手順の例がいくつかあります。
+本セクションでは、この機能をすべて説明します。 使用中の項目の例は、「`ansible-examples リポジトリー <https://github.com/ansible/ansible-examples/>`_」を参照してください。さまざまなアプリケーションのゼロダウンタイム更新手順の例がいくつかあります。
 
-また、:ref:`モジュールドキュメント<modules_by_category>` セクションを参照してください。:ref:`ec2_elb<ec2_elb_module>`、:ref:`nagios<nagios_module>`、:ref:`bigip_pool<bigip_pool_module>`、その他の :ref:`network_modules` などのモジュールは、ここで説明した概念と上手に適合します。
+また、「:ref:`モジュールドキュメント<modules_by_category>`」セクションを参照してください。:ref:`ec2_elb<ec2_elb_module>`、:ref:`nagios<nagios_module>`、:ref:`bigip_pool<bigip_pool_module>`、その他の :ref:`network_modules` などのモジュールは、ここで説明した概念と上手に適合します。
 
-また、「'pre_task」と「post_task」の概念は、これらのモジュールを通常呼び出す場所であるため、:ref:`playbooks_reuse_roles` で読み取る必要もあります。
+また、「pre_task」と「post_task」の概念は、これらのモジュールを通常呼び出す場所であるため、:ref:`playbooks_reuse_roles` で読み取る必要もあります。
 
 特定のタスク (`include`、`add_host`、`debug` など) は、常にコントローラーで実行されるため、委譲することができないことに注意してください。
 
@@ -30,8 +30,8 @@ Ansible は、最初からマルチ層デプロイメント用に設計されて
     ---
     - name: test play
       hosts: webservers
-      serial: 2
-      gather_facts: False
+      serial:2
+      gather_facts:False
 
       tasks:
         - name: task one
@@ -47,21 +47,21 @@ Ansible は、最初からマルチ層デプロイメント用に設計されて
 
     TASK [task one] ******************************************
     changed: [web2]
-    changed: [web1]
+    changed:[web1]
 
     TASK [task two] ******************************************
     changed: [web1]
-    changed: [web2]
+    changed:[web2]
 
     PLAY [webservers] ****************************************
 
     TASK [task one] ******************************************
     changed: [web3]
-    changed: [web4]
+    changed:[web4]
 
     TASK [task two] ******************************************
     changed: [web3]
-    changed: [web4]
+    changed:[web4]
 
     PLAY RECAP ***********************************************
     web1      : ok=2    changed=2    unreachable=0    failed=0
@@ -191,9 +191,9 @@ Ansible 2.2 の時点で、バッチサイズは以下のようにリストと�
     ---
     # ...
 
-  tasks:
-    - name: recursively copy files from management server to target
-      local_action: command rsync -a /path/to/files {{ inventory_hostname }}:/path/to/target/
+      tasks:
+        - name: recursively copy files from management server to target
+          local_action: command rsync -a /path/to/files {{ inventory_hostname }}:/path/to/target/
 
 パスフレーズなしの SSH キーまたはこれが機能するように設定された ssh-agent が必要です。
 そうでない場合は、rsync がパスフレーズを要求してきます。
@@ -229,11 +229,11 @@ Ansible 2.2 の時点で、バッチサイズは以下のようにリストと�
         - name: gather facts from db servers
           setup:
           delegate_to: "{{item}}"
-          delegate_facts: True
+          delegate_facts:True
           loop: "{{groups['dbservers']}}"
 
 上記は、dbservers グループのマシンのファクトを収集し、ファクトを app_servers ではなく、それらのマシンに割り当てます。
-これにより、dbservers がプレイに含まれていなかった場合、または `--limit` を使用して除外されていても、`hostvars['dbhost1']['ansible_default_ipv4']['address']` をルックアップできます。
+これにより、dbservers がプレイに含まれていなくても、または `--limit` を使用して除外されていても、`hostvars['dbhost1']['ansible_default_ipv4']['address']` をルックアップできます。
 
 
 .. _run_once:
@@ -318,14 +318,14 @@ Playbook 全体をローカルで実行するには、「hosts:」行を「hosts
 
 「any_errors_fatal」オプションを使用すると、マルチホストプレイのすべてのホストの障害は致命的として扱われ、現在のバッチのすべてのホストが致命的なタスクを終了するとすぐに Ansible は終了します。後続のタスクおよびプレイは実行されません。ブロックにレスキューセクションを追加して、致命的なエラーから復旧できます。
 
-場合によっては「serial」の実行は適していません。ホストの数は予測不可能であり (動的インベントリーが原因で)、速度は極めて重要ですが (同時実行が必要)、Playbook の実行を続行するにはすべてのタスクが 100% 成功する必要があります。
+場合によっては「serial」の実行は適していません。(動的インベントリーが原因で) ホストの数は予測不可能であり、速度は極めて重要ですが (同時実行が必要)、Playbook の実行を続行するにはすべてのタスクが 100% 成功する必要があります。
 
 たとえば、ユーザーからサービスにトラフィックを渡すために、一部のロードバランサーを持つ多くのデータセンターにあるサービスを検討します。サービスの deb-packages をアップグレードするデプロイ Playbook があります。Playbook には以下のような段階があります。
 
 - ロードバランサーのトラフィックを無効にする (同時にオフにする必要があります)
 - サービスを正常に停止する
 - ソフトウェアをアップグレードする (この手順には、テストとサービスの起動が含まれます)
-- ロードバランサーでのトラフィックの有効化 (同時に有効にする必要があります)
+- ロードバランサーでトラフィックを有効にする (同時に有効にする必要があります)
 
 サービスは「alive」ロードバランサーで停止することはできません。最初に無効にする必要があります。そのため、いずれかのサーバーが最初の段階で失敗した場合は、次のステージを非表示にすることはできません。
 
@@ -365,4 +365,4 @@ Playbook 全体をローカルで実行するには、「hosts:」行を「hosts
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

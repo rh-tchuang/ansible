@@ -32,7 +32,7 @@
 
 .. _collection_requirements_file:
 
-要件ファイルを使用して複数のコレクションのインストール
+要件ファイルを使用した複数のコレクションのインストール
 -----------------------------------------------------
 
 .. include:: ../shared_snippets/installing_multiple_collections.txt

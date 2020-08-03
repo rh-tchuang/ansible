@@ -52,15 +52,15 @@ Poll モードはスマートであるため、ポーリングがマシンで開
 
     ---
 
-    - hosts: all
+     hosts: all
       remote_user: root
 
       tasks:
 
       - name: simulate long running op (15 sec), wait for up to 45 sec, poll every 5 sec
         command: /bin/sleep 15
-        async:45
-        poll:5
+        async: 45
+        poll: 5
 
 .. note::
    async 時間制限のデフォルトはありません。 「async」キーワードを省略する場合、
@@ -97,8 +97,8 @@ Playbook の実行は、非同期タスクを確認し直すことなく終了�
 
       - name: simulate long running op, allow to run for 45 sec, fire and forget
         command: /bin/sleep 15
-        async:45
-        poll:0
+        async: 45
+        poll: 0
 
 .. note::
    Playbook で、同じリソースに対して別のコマンドを実行することが想定される場合を除いて、
@@ -181,4 +181,4 @@ Playbook の実行は、非同期タスクを確認し直すことなく終了�
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

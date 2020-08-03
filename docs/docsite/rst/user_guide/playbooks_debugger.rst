@@ -36,7 +36,7 @@ on_skipped
 
 これらのオプションは、デバッガーを有効または無効にするグローバル設定を上書きします。
 
-タスクでは、以下のようになります。
+タスクで使用
 `````````
 
 ::
@@ -45,7 +45,7 @@ on_skipped
       command: false
       debugger: on_failed
 
-プレイでは、以下のようになります。
+プレイで使用
 `````````
 
 ::
@@ -186,9 +186,9 @@ p(print) *task/task_vars/host/result*
     [192.0.2.10] TASK: install package (debug)> p host
     192.0.2.10
     [192.0.2.10] TASK: install package (debug)> p result._result
-    {'_ansible_no_log':False,
-     'changed':False,
-     u'failed':True,
+    {'_ansible_no_log': False,
+     'changed': False,
+     u'failed': True,
      ...
      u'msg': u"No package matching 'not_exist' is available"}
 
@@ -248,7 +248,7 @@ task_vars[*key*] = *value*
 u(pdate_task)
 `````````````
 
-バージョン 2.8 における新機能
+.. versionadded:: 2.8
 
 このコマンドは、元のタスクのデータ構造および更新された ``task_vars`` が含まれるテンプレートからタスクを再作成します。
 
@@ -280,7 +280,7 @@ q(uit)
 
 ``空き`` ストラテジーでデバッガーを使用すると、
 デバッガーがアクティブである間に、追加のタスクがキューに入ったり、実行したりしなくなります。さらに、タスクで ``redo`` を使用して再実行のスケジュールを設定すると、
-Playbook に記載されている後続のタスクの後に再スケジュールされたタスクが実行することがあります。
+Playbook に記載されている後続タスクの後に再スケジュールされたタスクが実行することがあります。
 
 
 .. seealso::
@@ -290,4 +290,4 @@ Playbook に記載されている後続のタスクの後に再スケジュー�
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

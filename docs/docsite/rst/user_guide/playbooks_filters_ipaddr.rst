@@ -5,7 +5,7 @@
 ipaddr フィルター
 `````````````
 
-バージョン 1.9 における新機能
+.. versionadded:: 1.9
 
 ``ipaddr()`` は、Ansible 内から Python パッケージ `netaddr`_ へ、
 インターフェースを提供するように設計された Jinja2 フィルターです。文字列やアイテムのリストを操作したり、
@@ -244,7 +244,7 @@ IP アドレスとサブネットプレフィックス ("CIDR") の組み合わ�
 正しいホスト/プレフィックスの値のみを使用するようにします。
 
     # {{ host_prefix | ipaddr('host/prefix') }}
-['2001:db8:deaf:be11::ef3/64', '192.0.2.48/24']
+    ['2001:db8:deaf:be11::ef3/64', '192.0.2.48/24']
     
 Debian ベースのシステムでは、``/etc/network/interfaces`` ファイルに保存されているネットワーク設定は、IP アドレス、ネットワークアドレス、ネットマスク、およびブロードキャストアドレスの組み合わせを使用して IPv4 ネットワークインターフェースを設定します。これらの値は、単一の「host/prefix」の組み合わせから取得できます。
 
@@ -301,15 +301,15 @@ Debian ベースのシステムでは、``/etc/network/interfaces`` ファイル
 ネットワークアドレスおよびサブネットマスクの形式でサブネットを指定すると、``ipaddr()`` フィルターは CIDR 表記に変換できます。 これは、ネットワーク設定に関する Ansible ファクトをサブネットマスクから CIDR 形式に変換する際に便利です。
 
     ansible_default_ipv4: {
-        address:"192.168.0.11",
+        address: "192.168.0.11",
         alias: "eth0",
-        broadcast:"192.168.0.255",
-        gateway:"192.168.0.1",
+        broadcast: "192.168.0.255",
+        gateway: "192.168.0.1",
         interface: "eth0",
         macaddress: "fa:16:3e:c4:bd:89",
-        mtu:1500,
-        netmask:"255.255.255.0",
-        network:"192.168.0.0",
+        mtu: 1500,
+        netmask: "255.255.255.0",
+        network: "192.168.0.0",
         type: "ether"
     }
 
@@ -438,7 +438,7 @@ IP 範囲内で使用可能な IP アドレスを見つけるには、以下の 
 IP 計算
 ^^^^^^^
 
-バージョン 2.7 における新機能
+.. versionadded:: 2.7
 
 ``ipmath()`` フィルターは、単純な IP 計算/演算をするのに使用できます。
 
@@ -574,7 +574,7 @@ IPv6 サブネットのサイズのため、
 サブネットのマージ
 ^^^^^^^^^^^^^^
 
-バージョン 2.6 における新機能
+.. versionadded:: 2.6
 
 ``cidr_merge()`` フィルターを使用して、
 サブネットまたは個々のアドレスを最小限の表現にマージし、
@@ -645,4 +645,4 @@ MAC アドレスフィルター
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

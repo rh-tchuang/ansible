@@ -164,4 +164,4 @@ Ansible コマンドおよび Playbook でパターンに関する知識を活�
    `メーリングリスト <https://groups.google.com/group/ansible-project>`_
        ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

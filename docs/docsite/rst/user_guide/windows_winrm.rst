@@ -160,13 +160,13 @@ Active Directory 証明書サービスはこのドキュメントの範囲外で
     
 
 .. Note:: PFX ファイルを pywinrm が使用できる秘密鍵に変換するには、
-    OpenSSL で次のコマンドを実行します
-    ``openssl pkcs12 -in cert.pfx -nocerts -nodes -out cert_key.pem -passin pass: -passout pass:``
+    OpenSSL で、
+    ``openssl pkcs12 -in cert.pfx -nocerts -nodes -out cert_key.pem -passin pass: -passout pass:`` コマンドを実行します
 
 証明書ストアへの証明書のインポート
 +++++++++++++++++++++++++++++++++++++++++++++
 証明書が生成されたら、
-発行証明書を ``LocalMachine`` ストアの ``信頼されたルート証明機関`` にインポートする必要があり、
+発行証明書を ``LocalMachine`` ストアの ``Trusted Root Certificate Authorities`` にインポートする必要があり、
 クライアント証明書の公開鍵は、
 ``LocalMachine`` ストアの ``Trusted People`` ディレクトリーに保存する必要があります。この例では、
 発行した証明書と公開鍵は同じになります。
@@ -603,9 +603,9 @@ WinRM 接続の追加構成では、
 
 * ``ansible_winrm_realm``: Kerberos 
   認証に使用するレルムを指定します。``ansible_user`` に ``@`` が含まれている場合、
-  Ansible は、
+  Ansible は、デフォルトで、``@`` に続くユーザー名の部分を使用します。
 
-* デフォルトで ``ansible_winrm_transport`` の ``@`` に続くユーザー名の部分を使用します。1 つ以上の認証トランスポートオプションを
+* ``ansible_winrm_transport``: 1 つ以上の認証トランスポートオプションを
   コンマ区切りリストとして指定します。デフォルトでは、Ansible は、
   ``kerberos`` モジュールがインストールされていてレルムが定義されている場合は、``kerberos, basic`` を使用しますが、
 それ以外の場合は ``plaintext`` になります。
@@ -840,9 +840,9 @@ TLS v1.2 が有効になるように構成する必要があります。これ�
 Windows ホストが提供する暗号スイートと同様に、
 TLS プロトコルを構成する方法は他にもあります。このような設定を管理する GUI を提供できるツールの 1 つに、
 Nartac Software 社の「`IIS Crypto <https://www.nartac.com/Products/IISCrypto/>`_」
-が
+があります。
 
-あります。
+制限事項
 ```````````
 WinRM プロトコルの設計により、WinRM を使用するときにいくつかの制限があり、
 Ansible の Playbook を作成するときに問題が発生する可能性があります。
@@ -890,4 +890,4 @@ Ansible の Playbook を作成するときに問題が発生する可能性が�
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-project>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

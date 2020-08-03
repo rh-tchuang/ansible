@@ -85,8 +85,8 @@ Ansible は、WinRM を介してコマンドを実行します。このプロセ
 
 * CredSSP や Kerberos などの認証オプションと認証情報の委譲を使用しない限り、
   WinRM プロセスにはユーザーの認証情報をネットワークリソースに委譲する機能がないため、
-  ``Access is
-Denied`` エラーが発生します。
+  ``Access is Denied`` 
+エラーが発生します。
 
 * WinRM で実行されるすべてのプロセスは、非対話型セッションです。対話型セッションを必要とするアプリケーションは
   機能しません。
@@ -115,7 +115,7 @@ Denied`` エラーが発生します。
 become を使用する方法の詳細は、「:ref:`become`」を参照してください。「:ref:`windows_winrm`」の制限セクションには、
 WinRM の制限に関する詳細があります。
 
-このプログラムは、Ansible がインストールされている Windows にはインストールされません
+このプログラムが、Ansible がインストールされている Windows にはインストールされません
 ``````````````````````````````````````````````````
 WinRMの制限の詳細は、「:ref:`こちらの質問 <windows_faq_winrm>`」を参照してください。
 
@@ -225,4 +225,4 @@ Windows ホストのインベントリーに、
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-project>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

@@ -1,6 +1,6 @@
 :orphan:
 
-Community Information & Contributing
+コミュニティーの情報および貢献
 ````````````````````````````````````
 
-This page is deprecated. Please see the updated :ref:`Ansible Community Guide <ansible_community_guide>`.
+このページは非推奨となりました。更新された「:ref:`Ansible コミュニティーガイド <ansible_community_guide>`」を参照してください。

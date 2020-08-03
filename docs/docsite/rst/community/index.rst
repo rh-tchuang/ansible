@@ -1,64 +1,64 @@
 .. _ansible_community_guide:
 
 ***********************
-Ansible Community Guide
+Ansible コミュニティーガイド
 ***********************
 
-Welcome to the Ansible Community Guide!
+Ansible コミュニティーガイドにようこそ!
 
-The purpose of this guide is to teach you everything you need to know about being a contributing member of the Ansible community. All types of contributions are welcome, and necessary to Ansible's continued success.
+本ガイドの目的は、Ansible コミュニティーに貢献する際に必要な知識をすべて説明することです。あらゆる種類の貢献が、Ansible の継続的な成功に必要なものであり、歓迎されます。
 
-This page outlines the most common situations and questions that bring readers to this section. If you prefer a traditional table of contents, there's one at the bottom of the page.
+このページでは、本セクションにたどり着いたユーザーにとって最も一般的な状況や質問の概要を説明します。従来の目次形式をご希望のユーザー向けに、ページの一番下に目次が用意されています。
 
 
-Getting started
+はじめに
 ===============
 
-* I'm new to the community. Where can I find the Ansible :ref:`code_of_conduct`?
-* I'd like to know what I'm agreeing to when I contribute to Ansible. Does Ansible have a :ref:`contributor_license_agreement`?
-* I'd like to contribute but I'm not sure how. Are there :ref:`easy ways to contribute <how_can_i_help>`?
-* I want to talk to other Ansible users. How do I find an `Ansible Meetup near me <https://www.meetup.com/topics/ansible/>`_?
-* I have a question. Which :ref:`Ansible email lists and IRC channels <communication>` will help me find answers?
-* I want to learn more about Ansible. What can I do?
+* このコミュニティーに参加して間もないです。Ansible の :ref:`code_of_conduct` はどこで確認できますか。
+* Ansible に貢献する際に何に同意しているのか知りたいのです。Ansible には :ref:`contributor_license_agreement` がありますか。
+* 貢献したいのですが、方法がわかりません。:ref:`簡単に貢献する方法 <how_can_i_help>` はありますか。
+* 他の Ansible ユーザーと話をしてみたいです。`私が参加できる Ansible Meetup <https://www.meetup.com/topics/ansible/>`_ はどのように探せばいいですか。
+* 質問があります。:ref:`Ansible のメーリングリストや IRC チャンネル <communication>` で答えを見つけるにはどうすればいいですか。
+* Ansible についてもっと知りたいです。どうすればよいでしょうか。
 
-  * `Read books <https://www.ansible.com/resources/ebooks>`_.
-  * `Get certified <https://www.ansible.com/products/training-certification>`_.
-  * `Attend events <https://www.ansible.com/community/events>`_.
-  * `Review getting started guides <https://www.ansible.com/resources/get-started>`_.
-  * `Watch videos <https://www.ansible.com/resources/videos>`_ - includes Ansible Automates, AnsibleFest & webinar recordings.
+  * `本を読む <https://www.ansible.com/resources/ebooks>`_。
+  * `認定を受ける <https://www.ansible.com/products/training-certification>`_。
+  * `イベントに参加する <https://www.ansible.com/community/events>`_。
+  * `スタートガイドを確認する <https://www.ansible.com/resources/get-started>`_。
+  * `ビデオを見る <https://www.ansible.com/resources/videos>`_ (Ansible Automates、AnsibleFest、ウェビナーの録画など)。
 
-* I'd like updates about new Ansible versions. How are `new releases announced <https://groups.google.com/forum/#!forum/ansible-announce>`_?
-* I want to use the current release. How do I know which :ref:`releases are current <release_schedule>`?
+* Ansible の新しいバージョンに関する最新情報を知りたいです。`新しいリリースの発表 <https://groups.google.com/forum/#!forum/ansible-announce>`_ はどのように行われますか。
+* 最新のリリースを使用したいです。:ref:`どのリリースが最新のリリース <release_schedule>` かを知るにはどうすれば良いですか。
 
-Going deeper
+使い慣れてきた頃
 ============
 
-* I think Ansible is broken. How do I :ref:`report a bug <reporting_bugs>`?
-* I need functionality that Ansible doesn't offer. How do I :ref:`request a feature <request_features>`?
-* I'm waiting for a particular feature. How do I see what's :ref:`planned for future Ansible Releases <roadmaps>`?
-* I have a specific Ansible interest or expertise (for example, VMware, Linode, and so on.). How do I get involved in a :ref:`working group <working_group_list>`?
-* I'd like to participate in conversations about features and fixes. How do I review GitHub issues and pull requests?
-* I found a typo or another problem on docs.ansible.com. How can I :ref:`improve the documentation <community_documentation_contributions>`?
+* Ansible が破損しているように見えます。:ref:`バグを報告 <reporting_bugs>` するにはどうすれば良いですか。
+* Ansible が提供していない機能が必要です。:ref:`機能を要求 <request_features>` するにはどうすれば良いですか。
+* 特定の機能が必要です。:ref:`Ansible の将来のリリースで予定されている <roadmaps>` ものを確認するにはどうすれば良いですか。
+* 特定の Ansible 機能に関心がある、または専門知識があります (VMware、Linode など)。:ref:`ワーキンググループ <working_group_list>` に参加するにはどうすれば良いですか。
+* 機能や修正に関する議論に参加したいです。GitHub の問題やプル要求を確認するにはどうすれば良いですか。
+* docs.ansible.com でタイポなどの誤りを見つけました。:ref:`ドキュメントを改善 <community_documentation_contributions>` するにはどうすれば良いですか。
 
 
-Working with the Ansible repo
+Ansible リポジトリーの使用
 =============================
 
-* I want to code my first changes to Ansible. How do I :ref:`set up my Python development environment <environment_setup>`?
-* I'd like to get more efficient as a developer. How can I find :ref:`editors, linters, and other tools <other_tools_and_programs>` that will support my Ansible development efforts?
-* I want my PR to meet Ansible's guidelines. Where can I find  guidance on :ref:`coding in Ansible <developer_guide>`?
-* I want to learn more about Ansible roadmaps, releases, and projects. How do I find information on :ref:`the development cycle <community_development_process>`?
-* I'd like to connect Ansible to a new API or other resource. How do I :ref:`contribute a group of related modules <developing_modules_in_groups>`?
-* My pull request is marked ``needs_rebase``. How do I :ref:`rebase my PR <rebase_guide>`?
-* I'm using an older version of Ansible and want a bug fixed in my version that's already been fixed on the ``devel`` branch. How do I :ref:`backport a bugfix PR <backport_process>`?
-* I have an open pull request with a failing test. How do I learn about Ansible's :ref:`testing (CI) process <developing_testing>`?
-* I'm ready to step up as a module maintainer. What are the :ref:`guidelines for maintainers <maintainers>`?
-* A module I maintain is obsolete. How do I :ref:`deprecate a module <deprecating_modules>`?
+* 変更を初めて Ansible でコーディングしたいです。:ref:`Python 開発環境を設定 <environment_setup>` するにはどうしたら良いですか。
+* 開発者としてもっと効率的に作業したいです。Ansible 開発をサポートする :ref:`エディター、Linter などのツール <other_tools_and_programs>` はどうやって見つければ良いですか。
+* 自分の PR を Ansible のガイドラインに沿ったものにしたいです。:ref:`Ansible でのコーディング <developer_guide>` に関するガイダンスはどこにありますか。
+* Ansible のロードマップ、リリース、およびプロジェクトについて詳しく知りたいです。:ref:`開発サイクル <community_development_process>` に関する情報はどこにありますか。
+* Ansible を新しい API やその他のリソースに接続したいです。:ref:`関連モジュールのグループに貢献 <developing_modules_in_groups>` するにはどうすれば良いですか。
+* プル要求に ``needs_rebase`` というマークが付いています。:ref:`自分の PR をリベース <rebase_guide>` するにはどうすれば良いですか。
+* Ansible の古いバージョンを使用していますが、``devel`` ブランチですでに修正されているバグを、私の使用しているバージョンで修正してほしいです。:ref:`バグ修正の PR をバックポート <backport_process>` するにはどうすれば良いですか。
+* オープンになっているプル要求でテストに失敗しているものがあります。Ansible の :ref:`テスト (CI) プロセス <developing_testing>` について学ぶにはどうすれば良いですか。
+* モジュールメンテナーになるための準備ができました。:ref:`メンテナー向けガイドライン <maintainers>` を教えてください。
+* 私が保守しているモジュールが古くなりました。:ref:`モジュールを非推奨 <deprecating_modules>` にするにはどうすれば良いですか。
 
-Traditional Table of Contents
+従来の目次
 =============================
 
-If you prefer to read the entire Community Guide, here's a list of the pages in order:
+コミュニティーガイド全体をお読みになりたい方は、こちらのページを順番にご覧ください。
 
 .. toctree::
    :maxdepth: 2
@@ -75,7 +75,7 @@ If you prefer to read the entire Community Guide, here's a list of the pages in 
    ../dev_guide/style_guide/index
 
 .. toctree::
-   :caption: Guidelines for specific types of contributors
+   :caption: 貢献者向け各ガイドライン
    :maxdepth: 1
 
    committer_guidelines

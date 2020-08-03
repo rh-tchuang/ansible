@@ -1,80 +1,80 @@
 .. _community_committer_guidelines:
 
 *********************
-Committers Guidelines
+コミット担当者のガイドライン
 *********************
 
-These are the guidelines for people with commit privileges on the Ansible GitHub repository. Committers are essentially acting as members of the Ansible Core team, although not necessarily as employees of Ansible and Red Hat. Please read the guidelines before you commit.
+このページは、Ansible GitHub リポジトリー上でコミット権限を持つユーザーのためのガイドラインです。コミット担当者は、基本的に Ansible Core チームのメンバーとして活動していますが、必ずしも Ansible および Red Hat の従業員である必要はあります。コミットする前にこのガイドラインをお読みください。
 
-These guidelines apply to everyone. At the same time, this ISN'T a process document. So just use good judgment. You've been given commit access because we trust your judgment.
+これらのガイドラインはすべてのユーザーに適用されます。同時に、これはプロセスのドキュメントではありません。したがって、適切な判断をしてください。コミットアクセス権が与えられているのは、そのユーザーの判断を信頼しているためです。
 
-That said, use the trust wisely.
+そのため、その信頼については慎重に行動してください。
 
-If you abuse the trust and break components and builds, and so on, the trust level falls and you may be asked not to commit or you may lose your commit privileges.
+信頼を乱用してコンポーネントやビルドなどを壊してしまうと、信頼のレベルが下がり、コミットしないように求められたり、コミット権限を失うことになるかもしれません。
 
-Features, high-level design, and roadmap
+機能、高レベル設計、およびロードマップ
 ========================================
 
-As a core team member, you are an integral part of the team that develops the :ref:`roadmap <roadmaps>`. Please be engaged, and push for the features and fixes that you want to see. Also keep in mind that Red Hat, as a company, will commit to certain features, fixes, APIs, and so on. for various releases. Red Hat, the company, and the Ansible team must get these committed features (and so on.) completed and released as scheduled. Obligations to users, the community, and customers must come first. Because of these commitments, a feature you want to develop yourself may not get into a release if it impacts a lot of other parts within Ansible.
+コミット担当者は、コアチームメンバーとして、:ref:`ロードマップ <roadmaps>` を作成するチームに不可欠です。積極的に関与し、希望する機能や修正をプッシュしてください。また、Red Hat は企業として、様々なリリースに対して、特定の機能、修正、API などにコミットすることを念頭に置いてください。企業である Red Hat、および Ansible チームは、このようなコミットされた機能 (など) を完成させ、スケジュール通りにリリースしなければなりません。ユーザー、コミュニティー、顧客への義務が最優先されなければなりません。これらの義務があるため、自分で開発したい機能が Ansible 内の他の多くの部分に影響を与える場合は、その機能がリリースに含まれない可能性があります。
 
-Any other new features and changes to high level design should go through the proposal process (TBD), to ensure the community and core team have had a chance to review the idea and approve it. The core team has sole responsibility for merging new features based on proposals.
+その他の新機能や高レベル設計の変更は、コミュニティーおよび Core チームがアイデアを確認して承認する機会を確実にもてるように、提案プロセス (TBD) を経る必要があります。提案に基づいて新機能をマージする責任は Core チームにあります。
 
-Our workflow on GitHub
+GitHub でのワークフロー
 ======================
 
-As a committer, you may already know this, but our workflow forms a lot of our team policies. Please ensure you're aware of the following workflow steps:
+コミット担当者として、以下をすでに理解しているかもしれませんが、私たちのワークフローは多くのチームポリシーを形成しています。以下のワークフローの手順を理解しておいてください。
 
-* Fork the repository upon which you want to do some work to your own personal repository
-* Work on the specific branch upon which you need to commit
-* Create a Pull Request back to the Ansible repository and tag the people you would like to review; assign someone as the primary "owner" of your request
-* Adjust code as necessary based on the Comments provided
-* Ask someone on the Core Team to do a final review and merge
+* 作業したいリポジトリーを自身のリポジトリーにフォークします。
+* コミットする必要がある特定のブランチで作業します。
+* プル要求を Ansible リポジトリーに作成し、レビューしてほしいユーザーにタグを付けます。そのユーザーを、その要求の主な「所有者」として割り当てます。
+* 提供されたコメントに基づいて必要に応じてコードを調整します。
+* Core チームに最終確認とマージを依頼します。
 
-Addendum to workflow for committers:
+コミット担当者のワークフローへの補足
 ------------------------------------
 
-The Core Team is aware that this can be a difficult process at times. Sometimes, the team breaks the rules by making direct commits or merging their own PRs. This section is a set of guidelines. If you're changing a comma in a doc, or making a very minor change, you can use your best judgement. This is another trust thing. The process is critical for any major change, but for little things or getting something done quickly, use your best judgement and make sure people on the team are aware of your work.
+Core チームは、これが時に困難なプロセスであることを認識しています。時には、チームが直接コミットしたり、自身のプル要求をマージしたりしてルールを破ってしまうこともあります。ここではガイドラインを示します。ドキュメントでコンマを変更する場合や、ごく些細な変更であれば、各自の裁量で行ってください。これも信頼関係の問題です。大きな変更にはプロセスが重要ですが、ちょっとしたことや迅速に何かを行う場合は、最善の判断を下し、チームの人々に自分の仕事を認識してもらうようにしましょう。
 
-Roles on Core
+Core におけるロール
 =============
-* Core committers: Fine to do PRs for most things, but we should have a timebox. Hanging PRs may merge on the judgement of these devs.
-* :ref:`Module maintainers <maintainers>`: Module maintainers own specific modules and have indirect commit access through the current module PR mechanisms.
+* Core のコミット担当者 - ほとんどの場合は、プル要求を実行しても問題ありませんが、タイムボックスが必要です。解決されていないプル要求が存在すると、開発者の判断でマージされます。
+* :ref:`モジュールメンテナー <maintainers>` - モジュールメンテナーは特定のモジュールを所有しており、現在のモジュールのプル要求メカニズムを通じて間接的にコミットにアクセスできます。
 
-General rules
+一般的なルール
 =============
-Individuals with direct commit access to ansible/ansible are entrusted with powers that allow them to do a broad variety of things--probably more than we can write down. Rather than rules, treat these as general *guidelines*, individuals with this power are expected to use their best judgement.
+ansible/ansible への直接コミットアクセスを持つユーザーには、さまざまなことを可能にする権限が与えられています。これは、ルールというよりは、一般的な *ガイドライン* として扱い、この権限を持つユーザーは最善の判断を下すことが期待されています。
 
-* Don't
+* してはいけないこと
 
-  - Commit directly.
-  - Merge your own PRs. Someone else should have a chance to review and approve the PR merge. If you are a Core Committer, you have a small amount of leeway here for very minor changes.
-  - Forget about alternate environments. Consider the alternatives--yes, people have bad environments, but they are the ones who need us the most.
-  - Drag your community team members down. Always discuss the technical merits, but you should never address the person's limitations (you can later go for beers and call them idiots, but not in IRC/GitHub/and so on.).
-  - Forget about the maintenance burden. Some things are really cool to have, but they might not be worth shoehorning in if the maintenance burden is too great.
-  - Break playbooks. Always keep backwards compatibility in mind.
-  - Forget to keep it simple. Complexity breeds all kinds of problems.
+  - 直接コミットする。
+  - 自身のプル要求をマージする。他の誰かがプル要求のマージを確認して承認する機会を持つべきです。Core のコミット担当者であれば、ごくわずかな変更であれば、各自の裁量で行うことができます。
+  - 代替環境のことを考えない。代替案を検討してください。ユーザーの中には環境が良くない人もいますが、私たちを最も必要としているのはそのようなユーザーです。
+  - コミュニティーチームのメンバーの足を引っ張る。技術的なメリットについては常に議論するべきですが、一個人の限界については決して言及すべきではありません (IRC、GitHub などでは特に注意してください)。
+  - メンテナンスの負担を考えない。その機能が本当に優れていても、メンテナンスの負担が大きすぎる場合は、組み込む価値がないかもしれません。
+  - Playbook を壊す。常に下位互換性を念頭に置いてください。
+  - シンプルにすることを考えない。複雑なものは、あらゆる種類の問題を生み出します。
 
-* Do
+* すべきこと
 
-  - Squash, avoid merges whenever possible, use GitHub's squash commits or cherry pick if needed (bisect thanks you).
-  - Be active. Committers who have no activity on the project (through merges, triage, commits, and so on.) will have their permissions suspended.
-  - Consider backwards compatibility (goes back to "don't break existing playbooks").
-  - Write tests. PRs with tests are looked at with more priority than PRs without tests that should have them included. While not all changes require tests, be sure to add them for bug fixes or functionality changes.
-  - Discuss with other committers, specially when you are unsure of something.
-  - Document! If your PR is a new feature or a change to behavior, make sure you've updated all associated documentation or have notified the right people to do so. It also helps to add the version of Core against which this documentation is compatible (to avoid confusion with stable versus devel docs, for backwards compatibility, and so on.).
-  - Consider scope, sometimes a fix can be generalized
-  - Keep it simple, then things are maintainable, debuggable and intelligible.
+  - squash を使用し、マージはできる限り使用せず、必要に応じて GitHub の Squash コミットを使用するか、入念に選びます (cherry-pick)。
+  - 活発に行動する。(マージ、トリアージ、コミットなどを通じて) プロジェクトで活動をしていないコミット担当者は、そのパーミッションが停止します。
+  - 下位互換性を検討してください。
+  - テストを作成する。テストが含まれているプル要求は、テストが必要なのに含まれていないプル要求よりも優先度が高く見られます。すべての変更がテストを必要とするわけではありませんが、バグ修正や機能変更の際には必ずテストを追加しましょう。
+  - 特に不明な点がある場合は、他のコミット担当者と話し合ってください。
+  - 文書化する。プル要求が新機能や動作の変更であれば、関連するすべてのドキュメントを更新したか、適切なユーザーに通知したかを確認してください。また、本ドキュメントと互換性がある Core のバージョンを追加するのに便利です (安定版と開発版のドキュメントとの混同を避けるため、後方互換性のためなど)。
+  - スコープを検討する。時には修正を一般化できる場合があります。
+  - 複雑にせず、保守やデバッグが可能で、分かりやすいものにする。
 
-Committers are expected to continue to follow the same community and contribution guidelines followed by the rest of the Ansible community.
+コミット担当者は、その他の Ansible コミュニティーメンバーが従っているコミュニティーおよび貢献に関するガイドラインに従い続けることが期待されています。
 
 
-People
+ユーザー
 ======
 
-Individuals who've been asked to become a part of this group have generally been contributing in significant ways to the Ansible community for some time. Should they agree, they are requested to add their names and GitHub IDs to this file, in the section below, through a pull request. Doing so indicates that these individuals agree to act in the ways that their fellow committers trust that they will act.
+このグループの一員になることを求められたユーザーは、通常、しばらくの間 Ansible コミュニティーに重要な貢献をしてきたユーザーです。同意したユーザーは、以下のセクションにあるこのファイルに名前と GitHub ID をプル要求で追加してください。この操作は、その他のコミット担当者が信頼できる行動をとることに同意していることを意味します。
 
 +---------------------+----------------------+--------------------+----------------------+
-| Name                | GitHub ID            | IRC Nick           | Other                |
+| 名前                | GitHub ID            | IRC ニックネーム           | その他                |
 +=====================+======================+====================+======================+
 | James Cammarata     | jimi-c               | jimi               |                      |
 +---------------------+----------------------+--------------------+----------------------+

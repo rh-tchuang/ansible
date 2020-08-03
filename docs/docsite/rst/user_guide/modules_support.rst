@@ -11,7 +11,7 @@
 メンテナンス
 ===========
 
-同梱される各モジュールの保守、機能の追加、バグの修正を行う者が明確になるように、同梱される各モジュールには、保守に関する情報を提供するメタデータが関連付けられています。
+同梱される各モジュールの保守、機能の追加、バグの修正を誰が行っているかが明確になるように、同梱される各モジュールには、保守に関する情報を提供するメタデータが関連付けられています。
 
 コア
 ----
@@ -40,19 +40,19 @@
 
 モジュールにバグが見つかり、最新の安定性または開発バージョンの Ansible を実行していると思われる場合は、まず `Ansible リポジトリーで問題のトラッカー <https://github.com/ansible/ansible/issues>`_ を確認し、問題がすでに報告されているかどうかを確認します。報告されていない場合は報告してください。
 
-バグの報告ではなく質問がある場合は、`ansible-project Google グループ <https://groups.google.com/forum/#%21forum/ansible-project>`_ または Ansible の "#ansible" channel, located on irc.freenode.net. でお問い合わせください。
+バグの報告ではなく質問がある場合は、`ansible-project Google グループ <https://groups.google.com/forum/#%21forum/ansible-project>`_ または Ansible の "#ansible" チャンネル (irc.freenode.net 上のチャンネル) でお問い合わせください。
 
-開発指向のトピックは、`ansible-devel Google group <https://groups.google.com/forum/#%21forum/ansible-devel>`_ または Ansible の #ansible and #ansible-devel channels, located on irc.freenode.net. You should also read the :ref:`コミュニティーガイド<ansible_community_guide>`、:ref:`Ansible のテスト<developing_testing>`、および:ref:`開発者ガイド<developer_guide>` を参照してください。
+開発指向のトピックは、`ansible-devel Google group <https://groups.google.com/forum/#%21forum/ansible-devel>`_ または Ansible の #ansible および #ansible-develチャンネル (irc.freenode.net 上のチャンネル) をお使いください。また、:ref:`コミュニティーガイド<ansible_community_guide>`、:ref:`Ansible のテスト<developing_testing>`、および:ref:`開発者ガイド<developer_guide>` もご覧ください。
 
 モジュールは、`Ansible <https://github.com/ansible/ansible/tree/devel/lib/ansible/modules>`_ リポジトリーのサブディレクトリーにある GitHub でホストされます。
 
-注記:Red Hat Ansible Automation 製品サブスクリプションをお持ちの場合は、`Red Hat カスタマーポータル<https:///access.redhat.com/>`_ から標準の問題報告プロセスを実行してください。
+注記:Red Hat Ansible Automation 製品サブスクリプションをお持ちの場合は、`Red Hat カスタマーポータル <https:///access.redhat.com/>`_ から標準の問題報告プロセスを実行してください。
 
 サポート
 =======
 
 同梱されている Ansible モジュールが Red Hat でどのようにサポートされているかは、
-以下の `ナレッジベースの記事<https://access.redhat.com/articles/3166901>`_ と、`Red Hat カスタマーポータル <https://access.redhat.com/>`_ のその他のリソースを参照してください。
+以下の `ナレッジベースの記事 <https://access.redhat.com/articles/3166901>`_ と、`Red Hat カスタマーポータル <https://access.redhat.com/>`_ のその他のリソースを参照してください。
 
 .. seealso::
 
@@ -69,4 +69,4 @@
    `メーリングリスト <https://groups.google.com/group/ansible-project>`_
        ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

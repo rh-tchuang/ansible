@@ -1,12 +1,12 @@
 .. _connections:
 
 ******************************
-接続方法と詳細
+接続方法および詳細
 ******************************
 
 このセクションでは、Ansible がインベントリーに使用する接続方法を拡張および改良する方法を示します。
 
-ControlPersist と paramiko
+ControlPersist および paramiko
 ---------------------------
 
 デフォルトでは、Ansible はネイティブの OpenSSH を使用します。これは、ControlPersist (パフォーマンス機能)、Kerberos、および Jump Host 設定などの ``〜/ .ssh / configの`` のオプションをサポートしているためです。ControlPersist をサポートしない OpenSSH の古いバージョンを使用している場合、Ansible は、「paramiko」と呼ばれる OpenSSH の Python 実装にフォールバックします。

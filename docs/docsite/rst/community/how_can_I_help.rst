@@ -1,85 +1,85 @@
 .. _how_can_i_help:
 
 ***************
-How can I help?
+貢献方法
 ***************
 
-.. contents:: Topics
+.. contents:: トピック
 
-Thanks for being interested in helping the Ansible project!
+Ansible プロジェクトを支援することに関心をお寄せいただきありがとうございます。
 
-There are many ways to help the Ansible project...but first, please read and understand the :ref:`code_of_conduct`.
+Ansible プロジェクトを支援する方法は多数ありますが、まずは「:ref:`code_of_conduct`」を読んで理解してください。
 
-Become a power user
+パワーユーザーになる
 ===================
 
-A great way to help the Ansible project is to become a power user:
+Ansible プロジェクトを支援する素晴らしい方法は、パワーユーザーになることです。
 
-* Use Ansible everywhere you can
-* Take tutorials and classes
-* Read the :ref:`official documentation <ansible_documentation>`
-* Study some of the `many excellent books <https://www.amazon.com/s/ref=nb_sb_ss_c_2_7?url=search-alias%3Dstripbooks&field-keywords=ansible&sprefix=ansible%2Caps%2C260>`_ about Ansible
-* `Get certified <https://www.ansible.com/products/training-certification>`_.
+* Ansible をできる限り使用する。
+* チュートリアルやクラスを受講する。
+* :ref:`公式ドキュメント <ansible_documentation>` を読む。
+* Ansible に関する `多くの優れた書籍 <https://www.amazon.com/s/ref=nb_sb_ss_c_2_7?url=search-alias%3Dstripbooks&field-keywords=ansible&sprefix=ansible%2Caps%2C260>`_ の中からいくつか選んで勉強する。
+* `認定を受ける <https://www.ansible.com/products/training-certification>`_。
 
-When you become a power user, your ability and opportunities to help the Ansible project in other ways will multiply quickly.
+パワーユーザーになると、Ansible プロジェクトを他の方法で支援する能力と機会が急速に増えます。
 
-Ask and answer questions online
+オンラインで質問し、質問に回答
 ===============================
 
-There are many forums online where Ansible users ask and answer questions. Reach out and communicate with your fellow Ansible users.
+オンラインには、Ansible ユーザーが質問をしたり、質問に答えたりするフォーラムが多数あります。他の Ansible ユーザーに連絡し、コミュニケーションを取ります。
 
-You can find the official :ref:`Ansible communication channels <communication>`.
+公式の :ref:`Ansible コミュニケーションチャンネル <communication>` があります。
 
-Review, fix, and maintain the documentation
+ドキュメントの確認、修正、および維持
 ===========================================
 
-Typos are everywhere, even in the Ansible documentation. We work hard to keep the documentation up-to-date, but you may also find outdated examples. We offer easy ways to :ref:`report and/or fix documentation errors <community_documentation_contributions>`.
+Ansible ドキュメントに誤字が含まれる場合があります。ドキュメントを最新の状態に保つように努めていますが、古い例が見つかる場合もあります。:ref:`ドキュメントエラーを報告または修正する <community_documentation_contributions>` 簡単な方法を提供します。
 
 .. _ansible_community_meetup:
 
-Participate in your local meetup
+各地の Meetup に参加
 ================================
 
-There are Ansible meetups `all over the world <https://www.meetup.com/topics/ansible/>`_. Join your local meetup. Attend regularly. Ask good questions. Volunteer to give a presentation about how you use Ansible.
+Ansible の Meetup は `世界中 <https://www.meetup.com/topics/ansible/>`_ で開催されています。お住いの地域で開催される Meetup に参加してください。定期的に公開されています。質問をしてください。Ansible の使用方法に関するプレゼンテーションを自発的に行ってください。
 
-If there isn't a meetup near you, we'll be happy to help you `start one <https://www.ansible.com/community/events/ansible-meetups>`_.
+お近くで Meetup が開催されない場合は、`新たに開催する <https://www.ansible.com/community/events/ansible-meetups>`_ ことをお手伝いします。
 
-File and verify issues
+問題の報告および確認
 ======================
 
-All software has bugs, and Ansible is no exception. When you find a bug, you can help tremendously by :ref:`telling us about it <reporting_bugs_and_features>`.
+すべてのソフトウェアにはバグがあり、Ansible も例外ではありません。バグを見つけた場合は、:ref:`それを報告 <reporting_bugs_and_features>` していただくと非常に助かります。
 
 
-If you should discover that the bug you're trying to file already exists in an issue, you can help by verifying the behavior of the reported bug with a comment in that issue, or by reporting any additional information.
+報告しようとしているバグがすでに報告されていることを発見した場合は、報告されたバグの動作をその問題のコメントで検証したり、追加情報を報告したりすることが助けになります。
 
-Review and submit pull requests
+プル要求の確認および提出
 ===============================
 
-As you become more familiar with how Ansible works, you may be able to fix issues or develop new features yourself. If you think you've got a solution to a bug you've found in Ansible, or if you've got a new feature that you've written and would like to share with millions of Ansible users, read all about the :ref:`Ansible development process <community_development_process>` to learn how to get your code accepted into Ansible.
+Ansible の動作に慣れると、問題を修正したり、新しい機能を自分で開発したりできるようになります。Ansible で見つかったバグの解決策がある場合や、自身が作成した新機能を何百万人もの Ansible ユーザーと共有したい場合は、「:ref:`Ansible の開発プロセス` <community_development_process>」をすべて読んで、作成したコードを Ansible に受け入れてもらう方法を学んでください。
 
-Another good way to help is to review pull requests that other Ansible users have submitted. The Ansible community keeps a full list of `open pull requests by file <https://ansible.sivel.net/pr/byfile.html>`_, so if there's a particular module or plug-in that particularly interests you, you can easily keep track of all the relevant new pull requests and provide testing or feedback.
+もう 1 つの貢献方法は、別の Ansible ユーザーが提出したプル要求を確認することです。Ansible コミュニティは、`ファイルごとにオープンなプル要求 <https://ansible.sivel.net/pr/byfile.html>`_ の完全なリストを保持しています。したがって、特に興味のある特定のモジュールやプラグインがあれば、関連する新しいプル要求をすべて簡単に追跡して、テストやフィードバックを提供できます。
 
-Become a module maintainer
+モジュールメンテナーになる
 ==========================
 
-Once you've learned about the development process and have contributed code to a particular module, we encourage you to become a maintainer of that module. There are hundreds of different modules in Ansible, and the vast majority of them are written and maintained entirely by members of the Ansible community.
+開発プロセスを確認し、特定のモジュールにコードを取得したら、モジュールのメンテナーになることが推奨されます。Ansible には数百ものモジュールがあり、その大部分は Ansible コミュニティーのメンバーによって完全に記述され、維持されています。
 
-To learn more about the responsibilities of being an Ansible module maintainer, please read our :ref:`module maintainer guidelines <maintainers>`.
+Ansible モジュールメンテナーにおける責任の詳細は、:ref:`モジュールのメンテナーガイドライン <maintainers>` を参照してください。
 
 .. _community_working_groups:
 
-Join a working group
+ワーキンググループへの参加
 ====================
 
-Working groups are a way for Ansible community members to self-organize around particular topics of interest. We have working groups around various topics. To join or create a working group, please read the :ref:`Ansible Working Groups<working_group_list>`.
+ワーキンググループは、Ansible コミュニティーのメンバーが関心のある特定のトピックについて自己編成する方法です。さまざまなトピックに関するワーキンググループがあります。ワーキンググループに参加するか、「:ref:`Ansible ワーキンググループ<working_group_list>`」を参照してください。
 
 
-Teach Ansible to others
+Ansible を紹介する
 =======================
 
-We're working on a standardized Ansible workshop called `Lightbulb <https://github.com/ansible/lightbulb>`_ that can provide a good hands-on introduction to Ansible usage and concepts.
+Ansible の使用方法や概念をしっかりとハンズオンで紹介できる `Lightbulb <https://github.com/ansible/lightbulb>`_ と呼ばれる Ansibl eの標準化されたワークショップに取り組んでいます。
 
-Social media
+ソーシャルメディア
 ============
 
-If you like Ansible and just want to spread the good word, feel free to share on your social media platform of choice, and let us know by using ``@ansible`` or ``#ansible``. We'll be looking for you.
+Ansible が好きで、Ansible の良さを広めたい方は、お好きなソーシャルメディアプラットフォームで気軽にシェアしてください。コミュニティーメンバーが気が付くように、``@ansible`` または ``#ansible`` を使用することが推奨されます。

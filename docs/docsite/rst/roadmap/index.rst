@@ -1,28 +1,28 @@
 .. _roadmaps:
 
-Ansible Roadmap
+Ansible ロードマップ
 ===============
 
-The Ansible team develops a roadmap for each major and minor Ansible release. The latest roadmap shows current work; older roadmaps provide a history of the project. We don't publish roadmaps for subminor versions. So 2.0 and 2.8 have roadmaps, but 2.7.1 does not.
+Ansible チームは、Ansible の各メジャーリリースとマイナーリリースのロードマップを開発しています。最新のロードマップは現在の作業、古いロードマップはプロジェクトの履歴を示します。サブマイナーバージョンのロードマップは公開していません。2.0 と 2.8 にはロードマップがありますが、2.7.1 にはありません。
 
-We incorporate team and community feedback in each roadmap, and aim for further transparency and better inclusion of both community desires and submissions.
+各ロードマップにチームとコミュニティーのフィードバックを組み込むことで、コミュニティーの要望と提供されたものをより透明性の高いものにすることを目指しています。
 
-Each roadmap offers a *best guess*, based on the Ansible team's experience and on requests and feedback from the community, of what will be included in a given release. However, some items on the roadmap may be dropped due to time constraints, lack of community maintainers, etc.
+各ロードマップは、Ansible チームの経験とコミュニティーからのリクエストやフィードバックに基づいて、特定のリリースに何が含まれるかについて *最良の推測* を提供します。ただし、ロードマップの一部の項目は、時間の制約、コミュニティーのメンテナー不足などのために削除される場合があります。
 
-Each roadmap is published both as an idea of what is upcoming in Ansible, and as a medium for seeking further feedback from the community.
+各ロードマップは、Ansible の今後の予定、およびコミュニティーからのフィードバックを募る媒体として公開されています。
 
-You can submit feedback on the current roadmap in multiple ways:
+現在のロードマップに関するフィードバックは、複数の方法で送信できます。
 
-- Edit the agenda of an IRC `Core Team Meeting <https://github.com/ansible/community/blob/master/meetings/README.md>`_ (preferred)
-- Post on the ``#ansible-devel`` Freenode IRC channel
-- Email the ansible-devel list
+- IRC `Core Team Meeting <https://github.com/ansible/community/blob/master/meetings/README.md>`_ の議題を編集 (推奨)
+- ``#ansible-devel`` Freenode IRC チャンネルで発言
+- ansible-devel リストへのメール送信
 
-See :ref:`Ansible communication channels <communication>` for details on how to join and use the email lists and IRC channels.
+メーリングリストおよび IRC チャンネルに参加して使用する方法は、「:ref:`Ansible 通信チャンネル <communication>`」を参照してください。
 
 .. toctree::
    :maxdepth: 1
    :glob:
    :reversed:
-   :caption: Ansible Release Roadmaps
+   :caption: Ansible リリースロールマップ
 
    ROADMAP*

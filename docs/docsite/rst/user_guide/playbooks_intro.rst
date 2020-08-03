@@ -240,8 +240,8 @@ reverse_inventory:
 sorted:
     ホストの名前をアルファベット順で並べます。
 reverse_sorted:
-    ホストの名前を
-逆アルファベット順で並べます。
+    ホストの名前を逆アルファベット順で並べます。
+shuffle:
     ホストは実行ごとにランダムに並べられます
 
 
@@ -331,14 +331,14 @@ Playbook を再実行しても安全です。
 
    tasks:
      - name: create a virtual host file for {{ vhost }}
-template:
-src: somefile.j2
-dest: /etc/httpd/conf.d/{{ vhost }}
+       template:
+         src: somefile.j2
+         dest: /etc/httpd/conf.d/{{ vhost }}
 
 同じような変数は、後で使用するテンプレートで使用できます。
 
 非常に基本的な Playbook では、すべてのタスクがそのプレイに直接リストされますが、
-通常は、:ref:`playbooks_reuse` の説明に従って、タスクを破損させる方が分かりやすくなります。
+通常は、「:ref:`playbooks_reuse`」の説明に従って、タスクを破損させる方が分かりやすくなります。
 
 .. _action_shorthand:
 
@@ -454,7 +454,7 @@ Playbook とロールの間でハンドラーを共有しやすくします (特
 
 .. note::
    * 通知ハンドラーは常に、notify-statement に記載される `順番ではなく`、定義される順序で実行されます。これは、`listen` を使用するハンドラーの場合でも当てはまります。
-   *ハンドラー名と `listen` トピックは、グローバルな名前空間にあります。
+   * ハンドラー名と `listen` トピックは、グローバルな名前空間にあります。
    * ハンドラー名は一時的なものですが、`listen` トピックは一時的ではありません。
    * 固有のハンドラー名を使用します。同じ名前のハンドラーを複数トリガーすると、最初のハンドラーが上書きされます。定義された最後のもののみが実行されます。
    * インクルード内で定義されたハンドラーに通知することはできません。Ansible 2.1 の時点では、これは機能しますが、包含は `静的` である必要があります。
@@ -538,11 +538,11 @@ Playbook の検証に使用できるツールの詳細なリストは、:ref:`va
 * 実行する前に Playbook の影響を受けるホストを確認するには、
   次のようにします::
 
-      ansible-playbook playbook.yml --step
+      ansible-playbook playbook.yml --list-hosts
 
 .. seealso::
 
-   `ansible- <https://docs.ansible.com/ansible-lint/index.html>lint`
+   `ansible-lint <https://docs.ansible.com/ansible-lint/index.html>`_
        Ansible Playbook 構文のテスト方法について
    :ref:`yaml_syntax`
        YAML 構文について

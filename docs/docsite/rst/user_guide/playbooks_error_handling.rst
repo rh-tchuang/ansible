@@ -175,17 +175,17 @@ Ansible を使用すると、``failed_when`` 条件を使用して、各タス�
 ブロックは、タスクの「faileded」ステータスのみを処理します。問題のあるタスク定義または到達不可能なホストは、「復旧可能な可能」エラーではありません。
 
     tasks:
-    - name: Handle the error
+    - name:Handle the error
       block:
         - debug:
-            msg: 'I execute normally'
+            msg:'I execute normally'
         - name: i force a failure
           command: /bin/false
         - debug:
-            msg: 'I never execute, due to the above task failing, :-('
+            msg:'I never execute, due to the above task failing, :-('
       rescue:
         - debug:
-            msg: 'I caught an error, can do stuff here to fix it, :-)'
+            msg:'I caught an error, can do stuff here to fix it, :-)'
 
 これにより、その実行には含まれない ``ブロック`` タスクの失敗ステータスが「取り消され」、成功したかのように再生が続行します。
 その他の例は、「:ref:`block_error_handling`」を参照してください。
@@ -203,4 +203,4 @@ Ansible を使用すると、``failed_when`` 条件を使用して、各タス�
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

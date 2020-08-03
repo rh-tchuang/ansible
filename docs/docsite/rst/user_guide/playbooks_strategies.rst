@@ -1,6 +1,6 @@
 .. _playbooks_strategies:
 
-Playbook の実行の制御: strategy およびその他
+Playbook の実行の制御: strategy など
 ===================================================
 
 デフォルトでは、Ansible は 5 フォークを使用して、任意のホストで次のタスクを開始する前に、プレイの影響を受けるすべてのホストで各タスクを実行します。このデフォルト動作を変更する場合は、異なるストラテジープラグインを使用するか、フォークの数を変更するか、``serial`` などのプレイレベルのキーワードからいずれかを適用します。
@@ -18,7 +18,7 @@ Playbook の実行の制御: strategy およびその他
       tasks:
       ...
 
-上記のように各プレイに異なるストラテジーを選択するか、``defaults`` stanza は、``ansible.cfg`` で優先されるストラテジーをグローバルに設定できます。
+上記のように各プレイに異なるストラテジーを選択するか、``defaults`` stanza の ``ansible.cfg`` で優先されるストラテジーをグローバルに設定できます。
 
     [defaults]
     strategy = free
@@ -42,7 +42,7 @@ Playbook の実行の制御: strategy およびその他
 
     tasks:
     - command: /path/to/cpu_intensive_command
-      throttle:1
+      throttle: 1
 
 プレイの実行に影響する他のキーワードには、``ignore_errors``、``ignore_unreachable``、および ``any_errors_fatal`` が含まれます。これらのキーワードはストラテジーではないことに注意してください。これは、プレイレベルのディレクティブまたはオプションです。
 
@@ -55,4 +55,4 @@ Playbook の実行の制御: strategy およびその他
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-devel>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

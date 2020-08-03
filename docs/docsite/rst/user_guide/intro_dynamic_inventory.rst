@@ -8,7 +8,7 @@
 .. contents::
    :local:
 
-ビジネスニーズに応じてホストを起動またはャットダウンすることで Ansible インベントリーが時間の経過と共に変動する場合は、:ref:`インベントリー` で説明されている静的なインベントリーソリューションではユーザーのニーズに応えることができません。クラウドプロバイダー、LDAP、`Cobbler <https://cobbler.github.io>`_、エンタープライズ CMDB システムなどの複数のソースからホストを追跡することが必要になる場合があります。
+ビジネスニーズに応じてホストを起動またはシャットダウンすることで Ansible インベントリーが時間の経過と共に変動する場合、:ref:`インベントリー` で説明されている静的なインベントリーソリューションではユーザーのニーズに応えることができません。クラウドプロバイダー、LDAP、`Cobbler <https://cobbler.github.io>`_、エンタープライズ CMDB システムなどの複数のソースからホストを追跡することが必要になる場合があります。
 
 Ansible は、動的な外部インベントリーシステムでこのオプションをすべて統合します。Ansible は、:ref:`inventory_plugins` および `インベントリースクリプト <https://github.com/ansible/ansible/tree/devel/contrib/inventory>`_ の 2 つの方法で外部インベントリーに接続します。
 
@@ -16,7 +16,7 @@ Ansible は、動的な外部インベントリーシステムでこのオプシ
 
 選択した場合には、インベントリースクリプトを使用できます。インベントリープラグインを実装すると、スクリプトインベントリープラグインを介して後方互換性が確保されます。以下の例は、インベントリースクリプトの使用方法を示しています。
 
-動的インベントリーの対応に GUI が必要な場合は、:ref:`ansible_tower` インベントリーデータベースがすべての動的インベントリーソースと同期し、その結果への Web および REST アクセスを提供し、グラフィカルインベントリーエディターを提供します。すべてのホストのデータベースレコードを使用して、過去のイベント履歴を関連付け、最後の Playbook の実行でどのホストに障害が発生したかを確認できます。
+動的インベントリーの対応に GUI が必要な場合は、:ref:`ansible_tower` インベントリーデータベースがすべての動的インベントリーソースと同期し、その結果に Web および REST アクセスを提供し、グラフィカルインベントリーエディターを提供します。すべてのホストのデータベースレコードを使用して、過去のイベント履歴を関連付け、最後の Playbook の実行でどのホストに障害が発生したかを確認できます。
 
 .. _cobbler_example:
 
@@ -55,7 +55,7 @@ Ansible が Cobbler サーバーの場所を認識し、キャッシュが改善
 
 まず ``/etc/ansible/cobbler.py`` を直接実行して、このスクリプトをテストします。  JSON データの出力が表示されますが、まだ何も含まれていない場合もあります。
 
-これが何をするのか見てみましょう。 Cobbler では、以下のようなシナリオを想定しています。
+これが何をするのかを見てみましょう。 Cobbler では、以下のようなシナリオを想定しています。
 
 .. code-block:: bash
 
@@ -111,9 +111,9 @@ Ansible が Cobbler サーバーの場所を認識し、キャッシュが改善
 インベントリースクリプトの例:AWS EC2
 =================================
 
-Amazon Web Services EC2 を使用している場合は、時間とともにホストが起動またはシャットダウンして外部アプリケーションにより管理されたり、AWS 自動スケーリングを使用している場合もあるため、インベントリーファイルを維持することが最良の方法ではない可能性があります。このため、`EC2 の外部インベントリー<https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/ec2.py>`_ スクリプトを使用できます。
+Amazon Web Services EC2 を使用している場合は、時間とともにホストが起動またはシャットダウンして外部アプリケーションにより管理されたり、AWS 自動スケーリングを使用している場合もあるため、インベントリーファイルを維持することが最良の方法ではない可能性があります。これにより、`EC2 の外部インベントリー<https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/ec2.py>`_ スクリプトを使用できます。
 
-このスクリプトは、以下のいずれかの方法で使用できます。最も簡単な方法は、Ansible の ``-i`` コマンドラインオプションを使用し、スクリプトを実行ファイルとした後、スクリプトへのパスを指定することです。
+このスクリプトは、以下のいずれかの方法で使用できます。最も簡単な方法は、Ansible の ``-i`` コマンドラインオプションを使用し、スクリプトを実行ファイルに変更してから、スクリプトへのパスを指定することです。
 
 .. code-block:: bash
 
@@ -121,7 +121,7 @@ Amazon Web Services EC2 を使用している場合は、時間とともにホ�
 
 次のオプションとして、スクリプトを `/etc/ansible/hosts` にコピーし `chmod +x` を設定します。`ec2.ini <https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/ec2.ini>`_ ファイルを `/etc/ansible/ec2.ini` にコピーする必要もあります。通常どおりに Ansible を実行できます。
 
-AWS への API 呼び出しを正常に行うには、Boto (AWS への Python インターフェース) を設定する必要があります。この `方法いくつか<http://docs.pythonboto.org/en/latest/boto_config_tut.html>`_ ありますが、最も簡単なのは 2 つの環境変数をエクスポートすることです。
+AWS への API 呼び出しを正常に行うには、Boto (AWS への Python インターフェース) を設定する必要があります。これを行うには `いくつかの方法<http://docs.pythonboto.org/en/latest/boto_config_tut.html>`_ ありますが、最も簡単なのは 2 つの環境変数をエクスポートすることです。
 
 .. code-block:: bash
 
@@ -150,7 +150,7 @@ Boto プロファイルを使用して複数の AWS アカウントを管理す�
     aws_secret_access_key = <prod secret key>
 
 その後、``ec2.py --profile prod`` を実行して、prod アカウントのインベントリーを取得できますが、このオプションは ``ansible-playbook`` ではサポートされません。
-``AWS_PROFILE`` 変数を使用することもできます。以下に例を示します。``AWS_PROFILE=prod ansible-playbook -i ec2.py myplaybook.yml``
+``AWS_PROFILE`` 変数を使用することもできます。たとえば、``AWS_PROFILE=prod ansible-playbook -i ec2.py myplaybook.yml`` のようになります。
 
 各リージョンには独自の API 呼び出しが必要であるため、小規模なリージョンセットのみを使用している場合は、``ec2.ini`` ファイルを編集して、使用していないリージョンをコメントアウトできます。
 
@@ -207,7 +207,7 @@ EC2 外部インベントリーは、複数のグループからインスタン�
   (例: 
   ``tag_Name_redis-master-001`` が ``tag_Name_redis_master_001`` になり、
   ``tag_aws_cloudformation_logical-id_WebServerGroup`` が ``tag_aws_cloudformation_logical_id_WebServerGroup`` となるように、
-  tag_Name_Web を使用できます。
+  tag_Name_Web を使用できます。)
 
 Ansible が特定のサーバーと対話する場合、EC2 インベントリースクリプトは ``--host HOST`` オプションを使用して再度呼び出されます。これは、インデックスキャッシュで HOST を検索してインスタンス ID を取得し、AWS への API 呼び出しを行い、その特定のインスタンスに関する情報を取得します。次に、そのインスタンスに関する情報を変数として Playbook で利用できるようにします。各変数の先頭には ``ec2_`` が付けられます。利用可能な変数の一部は次のとおりです。
 
@@ -267,7 +267,7 @@ AWS インベントリースクリプトは、API 呼び出しの繰り返しを
 インベントリースクリプトの例:OpenStack
 ===================================
 
-独自のインベントリーファイルを手動で管理する代わりに、OpenStack ベースのクラウドを使用する場合は、動的インベントリー ``openstack_inventory.py`` を使用して、OpenStack から直接コンピュートインスタンスに関する情報を取得できます。
+独自のインベントリーファイルを手動で管理する代わりに、OpenStack ベースのクラウドを使用する場合は、動的インベントリー ``openstack_inventory.py`` を使用して、OpenStack から直接 Compute インスタンスに関する情報を取得できます。
 
 最新バージョンの OpenStack インベントリースクリプトは、`こちら <https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/openstack_inventory.py>`_ からダウンロードできます。
 
@@ -304,7 +304,7 @@ OpenStack の動的インベントリースクリプトを手動でテストし�
 
     ./openstack_inventory.py --list
 
-しばらくすると、コンピュートインスタンスに関する情報が含まれる JSON 出力が表示されます。
+しばらくすると、Compute インスタンスに関する情報が含まれる JSON 出力が表示されます。
 
 動的インベントリースクリプトが想定どおりに機能していることを確認したら、以下のように Ansible が `openstack_inventory.py` スクリプトをインベントリーファイルとして使用するように指定します。
 
@@ -337,7 +337,7 @@ OpenStack 動的インベントリースクリプトを手動でテストして�
 
     /etc/ansible/hosts --list
 
-しばらくすると、コンピュートインスタンスに関する情報が含まれる JSON 出力が表示されます。
+しばらくすると、Compute インスタンスに関する情報が含まれる JSON 出力が表示されます。
 
 キャッシュの更新
 --------------------
@@ -402,4 +402,4 @@ Ansible は複数のインベントリーソースを同時に使用できます
    `メーリングリスト <https://groups.google.com/group/ansible-project>`_
        ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

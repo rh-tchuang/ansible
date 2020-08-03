@@ -2,51 +2,51 @@
 .. _ansible_galaxy:
 
 *****************
-Galaxy User Guide
+Galaxy ユーザーガイド
 *****************
 
-:dfn:`Ansible Galaxy` refers to the `Galaxy <https://galaxy.ansible.com>`_  website, a free site for finding, downloading, and sharing community developed roles.
+:dfn:`Ansible Galaxy` は、コミュニティーが開発したロールの検索、ダウンロード、共有を行う無料サイトである `Galaxy <https://galaxy.ansible.com>`_ の Web サイトを指します。
 
-Use Galaxy to jump-start your automation project with great content from the Ansible community. Galaxy provides pre-packaged units of work such as `roles <playbooks_reuse_roles>`_, and new in Galaxy 3.2, `collections <collections>`_.
-You can find roles for provisioning infrastructure, deploying applications, and all of the tasks you do everyday. The collection format provides a comprehensive package of automation that may include multiple playbooks, roles, modules, and plugins.
+Galaxy を使用して、Ansible コミュニティーの優れたコンテンツで自動化プロジェクトを活性化させます。Galaxy は `ロール <playbooks_reuse_roles>`_ などの事前にパッケージ化された作業単位を提供し、Galaxy 3.2 では `コレクション <collections>`_ が新たに提供されました。
+インフラストラクチャーのプロビジョニング、アプリケーションのデプロイ、および日々の作業を行うすべてのタスクにロールがあります。コレクション形式は、複数の Playbook、ロール、モジュール、およびプラグインが含まれる可能性のある自動化の包括的なパッケージを提供します。
 
 .. contents::
    :local:
    :depth: 2
 .. _finding_galaxy_collections:
 
-Finding collections on Galaxy
+Galaxy でコレクションの検索
 =============================
 
-To find collections on Galaxy:
+Galaxy でコレクションを検索するには、以下を行います。
 
-#. Click the :guilabel:`Search` icon in the left-hand navigation.
-#. Set the filter to *collection*.
-#. Set other filters and press :guilabel:`enter`.
+#. 左側のナビゲーションにある :guilabel:`検索` アイコンをクリックします。
+#. *コレクション* にフィルターを設定します。
+#. その他のフィルターを設定し、:guilabel:`Enter` を押します。
 
-Galaxy presents a list of collections that match your search criteria.
+Galaxy は、検索条件に一致するコレクションのリストを表示します。
 
 .. _installing_galaxy_collections:
 
 
-Installing collections
+コレクションのインストール
 ======================
 
 
-Installing a collection from Galaxy
+Galaxy からコレクションのインストール
 -----------------------------------
 
 .. include:: ../shared_snippets/installing_collections.txt
 
 .. _installing_ah_collection:
 
-Downloading a collection from Automation Hub
+Automation Hub からのコレクションのダウンロード
 ----------------------------------------------------
 
-To download a collection from Automation Hub with the ``ansible-galaxy`` command:
+``ansible-galaxy`` コマンドで Automation Hub からコレクションをダウンロードするには、以下を行います。
 
-1. Get your Automation Hub API token. Go to https://cloud.redhat.com/ansible/automation-hub/token/ and click :guilabel:`Get API token` from the version dropdown to copy your API token.
-2. Configure Red Hat Automation Hub server in the ``server_list``  option under the ``[galaxy]`` section in your :file:`ansible.cfg` file.
+1. Automation Hub API トークンを取得します。https://cloud.redhat.com/ansible/automation-hub/token/ にアクセスし、バージョンのドロップダウンから :guilabel:`Get API token` をクリックして、API トークンをコピーします。
+2. :file:`ansible.cfg` ファイルの ``[galaxy]`` セクションの下にある ``server_list`` オプションで Red Hat Automation Hub サーバーを設定します。
 
   .. code-block:: ini
 
@@ -58,44 +58,44 @@ To download a collection from Automation Hub with the ``ansible-galaxy`` command
       auth_url=https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
       token=my_ah_token
 
-3. Download the collection hosted in Automation Hub.
+3. Automation Hub でホストされるコレクションをダウンロードします。
 
   .. code-block:: bash
 
      ansible-galaxy collection install my_namespace.my_collection
 
 .. seealso::
-  `Getting started with Automation Hub <https://www.ansible.com/blog/getting-started-with-ansible-hub>`_
-    An introduction to Automation Hub
+  `Automation Hub の使用 <https://www.ansible.com/blog/getting-started-with-ansible-hub>`_
+    Automation Hub の概要
 
-Installing an older version of a collection
+古いバージョンのコレクションのインストール
 -------------------------------------------
 
 .. include:: ../shared_snippets/installing_older_collection.txt
 
-Install multiple collections with a requirements file
+要件ファイルを使用した複数のコレクションのインストール
 -----------------------------------------------------
 
 .. include:: ../shared_snippets/installing_multiple_collections.txt
 
 
-Configuring the ``ansible-galaxy`` client
+``ansible-galaxy`` クライアントの設定
 ------------------------------------------
 
 .. include:: ../shared_snippets/galaxy_server_list.txt
 
 .. _finding_galaxy_roles:
 
-Finding roles on Galaxy
+Galaxy でのロールの検索
 =======================
 
-Search the Galaxy database by tags, platforms, author and multiple keywords. For example:
+Galaxy データベースは、タグ、プラットフォーム、作成者、および複数のキーワードで検索します。たとえば、以下のようになります。
 
 .. code-block:: bash
 
     $ ansible-galaxy search elasticsearch --author geerlingguy
 
-The search command will return a list of the first 1000 results matching your search:
+search コマンドは、検索に一致する最初の 1000 個の結果を一覧で返します。
 
 .. code-block:: text
 
@@ -107,16 +107,16 @@ The search command will return a list of the first 1000 results matching your se
     geerlingguy.elasticsearch-curator Elasticsearch curator for Linux.
 
 
-Get more information about a role
+ロールに関する詳細情報の取得
 ---------------------------------
 
-Use the ``info`` command to view more detail about a specific role:
+``info`` コマンドを使用して、特定のロールに関する詳細を表示します。
 
 .. code-block:: bash
 
     $ ansible-galaxy info username.role_name
 
-This returns everything found in Galaxy for the role:
+これは、ロールの Galaxy にあるすべてのものを返します。
 
 .. code-block:: text
 
@@ -152,38 +152,38 @@ This returns everything found in Galaxy for the role:
 
 .. _installing_galaxy_roles:
 
-Installing roles from Galaxy
+Galaxy からのロールのインストール
 ============================
 
-The ``ansible-galaxy`` command comes bundled with Ansible, and you can use it to install roles from Galaxy or directly from a git based SCM. You can
-also use it to create a new role, remove roles, or perform tasks on the Galaxy website.
+``ansible-galaxy`` コマンドが Ansible にバンドルされており、これを使用して Galaxy からロールをインストールするか、または git ベースの SCM から直接ロールをインストールすることができます。また、
+これを使用して、Galaxy の Web サイトで新しいロールの作成、ロールの削除、またはタスクの実行を行います。
 
-The command line tool by default communicates with the Galaxy website API using the server address *https://galaxy.ansible.com*. Since the `Galaxy project <https://github.com/ansible/galaxy>`_
-is an open source project, you may be running your own internal Galaxy server and wish to override the default server address. You can do this using the *--server* option
-or by setting the Galaxy server value in your *ansible.cfg* file. For information on setting the value in *ansible.cfg* see :ref:`galaxy_server`.
+デフォルトでは、コマンドラインツールはサーバーアドレス *https://galaxy.ansible.com* を使用して Galaxy Web サイト API と通信します。`Galaxy プロジェクト<https://github.com/ansible/galaxy>`_ はオープンソースプロジェクトであるため、
+独自の内部 Galaxy サーバーを実行し、デフォルトのサーバーアドレスを上書きしたい場合があります。この場合は、*--server* オプションを使用できます。
+または、*ansible.cfg* ファイルで Galaxy サーバー値を設定して行います。*ansible.cfg* の値を設定する方法は、「:ref:`galaxy_server`」を参照してください。
 
 
-Installing roles
+ロールのインストール
 ----------------
 
-Use the ``ansible-galaxy`` command to download roles from the `Galaxy website <https://galaxy.ansible.com>`_
+``ansible-galaxy`` コマンドを使用して、`Galaxy の Web サイト<https://galaxy.ansible.com>`_ からロールをダウンロードします。
 
 .. code-block:: bash
 
   $ ansible-galaxy install namespace.role_name
 
-Setting where to install roles
+ロールをインストールする場所の設定
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, Ansible downloads roles to the first writable directory in the default list of paths ``~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles``. This installs roles in the home directory of the user running ``ansible-galaxy``.
+デフォルトでは、Ansible はパスのデフォルトリスト ``~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles`` にあるディレクトリーで、最初に書き込み可能なディレクトリーにロールをダウンロードします。これは、``ansible-galaxy`` を実行しているユーザーのホームディレクトリーにロールをインストールします。
 
-You can override this with one of the following options:
+これは、以下のオプションのいずれかで上書きできます。
 
-* Set the environment variable :envvar:`ANSIBLE_ROLES_PATH` in your session.
-* Define ``roles_path`` in an ``ansible.cfg`` file.
-* Use the ``--roles-path`` option for the ``ansible-galaxy`` command.
+* セッション内に環境変数 :envvar:`ANSIBLE_ROLES_PATH` を設定します。
+* ``ansible.cfg`` ファイルに ``roles_path`` を定義します。
+* ``ansible-galaxy`` コマンドに ``--roles-path`` オプションを使用します。
 
-The following provides an example of using ``--roles-path`` to install the role into the current working directory:
+以下は、``--roles-path`` を使用して現在の作業ディレクトリーにロールをインストールする例を示しています。
 
 .. code-block:: bash
 
@@ -192,62 +192,62 @@ The following provides an example of using ``--roles-path`` to install the role 
 .. seealso::
 
    :ref:`intro_configuration`
-      All about configuration files
+      設定ファイルに関するすべて
 
-Installing a specific version of a role
+ロールの特定バージョンのインストール
 ---------------------------------------
 
-When the Galaxy server imports a role, it imports any git tags matching the Semantic Version format as versions. In turn, you can download a specific version of a role by specifying one of the imported tags.
+Galaxy サーバーがロールをインポートする場合は、Sandmantic Version 形式に一致する git タグをバージョンとしてインポートします。その後、インポートされたタグのいずれかを指定して、特定バージョンのロールをダウンロードできます。
 
-To see the available versions for a role:
+ロールで利用可能なバージョンを表示するには、以下を行います。
 
-#. Locate the role on the Galaxy search page.
-#. Click on the name to view more details, including the available versions.
+#. Galaxy 検索ページでロールを検索します。
+#. 名前をクリックして、利用可能なバージョンなどの詳細を表示します。
 
-You can also navigate directly to the role using the /<namespace>/<role name>. For example, to view the role geerlingguy.apache, go to `<https://galaxy.ansible.com/geerlingguy/apache>`_.
+/<namespace>/<role name> を使用してロールに直接移動することもできます。たとえば、geerlingguy.apache ロールを表示するには、`<https://galaxy.ansible.com/geerlingguy/apache>`_ にアクセスします。
 
-To install a specific version of a role from Galaxy, append a comma and the value of a GitHub release tag. For example:
+Galaxy から特定のバージョンのロールをインストールするには、コンマと GitHub リリースタグの値を追加します。たとえば、以下のようになります。
 
 .. code-block:: bash
 
    $ ansible-galaxy install geerlingguy.apache,v1.0.0
 
-It is also possible to point directly to the git repository and specify a branch name or commit hash as the version. For example, the following will
-install a specific commit:
+git リポジトリーを直接指定し、ブランチ名またはコミットハッシュをバージョンとして指定することもできます。たとえば、次のコマンドは、
+特定のコミットをインストールします。
 
 .. code-block:: bash
 
    $ ansible-galaxy install git+https://github.com/geerlingguy/ansible-role-apache.git,0b7cd353c0250e87a26e0499e59e7fd265cc2f25
 
-Installing multiple roles from a file
+ファイルからの複数ロールのインストール
 -------------------------------------
 
-You can install multiple roles by including the roles in a :file:`requirements.yml` file. The format of the file is YAML, and the
-file extension must be either *.yml* or *.yaml*.
+:file:`requirements.yml` ファイルにロールを追加して、複数のロールをインストールできます。ファイルのフォーマットは YAML で、
+ファイル拡張子は *.yml* または *.yaml* のいずれかにする必要があります。
 
-Use the following command to install roles included in :file:`requirements.yml:`
+以下のコマンドを使用して、:file:`requirements.yml:` に含まれるロールをインストールします。
 
 .. code-block:: bash
 
     $ ansible-galaxy install -r requirements.yml
 
-Again, the extension is important. If the *.yml* extension is left off, the ``ansible-galaxy`` CLI assumes the file is in an older, now deprecated,
-"basic" format.
+ここでも、拡張機能は重要です。*.yml* 拡張を省略すると、``ansible-galaxy`` CLI は、ファイルが古い (現在は非推奨な)、
+基本的な形式であると見なします。
 
-Each role in the file will have one or more of the following attributes:
+このファイルの各ロールには、以下の属性が 1 つ以上あります。
 
    src
-     The source of the role. Use the format *namespace.role_name*, if downloading from Galaxy; otherwise, provide a URL pointing
-     to a repository within a git based SCM. See the examples below. This is a required attribute.
+     ロールのソース。Galaxy からダウンロードする場合は *namespace.role_name* 形式を使用します。
+     それ以外の場合は、git ベースの SCM 内のリポジトリーを指定する URL を指定します。以下の例を参照してください。これは必須の属性です。
    scm
-     Specify the SCM. As of this writing only *git* or *hg* are allowed. See the examples below. Defaults to *git*.
+     SCM を指定します。本ガイドの執筆中は、*git* または *hg* のみが許可されています。以下の例を参照してください。デフォルトは *git* です。
    version:
-     The version of the role to download. Provide a release tag value, commit hash, or branch name. Defaults to the branch set as a default in the repository, otherwise defaults to the *master*.
+     ダウンロードするロールのバージョン。リリースタグの値、コミットハッシュ、またはブランチ名を指定します。デフォルトは、リポジトリーでデフォルトとして設定されたブランチに設定されます。それ以外の場合は *master* にデフォルト設定されます。
    name:
-     Download the role to a specific name. Defaults to the Galaxy name when downloading from Galaxy, otherwise it defaults
-     to the name of the repository.
+     ロールを特定の名前にダウンロードします。Galaxy からダウンロードする場合にデフォルトは Galaxy 名に設定されます。
+     それ以外の場合は、リポジトリーの名前がデフォルトになります。
 
-Use the following example as a guide for specifying roles in *requirements.yml*:
+以下の例を、*requirements.yml* でロールを指定するためのガイドとして使用してください。
 
 .. code-block:: yaml
 
@@ -287,10 +287,10 @@ Use the following example as a guide for specifying roles in *requirements.yml*:
       scm: git
       version: "0.1"  # quoted, so YAML doesn't parse this as a floating-point value
 
-Installing roles and collections from the same requirements.yml file
+同じ requirements.yml ファイルからのロールおよびコレクションのインストール
 ---------------------------------------------------------------------
 
-You can install roles and collections from the same requirements files, with some caveats.
+同じ要件ファイルからロールとコレクションをインストールできますが、いくつか注意点があります。
 
 .. code-block:: yaml
 
@@ -307,17 +307,17 @@ You can install roles and collections from the same requirements files, with som
         source: https://galaxy.ansible.com
 
 .. note::
-   While both roles and collections can be specified in one requirements file, they need to be installed separately.
-   The ``ansible-galaxy role install -r requirements.yml`` will only install roles and  ``ansible-galaxy collection install -r requirements.yml -p ./`` will only install collections.
+   ロールとコレクションの両方を 1 つの要件ファイルで指定できますが、個別にインストールする必要があります。
+   ``ansible-galaxy role install -r requirements.yml`` はロールのみをインストールし、``ansible-galaxy collection install -r requirements.yml -p ./`` はコレクションのみをインストールします。
 
-Installing multiple roles from multiple files
+複数のファイルからの複数ロールのインストール
 ---------------------------------------------
 
-For large projects, the ``include`` directive in a :file:`requirements.yml` file provides the ability to split a large file into multiple smaller files.
+大規模なプロジェクトの場合、:file:`requirements.yml` ファイルの ``include`` ディレクティブにより、大きなファイルを複数の小さなファイルに分割できます。
 
-For example, a project may have a :file:`requirements.yml` file, and a :file:`webserver.yml` file.
+たとえば、プロジェクトに :file:`requirements.yml` ファイルと :file:`webserver.yml` ファイルが含まれるとします。
 
-Below are the contents of the :file:`webserver.yml` file:
+:file:`webserver.yml` ファイルの内容は次のとおりです。
 
 .. code-block:: bash
 
@@ -328,7 +328,7 @@ Below are the contents of the :file:`webserver.yml` file:
     - src: git+http://bitbucket.org/willthames/git-ansible-galaxy
       version: v1.4
 
-The following shows the contents of the :file:`requirements.yml` file that now includes the :file:`webserver.yml` file:
+以下は、:file:`webserver.yml` ファイルが含まれる :file:`requirements.yml` ファイルの内容を示しています。
 
 .. code-block:: bash
 
@@ -336,8 +336,8 @@ The following shows the contents of the :file:`requirements.yml` file that now i
   - name: yatesr.timezone
   - include: <path_to_requirements>/webserver.yml
 
-To install all the roles from both files, pass the root file, in this case :file:`requirements.yml` on the
-command line, as follows:
+両方のファイルから全ロールをインストールするには、root ファイルを渡します (この場合、コマンドラインの :file:`requirements.yml` は、
+以下のようになります。
 
 .. code-block:: bash
 
@@ -345,15 +345,15 @@ command line, as follows:
 
 .. _galaxy_dependencies:
 
-Dependencies
+依存関係
 ------------
 
-Roles can also be dependent on other roles, and when you install a role that has dependencies, those dependencies will automatically be installed.
+また、ロールは他のロールに依存し、依存関係のあるロールをインストールすると、それらの依存関係が自動的にインストールされます。
 
-You specify role dependencies in the ``meta/main.yml`` file by providing a list of roles. If the source of a role is Galaxy, you can simply specify the role in
-the format ``namespace.role_name``. You can also use the more complex format in ``requirements.yml``, allowing you to provide ``src``, ``scm``, ``version``, and ``name``.
+ロールの一覧を指定して、``meta/main.yml`` ファイルにロール依存関係を指定します。ロールのソースが Galaxy の場合は、
+``namespace.role_name`` 形式のロールのみを指定できます。``requirements.yml`` でより複雑な形式を使用し、``src``、``scm``、``version``、および ``name`` を指定することもできます。
 
-The following shows an example ``meta/main.yml`` file with dependent roles:
+以下は、依存するロールを持つ ``meta/main.yml`` ファイルの例になります。
 
 .. code-block:: yaml
 
@@ -386,12 +386,12 @@ The following shows an example ``meta/main.yml`` file with dependent roles:
         - elk
         - elasticsearch
 
-Tags are inherited *down* the dependency chain. In order for tags to be applied to a role and all its dependencies, the tag should be applied to the role, not to all the tasks within a role.
+タグは、依存関係チェーンを介して*継承* されます。タグをロールおよびそのすべての依存関係に適用するには、タグをロール内のすべてのタスクに適用せずに、ロールに適用する必要があります。
 
-Roles listed as dependencies are subject to conditionals and tag filtering, and may not execute fully depending on
-what tags and conditionals are applied.
+依存関係として一覧表示されるロールは、条件およびタグのフィルタリングの対象となり、
+適用されているタグや条件によっては、完全には実行されない場合があります。
 
-If the source of a role is Galaxy, specify the role in the format *namespace.role_name*:
+ロールのソースが Galaxy の場合は、ロールを *namespace.role_name* 形式で指定します。
 
 .. code-block:: yaml
 
@@ -400,7 +400,7 @@ If the source of a role is Galaxy, specify the role in the format *namespace.rol
       - geerlingguy.ansible
 
 
-Alternately, you can specify the role dependencies in the complex form used in  :file:`requirements.yml` as follows:
+または、以下のように :file:`requirements.yml` で使用される複雑な形式でロールの依存関係を指定することもできます。
 
 .. code-block:: yaml
 
@@ -410,17 +410,17 @@ Alternately, you can specify the role dependencies in the complex form used in  
         src: git+https://github.com/geerlingguy/ansible-role-composer.git
         version: 775396299f2da1f519f0d8885022ca2d6ee80ee8
 
-When dependencies are encountered by ``ansible-galaxy``, it will automatically install each dependency to the ``roles_path``. To understand how dependencies are handled during play execution, see :ref:`playbooks_reuse_roles`.
+``ansible-galaxy`` で依存関係が発生すると、各依存関係が ``roles_path`` に自動的にインストールされます。プレイの実行中に依存関係がどのように処理されるかを理解するには、「:ref:`playbooks_reuse_roles`」を参照してください。
 
 .. note::
 
-    Galaxy expects all role dependencies to exist in Galaxy, and therefore dependencies to be specified in the
-    ``namespace.role_name`` format. If you import a role with a dependency where the ``src`` value is a URL, the import process will fail.
+    Galaxy は、すべてのロールの依存関係が Galaxy に存在することを想定しているため、
+    依存関係は ``namespace.role_name`` 形式で指定されます。``src`` の値が URL である依存関係でロールをインポートすると、インポートプロセスに失敗します。
 
-List installed roles
+インストール済みロールの一覧表示
 --------------------
 
-Use ``list`` to show the name and version of each role installed in the *roles_path*.
+``list`` を使用して、*roles_path* にインストールされている各ロールの名前およびバージョンを表示します。
 
 .. code-block:: bash
 
@@ -431,10 +431,10 @@ Use ``list`` to show the name and version of each role installed in the *roles_p
       - ansible-network.vyos, v2.7.3
       - ansible-network.cisco_ios, v2.7.0
 
-Remove an installed role
+インストールされたロールの削除
 ------------------------
 
-Use ``remove`` to delete a role from *roles_path*:
+``remove`` を使用してロールを *roles_path* から削除します。
 
 .. code-block:: bash
 
@@ -443,6 +443,6 @@ Use ``remove`` to delete a role from *roles_path*:
 
 .. seealso::
   :ref:`collections`
-    Shareable collections of modules, playbooks and roles
+    モジュール、Playbook、およびロールの共有可能なコレクション
   :ref:`playbooks_reuse_roles`
-    Reusable tasks, handlers, and other files in a known directory structure
+    既知のディレクトリー構造の再利用可能なタスク、ハンドラー、およびその他のファイル

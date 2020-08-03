@@ -1,32 +1,25 @@
 .. _github_admins:
 
 *************
-GitHub Admins
+GitHub 管理者
 *************
 
-.. contents:: Topics
+.. contents:: トピック
 
-GitHub Admins have more permissions on GitHub than normal contributors or even committers.  There are
-a few responsibilities that come with that increased power.
+GitHub 管理者には、通常の貢献者や、コミットするユーザーよりも多くの権限を所有しています。このように権限の増加に伴い、いくつかの責任が発生します。
 
 
-Adding and removing committers
+コミットを行うユーザーの追加および削除
 ==============================
 
-The Ansible Team will periodically review who is actively contributing to Ansible to grant or revoke
-contributors' ability to commit on their own.  GitHub Admins are the people who have the power to
-actually manage the GitHub permissions.
+Ansible チームは、誰が Ansible に積極的に貢献しているかを定期的に確認して、貢献者のコミット権限を許可したり取り消したりします。GitHub 管理者は、GitHub パーミッションを実際に管理する権限を持つユーザーです。
 
 
-Changing branch permissions for releases
+リリースのブランチパーミッションの変更
 ========================================
 
-When we make releases we make people go through a :ref:`release_managers` to push commits to that
-branch.  The GitHub admins are responsible for setting the branch so only the Release Manager can
-commit to the branch when the release process reaches that stage and later opening the branch once
-the release has been made.  The Release manager will let the GitHub Admin know when this needs to be
-done.
+リリースを作成する際には、:ref:`release_managers` のガイドラインに沿って、そのブランチへのコミットをプッシュするようにしています。GitHub 管理者には、リリースプロセスがその段階に達したときにリリースマネージャーだけがブランチにコミットできるようにブランチを設定し、リリースが完了した後にブランチを開く責任があります。この設定が必要になると、リリースマネージャーが GitHub 管理者に知らせます。
 
-.. seealso:: The `GitHub Admin Process Docs
-    <https://docs.google.com/document/d/1gWPtxNX4J39uIzwqQWLIsTZ1dY_AwEZzAd9bJ4XtZso/edit#heading=h.2wezayw9xsqz>`_ for instructions
-    on how to change branch permissions.
+.. seealso:: ブランチのパーミッションを変更する方法は、
+    「`GitHub Admin Process Docs <https://docs.google.com/document/d/1gWPtxNX4J39uIzwqQWLIsTZ1dY_AwEZzAd9bJ4XtZso/edit#heading=h.2wezayw9xsqz>`_」を
+    参照してください。

@@ -36,7 +36,7 @@
 - ``tasks`` - このロールによって実行される主なタスクの一覧が含まれます。
 - ``handlers`` - このロールによって使用される可能性のあるハンドラーや、このロールの外でも使用できるハンドラーが含まれます。
 - ``defaults`` - ロールのデフォルト変数です (詳細は :ref:`playbooks_variables` を参照)。
-- ``vars`` - ロールの他の変数 (詳細は :ref:`playbooks_variables` を参照)
+- ``vars`` - ロールの他の変数です (詳細は :ref:`playbooks_variables` を参照)。
 - ``files`` - このロールでデプロイできるファイルが含まれます。
 - ``templates`` - このロールでデプロイできるテンプレートが含まれます。
 - ``meta`` - このロールのメタデータを定義します。詳細は、以下を参照してください。
@@ -133,11 +133,11 @@ Ansible 2.4 では、``import_role`` または ``include_role`` を使用して�
         - role: foo_app_instance
           vars:
             dir: '/opt/a'
-            app_port:5000
+            app_port: 5000
         - role: foo_app_instance
           vars:
             dir: '/opt/b'
-            app_port:5001
+            app_port: 5001
 
 または、新しい構文を使用します。
 
@@ -148,7 +148,7 @@ Ansible 2.4 では、``import_role`` または ``include_role`` を使用して�
             name: foo_app_instance
           vars:
             dir: '/opt/a'
-            app_port:5000
+            app_port: 5000
       ...
 
 ロールを条件付きでインポートし、そのタスクを実行できます::

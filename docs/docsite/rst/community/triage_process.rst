@@ -1,8 +1,7 @@
 **************
-Triage Process
+トリアージプロセス
 **************
 
-The issue and PR triage processes are driven by the `Ansibot <https://github.com/ansible/ansibullbot>`_. Whenever an issue or PR is filed, the Ansibot examines the issue to ensure that all relevant data is present, and handles the routing of the issue as it works its way to eventual completion.
+問題および PR プライマリープロセスは `Ansibot <https://github.com/ansible/ansibullbot>`_ によって実行されます。問題や PR が報告されるたびに、Ansibot は問題を調べ、すべての関連データが存在することを確認し、最終的な完成に向けて問題のルーティングを処理します。
 
-For details on how Ansibot manages the triage process, please consult the `Ansibot
-Issue Guide <https://github.com/ansible/ansibullbot/blob/master/ISSUE_HELP.md>`_.
+Ansibot によるトリアージプロセスの管理方法に関する詳細は、『`Ansibot 問題のガイド <https://github.com/ansible/ansibullbot/blob/master/ISSUE_HELP.md>`_』を参照してください。

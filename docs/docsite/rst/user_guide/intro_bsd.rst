@@ -33,7 +33,7 @@ Ansible はデフォルトでエージェントレスですが、管理ノード
 
     ansible -m raw -a "pkg install -y python27" mybsdhost1
 
-または、ほとんどのバージョンの OpenBSD の場合:
+または、ほとんどのバージョンの OpenBSD の場合は、次のようになります。
 
 .. code-block:: bash
 
@@ -49,7 +49,7 @@ Ansible はデフォルトでエージェントレスですが、管理ノード
 Python インタープリターの設定
 ------------------------------
 
-さまざまな Unix/Linux オペレーティングシステムおよびディストリビューションに対応するために、Ansible は常に既存の環境変数 (または ``env`` 変数) を使用して、適切な Python バイナリーを特定することはできません。モジュールは、デフォルトでは、最もよく使用される ``/usr/bin/python`` を参照します。BSD バリアントではこのパスが異なる可能性があるため、``ansible_python_interpreter`` インベントリー変数を使用して、バイナリーの場所を Ansible に通知することが推奨されます。以下に例を示します。
+さまざまな Unix/Linux オペレーティングシステムおよびディストリビューションに対応するために、Ansible が常に既存の環境変数 (または ``env`` 変数) を使用して、適切な Python バイナリーを特定することはできません。モジュールは、デフォルトでは、最もよく使用される ``/usr/bin/python`` を参照します。BSD バリアントではこのパスが異なる可能性があるため、``ansible_python_interpreter`` インベントリー変数を使用して、バイナリーの場所を Ansible に通知することが推奨されます。以下に例を示します。
 
 .. code-block:: text
 
@@ -103,4 +103,4 @@ BSD と検出された問題または非互換性を報告してください。�
    `メーリングリスト <https://groups.google.com/group/ansible-project>`_
        ご質問はございますか。サポートが必要ですか。ご提案はございますか。 Google グループの一覧をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

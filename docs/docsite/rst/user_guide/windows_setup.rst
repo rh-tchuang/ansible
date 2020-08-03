@@ -101,7 +101,7 @@ Windows ホストで、Ansible が特定のコマンドを実行できません�
     (New-Object -TypeName System.Net.WebClient).DownloadFile($url, $file)
     powershell.exe -ExecutionPolicy ByPass -File $file -Verbose
 
-詳細は、Microsoft 社の「`ホットフィックスのドキュメント<https://support.microsoft.com/en-us/help/2842230/out-of-memory-error-on-a-computer-that-has-a-customized-maxmemorypersh>`_」を参照してください。
+詳細は、Microsoft 社の「`ホットフィックスのドキュメント <https://support.microsoft.com/en-us/help/2842230/out-of-memory-error-on-a-computer-that-has-a-customized-maxmemorypersh>`_」を参照してください。
 
 WinRM の設定
 ```````````
@@ -176,11 +176,11 @@ WinRM サービスで実行している現在のリスナーを表示するに�
 HTTP 経由のポート 5985 でリッスンしているものと、HTTPS 経由のポート 5986 でリッスンしているものがあります。理解するのに役に立つ重要なオプションの一部は
 次のとおりです。
 
-* ``トランスポート``: リスナーが HTTP または HTTPS のどちらで実行されている場合でも、
+* ``Transport``: リスナーが HTTP または HTTPS のどちらで実行されている場合でも、
   データをさらに変更する必要なく暗号化されるため、
   HTTPS 経由でリスナーを使用することが推奨されます。
 
-* ``ポート``: リスナーが実行するポート。デフォルトは HTTP が ``5985`` で、
+* ``Port``: リスナーが実行するポート。デフォルトは HTTP が ``5985`` で、
   HTTPS が ``5986`` です。このポートは必要に応じて変更でき、
   ホスト変数 ``ansible_port`` に対応します。
 
@@ -194,7 +194,7 @@ HTTP 経由のポート 5985 でリッスンしているものと、HTTPS 経由
   PowerShell で関連する証明書の拇印を使用して、次のコマンドを実行します。
 
     $thumbprint = "E6CDAA82EEAF2ECE8546E05DB7F3E01AA47D76CE"
-    Get-ChildItem -Path cert:\\LocalMachine\\My -Recurse | Where-Object { $_.Thumbprint -eq $thumbprint } | Select-Object *
+    Get-ChildItem -Path cert:\LocalMachine\My -Recurse | Where-Object { $_.Thumbprint -eq $thumbprint } | Select-Object *
 
 WinRM リスナーの設定
 ++++++++++++++++++++
@@ -236,8 +236,7 @@ WinRM リスナーを設定するには、3 つの方法があります。
 WinRM リスナーの削除
 +++++++++++++++++++++
 WinRM リスナーを削除するには、以下を実行します。
-
-    # Remove all listeners
+# Remove all listeners
     Remove-Item -Path WSMan:\localhost\Listener\* -Recurse -Force
 
     # Only remove listeners that are run over HTTPS
@@ -451,7 +450,7 @@ Win32-OpenSSH のインストール
 Windows で SSH を使用する最初の手順は、Windows ホストにサービス `Win32-OpenSSH <https://github.com/PowerShell/Win32-OpenSSH>`_ 
 をインストールすることです。Microsoft 社は、Windows 機能を通じて ``Win32-OpenSSH`` をインストールする方法を提供していますが、
 現在、
-このプロセスを通じてインストールされるバージョンは古すぎて、Ansible では動作しません。Ansible で使用する ``Win32-OpenSSH`` をインストールするには、
+このプロセスを通じてインストールされるバージョンは古いため、Ansible では動作しません。Ansible で使用する ``Win32-OpenSSH`` をインストールするには、
 次の 3 つのインストールオプションのいずれかを選択します。
 
 * Microsoft 社が提供する `インストール手順 <https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH>`_ に従い、
@@ -476,7 +475,7 @@ Windows で SSH を使用する最初の手順は、Windows ホストにサー�
       gather_facts: no
       roles:
       - role: jborean93.win_openssh
-        opt_openssh_setup_service:True
+        opt_openssh_setup_service: True
 
 .. note:: ``Win32-OpenSSH`` は現在もベータ製品であり、
     新機能とバグ修正を含むように常に更新されています。Windows の接続オプションとして SSH を使用している場合は、
@@ -491,9 +490,9 @@ Ansible タスクを使用してレジストリー設定を定義します。
 
     - name: set the default shell to PowerShell
       win_regedit:
-        path:HKLM:\SOFTWARE\OpenSSH
-        name:DefaultShell
-        data:C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+        path: HKLM:\SOFTWARE\OpenSSH
+        name: DefaultShell
+        data: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
         type: string
         state: present
 
@@ -515,7 +514,7 @@ Unix/Linux ホストで行うのと同じようにサービスを設定するこ
 
 Ansible で SSH キー認証を使用する場合、リモートセッションはユーザーの認証情報にアクセスできず、
 ネットワークリソースにアクセスしようとすると失敗します。
-これは、ダブルホップまたは認証情報の委任の問題としても知られています。この問題を回避するには、
+これは、ダブルホップまたは認証情報の委譲の問題としても知られています。この問題を回避するには、
 2 つの方法があります。
 
 * ``ansible_password`` を設定して平文テキストのパスワード認証を使用する
@@ -538,7 +537,7 @@ Windows で SSH を使用することは実験的なものであり、さらに�
 既知のものは以下のとおりです。
 
 * ``powershell`` がシェルタイプの場合は、``v7.9.0.0p1-Beta`` よりも古い Win32-OpenSSH バージョンは機能しません。
-* SCP は機能するはずですが、SFTP は、ファイルのコピーまたは取得時に使用する、推奨される SSH ファイル転送メカニズムです。
+* SCP も有効ですが、SFTP は、ファイルのコピーまたは取得時に使用する、推奨される SSH ファイル転送メカニズムです。
 
 
 .. seealso::
@@ -552,4 +551,4 @@ Windows で SSH を使用することは実験的なものであり、さらに�
    `ユーザーメーリングリスト <https://groups.google.com/group/ansible-project>`_
        ご質問はございますか。 Google Group をご覧ください。
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

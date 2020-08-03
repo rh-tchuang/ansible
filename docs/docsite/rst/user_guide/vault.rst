@@ -26,8 +26,8 @@ Ansible Vault は、Ansible が使用する構造化データファイルを暗�
 Ansible タスク、ハンドラーなどもデータであるため、vault で暗号化できます。使用している変数の名前を隠すために、タスクファイル全体を暗号化できます。
 
 Ansible Vault は、バイナリーファイルも含め、任意のファイルを暗号化できます。 vault で暗号化されたファイルが、
-``src`` 引数として、:ref:`copy <copy_module>`、:ref:`template <template_module>`
-:ref:`unarchive <unarchive_module>`、:ref:`script <script_module>`、または :ref:`assemble
+``src`` 引数として、:ref:`copy <copy_module>` モジュール、:ref:`template <template_module>` モジュール、
+:ref:`unarchive <unarchive_module>` モジュール、:ref:`script <script_module>` モジュール、または :ref:`assemble
 <assemble_module>` モジュールとして指定されていると、ファイルは復号されたターゲットホストの宛先に配置されます 
 (プレイの実行時に有効な vault パスワードが提供されている場合)。
 
@@ -191,7 +191,7 @@ Vault ID の「preprod2」と「ppold」ファイルで暗号化された鍵を�
 
 .. _encrypt_string_for_use_in_yaml:
 
-encrypt_string を使用して、yaml に埋め込む暗号化変数を作成します
+encrypt_string を使用して、yaml に埋め込む暗号化変数を作成
 `````````````````````````````````````````````````````````````````
 
 :ref:`ansible-vault encrypt_string <ansible_vault_encrypt_string>` コマンドは、提供された文字列を暗号化し、
@@ -415,7 +415,7 @@ Ansiblebは、各パスワードで vault コンテンツの復号を試みま�
 暗号化されたデータと同じラベルのパスワードのみを使用するようにすることができます。これはより効率的であり、
 複数のパスワードが使用されている場合により予測可能になります。
 
-構成オプション:ref:`DEFAULT_VAULT_IDENTITY_LIST` には、複数の CLI オプション :option:`--vault-id <ansible-playbook --vault-id>` に相当する複数の値を含めることができます。
+構成オプション :ref:`DEFAULT_VAULT_IDENTITY_LIST` には、複数の CLI オプション :option:`--vault-id <ansible-playbook --vault-id>` に相当する複数の値を含めることができます。
 
 :option:`--vault-id <ansible-playbook --vault-id>` は、:option:`--vault-password-file <ansible-playbook --vault-password-file>` オプションまたは :option:`--ask-vault-pass <ansible-playbook --ask-vault-pass>` オプションの代わりに使用できます。
 または、それらを組み合わせて使用できます。
@@ -521,9 +521,9 @@ hexlify() が行われた結果:
         - バイト単位のソルト
         - 10000 回の繰り返し
         - SHA256() アルゴリズム
-        - 最初の 32 バイトは暗号キーです
-        - 2 番目の 32 バイトは HMAC キーです
-        - 残りの 16 バイトは暗号 IV です
+        - 最初の 32 バイトは暗号キーです。
+        - 2 番目の 32 バイトは HMAC キーです。
+        - 残りの 16 バイトは暗号 IV です。
 
 -  暗号文の hexlify() が行われた文字列。暗号文は次のとおりです。
 
@@ -536,6 +536,6 @@ hexlify() が行われた結果:
     - 平文
 
       - 元の平文
-      - AES256 ブロックサイズまでのパディング(パディングに使用されるデータは `RFC5652 <https://tools.ietf.org/html/rfc5652#section-6.3>`_ に基づいています。)
+      - AES256 ブロックサイズまでのパディング。パディングに使用されるデータは `RFC5652 <https://tools.ietf.org/html/rfc5652#section-6.3>`_ に基づいています。
 
 

@@ -15,7 +15,7 @@ Ansible モジュールがワークショップのツールである場合、Pla
 Playbook は人間が判読できるように設計されており、基本的なテキスト言語で開発されます。 Playbook と、
 そこに含まれるファイルを整理する方法は複数あり、その方法と、Ansible を最大限に活用する提案を提供します。
 
-Playbook ドキュメントと一緒に、`「Example Playbooks」<https://github.com/ansible/ansible-examples>`_ を参照してください。 ここでは、ベストプラクティスと、さまざまな概念をまとめて配置する方法を説明しています。
+Playbook ドキュメントと一緒に、`「Example Playbooks」 <https://github.com/ansible/ansible-examples>`_ を参照してください。 ここでは、ベストプラクティスと、さまざまな概念をまとめて配置する方法を説明しています。
 
 .. toctree::
    :maxdepth: 2
