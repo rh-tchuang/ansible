@@ -3,7 +3,7 @@
 boilerplate
 ===========
 
-ほとんどの Python ファイルには以下の boilerplate を含む必要があります。
+ほとんどの Python ファイルには以下の boilerplate が必要です。
 
 .. code-block:: python
 

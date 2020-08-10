@@ -97,7 +97,7 @@ integration-aliases
 - ``destructive`` - ``--docker`` または ``--remote`` なしで実行するには ``--allow-destructive`` が必要です。
 - ``hidden`` - 対象は無視されます。依存関係として使用できます。``setup_`` および ``prepare_`` の接頭辞が付いた場合は自動です。
 
-Unstable
+不安定
 --------
 
 安定性が修正されるまで、``unstable`` エイリアスのマークが付けられる必要があるテスト。
@@ -113,7 +113,7 @@ Unstable
 テストは、Ansible Core Team のメンバーによって不安定としてマークされます。
 GitHub issue_ が作成され、それぞれの不安定なテストを追跡します。
 
-Disabled
+無効
 --------
 
 常に失敗するテストでは、修正されるまで、``disabled`` なエイリアスでマークされる必要があります。
@@ -128,7 +128,7 @@ Disabled
 テストは、Ansible Core Team のメンバーによって無効とマークされます。
 GitHub issue_ が作成され、無効にされた各テストを追跡します。
 
-Unsupported
+サポート対象外
 -----------
 
 CI で実行できないテストには、``unsupported`` エイリアスのマークを付ける必要があります。

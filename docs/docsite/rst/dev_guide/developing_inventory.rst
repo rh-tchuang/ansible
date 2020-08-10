@@ -1,70 +1,70 @@
 .. _developing_inventory:
 
 ****************************
-Developing dynamic inventory
+動的インベントリーの開発
 ****************************
 
-.. contents:: Topics
+.. contents:: トピック
    :local:
 
-As described in :ref:`dynamic_inventory`, Ansible can pull inventory information from dynamic sources,
-including cloud sources, using the supplied :ref:`inventory plugins <inventory_plugins>`.
-If the source you want is not currently covered by existing plugins, you can create your own as with any other plugin type.
+「:ref:`dynamic_inventory`」で説明されているように、Ansible は、
+付属の「:ref:`Inventory プラグイン <inventory_plugins>`」を使用して、クラウドソースを含む動的ソースからインベントリー情報を引き出すことができます。
+現在、必要なソースが既存のプラグインで対応していない場合は、他のプラグインの種類と同様、自身で作成できます。
 
-In previous versions you had to create a script or program that can output JSON in the correct format when invoked with the proper arguments.
-You can still use and write inventory scripts, as we ensured backwards compatibility via the :ref:`script inventory plugin <script_inventory>`
-and there is no restriction on the programming language used.
-If you choose to write a script, however, you will need to implement some features yourself.
-i.e caching, configuration management, dynamic variable and group composition, etc.
-While with :ref:`inventory plugins <inventory_plugins>` you can leverage the Ansible codebase to add these common features.
+以前のバージョンでは、適切な引数で呼び出す際に、JSON を正しい形式で出力できるスクリプトまたはプログラムを作成する必要があります。
+:ref:`スクリプトインベントリープラグイン <script_inventory>` により後方互換性を確保しており、使用するプログラミング言語に制限はないため、
+インベントリースクリプトを使用して作成できます。
+スクリプトを作成する場合は、いくつかの機能を実装する必要があります。
+つまり、キャッシュ、設定管理、動的変数、グループ構成などです。
+「:ref:`インベントリープラグイン <inventory_plugins>`」では、Ansible コードベースを活用して、これらの一般的な機能を追加できます。
 
 
 .. _inventory_sources:
 
-Inventory sources
+インベントリーソース
 =================
 
-Inventory sources are strings (i.e what you pass to ``-i`` in the command line),
-they can represent a path to a file/script or just be the raw data for the plugin to use.
-Here are some plugins and the type of source they use:
+インベントリーソースは文字列 (コマンドラインで ``-i`` に渡すもの) です。
+これらはファイル/スクリプトへのパスを表すか、またはプラグインが使用する生データになります。
+プラグインとそれらが使用するソースのタイプを以下に示します。
 
 +--------------------------------------------+---------------------------------------+
 |  Plugin                                    | Source                                |
 +--------------------------------------------+---------------------------------------+
-| :ref:`host list <host_list_inventory>`     | A comma separated list of hosts       |
+| :ref:`host list <host_list_inventory>`     | ホストのコンマ区切りリスト       |
 +--------------------------------------------+---------------------------------------+
-| :ref:`yaml <yaml_inventory>`               | Path to a YAML format data file       |
+| :ref:`yaml <yaml_inventory>`               | YAML 形式のデータファイルへのパス       |
 +--------------------------------------------+---------------------------------------+
-| :ref:`constructed <constructed_inventory>` | Path to a YAML configuration file     |
+| :ref:`constructed <constructed_inventory>` | YAML設定ファイルへのパス     |
 +--------------------------------------------+---------------------------------------+
-| :ref:`ini <ini_inventory>`                 | Path to an INI formatted data file    |
+| :ref:`ini <ini_inventory>`                 | INI 形式のデータファイルへのパス    |
 +--------------------------------------------+---------------------------------------+
-| :ref:`virtualbox <virtualbox_inventory>`   | Path to a YAML configuration file     |
+| :ref:`virtualbox <virtualbox_inventory>`   | YAML 設定ファイルへのパス     |
 +--------------------------------------------+---------------------------------------+
-| :ref:`script plugin <script_inventory>`    | Path to an executable outputting JSON |
+| :ref:`script plugin <script_inventory>`    |  JSON を出力する実行ファイルへのパス |
 +--------------------------------------------+---------------------------------------+
 
 
 .. _developing_inventory_inventory_plugins:
 
-Inventory plugins
+Inventory プラグイン
 =================
 
-Like most plugin types (except modules) they must be developed in Python, since they execute on the controller they should match the same requirements :ref:`control_node_requirements`.
+ほとんどのプラグインタイプ (モジュールを除く) と同様に、それらは Python で開発されなければなりません。コントローラー上で実行するため、「:ref:`control_node_requirements`」と同じ要件に一致させなければなりません。
 
-Most of the documentation in :ref:`developing_plugins` also applies here, so as to not repeat ourselves, you should read that document first and we'll include inventory plugin specifics next.
+:ref:`developing_plugins` に関するドキュメントの多くはここでも適用されています。したがって、反復しないように、本ガイドを先に読み、次に Inventory プラグインの詳細を参照してください。
 
-Inventory plugins normally only execute at the start of a run, before playbooks/plays and roles are loaded,
-but they can be 're-executed' via the ``meta: refresh_inventory`` task, which will clear out the existing inventory and rebuild it.
+通常、Inventory プラグインは、Playbook/プレイ、およびロールが読み込まれる前に、実行の開始時にのみ実行されます。
+ただし、``meta: refresh_inventory`` タスク経由で「再実行」することができます。これにより、既存のインベントリーを削除し、再ビルドします。
 
-When using the 'persistent' cache, inventory plugins can also use the configured cache plugin to store and retrieve data to avoid costly external calls.
+「永続」キャッシュを使用する場合、Inventory プラグインは設定済みのキャッシュプラグインを使用してデータを保存および取得し、コストのかかる外部呼び出しを回避することもできます。
 
 .. _developing_an_inventory_plugin:
 
-Developing an inventory plugin
+Inventory プラグインの開発
 ------------------------------
 
-The first thing you want to do is use the base class:
+最初に行うのは、ベースクラスを使用することです。
 
 .. code-block:: python
 
@@ -74,11 +74,11 @@ The first thing you want to do is use the base class:
 
         NAME = 'myplugin'  # used internally by Ansible, it should match the file name but not required
 
-If the inventory plugin is in a collection the NAME should be in the format of 'namespace.collection_name.myplugin'.
+Inventory プラグインがコレクションにある場合、NAME は「namespace.collection_name.myplugin」形式である必要があります。
 
-This class has a couple of methods each plugin should implement and a few helpers for parsing the inventory source and updating the inventory.
+このクラスは、各プラグインが実装する必要のあるいくつかのメソッドと、インベントリーソースを解析してインベントリーを更新するためのヘルパーがいくつかあります。
 
-After you have the basic plugin working you might want to to incorporate other features by adding more base classes:
+基本的なプラグインが動作するようになったら、より多くの基本クラスを追加することで他の機能を組み込むことができます。
 
 .. code-block:: python
 
@@ -88,14 +88,14 @@ After you have the basic plugin working you might want to to incorporate other f
 
         NAME = 'myplugin'
 
-For the bulk of the work in the plugin, We mostly want to deal with 2 methods ``verify_file`` and ``parse``.
+プラグインでの作業の大部分では、主に 2 つのメソッド ``verify_file`` と ``parse`` を扱います。
 
 .. _inventory_plugin_verify_file:
 
 verify_file
 ^^^^^^^^^^^
 
-This method is used by Ansible to make a quick determination if the inventory source is usable by the plugin. It does not need to be 100% accurate as there might be overlap in what plugins can handle and Ansible will try the enabled plugins (in order) by default.
+このメソッドは、Inventory ソースがプラグインで使用可能かどうかをすばやく判断するために、Ansible によって使用されます。プラグインが処理できるものに重複がある可能性があり、Ansible はデフォルトで有効なプラグインを (順番に) 試行するため、100％ 正確である必要はありません。
 
 .. code-block:: python
 
@@ -108,10 +108,10 @@ This method is used by Ansible to make a quick determination if the inventory so
                 valid = True
         return valid
 
-In this case, from the :ref:`virtualbox inventory plugin <virtualbox_inventory>`, we screen for specific file name patterns to avoid attempting to consume any valid yaml file. You can add any type of condition here, but the most common one is 'extension matching'. If you implement extension matching for YAML configuration files the path suffix <plugin_name>.<yml|yaml> should be accepted. All valid extensions should be documented in the plugin description.
+この場合、:ref:`virtualbox Inventory プラグイン <virtualbox_inventory>` から有効な yaml ファイルを使用しないように、特定のファイル名のパターンを選定します。ここには任意のタイプの条件を追加できますが、最も一般的な条件は「拡張子一致」です。YAML 設定ファイルの拡張子マッチングを実装している場合は、パスの接尾辞 <plugin_name>.<yml|yaml> を使用する必要があります。有効な拡張機能はすべて、プラグインの説明で文書化されている必要があります。
 
-Another example that actually does not use a 'file' but the inventory source string itself,
-from the :ref:`host list <host_list_inventory>` plugin:
+別の例では、実際には「file」を使わず、
+:ref:`ホストリスト <host_list_inventory>` プラグインの、インベントリのソース文字列そのものを使用します。
 
 .. code-block:: python
 
@@ -125,24 +125,24 @@ from the :ref:`host list <host_list_inventory>` plugin:
             valid = True
         return valid
 
-This method is just to expedite the inventory process and avoid unnecessary parsing of sources that are easy to filter out before causing a parse error.
+この方法は、Inventory プロセスを迅速化し、解析エラーの原因になる前に簡単に除外できるソースの不要な解析を回避するためのものです。
 
 .. _inventory_plugin_parse:
 
 parse
 ^^^^^
 
-This method does the bulk of the work in the plugin.
+この方法は、プラグインの作業の大部分を行います。
 
-It takes the following parameters:
+このメソッドは、以下のパラメーターを取ります。
 
- * inventory: inventory object with existing data and the methods to add hosts/groups/variables to inventory
- * loader: Ansible's DataLoader. The DataLoader can read files, auto load JSON/YAML and decrypt vaulted data, and cache read files.
- * path: string with inventory source (this is usually a path, but is not required)
- * cache: indicates whether the plugin should use or avoid caches (cache plugin and/or loader)
+ * inventory: 既存のデータと、ホスト/グループ/変数をインベントリーに追加するメソッドがある Inventory オブジェクト。
+ * loader: Ansible の DataLoader です。DataLoader は、ファイルの読み取り、JSON/YAML の自動読み込み、vault を使用したデータの復号化、および読み取りファイルのキャッシュを行うことができます。
+ * path: インベントリーソースを持つ文字列 (通常、これはパスですが、必須ではありません)。
+ * cache: プラグインがキャッシュを使用するかどうかを示します (キャッシュプラグインまたはローダー、もしくはその両方)。
 
 
-The base class does some minimal assignment for reuse in other methods.
+ベースクラスは他のメソッドで再利用するための割り当てを最小限に抑えます。
 
 .. code-block:: python
 
@@ -152,8 +152,8 @@ The base class does some minimal assignment for reuse in other methods.
         self.inventory = inventory
         self.templar = Templar(loader=loader)
 
-It is up to the plugin now to deal with the inventory source provided and translate that into the Ansible inventory.
-To facilitate this, the example below uses a few helper functions:
+プラグインは提供されるインベントリーソースに対応し、これを Ansible インベントリーに変換します。
+これを容易にするため、以下の例ではいくつかのヘルパー関数を使用します。
 
 .. code-block:: python
 
@@ -188,18 +188,18 @@ To facilitate this, the example below uses a few helper functions:
                 for server in mydata[colo]['servers']:
                     self.inventory.add_host(server['name'])
                     self.inventory.set_variable(server['name'], 'ansible_host', server['external_ip'])
+    
+具体的な内容は、返される API や構造体によって異なります。ただし、注意すべき点の 1 つは、インベントリーソースやその他の問題が発生した場合は ``raise AnsibleParserError を発生`` させて、ソースが無効であったことやプロセスが失敗したことを Ansible に知らせる必要があるということです。
 
-The specifics will vary depending on API and structure returned. But one thing to keep in mind, if the inventory source or any other issue crops up you should ``raise AnsibleParserError`` to let Ansible know that the source was invalid or the process failed.
-
-For examples on how to implement an inventory plugin, see the source code here:
-`lib/ansible/plugins/inventory <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/inventory>`_.
+インベントリープラグインの実装方法の例は、
+ソースコード `lib/ansible/plugins/inventory` <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/inventory>_ を参照してください。
 
 .. _inventory_plugin_caching:
 
-inventory cache
+インベントリーキャッシュ
 ^^^^^^^^^^^^^^^
 
-Extend the inventory plugin documentation with the inventory_cache documentation fragment and use the Cacheable base class to have the caching system at your disposal.
+インベントリープラグインのドキュメントを inventory_cache ドキュメントフラグメントで拡張し、Cacheable ベースクラスを使用して、キャッシュシステムを自由に使用できます。
 
 .. code-block:: yaml
 
@@ -212,7 +212,7 @@ Extend the inventory plugin documentation with the inventory_cache documentation
 
         NAME = 'myplugin'
 
-Next, load the cache plugin specified by the user to read from and update the cache. If your inventory plugin uses YAML based configuration files and the ``_read_config_data`` method, the cache plugin is loaded within that method. If your inventory plugin does not use ``_read_config_data``, you must load the cache explicitly with ``load_cache_plugin``.
+次に、ユーザーが指定したキャッシュプラグインを読み込み、キャッシュからの読み込みと更新を行います。Inventory プラグインが YAML ベースの設定ファイルおよび ``_read_config_data`` メソッドを使用している場合は、キャッシュプラグインがそのメソッドに読み込まれます。インベントリープラグインが ``_read_config_data`` を使用しない場合は、``load_cache_plugin`` でキャッシュを明示的に読み込む必要があります。
 
 .. code-block:: python
 
@@ -223,7 +223,7 @@ Next, load the cache plugin specified by the user to read from and update the ca
 
         self.load_cache_plugin()
 
-Before using the cache, retrieve a unique cache key using the ``get_cache_key`` method. This needs to be done by all inventory modules using the cache, so you don't use/overwrite other parts of the cache.
+キャッシュを使用する前に、``get_cache_key`` メソッドを使用して一意のキャッシュキーを取得します。これはキャッシュを使用するすべてのインベントリーモジュールによって実行される必要があるため、キャッシュの他の部分を使用したり上書きしたりしないでください。
 
 .. code-block:: python
 
@@ -233,7 +233,7 @@ Before using the cache, retrieve a unique cache key using the ``get_cache_key`` 
         self.load_cache_plugin()
         cache_key = self.get_cache_key(path)
 
-Now that you've enabled caching, loaded the correct plugin, and retrieved a unique cache key, you can set up the flow of data between the cache and your inventory using the ``cache`` parameter of the ``parse`` method. This value comes from the inventory manager and indicates whether the inventory is being refreshed (such as via ``--flush-cache`` or the meta task ``refresh_inventory``). Although the cache shouldn't be used to populate the inventory when being refreshed, the cache should be updated with the new inventory if the user has enabled caching. You can use ``self._cache`` like a dictionary. The following pattern allows refreshing the inventory to work in conjunction with caching.
+キャッシュを有効にし、正しいプラグインを読み込み、ユニークなキャッシュキーを取得したため、キャッシュとインベントリーとの間のデータの流れを、``parse`` メソッドの ``cache`` パラメーターを使用して設定できます。この値はインベントリーマネージャーから取得され、インベントリーを更新するかどうかを示します (``--flush-cache`` またはメタタスク ``refresh_inventory`` など)。キャッシュの更新時にインベントリーを設定するために使用される訳ではありませんが、ユーザーがキャッシュを有効にしている場合は、キャッシュを新しいインベントリーで更新する必要があります。``self._cache`` はディクショナリーのように使用できます。以下のパターンでは、インベントリーの更新がキャッシュと連動して動作するようになっています。
 
 .. code-block:: python
 
@@ -267,52 +267,52 @@ Now that you've enabled caching, loaded the correct plugin, and retrieved a uniq
             self._cache[cache_key] = results
 
         self.populate(results)
+    
+``parse`` メソッドが完了すると、``self._cache`` の内容は、キャッシュの内容が変更された場合にキャッシュプラグインを設定するために使用されます。
 
-After the ``parse`` method is complete, the contents of ``self._cache`` is used to set the cache plugin if the contents of the cache have changed.
-
-You have three other cache methods available:
-  - ``set_cache_plugin`` forces the cache plugin to be set with the contents of ``self._cache`` before the ``parse`` method completes
-  - ``update_cache_if_changed`` sets the cache plugin only if ``self._cache`` has been modified before the ``parse`` method completes
-  - ``clear_cache`` deletes the keys in ``self._cache`` from your cache plugin
+利用できるキャッシュメソッドは 3 つあります。
+  - ``set_cache_plugin`` は、``parse`` メソッドの完了前にキャッシュプラグインを ``self._cache`` の内容で強制的に設定します。
+  - ``update_cache_if_changed`` は、``parse`` メソッドが完了する前に ``self._cache`` が変更された場合のみキャッシュプラグインを設定します。
+  - ``clear_cache`` は、キャッシュプラグインから ``self._cache`` のキーを削除します。
 
 .. _inventory_source_common_format:
 
-Inventory source common format
+インベントリーソース共通形式
 ------------------------------
 
-To simplify development, most plugins use a mostly standard configuration file as the inventory source, YAML based and with just one required field ``plugin`` which should contain the name of the plugin that is expected to consume the file.
-Depending on other common features used, other fields might be needed, but each plugin can also add its own custom options as needed.
-For example, if you use the integrated caching, ``cache_plugin``, ``cache_timeout`` and other cache related fields could be present.
+開発を簡単にするために、ほとんどのプラグインにはインベントリーのソースとして標準的な設定ファイルを使用し、YAML ベースで、ファイルを使用するプラグインの名前を含む 1 つの必須フィールド ``plugin`` があります。
+使用されるその他の一般的な機能に応じて、他のフィールドが必要になるかもしれませんが、各プラグインは必要に応じて独自のカスタムオプションを追加することもできます。
+たとえば、統合されたキャッシュを使用している場合は、``cache_plugin``、``cache_timeout`` やその他のキャッシュ関連のフィールドが必要になるかもしれません。
 
 .. _inventory_development_auto:
 
-The 'auto' plugin
+「auto」プラグイン
 -----------------
 
-Since Ansible 2.5, we include the :ref:`auto inventory plugin <auto_inventory>` enabled by default, which itself just loads other plugins if they use the common YAML configuration format that specifies a ``plugin`` field that matches an inventory plugin name, this makes it easier to use your plugin w/o having to update configurations.
+Ansible 2.5 以降、デフォルトで有効になっている :ref:`自動インベントリープラグイン <auto_inventory>` が含まれます。これは、インベントリープラグイン名と一致する ``plugin`` フィールドを指定する共通の YAML 設定形式を使用する場合のみ、他のプラグインを読み込みます。これにより、設定を更新する必要がないプラグインを簡単に使用できます。
 
 
 .. _inventory_scripts:
 .. _developing_inventory_scripts:
 
-Inventory scripts
+インベントリースクリプト
 =================
 
-Even though we now have inventory plugins, we still support inventory scripts, not only for backwards compatibility but also to allow users to leverage other programming languages.
+インベントリープラグインはそのままですが、後方互換性だけでなく、ユーザーが他のプログラミング言語を使用できるように、引き続きインベントリースクリプトをサポートします。
 
 
 .. _inventory_script_conventions:
 
-Inventory script conventions
+インベントリースクリプトの規則
 ----------------------------
 
-Inventory scripts must accept the ``--list`` and ``--host <hostname>`` arguments, other arguments are allowed but Ansible will not use them.
-They might still be useful for when executing the scripts directly.
+インベントリースクリプトでは ``--list`` および ``--host <hostname>`` の引数が使用できるようにする必要があります。他の引数も受け取りますが、Ansible はこれらを使用しません。
+これらの引数は、スクリプトを直接実行する際に便利な場合があります。
 
-When the script is called with the single argument ``--list``, the script must output to stdout a JSON-encoded hash or
-dictionary containing all of the groups to be managed.
-Each group's value should be either a hash or dictionary containing a list of each host, any child groups,
-and potential group variables, or simply a list of hosts::
+単一の引数 ``--list`` を指定してスクリプトを呼び出した場合、
+スクリプトは、管理対象のすべてのグループを含む JSON エンコードされたハッシュまたはディクショナリーを標準出力に出力する必要があります。
+各グループの値は、各ホスト、子グループ、可能なグループ変数、
+または単にホストのリストを含むハッシュまたはディクショナリーにする必要があります。
 
 
     {
@@ -333,9 +333,9 @@ and potential group variables, or simply a list of hosts::
 
     }
 
-If any of the elements of a group are empty they may be omitted from the output.
+グループのいずれかの要素が空の場合は、出力から省略される可能性があります。
 
-When called with the argument ``--host <hostname>`` (where <hostname> is a host from above), the script must print either an empty JSON hash/dictionary, or a hash/dictionary of variables to make available to templates and playbooks. For example::
+引数 ``--host <hostname>`` (<hostname> は上述のホストです) で呼び出されると、スクリプトは空の JSON ハッシュ/ディクショナリーか、テンプレートや Playbook で利用できるようにするための変数のハッシュ/ディクショナリーを出力しなければなりません。例::
 
 
     {
@@ -343,26 +343,26 @@ When called with the argument ``--host <hostname>`` (where <hostname> is a host 
         "VAR002": "VALUE",
     }
 
-Printing variables is optional. If the script does not do this, it should print an empty hash or dictionary.
+変数の出力は任意です。スクリプトがこれを実行しない場合は、空のハッシュまたはディクショナリーを出力する必要があります。
 
 .. _inventory_script_tuning:
 
-Tuning the external inventory script
+外部インベントリースクリプトのチューニング
 ------------------------------------
 
-.. versionadded:: 1.3
+バージョン 1.3 における新機能
 
-The stock inventory script system detailed above works for all versions of Ansible,
-but calling ``--host`` for every host can be rather inefficient,
-especially if it involves API calls to a remote subsystem.
+上述したストックインベントリースクリプトシステムは Ansible のすべてのバージョンで動作しますが、
+すべてのホストに対して ``--host`` を呼び出すことは、特にリモートサブシステムへの API 呼び出しを伴う場合には、
+かなり非効率的になる可能性があります。
 
-To avoid this inefficiency, if the inventory script returns a top level element called "_meta",
-it is possible to return all of the host variables in one script execution.
-When this meta element contains a value for "hostvars",
-the inventory script will not be invoked with ``--host`` for each host.
-This results in a significant performance increase for large numbers of hosts.
+この非効率さを回避するために、インベントリースクリプトが「_meta」と呼ばれるトップレベルの要素を返す場合に、
+1 回のスクリプト実行ですべてのホスト変数を返すことができます。
+このメタ要素に「hostvars」の値が含まれる場合、
+インベントリースクリプトは各ホストに対して ``--host`` で呼び出されません。
+これにより、大量のホストに対してパフォーマンスが大幅に向上します。
 
-The data to be added to the top level JSON dictionary looks like this::
+トップレベルの JSON ディクショナリーに追加するデータは次のようになります。
 
     {
 
@@ -381,8 +381,8 @@ The data to be added to the top level JSON dictionary looks like this::
         }
     }
 
-To satisfy the requirements of using ``_meta``, to prevent ansible from calling your inventory with ``--host`` you must at least populate ``_meta`` with an empty ``hostvars`` dictionary.
-For example::
+Ansible が ``--host`` でインベントリーを呼び出すのを防ぐために ``_meta`` を使用する要件を満たすには、少なくとも空の ``hostvars`` ディクショナリーで ``_meta`` を埋めなければなりません。
+例::
 
     {
 
@@ -397,11 +397,11 @@ For example::
 
 .. _replacing_inventory_ini_with_dynamic_provider:
 
-If you intend to replace an existing static inventory file with an inventory script,
-it must return a JSON object which contains an 'all' group that includes every
-host in the inventory as a member and every group in the inventory as a child.
-It should also include an 'ungrouped' group which contains all hosts which are not members of any other group.
-A skeleton example of this JSON object is:
+既存の静的インベントリーファイルをインベントリースクリプトで置き換える場合は、
+インベントリー内のすべてのホストをメンバーとして、
+インベントリー内のすべてのグループを子として含む「all」グループを含む JSON オブジェクトを返さなければなりません。
+また、他のグループのメンバーではないすべてのホストを含む「ungrouped」グループも含まなければなりません。
+この JSON オブジェクトのスケルトンの例は以下のとおりです。
 
 .. code-block:: json
 
@@ -420,19 +420,19 @@ A skeleton example of this JSON object is:
        }
    }
 
-An easy way to see how this should look is using :ref:`ansible-inventory`, which also supports ``--list`` and ``--host`` parameters like an inventory script would.
+これがどのように見えるかを確認する簡単な方法は、:ref:`ansible-inventory` を使用することです。これにより、インベントリースクリプトのように ``--list`` パラメーターおよび ``--host`` パラメーターがサポートされます。
 
 .. seealso::
 
    :ref:`developing_api`
-       Python API to Playbooks and Ad Hoc Task Execution
+       Playbook およびアドホックタスク実行のための Python API
    :ref:`developing_modules_general`
-       Get started with developing a module
+       モジュールの開発を始める
    :ref:`developing_plugins`
-       How to develop plugins
+       プラグインの開発方法
    `Ansible Tower <https://www.ansible.com/products/tower>`_
-       REST API endpoint and GUI for Ansible, syncs with dynamic inventory
-   `Development Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Mailing list for development topics
+       Ansible の REST API エンドポイントおよび GUI (動的インベントリーと同期)
+   `開発メーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       開発トピックのメーリングリスト
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       IRC チャットチャンネル #ansible

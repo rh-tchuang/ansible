@@ -1,77 +1,77 @@
 .. _developing_module_utilities:
 
 *************************************
-Using and Developing Module Utilities
+モジュールユーティリティーの使用および開発
 *************************************
 
-Ansible provides a number of module utilities, or snippets of shared code, that
-provide helper functions you can use when developing your own modules. The
-``basic.py`` module utility provides the main entry point for accessing the
-Ansible library, and all Python Ansible modules must import something from
-``ansible.module_utils``. A common option is to import ``AnsibleModule``::
+Ansible は、独自のモジュールを開発する際に使用できるヘルパー関数を提供するモジュールユーティリティー、
+または共有コードのスニペットを多数提供します。basic.py モジュールユーティリティーは、
+Ansible ライブラリーにアクセスするための主要なエントリーポイントを提供します。
+すべての Python Ansible モジュールは、
+``ansible.module_utils`` から何かをインポートする必要があります。一般的なオプションとして、``AnsibleModule`` をインポートする方法があります。
 
   from ansible.module_utils.basic import AnsibleModule
 
-The ``ansible.module_utils`` namespace is not a plain Python package: it is
-constructed dynamically for each task invocation, by extracting imports and
-resolving those matching the namespace against a :ref:`search path <ansible_search_path>` derived from the
-active configuration.
+``ansible.module_utils`` 名前空間は簡単な Python パッケージではありません。
+インポートを抽出し、
+アクティブな構成から派生した :ref:`検索パス <ansible_search_path>` に対して名前空間に一致するものを解決することにより、
+タスクの呼び出しごとに動的に構築されます。
 
-To reduce the maintenance burden on your own local modules, you can extract
-duplicated code into one or more module utilities and import them into your modules. For example, if you have your own custom modules that import a ``my_shared_code`` library, you can place that into a ``./module_utils/my_shared_code.py`` file like this::
+独自のローカルモジュールのメンテナンスの負担を軽減するために、
+複製されたコードを 1 つまたは複数のモジュールユーティリティーに追加し、モジュールにインポートします。たとえば、``my_shared_code`` ライブラリーをインポートする独自のカスタムモジュールがある場合は、以下のように ``./module_utils/my_shared_code.py`` ファイルに置くことがあります。
 
   from ansible.module_utils.my_shared_code import MySharedCodeClient
 
-When you run ``ansible-playbook``, Ansible will merge any files in your local ``module_utils`` directories into the ``ansible.module_utils`` namespace in the order defined by the :ref:`Ansible search path <ansible_search_path>`.
+``ansible-playbook`` を実行すると、Ansible はローカルの ``module_utils`` ディレクトリー内のファイルを :ref:`Ansible 検索パス<ansible_search_path>` で定義される順序で ``ansible.module_utils`` 名前空間にマージします。
 
-Naming and finding module utilities
+モジュールユーティリティーの命名および検索
 ===================================
 
-You can generally tell what a module utility does from its name and/or its location. For example, ``openstack.py`` contains utilities for modules that work with OpenStack instances.
-Generic utilities (shared code used by many different kinds of modules) live in the ``common`` subdirectory or in the root directory. Utilities
-used by a particular set of modules generally live in a sub-directory that mirrors
-the directory for those modules. For example:
+通常、モジュールユーティリティーの機能は、その名前や場所からわかります。たとえば、``openstack.py`` には、OpenStack インスタンスと連携するモジュールのユーティリティーが含まれます。
+一般的なユーティリティー (さまざまな種類のモジュールによって使用される共有コード) は、``common`` のサブディレクトリーまたはルートディレクトリーに存在します。特定のモジュールのセットで使用され、
+通常、
+これらのモジュールのディレクトリーをミラーリングするサブディレクトリーにあります。例:
 
-* ``lib/ansible/module_utils/urls.py`` contains shared code for parsing URLs
-* ``lib/ansible/module_utils/storage/emc/`` contains shared code related to EMC
-*  ``lib/ansible/modules/storage/emc/`` contains modules related to EMC
+* ``lib/ansible/module_utils/urls.py`` には URL の解析用の共有コードが含まれます。
+* ``lib/ansible/module_utils/storage/emc/`` には、EMC に関連する共有コードが含まれます。
+*  ``lib/ansible/modules/storage/emc/`` には、EMC に関連するモジュールが含まれています。
 
-Following this pattern with your own module utilities makes everything easy to find and use.
+このパターンを独自のモジュールユーティリティーで行うと、あらゆるものを見つけ、使用することが容易になります。
 
 .. _standard_mod_utils:
 
-Standard module utilities
+標準のモジュールユーティリティー
 =========================
 
-Ansible ships with an extensive library of ``module_utils`` files.
-You can find the module
-utility source code in the ``lib/ansible/module_utils`` directory under
-your main Ansible path. We've described the most widely used utilities below. For more details on any specific module utility,
-please see the `source code for module_utils <https://github.com/ansible/ansible/tree/devel/lib/ansible/module_utils>`_.
+Ansible には、``module_utils`` ファイルの大規模なライブラリーが同梱されています。
+Ansible のメインのパスの、
+``lib/ansible/module_utils`` ディレクトリーに、
+ユーティリティーソースコードがあります。以下の最も広く使用されているユーティリティーを説明しています。特定のモジュールユーティリティーの詳細は、
+「`module_utils のソースコード <https://github.com/ansible/ansible/tree/devel/lib/ansible/module_utils>`_」を参照してください。
 
 .. include:: shared_snippets/licensing.txt
 
-- ``api.py`` - Supports generic API modules
-- ``basic.py`` - General definitions and helper utilities for Ansible modules
-- ``common/dict_transformations.py`` - Helper functions for dictionary transformations
-- ``common/file.py`` - Helper functions for working with files
-- ``common/text/`` - Helper functions for converting and formatting text.
-- ``common/parameters.py`` - Helper functions for dealing with module parameters
-- ``common/sys_info.py`` - Functions for getting distribution and platform information
-- ``common/validation.py`` - Helper functions for validating module parameters against a module argument spec
-- ``facts/`` - Directory of utilities for modules that return facts. See `PR 23012 <https://github.com/ansible/ansible/pull/23012>`_ for more information
-- ``ismount.py`` - Single helper function that fixes os.path.ismount
-- ``json_utils.py`` - Utilities for filtering unrelated output around module JSON output, like leading and trailing lines
-- ``known_hosts.py`` - utilities for working with known_hosts file
-- ``network/common/config.py`` - Configuration utility functions for use by networking modules
-- ``network/common/netconf.py`` - Definitions and helper functions for modules that use Netconf transport
-- ``network/common/parsing.py`` - Definitions and helper functions for Network modules
-- ``network/common/network.py`` - Functions for running commands on networking devices
-- ``network/common/utils.py`` - Defines commands and comparison operators and other utilises for use in networking modules
-- ``powershell/`` - Directory of definitions and helper functions for Windows PowerShell modules
-- ``pycompat24.py`` - Exception workaround for Python 2.4
-- ``service.py`` - Utilities to enable modules to work with Linux services (placeholder, not in use)
-- ``shell.py`` - Functions to allow modules to create shells and work with shell commands
-- ``six/__init__.py`` - Bundled copy of the `Six Python library <https://pythonhosted.org/six/>`_ to aid in writing code compatible with both Python 2 and Python 3
-- ``splitter.py`` - String splitting and manipulation utilities for working with Jinja2 templates
-- ``urls.py`` - Utilities for working with http and https requests
+- ``api.py`` - 汎用 API モジュールをサポートします。
+- ``basic.py`` - Ansible モジュールの一般的な定義およびヘルパーユーティリティー
+- ``common/dict_transformations.py`` - ディクショナリー変換のヘルパー関数
+- ``common/file.py`` - ファイルを操作するヘルパー関数
+- ``common/text/`` - テキストの変換およびフォーマットを行うヘルパー関数
+- ``common/parameters.py`` - モジュールパラメーターを処理するヘルパー関数
+- ``common/sys_info.py`` - ディストリビューションおよびプラットフォーム情報を取得する機能
+- ``common/validation.py`` - モジュール引数仕様に対してモジュールパラメーターを検証するためのヘルパー関数
+- ``facts/`` - ファクトを返すモジュールのユーティリティーディレクトリー。詳細は、「`PR 23012` <https://github.com/ansible/ansible/pull/23012>_」を参照してください。
+- ``ismount.py`` - os.path.ismount を修正する単一のヘルパー関数
+- ``json_utils.py`` - 先頭行や末尾行など、モジュール JSON 出力に関する関連のない出力をフィルタリングするユーティリティー
+- ``known_hosts.py`` - known_hosts ファイルで作業するためのユーティリティー
+- ``network/common/config.py`` - ネットワークモジュールによって使用される設定ユーティリティーの機能
+- ``network/common/netconf.py`` - Netconf トランスポートを使用するモジュールの定義およびヘルパー関数
+- ``network/common/parsing.py`` - ネットワークモジュールの定義およびヘルパー関数
+- ``network/common/network.py`` - ネットワークデバイスでコマンドを実行する機能
+- ``network/common/utils.py`` - コマンドと比較演算子、およびその他のネットワークモジュールで使用するために使用するその他のユーティリティーを定義します。
+- ``powershell/`` - Windows PowerShell モジュールの定義およびヘルパー関数のディレクトリー
+- ``pycompat24.py`` - Python 2.4 の例外回避策
+- ``service.py`` - モジュールが Linux サービスと連携できるようにするユーティリティー (未使用のプレースホルダー)
+- ``shell.py`` - モジュールによるシェルの作成およびシェルコマンドの使用を許可する関数
+- ``six/__init__.py`` - Python 2 と Python 3 の両方と互換性のあるコードを書き込む際に助けとなる `Six Python ライブラリー <https://pythonhosted.org/six/>`_ のバンドルコピー
+- ``splitter.py`` - Jinja2 テンプレートを使用する文字列分割および操作ユーティリティー
+- ``urls.py`` - http および https リクエストを操作するユーティリティー

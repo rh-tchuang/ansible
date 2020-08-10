@@ -4,14 +4,14 @@
 httptester
 **********
 
-.. contents:: Topics
+.. contents:: トピック
 
-Overview
+概要
 ========
 
-``httptester`` is a docker container used to host certain resources required by :ref:`testing_integration`. This is to avoid CI tests requiring external resources (such as git or package repos) which, if temporarily unavailable, would cause tests to fail.
+``httptester`` は、:ref:`testing_integration` で必要な特定のリソースをホストするために使用される docker コンテナーです。これにより、(git やパッケージリポジトリーなどの) 外部リソースを必要とする CI テストが回避され、一時的に利用できなくなるとテストが失敗します。
 
-HTTP Testing endpoint which provides the following capabilities:
+以下の機能を提供する HTTP テストエンドポイント。
 
 * httpbin
 * nginx
@@ -19,9 +19,9 @@ HTTP Testing endpoint which provides the following capabilities:
 * SNI
 
 
-Source files can be found in the `http-test-container <https://github.com/ansible/http-test-container>`_ repository.
+ソースファイルは `http-test-container <https://github.com/ansible/http-test-container>`_ リポジトリーにあります。
 
-Extending httptester
+httptester の拡張
 ====================
 
-If you have sometime to improve ``httptester`` please add a comment on the `Testing Working Group Agenda <https://github.com/ansible/community/blob/master/meetings/README.md>`_ to avoid duplicated effort.
+``httptester`` を改善するタイミングがある場合は、重複作業を回避するために、「`Testing Working Group Agenda <https://github.com/ansible/community/blob/master/meetings/README.md>`_」にコメントを追加します。

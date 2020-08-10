@@ -2,63 +2,63 @@
 .. _developing_locally:
 
 **********************************
-Adding modules and plugins locally
+モジュールおよびプラグインをローカルで追加
 **********************************
 
 .. contents::
    :local:
 
-The easiest, quickest, and most popular way to extend Ansible is to copy or write a module or a plugin for local use. You can store local modules and plugins on your Ansible control node for use within your team or organization. You can also share a local plugin or module by embedding it in a role and publishing it on Ansible Galaxy. If you've been using roles off Galaxy, you may have been using local modules and plugins without even realizing it. If you're using a local module or plugin that already exists, this page is all you need.
+Ansible を拡張する最も簡単で、最も速く、最も一般的な方法は、ローカルで使用するためにモジュールまたはプラグインをコピーするか、作成することです。チームまたは組織内で使用できるように、ローカルのモジュールとプラグインを Ansible コントロールノードに保管できます。ローカルのプラグインまたはモジュールを共有するには、ロールに組み込み、Ansible Galaxy に公開します。Galaxy からロールを使用していた場合は、ローカルのモジュールとプラグインを認識せずに使用していた可能性があります。存在しているローカルのモジュールまたはプラグインを使用している場合は、このページのみが必要になります。
 
-Extending Ansible with local modules and plugins offers lots of shortcuts:
+ローカルのモジュールおよびプラグインで Ansible を拡張すると、ショートカットが多数利用できるようになります。
 
-* You can copy other people's modules and plugins.
-* If you're writing a new module, you can choose any programming language you like.
-* You don't have to clone the main Ansible repo.
-* You don't have to open a pull request.
-* You don't have to add tests (though we recommend that you do!).
+* 他のユーザーのモジュールおよびプラグインをコピーできます。
+* 新しいモジュールを作成する場合は、任意のプログラミング言語を選択できます。
+* メインの Ansible リポジトリーのクローンを作成する必要はありません。
+* プル要求を開く必要はありません。
+* テストを追加する必要はありません (ただし、この操作を推奨しています)。
 
-To save a local module or plugin so Ansible can find and use it, drop the module or plugin in the correct "magic" directory. For local modules, use the name of the file as the module name: for example, if the module file is ``~/.ansible/plugins/modules/local_users.py``, use ``local_users`` as the module name.
+Ansible が検索して使用できるようにローカルのモジュールまたはプラグインを保存するには、正しい「マジック」ディレクトリーにモジュールまたはプラグインを置きます。ローカルモジュールの場合は、ファイル名をモジュール名として使用します。たとえば、モジュールファイルが ``~/.ansible/plugins/modules/local_users.py`` の場合は、モジュール名に ``local_users`` を使用します。
 
 .. _modules_vs_plugins:
 
-Modules and plugins: what's the difference?
+モジュールおよびプラグイン: 相違点
 ===========================================
-If you're looking to add local functionality to Ansible, you may be wondering whether you need a module or a plugin. Here's a quick overview of the differences:
+ローカル機能を Ansible に追加する場合は、モジュールまたはプラグインのどちらが必要か疑問に思われるかもしれません。相違点の概要は次のとおりです。
 
-* Modules are reusable, standalone scripts that can be used by the Ansible API, the :command:`ansible` command, or the :command:`ansible-playbook` command. Modules provide a defined interface, accepting arguments and returning information to Ansible by printing a JSON string to stdout before exiting. Modules execute on the target system (usually that means on a remote system) in separate processes.
-* :ref:`Plugins <plugins_lookup>` augment Ansible's core functionality and execute on the control node within the ``/usr/bin/ansible`` process. Plugins offer options and extensions for the core features of Ansible - transforming data, logging output, connecting to inventory, and more.
+* モジュールは、Ansible API、:command:`ansible` コマンド、または :command:`ansible-playbook` コマンドで使用できる再利用可能なスタンドアロンスクリプトです。モジュールは定義されたインターフェースを提供し、引数を受け入れ、終了前に JSON 文字列を標準出力 (stdout) に出力して Ansible に情報を返します。モジュールは、別々のプロセスのターゲットシステム (通常はリモートシステム) 上で実行します。
+* :ref:`プラグイン <plugins_lookup>` は Ansible のコア機能を強化し、``/usr/bin/ansible`` プロセス内のコントロールノードで実行します。プラグインは、Ansible のコア機能のオプションおよび拡張機能を提供します。データ変換、ロギング出力、インベントリーへの接続などです。
 
 .. _local_modules:
 
-Adding a module locally
+モジュールをローカルで追加
 =======================
-Ansible automatically loads all executable files found in certain directories as modules, so you can create or add a local module in any of these locations:
+Ansible は、特定のディレクトリーにあるすべての実行ファイルをモジュールとして自動的に読み込むため、以下の場所にローカルモジュールを作成または追加できます。
 
-* any directory added to the ``ANSIBLE_LIBRARY`` environment variable (``$ANSIBLE_LIBRARY`` takes a colon-separated list like ``$PATH``)
+* ``ANSIBLE_LIBRARY`` 環境変数に追加されたディレクトリー (``$ANSIBLE_LIBRARY`` は、``$PATH`` のようにコロンで区切られたリストを取ります)
 * ``~/.ansible/plugins/modules/``
 * ``/usr/share/ansible/plugins/modules/``
 
-Once you save your module file in one of these locations, Ansible will load it and you can use it in any local task, playbook, or role.
+モジュールファイルをこのいずれかの場所に保存すると、Ansible はそのファイルを読み込み、ローカルのタスク、Playbook、またはロールで使用できます。
 
-To confirm that ``my_custom_module`` is available:
+``my_custom_module`` が利用できることを確認するには、以下を行います。
 
-* type ``ansible-doc -t module my_custom_module``. You should see the documentation for that module.
+* ``ansible-doc -t module my_custom_module`` と入力します。そのモジュールのドキュメントが表示されるはずです。
 
-To use a local module only in certain playbooks:
+ローカルモジュールを特定の Playbook でのみ使用するには、以下を行います。
 
-* store it in a sub-directory called ``library`` in the directory that contains the playbook(s)
+* これを、Playbook を含むディレクトリーの ``library`` サブディレクトリーに保存します。
 
-To use a local module only in a single role:
+ローカルモジュールを 1 つのロールでのみ使用するには、以下を行います。
 
-* store it in a sub-directory called ``library`` within that role
+* このロール内の ``library`` と呼ばれるサブディレクトリーに格納します。
 
 .. _distributing_plugins:
 .. _local_plugins:
 
-Adding a plugin locally
+プラグインをローカルで追加
 =======================
-Ansible loads plugins automatically too, loading each type of plugin separately from a directory named for the type of plugin. Here's the full list of plugin directory names:
+Ansible はプラグインを自動的に読み込み、プラグインのタイプに応じた名前が付けられたディレクトリーから、各タイプのプラグインを個別に読み込みます。以下は、プラグインディレクトリー名の一覧です。
 
     * action_plugins*
     * cache_plugins
@@ -72,24 +72,24 @@ Ansible loads plugins automatically too, loading each type of plugin separately 
     * test_plugins*
     * vars_plugins
 
-To load your local plugins automatically, create or add them in any of these locations:
+ローカルプラグインを自動的に読み込むには、以下の場所のいずれかにローカルプラグインを作成または追加します。
 
-* any directory added to the relevant ``ANSIBLE_plugin_type_PLUGINS`` environment variable (these variables, such as ``$ANSIBLE_INVENTORY_PLUGINS`` and ``$ANSIBLE_VARS_PLUGINS`` take colon-separated lists like ``$PATH``)
-* the directory named for the correct ``plugin_type`` within ``~/.ansible/plugins/`` - for example, ``~/.ansible/plugins/callback``
-* the directory named for the correct ``plugin_type`` within ``/usr/share/ansible/plugins/`` - for example, ``/usr/share/ansible/plugins/action``
+* 関連する ``ANSIBLE_plugin_type_PLUGINS`` 環境変数に追加されるディレクトリー (``$ANSIBLE_INVENTORY_PLUGINS``、``$ANSIBLE_VARS_PLUGINS`` などの変数は、``$PATH`` などのコロンで区切られたリストを取得します)
+* ``~/.ansible/plugins/`` 内で適切な ``plugin_type`` の名前が付けられたディレクトリー (``~/.ansible/plugins/callback`` など)
+* ``/usr/share/ansible/plugins/`` 内の適切な ``plugin_type`` の名前が付けられたディレクトリー (``/usr/share/ansible/plugins/action`` など)
 
-Once your plugin file is in one of these locations, Ansible will load it and you can use it in a any local module, task, playbook, or role. Alternatively, you can edit your ``ansible.cfg`` file to add directories that contain local plugins - see :ref:`ansible_configuration_settings` for details.
+プラグインファイルがこれらの場所のいずれかに置かれると、Ansible はそのファイルを読み込み、ローカルのモジュール、タスク、Playbook、またはロールで使用できます。または、``ansible.cfg`` ファイルを編集して、ローカルプラグインを含むディレクトリーを追加することもできます。詳細は「:ref:`ansible_configuration_settings`」を参照してください。
 
-To confirm that ``plugins/plugin_type/my_custom_plugin`` is available:
+``plugins/plugin_type/my_custom_plugin`` が利用可能であることを確認するには、以下を行います。
 
-* type ``ansible-doc -t <plugin_type> my_custom_lookup_plugin``. For example, ``ansible-doc -t lookup my_custom_lookup_plugin``. You should see the documentation for that plugin. This works for all plugin types except the ones marked with ``*`` in the list above  - see :ref:`ansible-doc` for more details.
+* ``ansible-doc -t <plugin_type> my_custom_lookup_plugin`` と入力します。たとえば、``ansible-doc -t lookup my_custom_lookup_plugin`` です。そのプラグインのドキュメントが表示されるはずです。これは、上記の一覧で ``*`` のマークが付いたプラグインタイプを除くすべてのプラグインタイプで機能します。詳細は、:ref:`ansible-doc` を参照してください。
 
-To use your local plugin only in certain playbooks:
+ローカルプラグインを特定の Playbook でのみ使用するには、以下を行います。
 
-* store it in a sub-directory for the correct ``plugin_type`` (for example, ``callback_plugins`` or ``inventory_plugins``) in the directory that contains the playbook(s)
+* これを Playbook を含むディレクトリーの適切な ``plugin_type`` (``callback_plugins`` または ``inventory_plugins`` など) のサブディレクトリーに保存します。
 
-To use your local plugin only in a single role:
+ローカルプラグインを 1 つのロールでのみ使用するには、以下を行います。
 
-* store it in a sub-directory for the correct ``plugin_type`` (for example, ``cache_plugins`` or ``strategy_plugins``) within that role
+* ロール内の適切な ``plugin_type (``cache_plugins``、``strategy_plugins`` など) のサブディレクトリーに保存します。
 
-When shipped as part of a role, the plugin will be available as soon as the role is called in the play.
+ロールの一部として同梱されると、ロールがプレイで呼び出されるとすぐにプラグインが利用可能になります。

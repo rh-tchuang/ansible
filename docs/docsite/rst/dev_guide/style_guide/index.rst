@@ -146,13 +146,13 @@ Sphinx は、ヘッダーの階層を作成するときに「オンザフライ�
 アンカーの追加
 ^^^^^^^^^^^^^^
 
-* すべてのページに少なくとも 1 つのアンカーを含める
+* すべてのページに少なくとも 1 つのアンカーを含める。
 * メインヘッダーの上にメインアンカーを配置する。
 * このファイルに一意のタイトルがある場合は、メインページのアンカーに使用する。
 
    .. _unique_page::
 
-* ページにアンカーを追加することも可能。
+* ページにアンカーを追加することもできます。
 
 内部リンクの追加
 ^^^^^^^^^^^^^^^^^^^^^
@@ -174,13 +174,13 @@ Sphinx は、ヘッダーの階層を作成するときに「オンザフライ�
 
 .. code-block:: rst
 
-   :ref:`unique_page`
-   :ref:`this page <unique_page>`
+   :ref:`this module <this_module>``
+   :ref:`that connection plugin <that_connection>`
 
 ページ内目次の追加
 ^^^^^^^^^^^^^^^^^
 
-本ページには、`ページ内目次 <http://docutils.sourceforge.net/docs/ref/rst/directives.html#table-of-contents>` が含まれています。
+本ページには、`ページ内目次 <http://docutils.sourceforge.net/docs/ref/rst/directives.html#table-of-contents>`_ が含まれています。
 ページ内目次を追加する場合は、以下のようにします。
 
 * 目次の下に、主要な見出しと (任意で) 紹介文を追加する。
@@ -216,4 +216,4 @@ Sphinx は、ヘッダーの階層を作成するときに「オンザフライ�
    :ref:`testing_documentation_locally`
        Ansible ドキュメントのビルド方法
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible-docs IRC chat channel
+       IRC チャットチャンネル #ansible-docs

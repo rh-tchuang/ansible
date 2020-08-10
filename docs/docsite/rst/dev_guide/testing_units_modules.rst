@@ -3,189 +3,189 @@
 .. _testing_units_modules:
 
 ****************************
-Unit Testing Ansible Modules
+Ansible モジュールのユニットテスト
 ****************************
 
 .. highlight:: python
 
-.. contents:: Topics
+.. contents:: トピック
 
-Introduction
+はじめに
 ============
 
-This document explains why, how and when you should use unit tests for Ansible modules.
-The document doesn't apply to other parts of Ansible for which the recommendations are
-normally closer to the Python standard.  There is basic documentation for Ansible unit
-tests in the developer guide :ref:`testing_units`.  This document should
-be readable for a new Ansible module author. If you find it incomplete or confusing,
-please open a bug or ask for help on Ansible IRC.
+本ドキュメントは、なぜ、どのように、いつ Ansible モジュールのユニットテストを使用すべきかを説明します。
+このドキュメントは、Ansible の他の部分には適用されませんが、
+推奨事項は、通常、Python の標準仕様と似ています。 Ansible のユニットテストについては、
+開発者ガイドの「:ref:`testing_units`」に基本的な説明があります。 このドキュメントは、
+新たに Ansible モジュールを作成するユーザーが読めるようになっているはずです。もし不完全または分からない箇所がある場合は、
+バグを登録するか、Ansible IRC で助けを求めてください。
 
-What Are Unit Tests?
+ユニットテストとは
 ====================
 
-Ansible includes a set of unit tests in the :file:`test/units` directory. These tests primarily cover the
-internals but can also can cover Ansible modules.  The structure of the unit tests matches
-the structure of the code base, so the tests that reside in the :file:`test/units/modules/` directory
-are organized by module groups.
+Ansible には、:file:`test/units` ディレクトリーにユニットテストのセットが含まれています。これらのテストは主に Ansible そのものを対象としていますが、
+Ansible のモジュールにも対応しています。 ユニットテストの構造はコードベースの構造と一致しているため、
+:file:`test/units/modules/` ディレクトリーにあるテストは、
+モジュールグループ別に整理されています。
 
-Integration tests can be used for most modules, but there are situations where
-cases cannot be verified using integration tests.  This means that Ansible unit test cases
-may extend beyond testing only minimal units and in some cases will include some
-level of functional testing.
+統合テストはほとんどのモジュールに使用できますが、
+統合テストではケースを検証できない場合もあります。 つまり、
+Ansible のユニットテストケースは最小限のユニットのみをテストするだけにとどまらず、
+場合によってはある程度のレベルにある機能テストを含むこともあります。
 
 
-Why Use Unit Tests?
+ユニットテストを使用する理由
 ===================
 
-Ansible unit tests have advantages and disadvantages. It is important to understand these.
-Advantages include:
+Ansibleのユニットテストには利点と欠点があります。これを理解することが重要です。
+利点には以下のようなものがあります。
 
-* Most unit tests are much faster than most Ansible integration tests.  The complete suite
-  of unit tests can be run regularly by a developer on their local system.
-* Unit tests can be run by developers who don't have access to the system which the module is
-  designed to work on, allowing a level of verification that changes to core functions
-  haven't broken module expectations.
-* Unit tests can easily substitute system functions allowing testing of software that
-  would be impractical.  For example, the ``sleep()`` function can be replaced and we check
-  that a ten minute sleep was called without actually waiting ten minutes.
-* Unit tests are run on different Python versions. This allows us to
-  ensure that the code behaves in the same way on different Python versions.
+* ほとんどのユニットテストは、ほとんどの Ansible の統合テストよりもはるかに高速です。 ユニットテストの完全なスイートは、
+  開発者が自身のローカルシステムで定期的に実行できます。
+* ユニットテストは、
+  モジュールが動作するように設計されているシステムにアクセスできない開発者が実行することができ、
+  コア機能への変更がモジュールの期待どおりであることを検証できます。
+* ユニットテストは、
+  非現実的なソフトウェアのテストを可能にするシステム関数を簡単に置き換えることができます。 たとえば、``sleep()`` 関数を置き換えることができ、
+  実際に 10 分間待つことなく 10 分間のスリープが呼び出されたかどうかを確認します。
+* ユニットテストは、Python の各バージョンで実行されます。これにより、
+  コードが異なる Python のバージョンでも同じように動作することを確認できます。
 
-There are also some potential disadvantages of unit tests. Unit tests don't normally
-directly test actual useful valuable features of software, instead just internal
-implementation
+ユニットテストには、いくつかの潜在的な欠点もあります。ユニットテストは、
+通常、実際に便利で価値のある機能を直接テストせず、
+代わりに内部実装をテストします。
 
-* Unit tests that test the internal, non-visible features of software may make
-  refactoring difficult if those internal features have to change (see also naming in How
-  below)
-* Even if the internal feature is working correctly it is possible that there will be a
-  problem between the internal code tested and the actual result delivered to the user
+* ソフトウェア内部にある、見に見えない機能をテストするユニットテストは、
+  それらの内部機能を変更しなければならない場合、
+  リファクタリングを困難にする場合があります (下記の「方法」の命名も参照してください)。
+* 内部機能が正常に動作していても、
+  テストした内部コードと実際の結果との間に問題が発生する可能性があります。
 
-Normally the Ansible integration tests (which are written in Ansible YAML) provide better
-testing for most module functionality.  If those tests already test a feature and perform
-well there may be little point in providing a unit test covering the same area as well.
+通常、(Ansible YAML で記述される) Ansible 統合テストは、
+ほとんどのモジュール機能に対してより良いテストを提供します。 これらのテストがすでに機能をテストしていて、
+うまく機能している場合は、同じ領域をカバーするユニットテストを提供する意味はほとんどないかもしれません。
 
-When To Use Unit Tests
+ユニットテストを使うタイミング
 ======================
 
-There are a number of situations where unit tests are a better choice than integration
-tests. For example, testing things which are impossible, slow or very difficult to test
-with integration tests, such as:
+ユニットテストが、
+統合テストよりも適切な選択である状況はたくさんあります。たとえば、統合テストでテストすることが不可能なもの、遅いもの、
+または非常に難しいものをテストすることです。
 
-* Forcing rare / strange / random situations that can't be forced, such as specific network
-  failures and exceptions
-* Extensive testing of slow configuration APIs
-* Situations where the integration tests cannot be run as part of the main Ansible
-  continuous integration running in Shippable.
+* 特定のネットワーク障害や例外のような、
+  強制することができない稀な、奇妙な、およびランダムな状況を強制する
+* 遅い設定 API の広範なテスト
+* Shippable で実行されているメインの Ansible 継続的インテグレーションの一部として、
+  統合テストを実行できない状況。
 
 
 
-Providing quick feedback
+迅速なフィードバックの提供
 ------------------------
 
-Example:
-  A single step of the rds_instance test cases can take up to 20
-  minutes (the time to create an RDS instance in Amazon).  The entire
-  test run can last for well over an hour.  All 16 of the unit tests
-  complete execution in less than 2 seconds.
+例: 
+  rds_instance のテストケースの 1 つのステップには、
+  最大 20 分 (Amazonで RDS インスタンスを作成する時間) かかる場合があります。 テスト実行は、
+  全体で 1 時間以上かかることもあります。 16 個のユニットテストは、
+  すべて 2 秒以内に実行を完了します。
 
-The time saving provided by being able to run the code in a unit test makes it worth
-creating a unit test when bug fixing a module, even if those tests do not often identify
-problems later.  As a basic goal, every module should have at least one unit test which
-will give quick feedback in easy cases without having to wait for the integration tests to
-complete.
+ユニットテストでコードを実行できることで提供される時間が短いため、
+そのテストが後で問題を発見しないことが多かったとしても、
+モジュールのバグ修正を行う際にユニットテストを作成する価値があります。 基本的な目標として、すべてのモジュールは、
+統合テストが完了するのを待つことなく、
+簡単なケースで迅速なフィードバックを提供するユニットテストを少なくとも 1 つは用意すべきです。
 
-Ensuring correct use of external interfaces
+外部インターフェースを正しく使用すること
 -------------------------------------------
 
-Unit tests can check the way in which external services are run to ensure that they match
-specifications or are as efficient as possible *even when the final output will not be changed*.
+ユニットテストは、*最終的な出力が変更されない場合でも*、外部サービスの実行方法が仕様に合致しているか、
+あるいは可能な限り効率的であるかを確認できます。
 
-Example:
-  Package managers are often far more efficient when installing multiple packages at once
-  rather than each package separately. The final result is the
-  same: the packages are all installed, so the efficiency is difficult to verify through
-  integration tests. By providing a mock package manager and verifying that it is called
-  once, we can build a valuable test for module efficiency.
+例: 
+  パッケージマネージャーは、各パッケージを個別にインストールするよりも、
+  複数のパッケージを一度にインストールする方がはるかに効率的であることが多くなります。最終的な結果は同じです。
+  すべてのパッケージがインストールされるため、
+  統合テストで効率性を検証することは困難です。模擬パッケージマネージャを提供し、
+  それが一度に呼ばれることを検証するため、モジュール効率について価値のあるテストを構築できます。
 
-Another related use is in the situation where an API has versions which behave
-differently. A programmer working on a new version may change the module to work with the
-new API version and unintentionally break the old version.  A test case
-which checks that the call happens properly for the old version can help avoid the
-problem.  In this situation it is very important to include version numbering in the test case
-name (see `Naming unit tests`_ below).
+もう 1 つの関連する用途は、
+API が異なる挙動をするバージョンを持っている場合です。新しいバージョンで作業しているプログラマーが、新しい API バージョンで動作するようにモジュールを変更して、
+意図せずに古いバージョンを壊してしまうことがあります。 この時、テストケースで、
+古いバージョンの呼び出しが正しく行われるかどうかを確認すると、
+この問題を回避するのに役立ちます。 このような状況では、テストケースの名前にバージョン番号を含めることが非常に重要です 
+(下記の「`ユニットテストの命名`_」を参照してください。)
 
-Providing specific design tests
+特定の設計テストの提供
 --------------------------------
 
-By building a requirement for a particular part of the
-code and then coding to that requirement, unit tests _can_ sometimes improve the code and
-help future developers understand that code.
+コードの特定の部分に対する要件を構築し、
+その要件に合わせてコーディングすることで、ユニットテストは、時にはコードを改善し、
+将来の開発者がそのコードを理解する _助けとなります_。
 
-Unit tests that test internal implementation details of code, on the other hand, almost
-always do more harm than good.  Testing that your packages to install are stored in a list
-would slow down and confuse a future developer who might need to change that list into a
-dictionary for efficiency. This problem can be reduced somewhat with clear test naming so
-that the future developer immediately knows to delete the test case, but it is often
-better to simply leave out the test case altogether and test for a real valuable feature
-of the code, such as installing all of the packages supplied as arguments to the module.
+一方で、コードの内部実装の詳細をテストするユニットテストは、
+ほとんどの場合、良いことよりも悪いことの方が多いです。 インストールするパッケージがリストに記載されているかどうかをテストすることは、
+効率化のためにそのリストをディクショナリーに変更を加える必要があったときに、
+将来の開発者の作業遅らせ、混乱させることになります。この問題は、テストの名前を明確にして、
+将来の開発者がそのテストケースを削除することがすぐに分かるようにすることで多少は軽減できますが、
+テストケースを完全に除外して、
+モジュールの引数として提供されるすべてのパッケージをインストールするなど、コードの中で本当に価値のある機能をテストする方が良いことがよくあります。
 
 
-How to unit test Ansible modules
+Ansible モジュールをユニットテストする方法
 ================================
 
-There are a number of techniques for unit testing modules.  Beware that most
-modules without unit tests are structured in a way that makes testing quite difficult and
-can lead to very complicated tests which need more work than the code.  Effectively using unit
-tests may lead you to restructure your code. This is often a good thing and leads
-to better code overall. Good restructuring can make your code clearer and easier to understand.
+モジュールのユニットテストにはいくつかの手法があります。 ユニットテストのないほとんどのモジュールは、
+テストを非常に困難にする方法で構造化されており
+コードよりも多くの作業を必要とする非常に複雑なテストにつながる可能性があることに注意してください。 ユニットテストを効果的に使用すると、
+コードを再構築することになるかもしれません。これは適していることが多く、
+全体的にコードがより適切になります。適切な再構築により、コードがより明確になり、理解しやすくなります。
 
 
-Naming unit tests
+ユニットテストの命名
 -----------------
 
-Unit tests should have logical names. If a developer working on the module being tested
-breaks the test case, it should be easy to figure what the unit test covers from the name.
-If a unit test is designed to verify compatibility with a specific software or API version
-then include the version in the name of the unit test.
+ユニットテストは論理的な名前が必要です。テストされるモジュールで作業している開発者がテストケースを壊してしまった場合、
+ユニットテストが何を対象としているのかが名前から簡単に分かるようにする必要があります。
+ユニットテストが特定のソフトウェアや API のバージョンとの互換性を検証するように設計されている場合は、
+ユニットテストの名前にバージョンを含めてください。
 
-As an example, ``test_v2_state_present_should_call_create_server_with_name()`` would be a
-good name, ``test_create_server()`` would not be.
+たとえば、``test_v2_state_present_should_call_create_server_with_name()`` は適切ですが、
+``test_create_server()`` は適切ではありません。
 
 
-Use of Mocks
+モックの使用
 ------------
 
-Mock objects (from https://docs.python.org/3/library/unittest.mock.html) can be very
-useful in building unit tests for special / difficult cases, but they can also
-lead to complex and confusing coding situations.  One good use for mocks would be in
-simulating an API. As for 'six', the 'mock' python package is bundled with Ansible (use
-``import ansible.compat.tests.mock``). See for example
+モックオブジェクト (https://docs.python.org/3/library/unittest.mock.html から) は、
+特別なケースや難しいケースのユニットテストを構築するのに非常に便利ですが、
+コーディングが複雑で紛らわしくなる場合があります。 モックの適切な使い方としては、
+API をシミュレートすることが挙げられます。「six」場合、
+python パッケージ「mock」は Ansible にバンドルされています ``import ansible.compat.tests.mock`` を使用してください)。例を参照してください。
 
-Ensuring failure cases are visible with mock objects
+モックオブジェクトで障害ケースを確実に可視化
 ----------------------------------------------------
 
-Functions like :meth:`module.fail_json` are normally expected to terminate execution. When you
-run with a mock module object this doesn't happen since the mock always returns another mock
-from a function call. You can set up the mock to raise an exception as shown above, or you can
-assert that these functions have not been called in each test. For example::
+:meth:`module.fail_json` のような関数は通常、実行を終了することが期待されます。モックモジュールオブジェクトを使用して実行すると、
+モックは常に関数呼び出しから別のモックを返すため、
+このようなことは起こりません。上記のように例外を発生させるようにモックを設定することもできますし、
+各テストでこれらの関数が呼び出されていないことを主張することもできます。例::
 
   module = MagicMock()
   function_to_test(module, argument)
   module.fail_json.assert_not_called()
 
-This applies not only to calling the main module but almost any other
-function in a module which gets the module object.
+これは、メインモジュールを呼び出す場合だけでなく、
+モジュールオブジェクトを取得するモジュール内の他のほとんどの関数を呼び出す場合にも適用されます。
 
 
-Mocking of the actual module
+実際のモジュールのモック化
 ----------------------------
 
-The setup of an actual module is quite complex (see `Passing Arguments`_ below) and often
-isn't needed for most functions which use a module. Instead you can use a mock object as
-the module and create any module attributes needed by the function you are testing. If
-you do this, beware that the module exit functions need special handling as mentioned
-above, either by throwing an exception or ensuring that they haven't been called. For example::
+実際のモジュールの設定は非常に複雑で (下記の `Passing Arguments`_ を参照)、
+ほとんどの場合、モジュールを使用するほとんどの関数では必要なくなります。代わりに、モックオブジェクトをモジュールとして使用し、
+テストしている関数に必要なモジュール属性を作成することができます。この場合、
+モジュールの終了関数は、例外を発生させるか、
+呼ばれていないことを確認するかのどちらかで、上記で述べたように特別な処理が必要になることに注意してください。例::
 
     class AnsibleExitJson(Exception):
         """Exception class to be raised by module.exit_json and caught by the test case"""
@@ -198,35 +198,35 @@ above, either by throwing an exception or ensuring that they haven't been called
         return = my_module.test_this_function(module, argument)
     module.fail_json.assert_not_called()
     assert return["changed"] == True
-
-API definition with unit test cases
+    
+ユニットテストケースでの API 定義
 -----------------------------------
 
-API interaction is usually best tested with the function tests defined in Ansible's
-integration testing section, which run against the actual API.  There are several cases
-where the unit tests are likely to work better.
+API のインタラクションは通常、Ansible の統合テストセクションで定義されている機能テストを使用してテストするのがベストですが、
+これは実際の API に対して実行されます。 ユニットテストの方が
+適しているケースもいくつかあります。
 
-Defining a module against an API specification
+API の仕様に対してモジュールを定義
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This case is especially important for modules interacting with web services, which provide
-an API that Ansible uses but which are beyond the control of the user.
+このケースは、Ansible が使用する API を提供しているが、
+ユーザーの制御が及ばない Web サービスと対話するモジュールにとって特に重要です。
 
-By writing a custom emulation of the calls that return data from the API, we can ensure
-that only the features which are clearly defined in the specification of the API are
-present in the message.  This means that we can check that we use the correct
-parameters and nothing else.
+API からデータを返す呼び出しのカスタムエミュレーションを書くことで、
+API の仕様で明確に定義されている機能のみが
+メッセージに含まれていることを確認できます。 つまり、正しいパラメーターを使用しているかどうかを確認し、
+それ以外は何も使用していないことを確認することができます。
 
 
-*Example:  in rds_instance unit tests a simple instance state is defined*::
+*例: rds_instance ユニットテストでは、単純なインスタンスの状態が定義されています*::
 
     def simple_instance_list(status, pending):
         return {u'DBInstances': [{u'DBInstanceArn': 'arn:aws:rds:us-east-1:1234567890:db:fakedb',
                                   u'DBInstanceStatus': status,
                                   u'PendingModifiedValues': pending,
                                   u'DBInstanceIdentifier': 'fakedb'}]}
-
-This is then used to create a list of states::
+    
+次に、これを使用して状態のリストを作成します。
 
     rds_client_double = MagicMock()
     rds_client_double.describe_db_instances.side_effect = [
@@ -240,59 +240,59 @@ This is then used to create a list of states::
         simple_instance_list('available', {}),
         simple_instance_list('available', {}),
     ]
-
-These states are then used as returns from a mock object to ensure that the ``await`` function
-waits through all of the states that would mean the RDS instance has not yet completed
+    
+これらの状態はモックオブジェクトからの戻り値として使用され、
+``await`` 関数が RDS インスタンスがまだ設定を完了していないことを意味するすべての状態を確実に待機するようにします。
 configuration::
 
    rds_i.await_resource(rds_client_double, "some-instance", "available", mod_mock,
                         await_pending=1)
    assert(len(sleeper_double.mock_calls) > 5), "await_pending didn't wait enough"
 
-By doing this we check that the ``await`` function will keep waiting through
-potentially unusual that it would be impossible to reliably trigger through the
-integration tests but which happen unpredictably in reality.
+これを実行することで、
+統合テストでは確実に誘発させることができないにもかかわらず、
+現実には予測できないような、潜在的に異常なことが起こる可能性がある場合に ``await`` 関数が待機し続けるかどうかをチェックしています。
 
-Defining a module to work against multiple API versions
+複数の API バージョンに対して動作するモジュールの定義
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This case is especially important for modules interacting with many different versions of
-software; for example, package installation modules that might be expected to work with
-many different operating system versions.
+このケースは、
+相互作用するソフトウェアのバージョンがいくつも異なるモジュールにとって特に重要です。
+たとえば、多数のバージョンのオペレーティングシステムで動作することが予想されるパッケージインストールモジュールなどです。
 
-By using previously stored data from various versions of an API we can ensure that the
-code is tested against the actual data which will be sent from that version of the system
-even when the version is very obscure and unlikely to be available during testing.
+様々なバージョンの API から、以前に保存されたデータを使用することで、
+バージョンが非常に曖昧でテスト中に利用できそうにない場合でも、
+そのバージョンのシステムから送信される実際のデータに対してコードがテストされることを確実にすることができます。
 
-Ansible special cases for unit testing
+Ansible ユニットテストの特殊なケース
 ======================================
 
-There are a number of special cases for unit testing the environment of an Ansible module.
-The most common are documented below, and suggestions for others can be found by looking
-at the source code of the existing unit tests or asking on the Ansible IRC channel or mailing
-lists.
+Ansible モジュールの環境に対してユニットテストするための特別なケースがいくつかあります。
+最も一般的なものを以下に示します。その他の提案については、
+既存のユニットテストのソースコードを確認したり、
+Ansible の IRC チャンネルやメーリングリストで質問してください。
 
-Module argument processing
+モジュール引数処理
 --------------------------
 
-There are two problems with running the main function of a module:
+モジュールの主な関数の実行には、以下の 2 つの問題があります。
 
-* Since the module is supposed to accept arguments on ``STDIN`` it is a bit difficult to
-  set up the arguments correctly so that the module will get them as parameters.
-* All modules should finish by calling either the :meth:`module.fail_json` or
-  :meth:`module.exit_json`, but these won't work correctly in a testing environment.
+* モジュールは ``STDIN`` で引数を受け入れる必要があるため、
+  引数を正しく設定してモジュールがパラメーターとして受け取るようにするのは少し難しくなります。
+* すべてのモジュールは :meth:`module.fail_json`、
+  または :meth:`module.exit_json` のいずれかを呼び出して終了する必要がありますが、テスト環境ではこれらは正しく動作しません。
 
-Passing Arguments
+引数の渡し方
 -----------------
 
-.. This section should be updated once https://github.com/ansible/ansible/pull/31456 is
-   closed since the function below will be provided in a library file.
+..以下の関数はライブラリーファイルで提供されているため、
+   https://github.com/ansible/ansible/pull/31456 が解決したら、本セクションを一度更新する必要があります。
 
-To pass arguments to a module correctly, use the ``set_module_args`` method which accepts a dictionary
-as its parameter. Module creation and argument processing is
-handled through the :class:`AnsibleModule` object in the basic section of the utilities. Normally
-this accepts input on ``STDIN``, which is not convenient for unit testing. When the special
-variable is set it will be treated as if the input came on ``STDIN`` to the module. Simply call that function before setting up your module::
+モジュールに正しく引数を渡すには、
+ディクショナリーをパラメータとして受け取る ``set_module_args`` メソッドを使用します。モジュールの作成や引数の処理は、
+ユーティリティーの基本セクションにある :class:`AnsibleModule` オブジェクトを使用して行います。通常は、
+``STDIN`` で入力を受け付けますが、これはユニットテストには不便です。特別な変数が設定されている場合は、
+モジュールへの入力が ``STDIN`` であったかのように処理されます。モジュールを設定する前にこの関数を呼び出すだけです。
 
     import json
     from units.modules.utils import set_module_args
@@ -305,24 +305,24 @@ variable is set it will be treated as if the input came on ``STDIN`` to the modu
             'password': 'pass',
         })
 
-Handling exit correctly
+終了を適切に処理
 -----------------------
 
-.. This section should be updated once https://github.com/ansible/ansible/pull/31456 is
-   closed since the exit and failure functions below will be provided in a library file.
+..以下の終了および失敗の関数はライブラリーファイルで提供されるため、
+   https://github.com/ansible/ansible/pull/31456 が解決したら、本セクションを一度更新する必要があります。
 
-The :meth:`module.exit_json` function won't work properly in a testing environment since it
-writes error information to ``STDOUT`` upon exit, where it
-is difficult to examine. This can be mitigated by replacing it (and :meth:`module.fail_json`) with
-a function that raises an exception::
+:meth:`module.exit_json` 関数は、
+終了時にエラー情報を ``STDOUT``に書き込むため、
+テスト環境では適切に動作しません。これは、この関数 (および :meth:`module.fail_json`) を、
+例外を発生させる関数に置き換えることで緩和できます。
 
     def exit_json(*args, **kwargs):
         if 'changed' not in kwargs:
             kwargs['changed'] = False
         raise AnsibleExitJson(kwargs)
 
-Now you can ensure that the first function called is the one you expected simply by
-testing for the correct exception::
+これで、最初に呼び出された関数が正しい例外であるかどうかをテストするだけで、
+期待したものであることを確認することができるようになりました。
 
     def test_returned_value(self):
         set_module_args({
@@ -334,15 +334,15 @@ testing for the correct exception::
         with self.assertRaises(AnsibleExitJson) as result:
             my_module.main()
 
-The same technique can be used to replace :meth:`module.fail_json` (which is used for failure
-returns from modules) and for the ``aws_module.fail_json_aws()`` (used in modules for Amazon
-Web Services).
+:meth:`module.fail_json` (モジュールからの失敗の戻り値に使用される) や、
+``aws_module.fail_json_aws()`` (Amazon Web Services 用のモジュールで使用される) 
+を置き換えるのと同じ手法を使うことができます。
 
-Running the main function
+主な関数の実行
 -------------------------
 
-If you do want to run the actual main function of a module you must import the module, set
-the arguments as above, set up the appropriate exit exception and then run the module::
+モジュールにおける主な実関数を実行する場合は、モジュールをインポートし、上記のように引数を設定し、
+適切な終了例外を設定してからモジュールを実行する必要があります。
 
     # This test is based around pytest's features for individual test functions
     import pytest
@@ -358,13 +358,13 @@ the arguments as above, set up the appropriate exit exception and then run the m
         my_module.main()
 
 
-Handling calls to external executables
+外部実行ファイルへの呼び出しの処理
 --------------------------------------
 
-Module must use :meth:`AnsibleModule.run_command` in order to execute an external command. This
-method needs to be mocked:
+モジュールは、外部コマンドを実行するのに :meth:`AnsibleModule.run_command` を使用する必要があります。このメソッドは、
+モックする必要があります。
 
-Here is a simple mock of :meth:`AnsibleModule.run_command` (taken from :file:`test/units/modules/packaging/os/test_rhn_register.py`)::
+以下は、:meth:`AnsibleModule.run_command` (:file:`test/units/modules/packaging/os/test_rhn_register.py` から入手) の簡単なモック例です。
 
         with patch.object(basic.AnsibleModule, 'run_command') as run_command:
             run_command.return_value = 0, '', ''  # successful execution, no output
@@ -377,11 +377,11 @@ Here is a simple mock of :meth:`AnsibleModule.run_command` (taken from :file:`te
         self.assertFalse(run_command.called)
 
 
-A Complete Example
+完全な例
 ------------------
 
-The following example is a complete skeleton that reuses the mocks explained above and adds a new
-mock for :meth:`Ansible.get_bin_path`::
+以下の例は、上記のモックを再利用し、
+:meth:`Ansible.get_bin_path` 用に新たにモックを追加した完全なスケルトンです::
 
     import json
 
@@ -465,12 +465,12 @@ mock for :meth:`Ansible.get_bin_path`::
             mock_run_command.assert_called_once_with('/usr/bin/my_command --value 10 --name test')
 
 
-Restructuring modules to enable testing module set up and other processes
+テストモジュールの設定などを可能にするためのモジュールの再構築
 -------------------------------------------------------------------------
 
-Often modules have a ``main()`` function which sets up the module and then performs other
-actions. This can make it difficult to check argument processing. This can be made easier by
-moving module configuration and initialization into a separate function. For example::
+多くの場合、モジュールには、
+モジュールを設定してからその他のアクションを実行する ``main()`` 関数があります。これにより、引数処理の確認が困難になることがあります。これは、
+モジュールの設定と初期化を別の関数に移すことで簡単にできます。例::
 
     argument_spec = dict(
         # module function variables
@@ -497,8 +497,8 @@ moving module configuration and initialization into a separate function. For exa
         conn = setup_client(module)
         return_dict = run_task(module, conn)
         module.exit_json(**return_dict)
-
-This now makes it possible to run tests against the module initiation function::
+    
+これにより、モジュールの開始関数に対してテストを実行できるようになりました。
 
     def test_rds_module_setup_fails_if_db_instance_identifier_parameter_missing():
         # db_instance_identifier parameter is missing
@@ -510,54 +510,54 @@ This now makes it possible to run tests against the module initiation function::
         with self.assertRaises(AnsibleFailJson) as result:
             self.module.setup_json
 
-See also ``test/units/module_utils/aws/test_rds.py``
+``test/units/module_utils/aws/test_rds.py`` を併せて参照してください。
 
-Note that the ``argument_spec`` dictionary is visible in a module variable. This has
-advantages, both in allowing explicit testing of the arguments and in allowing the easy
-creation of module objects for testing.
+``argument_spec`` ディクショナリーは、モジュール変数に表示されることに注意してください。これは、
+引数の明示的なテストを可能にし、
+テスト用のモジュールオブジェクトを簡単に作成できるという利点があります。
 
-The same restructuring technique can be valuable for testing other functionality, such as the part of the module which queries the object that the module configures.
+この再構築の手法は、モジュールが設定したオブジェクトを問い合わせるモジュールの部分など、その他の機能をテストする場合にも役に立ちます。
 
-Traps for maintaining Python 2 compatibility
+Python 2 の互換性を維持するためのトラップ
 ============================================
 
-If you use the ``mock`` library from the Python 2.6 standard library, a number of the
-assert functions are missing but will return as if successful.  This means that test cases should take great care *not* use
-functions marked as _new_ in the Python 3 documentation, since the tests will likely always
-succeed even if the code is broken when run on older versions of Python.
+``Python`` 2.6 標準ライブラリーの ``mock`` ライブラリーを使用する場合は、
+多くの assert 関数が欠落していますが、成功したかのように返されます。 これは、Python 3 のドキュメントで _new_ というマークが付いている関数を *使用しない* ように、
+テストケースが細心の注意を払う必要があることを示しています。
+これは、古いバージョンの Python で実行したときにコードが壊れていても、テストは常に成功する可能性が高いからです。
 
-A helpful development approach to this should be to ensure that all of the tests have been
-run under Python 2.6 and that each assertion in the test cases has been checked to work by breaking
-the code in Ansible to trigger that failure.
+これに役立つ開発アプローチは、
+すべてのテストが Python 2.6 で実行されていることと、
+テストケース内の各アサーションが Ansible でコードを壊してその失敗を誘発することで動作することが確認されているという点を確認することです。
 
-.. warning:: Maintain Python 2.6 compatibility
+.. warning:: Python 2.6 互換性の維持
 
-    Please remember that modules need to maintain compatibility with Python 2.6 so the unittests for
-    modules should also be compatible with Python 2.6.
+    モジュールは Python 2.6 との互換性を維持する必要があるため、
+    モジュールのユニットテストも、Python 2.6 との互換性を維持する必要があることに注意してください。
 
 
 .. seealso::
 
    :ref:`testing_units`
-       Ansible unit tests documentation
+       Ansible unit テストドキュメント
    :ref:`testing_running_locally`
-       Running tests locally including gathering and reporting coverage data
+       カバレージデータの収集とレポートを含む、ローカルでのテストの実行
    :ref:`developing_modules_general`
-       Get started developing a module
-   `Python 3 documentation - 26.4. unittest — Unit testing framework <https://docs.python.org/3/library/unittest.html>`_
-       The documentation of the unittest framework in python 3
-   `Python 2 documentation - 25.3. unittest — Unit testing framework <https://docs.python.org/3/library/unittest.html>`_
-       The documentation of the earliest supported unittest framework - from Python 2.6
-   `pytest: helps you write better programs <https://docs.pytest.org/en/latest/>`_
-       The documentation of pytest - the framework actually used to run Ansible unit tests
-   `Development Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Mailing list for development topics
-   `Testing Your Code (from The Hitchhiker's Guide to Python!) <https://docs.python-guide.org/writing/tests/>`_
-       General advice on testing Python code
-   `Uncle Bob's many videos on YouTube <https://www.youtube.com/watch?v=QedpQjxBPMA&list=PLlu0CT-JnSasQzGrGzddSczJQQU7295D2>`_
-       Unit testing is a part of the of various philosophies of software development, including
-       Extreme Programming (XP), Clean Coding.  Uncle Bob talks through how to benefit from this
-   `"Why Most Unit Testing is Waste" <https://rbcs-us.com/documents/Why-Most-Unit-Testing-is-Waste.pdf>`_
-       An article warning against the costs of unit testing
-   `'A Response to "Why Most Unit Testing is Waste"' <https://henrikwarne.com/2014/09/04/a-response-to-why-most-unit-testing-is-waste/>`_
-       An response pointing to how to maintain the value of unit tests
+       モジュール開発を始める
+   `Python 3 ドキュメント - 26.4. ユニットテスト - ユニットテストのフレームワーク <https://docs.python.org/3/library/unittest.html>`_
+       Python 3 におけるユニットテストフレームワークのドキュメント
+   `Python 2 ドキュメント - 25.3. ユニットテスト - ユニットテストのフレームワーク <https://docs.python.org/3/library/unittest.html>`_
+       サポートされている初期のユニットテストフレームワークのドキュメント (Python 2.6)
+   `pytest (より優れたプログラムを書き込むのに役立ちます) <https://docs.pytest.org/en/latest/>`_
+       pytest のドキュメント - Ansible ユニットテストの実行に実際に使用されているフレームワーク
+   `開発メーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       開発トピックのメーリングリスト
+   `コードのテスト (「The Hitchhiker's Guide to Python!」より) <https://docs.python-guide.org/writing/tests/>`_
+       Python コードのテストに関する一般的なアドバイス
+   `YouTube で公開されている Uncle Bob による多数の動画 <https://www.youtube.com/watch?v=QedpQjxBPMA&list=PLlu0CT-JnSasQzGrGzddSczJQQU7295D2>`_
+       ユニットテストは、
+       Extreme Programming (XP)、クリーンコーディングを含むソフトウェア開発の様々な哲学の一部です。 Uncle Bob は、どのようにしてこの恩恵を受けることができるのかを説明します。
+   `「Why Most Unit Testing is Waste」 <https://rbcs-us.com/documents/Why-Most-Unit-Testing-is-Waste.pdf>`_
+       ユニットテストの大半が無駄である理由
+   `「Why Most Unit Testing is Waste」への回答<https://henrikwarne.com/2014/09/04/a-response-to-why-most-unit-testing-is-waste/>`_
+       ユニットテストの価値を維持する方法を指摘した回答

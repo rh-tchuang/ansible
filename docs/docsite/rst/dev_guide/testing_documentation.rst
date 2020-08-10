@@ -3,29 +3,29 @@
 .. _testing_module_documentation:
 
 ****************************
-Testing module documentation
+モジュールドキュメンテーションのテスト
 ****************************
 
-Before you submit a module for inclusion in the main Ansible repo, you must test your module documentation for correct HTML rendering and to ensure that the argspec matches the documentation in your Python file. The community pages offer more information on :ref:`testing reStructuredText documentation <testing_documentation_locally>`.
+メインの Ansible リポジトリーに組み込むモジュールを送信する前に、正しい HTML レンダリングついてモジュールドキュメントをテストする必要があります。また、argspec が Python ファイルのドキュメントと一致することを確認する必要があります。コミュニティーページは、:ref:`reStructuredText ドキュメントのテスト <testing_documentation_locally>` で詳細を提供しています。
 
-To check the HTML output of your module documentation:
+モジュールドキュメントの HTML 出力を確認するには、次のコマンドを実行します。
 
-#. Ensure working :ref:`development environment <environment_setup>`.
-#. Install required Python packages (drop '--user' in venv/virtualenv):
+#. 動作する :ref:`開発環境` <environment_setup> を確保します。
+#. 必要な Python パッケージをインストールします (venv/virtualenv では「--user」を指定しません)。
 
    .. code-block:: bash
 
       pip install --user -r requirements.txt
       pip install --user -r docs/docsite/requirements.txt
 
-#. Ensure your module is in the correct directory: ``lib/ansible/modules/$CATEGORY/mymodule.py``.
-#. Build HTML from your module documentation: ``MODULES=mymodule make webdocs``.
-#. To build the HTML documentation for multiple modules, use a comma-separated list of module names: ``MODULES=mymodule,mymodule2 make webdocs``.
-#. View the HTML page at ``file:///path/to/docs/docsite/_build/html/modules/mymodule_module.html``.
+#. モジュールが適切なディレクトリー (``lib/ansible/modules/$CATEGORY/mymodule.py``) にあることを確認してください。
+#. モジュールドキュメント ``modules=mymodule make webdocs`` から HTML を構築します。
+#.  複数のモジュールの HTML ドキュメントを作成するには、モジュール名をコンマで区切ったリスト (``MODULES=mymodule,mymodule2 make webdocs``) を使用します。
+#. ``file:///path/to/docs/docsite/_build/html/modules/mymodule_module.html`` で HTML ページを表示します。
 
-To ensure that your module documentation matches your ``argument_spec``:
+モジュールのドキュメントが ``argument_spec`` と一致するようにするには、以下を使用します。
 
-#. Install required Python packages (drop '--user' in venv/virtualenv):
+#. 必要な Python パッケージをインストールします (venv/virtualenv では「--user」を指定しません)。
 
    .. code-block:: bash
 

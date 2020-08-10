@@ -1,187 +1,187 @@
 .. _developing_testing:
 
 ***************
-Testing Ansible
+Ansible のテスト
 ***************
 
-.. contents:: Topics
+.. contents:: トピック
    :local:
 
 
-Why test your Ansible contributions?
+Ansible への貢献をテストする理由
 ====================================
 
-If you're a developer, one of the most valuable things you can do is to look at GitHub issues and help fix bugs, since bug-fixing is almost always prioritized over feature development.  Even for non-developers, helping to test pull requests for bug fixes and features is still immensely valuable.
+開発者にとって、最も価値のあることの 1 つが、GitHub の問題を確認バグ修正を手伝うことです。バグ修正は、ほとんど常に、機能開発よりも優先されるためです。 開発者ではなくても、バグの修正や機能のプル要求のテストを手伝うことは非常に価値のあることです。
 
-Ansible users who understand how to write playbooks and roles should be able to test their work.  GitHub pull requests will automatically run a variety of tests (e.g., Shippable) that show bugs in action.  However, contributors must also test their work outside of the automated GitHub checks and show evidence of these tests in the PR to ensure that their work will be more likely to be reviewed and merged.
+Ansible ユーザーは、Playbook とロールの作成方法を理解していれば、自身が作成した作業をテストできるはずです。 GitHub のプル要求は、バグの動作を示すさまざまなテスト (Shippable など) を自動的に実行します。 ただし、貢献者は、自動化された GitHub チェック以外でも自身の作業をテストし、その証拠を PR で示すと、その作業がレビューされてマージされる可能性が高くなります。
 
-Read on to learn how Ansible is tested, how to test your contributions locally, and how to extend testing capabilities.
+Ansible のテスト方法、貢献をローカルでテストする方法、およびテスト機能を拡張する方法を説明します。
 
 
 
-Types of tests
+テストの種類
 ==============
 
-At a high level we have the following classifications of tests:
+テストは、大きく分けて以下のように分類されます。
 
 :compile:
   * :ref:`testing_compile`
-  * Test python code against a variety of Python versions.
+  * さまざまな Python バージョンに対して python コードのテスト
 :sanity:
   * :ref:`testing_sanity`
-  * Sanity tests are made up of scripts and tools used to perform static code analysis.
-  * The primary purpose of these tests is to enforce Ansible coding standards and requirements.
+  * 健全性テストは、静的なコード分析の実行に使用されるスクリプトとツールで構成されています。
+  * これらのテストの主な目的は、Ansible コーディングの標準と要件を実施することです。
 :integration:
   * :ref:`testing_integration`
-  * Functional tests of modules and Ansible core functionality.
+  * モジュールおよび Ansible コア機能の機能テスト
 :units:
   * :ref:`testing_units`
-  * Tests directly against individual parts of the code base.
+  * コードベースの個々の部分に対して直接テストを行います。
 
 
-If you're a developer, one of the most valuable things you can do is look at the GitHub
-issues list and help fix bugs.  We almost always prioritize bug fixing over feature
-development.
+開発者にとって、最も価値のあることの 1 つが、
+GitHub の問題一覧を確認してバグ修正を手伝うことです。 ほとんどの場合、
+機能開発よりもバグ修正が優先されます。
 
-Even for non developers, helping to test pull requests for bug fixes and features is still
-immensely valuable.  Ansible users who understand writing playbooks and roles should be
-able to add integration tests and so GitHub pull requests with integration tests that show
-bugs in action will also be a great way to help.
+開発者ではなくても、
+バグの修正や機能のプル要求のテストを手伝うことは非常に価値のあることです。 Ansible ユーザーが Playbook やロールの書き方を熟知していれば統合テストを追加できるため、
+バグが実際に動かしている様子を示す統合テストが付いた GitHub プル要求も、
+大きな助けになるでしょう。
 
 
-Testing within GitHub & Shippable
+GitHub および Shippable でのテスト
 =================================
 
 
-Organization
+組織
 ------------
 
-When Pull Requests (PRs) are created they are tested using Shippable, a Continuous Integration (CI) tool. Results are shown at the end of every PR.
+プル要求 (PR: Pull Requests) が作成されると、継続的インテグレーション (CI) ツールである Shippable を使用してテストが行われます。結果はすべての PR の最後に表示されます。
 
-When Shippable detects an error and it can be linked back to a file that has been modified in the PR then the relevant lines will be added as a GitHub comment. For example::
+Saltppable がエラーを検出し、それが PR で変更されたファイルにリンクされると、関連する行が GitHub のコメントとして追加されます。例::
 
    The test `ansible-test sanity --test pep8` failed with the following errors:
 
    lib/ansible/modules/network/foo/bar.py:509:17: E265 block comment should start with '# '
 
    The test `ansible-test sanity --test validate-modules` failed with the following errors:
-   lib/ansible/modules/network/foo/bar.py:0:0: E307 version_added should be 2.4. Currently 2.3
-   lib/ansible/modules/network/foo/bar.py:0:0: E316 ANSIBLE_METADATA.metadata_version: required key not provided @ data['metadata_version']. Got None
+   lib/ansible/modules/network/foo/bar.py:0:0: E307 version_added should be 2.4.Currently 2.3
+   lib/ansible/modules/network/foo/bar.py:0:0: E316 ANSIBLE_METADATA.metadata_version: required key not provided @ data['metadata_version'].Got None
 
-From the above example we can see that ``--test pep8`` and ``--test validate-modules`` have identified issues. The commands given allow you to run the same tests locally to ensure you've fixed the issues without having to push your changed to GitHub and wait for Shippable, for example:
+上記の例では、``--test pep8`` および ``--test validate-modules`` が問題を特定していることが分かります。このコマンドを使用すれば、変更した内容を GitHub にプッシュしたり、Shippable を待たなくても、ローカルで同じテストを実行して問題が修正されたことを確認できます。
 
-If you haven't already got Ansible available, use the local checkout by running::
+Ansible がまだ利用できるようになっていない場合は、ローカルでチェックアウトを実行してください。
 
   source hacking/env-setup
 
-Then run the tests detailed in the GitHub comment::
+次に、GitHub コメントで説明するテストを実行します。
 
   ansible-test sanity --test pep8
   ansible-test sanity --test validate-modules
 
-If there isn't a GitHub comment stating what's failed you can inspect the results by clicking on the "Details" button under the "checks have failed" message at the end of the PR.
+GitHub のコメントに何が失敗したかが書かれていない場合は、PR の末尾にある「checks have failed」というメッセージの下にある「Details」ボタンをクリックして結果を確認することができます。
 
-Rerunning a failing CI job
+失敗した CI ジョブの再実行
 --------------------------
 
-Occasionally you may find your PR fails due to a reason unrelated to your change. This could happen for several reasons, including:
+時折、変更とは関係のない理由で PR が失敗することがあります。これには、以下のような理由が考えられます。
 
-* a temporary issue accessing an external resource, such as a yum or git repo
-* a timeout creating a virtual machine to run the tests on
+* yum や git リポジトリーなどの外部リソースにアクセスする際に一時的に問題が発生した場合。
+* テストを実行するための仮想マシンを作成するタイムアウト。
 
-If either of these issues appear to be the case, you can rerun the Shippable test by:
+いずれかの問題が発生しているようであれば、以下の方法で Shippable テストを再実行できます。
 
-* closing and re-opening the PR
-* making another change to the PR and pushing to GitHub
+* PR を閉じて再度開く。
+* PR に何らかの変更を加えて GitHub にプッシュする。
 
-If the issue persists, please contact us in ``#ansible-devel`` on Freenode IRC.
+問題が解決しない場合は、Freenode IRC の ``#ansible-devel`` にお問い合わせください。
 
 
-How to test a PR
+PR をテストする方法
 ================
 
-Ideally, code should add tests that prove that the code works. That's not always possible and tests are not always comprehensive, especially when a user doesn't have access to a wide variety of platforms, or is using an API or web service. In these cases, live testing against real equipment can be more valuable than automation that runs against simulated interfaces. In any case, things should always be tested manually the first time as well.
+理想的には、コードが機能することを証明するテストを追加することが推奨されます。特に、ユーザーが様々なプラットフォームにアクセスできない場合、または API や Web サービスを使用している場合は、これが必ずしも可能ではなく、テストが必ずしも包括的ではありません。このような場合は、シミュレーションされたインターフェースに対して実行される自動化よりも、実際の機器に対するライブテストの方が有益かもしれません。いずれにせよ、最初の段階でも常に手動でテストする必要があります。
 
-Thankfully, helping to test Ansible is pretty straightforward, assuming you are familiar with how Ansible works.
+Ansible の動作を熟知していれば、Ansible のテストを手伝うことは非常に簡単です。
 
-Setup: Checking out a Pull Request
+設定: プル要求のチェック
 ----------------------------------
 
-You can do this by:
+これは、以下の方法で実行できます。
 
-* checking out Ansible
-* making a test branch off the main branch
-* merging a GitHub issue
-* testing
-* commenting on that particular issue on GitHub
+* Ansible のチェックアウト
+* メインブランチからのテストブランチの作成
+* GitHub の問題のマージ
+* テスト
+* GitHub に特定の問題についてのコメント
 
-Here's how:
+以下に、実行する方法を説明します。
 
 .. warning::
-   Testing source code from GitHub pull requests sent to us does have some inherent risk, as the source code
-   sent may have mistakes or malicious code that could have a negative impact on your system. We recommend
-   doing all testing on a virtual machine, whether a cloud instance, or locally.  Some users like Vagrant
-   or Docker for this, but they are optional. It is also useful to have virtual machines of different Linux or
-   other flavors, since some features (apt vs. yum, for example) are specific to those OS versions.
+   GitHub のプル要求から送られてきたソースコードをテストすることにはリスクが伴います。
+   送られてきたソースコードには、間違いや悪意のあるコードが含まれていて、システムに影響を及ぼす可能性があるからです。すべてのテストは、
+   仮想マシン上で行うことが推奨されます。クラウドインスタンスでもローカルでもかまいません。 このため、Vagrant や Docker を好んで使用するユーザーもいますが、
+   これは任意です。また、その OS のバージョンに固有の機能 (apt、yum など) もいくつかあるため、
+   Linux などの様々なフレーバーが使用されている仮想マシンを用意しておくと便利です。
 
 
-Create a fresh area to work::
+作業用に新しい領域を作成します::
 
 
    git clone https://github.com/ansible/ansible.git ansible-pr-testing
    cd ansible-pr-testing
 
-Next, find the pull request you'd like to test and make note of the line at the top which describes the source
-and destination repositories. It will look something like this::
+次に、テストするプル要求を見つけ、
+その上部にあるソースと宛先のリポジトリーを記述した行を書き留めます。以下のようになります。
 
    Someuser wants to merge 1 commit into ansible:devel from someuser:feature_branch_name
 
-.. note:: Only test ``ansible:devel``
+.. note:: ``ansible:devel`` テストのみ
 
-   It is important that the PR request target be ``ansible:devel``, as we do not accept pull requests into any other branch. Dot releases are cherry-picked manually by Ansible staff.
+   他のブランチへのプル要求は使用できないため、PR 要求のターゲットは ``ansible:devel`` にすることが重要です。ドットリリースは、Ansible のスタッフが入念に選択しています。
 
-The username and branch at the end are the important parts, which will be turned into git commands as follows::
+末尾の username とブランチは重要な部分になります。以下のように git コマンドに変換されます。
 
    git checkout -b testing_PRXXXX devel
    git pull https://github.com/someuser/ansible.git feature_branch_name
 
-The first command creates and switches to a new branch named ``testing_PRXXXX``, where the XXXX is the actual issue number associated with the pull request (for example, 1234). This branch is based on the ``devel`` branch. The second command pulls the new code from the users feature branch into the newly created branch.
+最初のコマンドは、``testing_PRXXXX`` という名前の新しいブランチを作成し、切り替えます。XXXX は、プル要求に関連付けられる実際の問題 (issue) の番号です (1234 など)。このブランチは、``devel`` ブランチに基づいています。2 つ目のコマンドは、users 機能ブランチから、新たに作成されたブランチに新規コードをプルします。
 
 .. note::
-   If the GitHub user interface shows that the pull request will not merge cleanly, we do not recommend proceeding if you are not somewhat familiar with git and coding, as you will have to resolve a merge conflict. This is the responsibility of the original pull request contributor.
+   GitHub ユーザーインターフェースで、プル要求が正常にマージされないと示された場合は、マージの競合を解決しなければならないため、git およびコーディングにあまり精通していない場合は、続行しないことが推奨されます。これは、元のプル要求の投稿者の責任です。
 
 .. note::
-   Some users do not create feature branches, which can cause problems when they have multiple, unrelated commits in their version of ``devel``. If the source looks like ``someuser:devel``, make sure there is only one commit listed on the pull request.
+   一部のユーザーは機能ブランチを作成しないため、``devel`` のバージョンに関連性のないコミットが複数ある場合に、問題が発生する可能性があります。ソースが ``someuser:devel`` のように表示される場合は、プル要求に記載されているコミットが 1 つだけであることを確認してください。
 
-The Ansible source includes a script that allows you to use Ansible directly from source without requiring a
-full installation that is frequently used by developers on Ansible.
+Ansible のソースには、
+Ansible の開発者が頻繁に使用するフルインストールを必要とせず、ソースから直接 Ansible を使えるようにするスクリプトが含まれています。
 
-Simply source it (to use the Linux/Unix terminology) to begin using it immediately::
+ソースを作成するだけ (Linux/Unix の用語を使用するために) で、すぐに使い始めることができます。
 
    source ./hacking/env-setup
 
-This script modifies the ``PYTHONPATH`` environment variables (along with a few other things), which will be temporarily
-set as long as your shell session is open.
+このスクリプトは、``PYTHONPATH`` 環境変数を変更します (他にもいくつかあります)。
+これは、シェルセッションが開いている間は一時的に設定されます。
 
-Testing the Pull Request
+プル要求のテスト
 ------------------------
 
-At this point, you should be ready to begin testing!
+この時点でテストを開始する準備が整いました。
 
-Some ideas of what to test are:
+何をテストするかのアイデアをいくつか挙げてみましょう。
 
-* Create a test Playbook with the examples in and check if they function correctly
-* Test to see if any Python backtraces returned (that's a bug)
-* Test on different operating systems, or against different library versions
+* 例題を含むテスト Playbook を作成し、それらが正しく機能するかどうかを確認します。
+* Python のバックトレースが返されているかどうかをテストします (これはバグです)。
+* 異なるオペレーティングシステムで、または異なるバージョンのライブラリーに対してテストします。
 
 
-Any potential issues should be added as comments on the pull request (and it's acceptable to comment if the feature works as well), remembering to include the output of ``ansible --version``
+潜在的な問題があれば、プル要求にコメントを追加する必要があります (機能が正常に動作する場合もコメントしてもかまいません)。忘れずに ``ansible --version`` の出力を転載してください。
 
-Example::
+例:
 
-   Works for me! Tested on `Ansible 2.3.0`.  I verified this on CentOS 6.5 and also Ubuntu 14.04.
+   Works for me!Tested on `Ansible 2.3.0`. I verified this on CentOS 6.5 and also Ubuntu 14.04.
 
-If the PR does not resolve the issue, or if you see any failures from the unit/integration tests, just include that output instead:
+PR が問題を解決しない場合や、ユニット/統合テストでエラーが発生した場合には、代わりにその出力を転載してください。
 
    | This doesn't work for me.
    |
@@ -193,25 +193,25 @@ If the PR does not resolve the issue, or if you see any failures from the unit/i
    |   some other output
    |   \```
 
-Code Coverage Online
+オンラインのコードカバレージ
 ````````````````````
 
-`The online code coverage reports <https://codecov.io/gh/ansible/ansible>`_ are a good way
-to identify areas for testing improvement in Ansible.  By following red colors you can
-drill down through the reports to find files which have no tests at all.  Adding both
-integration and unit tests which show clearly how code should work, verify important
-Ansible functions and increase testing coverage in areas where there is none is a valuable
-way to help improve Ansible.
+「`オンラインのコードカバレージレポート <https://codecov.io/gh/ansible/ansible>`_」は、
+Ansible のテストの改善点を特定するのに適しています。 赤い色を追ってレポートを掘り下げていけば、
+テストが存在しないファイルを調べることができます。 コードがどのように動作するかを明確に示す統合テストとユニットテストの両方を追加し、
+重要な Ansible 機能を検証し、
+テストがない領域のテストカバレージを高めることは、
+Ansible の改善に役立つ有益な方法です。
 
-The code coverage reports only cover the ``devel`` branch of Ansible where new feature
-development takes place.  Pull requests and new code will be missing from the codecov.io
-coverage reports so local reporting is needed.  Most ``ansible-test`` commands allow you
-to collect code coverage, this is particularly useful to indicate where to extend
-testing. See :ref:`testing_running_locally` for more information.
+コードカバレージレポートは、
+新機能の開発が行われる Ansible の ``devel`` ブランチのみを対象としています。 プル要求や新しいコードは codecov.io のカバレージレポートには含まれていないため、
+ローカルでのレポートが必要になります。 ほとんどの ``ansible-test`` コマンドで、
+コードカバレージを収集することができます。
+これは特に拡張先を特定するのに便利です。詳細は、:ref:`testing_running_locally` を参照してください。
 
 
-Want to know more about testing?
+テストに関する詳細情報
 ================================
 
-If you'd like to know more about the plans for improving testing Ansible then why not join the
-`Testing Working Group <https://github.com/ansible/community/blob/master/meetings/README.md>`_.
+Ansible テストを改善する詳細な計画を確認したい場合は、
+「`Testing Working Group <https://github.com/ansible/community/blob/master/meetings/README.md>`_にご参加ください。

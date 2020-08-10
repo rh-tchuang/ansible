@@ -3,7 +3,7 @@
 ``````````````````````````````````````
 登録商標に TM、SM、および ® を使用することが重要な理由
 
-商標が米国特許商標局に登録される前に、TM または SM の記号を使用することは、製品が商品用かサービス用かによって異なります。TM または SM は、登録される前から、Ansible がそのマークに対する権利を主張していることを公に通知するため、TM または SM を使用することが重要です。 
+商標が米国特許商標局に登録される前に、TM または SM のどちらの記号を使用するのが適切かは、製品が商品用かサービス用かによって異なります。TM または SM は、登録される前から、Ansible がそのマークに対する権利を主張していることを公に通知するため、TM または SM を使用することが重要です。 
 
 商標が登録されたら、TM または SM の代わりにシンボルを使用することが適切です。Ansible がその権利を完全に保護する場合は、シンボルと商標を組み合わせて使用する必要があります。これらのマークを保護しないと、アスピリン、トランポリン、エスカレーターなどのように、権利を失う場合があります。
 
@@ -20,15 +20,15 @@
 * 文章の本文に Ansible 商標を使用する場合は、目立つ場所、通常は脚注に次のような行を追加する必要があります。
 
     登録商標の場合:
-    - [Name of Trademark] is a registered trademark of Red Hat, Inc. in the United States and other countries.
+    [Name of Trademark] is a registered trademark of Red Hat, Inc. in the United States and other countries.
     
     未登録商標 (TM/SM) の場合:
-    - [Name of Trademark] is a trademark of Red Hat, Inc. in the United States and other countries.
+    [Name of Trademark] is a trademark of Red Hat, Inc. in the United States and other countries.
 
     登録商標および未登録商標の場合:
-    - [Name of Trademark] is a registered trademark and [Name of Trademark] is a trademark of Red Hat, Inc. in the United States and other countries.
+    [Name of Trademark] is a registered trademark and [Name of Trademark] is a trademark of Red Hat, Inc. in the United States and other countries.
 
-商標の適切な使用に関するガイドライン:
+商標を適切な使用するためのガイドライン:
 +++++++++++++++++++++++++++++++++++++++++++++
  
  商標を、周囲のテキストと区別するために、少なくとも頭文字を大文字にするか、すべての文字を大文字にします。
@@ -37,27 +37,27 @@
 
 商標は、名詞として使用しないでください。商標は、常に名詞を修飾する形容詞として使用してください。
 
-    正しい形: 
+    正しい使用方法: 
     Red Hat® Ansible Tower® system performance is incredible.
 
-    誤った形: 
+    誤った使用方法: 
     Ansible's performance is incredible.
     
 商標は、動詞として使用しないでください。商標は製品またはサービスであり、動作ではありません。
 
-    正しい形: 
-    "Orchestrate your entire network using Red Hat® Ansible Tower®."
+    正しい使用方法: 
+    Orchestrate your entire network using Red Hat® Ansible Tower®.
     
-    誤った形: 
-    "Ansible your entire network."
+    誤った使用方法: 
+    Ansible your entire network.
 
 商標を複数形に変更しないでください。代わりに、一般的な単語を単数形から複数形に変更します。
 
-    正しい形: 
-    "Corporate demand for Red Hat® Ansible Tower® configuration software is surging."
+    正しい使用方法: 
+    Corporate demand for Red Hat® Ansible Tower® configuration software is surging.
 
-    誤った形: 
-    "Corporate demand for Ansible is surging."
+    誤った使用方法: 
+    Corporate demand for Ansible is surging.
     
 商標を所有格から変更したり、商標を所有格にしたりしないでください。必ず登録した形を使用してください。
 

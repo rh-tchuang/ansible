@@ -133,7 +133,7 @@ oVirt エンティティー属性の冪等性を実現するために、
         supports_check_mode=True,
     )
 
-    # Check if the user has Python SDK installed:
+# Check if the user has Python SDK installed:
     check_sdk(module)
 
     try:

@@ -3,151 +3,151 @@
 .. _testing_integration:
 
 *****************
-Integration tests
+統合テスト
 *****************
 
-.. contents:: Topics
+.. contents:: トピック
 
-The Ansible integration Test system.
+Ansible 統合テストシステム。
 
-Tests for playbooks, by playbooks.
+Playbook による Playbook のテスト
 
-Some tests may require credentials.  Credentials may be specified with `credentials.yml`.
+テストによっては認証情報が必要になる場合があります。 認証情報は `credentials.yml` で指定できます。
 
-Some tests may require root.
+テストによっては root が必要になる場合があります。
 
-Quick Start
+クイックスタート
 ===========
 
-It is highly recommended that you install and activate the ``argcomplete`` python package.
-It provides tab completion in ``bash`` for the ``ansible-test`` test runner.
+python パッケージ ``argcomplete`` をインストールし、アクティベートすることが強く推奨されます。
+これにより、テストランナー ``ansible-test`` に ``bash`` のタブ補完が提供されます。
 
-Configuration
+構成
 =============
 
-ansible-test command
+ansible-test コマンド
 --------------------
 
-The example below assumes ``bin/`` is in your ``$PATH``. An easy way to achieve that
-is to initialize your environment with the ``env-setup`` command::
+以下の例では、``bin/`` が ``$PATH`` にあることを前提としています。それを行う簡単な方法は、
+``env-setup`` コマンドで環境を初期化します。
 
     source hacking/env-setup
     ansible-test --help
 
-You can also call ``ansible-test`` with the full path::
+``ansible-test`` は、完全パスで呼び出すこともできます。
 
     bin/ansible-test --help
 
 integration_config.yml
 ----------------------
 
-Making your own version of ``integration_config.yml`` can allow for setting some
-tunable parameters to help run the tests better in your environment.  Some
-tests (e.g. cloud) will only run when access credentials are provided.  For more
-information about supported credentials, refer to the various ``cloud-config-*.template``
-files in the ``test/integration/`` directory.
+独自のバージョンの ``integration_config.yml`` を作成すると、
+調整可能なパラメーターを設定して、自分の環境でより良いテストを実行する助けとなります。 一部のテスト (例: クラウド) は、
+アクセス認証情報が提供されている場合に限り実行します。 サポートされている認証情報の詳細は、
+``test/integration/`` ディレクトリーにある、
+各種ファイル ``cloud-config-*.template`` を参照してください。
 
-Prerequisites
+要件
 =============
 
-Some tests assume things like hg, svn, and git are installed, and in path.  Some tests
-(such as those for Amazon Web Services) need separate definitions, which will be covered
-later in this document.
+いくつかのテストでは、hg、svn、git のようなものがインストールされていて、パスに入っていることを前提としています。 (Amazon Web Services 用のものなどの) 一部のテストでは、
+個別の定義が必要になります。
+これは、本ガイドの後半に記載されています。
 
-(Complete list pending)
+(完全はリストは後に追加されます)
 
-Non-destructive Tests
+非破壊テスト
 =====================
 
-These tests will modify files in subdirectories, but will not do things that install or remove packages or things
-outside of those test subdirectories.  They will also not reconfigure or bounce system services.
+これらのテストはサブディレクトリー内のファイルを修正しますが、
+パッケージやテストのサブディレクトリー以外にあるものをインストールしたり削除したりするようなことはしません。 また、システムサービスの再設定やバウンスも行いません。
 
-.. note:: Running integration tests within Docker
+.. note:: Docker 内での統合テストの実行
 
-   To protect your system from any potential changes caused by integration tests, and to ensure a sensible set of dependencies are available we recommend that you always run integration tests with the ``--docker`` option. See the `list of supported docker images <https://github.com/ansible/ansible/blob/devel/test/lib/ansible_test/_data/completion/docker.txt>`_ for options.
+   統合テストによる潜在的な変更からシステムを守り、適切な依存関係セットが利用可能になるようにするには、常に ``--docker`` オプションをつけて統合テストを実行することが推奨されます。オプションについては、「`サポートされる docker イメージの一覧 <https://github.com/ansible/ansible/blob/devel/test/lib/ansible_test/_data/completion/docker.txt>`_」を参照してください。
 
-.. note:: Avoiding pulling new Docker images
+.. note:: 新規 Docker イメージのプルの回避
 
-   Use the ``--docker-no-pull`` option to avoid pulling the latest container image. This is required when using custom local images that are not available for download.
+   最新のコンテナーイメージをプルしないようにするには、``--docker-no-pull`` オプションを使用します。これは、ダウンロードに利用できないカスタムのローカルイメージを使用する場合に必要です。
 
-Run as follows for all POSIX platform tests executed by our CI system::
+CI システムで実行されたすべての POSIX プラットフォームテストに対して、次を実行します。
 
     ansible-test integration --docker fedora29 -v shippable/
 
-You can target a specific tests as well, such as for individual modules::
+個々のモジュールなど、特定のテストを対象とすることもできます。
 
     ansible-test integration -v ping
 
-Use the following command to list all the available targets::
+利用可能なターゲットの一覧を表示するには、以下のコマンドを実行します。
 
     ansible-test integration --list-targets
 
-.. note:: Bash users
+.. note:: Bash ユーザー
 
-   If you use ``bash`` with ``argcomplete``, obtain a full list by doing: ``ansible-test integration <tab><tab>``
+   ``argcomplete`` で ``bash`` を使用する場合は、``ansible-test integration <tab><tab>`` を実行して完全な一覧を取得します。
 
-Destructive Tests
+破壊テスト
 =================
 
-These tests are allowed to install and remove some trivial packages.  You will likely want to devote these
-to a virtual environment, such as Docker.  They won't reformat your filesystem::
+これらのテストでは、いくつかの簡単なパッケージのインストールと削除が許可されています。 おそらく、Docker のような仮想環境に、
+これらを割り当てたいと考えるでしょう。 ファイルシステムを再フォーマットすることはありません。
 
     ansible-test integration --docker fedora29 -v destructive/
 
-Windows Tests
+Windows テスト
 =============
 
-These tests exercise the ``winrm`` connection plugin and Windows modules.  You'll
-need to define an inventory with a remote Windows 2008 or 2012 Server to use
-for testing, and enable PowerShell Remoting to continue.
+これらのテストには、``winrm`` 接続プラグインと Windows モジュールが使用されます。 テストに使用するリモートの Windows 2008 Server、
+または Windows 2012 Server でインベントリーを定義して、
+PowerShell Remoting を有効にして継続する必要があります。
 
-Running these tests may result in changes to your Windows host, so don't run
-them against a production/critical Windows environment.
+これらのテストを実行すると、Windows ホストが変更される可能性があるため、
+実稼働環境や重要な Windows 環境では実行しないでください。
 
-Enable PowerShell Remoting (run on the Windows host via Remote Desktop)::
+PowerShell Remoting を有効にします (リモートデスクトップを介して Windows ホストで実行します)::
 
     Enable-PSRemoting -Force
 
-Define Windows inventory::
+Windows インベントリーを定義します。
 
     cp inventory.winrm.template inventory.winrm
     ${EDITOR:-vi} inventory.winrm
 
-Run the Windows tests executed by our CI system::
+CI システムで実行する Windows テストを実行します::
 
-    ansible-test windows-integration -v shippable/
+    ansible-test windows-integration -v providepable/
 
-Tests in Docker containers
+Docker コンテナーでのテスト
 ==========================
 
-If you have a Linux system with Docker installed, running integration tests using the same Docker containers used by
-the Ansible continuous integration (CI) system is recommended.
+Docker がインストールされた Linux システムをお持ちの場合は、
+Ansible の継続的インテグレーション (CI) システムで使用されているものと同じ Docker コンテナーを使用して統合テストを実行することが推奨されます。
 
-.. note:: Docker on non-Linux
+.. note:: Linux 以外の Docker
 
-   Using Docker Engine to run Docker on a non-Linux host (such as macOS) is not recommended.
-   Some tests may fail, depending on the image used for testing.
-   Using the ``--docker-privileged`` option when running ``integration`` (not ``network-integration`` or ``windows-integration``) may resolve the issue.
+   Docker Engine を使用して (macOS などの) Linux 以外のホストで Docker を実行することは推奨されません。
+   テストに使用されるイメージによっては、テストが失敗する場合があります。
+   (``network-integration`` または ``windows-integration`` ではなく) ``integration`` の実行時に ``--docker-privileged`` オプションを使用すると、問題が解決する可能性があります。
 
-Running Integration Tests
+統合テストの実行
 -------------------------
 
-To run all CI integration test targets for POSIX platforms in a Ubuntu 16.04 container::
+Ubuntu 16.04 コンテナー内の POSIX プラットフォームに CI 統合テストターゲットすべてを実行するには、次のコマンドを実行します。
 
     ansible-test integration --docker ubuntu1604 -v shippable/
 
-You can also run specific tests or select a different Linux distribution.
-For example, to run tests for the ``ping`` module on a Ubuntu 14.04 container::
+特定のテストを実行することも、別の Linux ディストリビューションを選択することもできます。
+たとえば、Ubuntu 14.04 コンテナーで ``ping`` モジュールのテストを実行するには、次を実行します。
 
     ansible-test integration -v ping --docker ubuntu1404
 
-Container Images
+コンテナーイメージ
 ----------------
 
 Python 2
 ````````
 
-Most container images are for testing with Python 2:
+ほとんどのコンテナーイメージは、Python 2 でテストするためのものです。
 
   - centos6
   - centos7
@@ -159,7 +159,7 @@ Most container images are for testing with Python 2:
 Python 3
 ````````
 
-To test with Python 3 use the following images:
+Python 3 でテストするには、以下のイメージを使用します。
 
   - fedora29
   - opensuse15
@@ -167,90 +167,90 @@ To test with Python 3 use the following images:
   - ubuntu1804
 
 
-Legacy Cloud Tests
+レガシーのクラウドテスト
 ==================
 
-Some of the cloud tests run as normal integration tests, and others run as legacy tests; see the
-:ref:`testing_integration_legacy` page for more information.
+一部のクラウドテストは通常の統合テストとして実行され、その他はレガシーテストとして実行されます。
+詳細は、「:ref:`testing_integration_legacy`」ページを参照してください。
 
 
-Other configuration for Cloud Tests
+クラウドテストのその他の設定
 ===================================
 
-In order to run some tests, you must provide access credentials in a file named
-``cloud-config-aws.yml`` or ``cloud-config-cs.ini`` in the test/integration
-directory. Corresponding .template files are available for for syntax help.  The newer AWS
-tests now use the file test/integration/cloud-config-aws.yml
+テストを実行するには、
+test/integration ディレクトリーに、
+``cloud-config-aws.yml`` または ``cloud-config-cs.ini`` という名前のファイルにアクセス認証情報を指定する必要があります。構文ヘルプでは、対応する .template ファイルを利用できます。 新しい AWS テストは、
+test/integration/cloud-config-aws.yml ファイルを使用するようになりました。
 
-IAM policies for AWS
+AWS の IAM ポリシー
 ====================
 
-Ansible needs fairly wide ranging powers to run the tests in an AWS account.  This rights can be provided to a dedicated user. These need to be configured before running the test.
+AWS アカウントでテストを実行するには、Ansible にはかなり幅広い権限が必要になります。 この権限は専用ユーザーに提供できます。テストを実行する前に設定する必要があります。
 
 testing-policies
 ----------------
 
-``hacking/aws_config/testing_policies`` contains a set of policies that are required for all existing AWS module tests.
-The ``hacking/aws_config/setup_iam.yml`` playbook can be used to add all of those policies to an IAM group (using
-``-e iam_group=GROUP_NAME``. Once the group is created, you'll need to create a user and make the user a member of the
-group. The policies are designed to minimize the rights of that user.  Please note that while this policy does limit
-the user to one region, this does not fully restrict the user (primarily due to the limitations of the Amazon ARN
-notation). The user will still have wide privileges for viewing account definitions, and will also able to manage
-some resources that are not related to testing (for example, AWS lambdas with different names).  Tests should not
-be run in a primary production account in any case.
+``hacking/aws_config/testing_policies`` には、既存のすべての AWS モジュールテストに必要なポリシーのセットが含まれます。
+Playbook ``hacking/aws_config/setup_iam.yml`` を使用すると、これらのポリシーをすべて IAM グループに追加できます。
+これには、``-e iam_group=GROUP_NAME`` を使用します。グループの作成が完了したら、ユーザーを作成し、
+ユーザーをグループのメンバーにする必要があります。ポリシーは、そのユーザーの権限を最小限に抑えるために設計されています。 このポリシーではユーザーを 1 つのリージョンに制限していますが、
+完全にユーザーを制限しているわけではないことに注意してください 
+(主に Amazon ARN 表記の制限のため)。ユーザーにはアカウント定義を閲覧するための幅広い権限が与えられ、
+テストに関係のない一部のリソースを管理することもできます (例えば、別の名前の AWS ラムダなど)。 どのような場合でも、
+本番環境のプライマリーのアカウントでは、テストを実行しないでください。
 
-Other Definitions required
+その他の必要な定義
 --------------------------
 
-Apart from installing the policy and giving it to the user identity running the tests, a
-lambda role `ansible_integration_tests` has to be created which has lambda basic execution
-privileges.
+ポリシーをインストールしてテストを実行しているユーザ ID に付与する以外に、
+ラムダの基本実行権限を持つラムダロール `ansible_integration_tests` 
+を作成する必要があります。
 
 
-Network Tests
+ネットワークテスト
 =============
 
-Starting with Ansible 2.4, all network modules MUST include unit tests that cover all functionality. You must add unit tests for each new network module and for each added feature. Please submit the unit tests and the code in a single PR. Integration tests are also strongly encouraged.
+Ansible 2.4 以降、すべてのネットワークモジュールには、すべての機能をカバーするユニットテストが含まれていなければなりません。新しいネットワークモジュールごと、および追加された機能ごとにユニットテストを追加する必要があります。ユニットテストとコードは 1 つの PR にまとめて提出してください。統合テストも強く推奨されます。
 
-Writing network integration tests
+ネットワーク統合テストの作成
 ---------------------------------
 
-For guidance on writing network test see the `adding tests for Network modules guide <https://github.com/ansible/community/blob/master/group-network/network_test.rst>`_.
+ネットワークテストの記述に関するガイダンスは、「`adding tests for Network modules guide <https://github.com/ansible/community/blob/master/group-network/network_test.rst>`_」を参照してください。
 
 
-Running network integration tests locally
+ネットワーク統合テストのローカルでの実行
 -----------------------------------------
 
-Ansible uses Shippable to run an integration test suite on every PR, including new tests introduced by that PR. To find and fix problems in network modules, run the network integration test locally before you submit a PR.
+Ansible では Shippable を使用して、その PR で導入された新しいテストも含め、すべての PR で統合テストスイートを実行します。ネットワークモジュールの問題を見つけて修正するには、PR を提出する前にローカルでネットワーク統合テストを実行します。
 
-To run the network integration tests, use a command in the form::
+ネットワーク統合テストを実行するには、次の形式でコマンドを使用します。
 
     ansible-test network-integration --inventory /path/to/inventory tests_to_run
 
-First, define a network inventory file::
+まず、ネットワークインベントリーファイルを定義します。
 
     cd test/integration
     cp inventory.network.template inventory.networking
     ${EDITOR:-vi} inventory.networking
     # Add in machines for the platform(s) you wish to test
 
-To run all Network tests for a particular platform::
+特定のプラットフォームでネットワークテストをすべて実行するには、次のコマンドを実行します。
 
     ansible-test network-integration --inventory  /path/to/ansible/test/integration/inventory.networking vyos_.*
 
-This example will run against all vyos modules. Note that ``vyos_.*`` is a regex match, not a bash wildcard - include the `.` if you modify this example.
+この例では、すべての VyOS モジュールに対して実行されます。``vyos_.*`` は、bash ワイルドカードではなく正規表現の一致であることに注意してください。この例を変更した場合は、`.` を含めます。
 
 
-To run integration tests for a specific module::
+特定のモジュールに対してインテグレーションテストを実行するには、次のコマンドを実行します。
 
     ansible-test network-integration --inventory  /path/to/ansible/test/integration/inventory.networking vyos_vlan
 
-To run a single test case on a specific module::
+特定のモジュールでテストケースを 1 つ実行するには、次を実行します。
 
     # Only run vyos_vlan/tests/cli/basic.yaml
     ansible-test network-integration --inventory  /path/to/ansible/test/integration/inventory.networking vyos_vlan --testcase basic
 
-To run integration tests for a specific transport::
+特定のトランスポートでインテグレーションテストを実行するには、次を実行します。
 
     # Only run nxapi test
     ansible-test network-integration --inventory  /path/to/ansible/test/integration/inventory.networking  --tags="nxapi" nxos_.*
@@ -258,16 +258,16 @@ To run integration tests for a specific transport::
     # Skip any cli tests
     ansible-test network-integration --inventory  /path/to/ansible/test/integration/inventory.networking  --skip-tags="cli" nxos_.*
 
-See `test/integration/targets/nxos_bgp/tasks/main.yaml <https://github.com/ansible/ansible/blob/devel/test/integration/targets/nxos_bgp/tasks/main.yaml>`_ for how this is implemented in the tests.
+`テストに実装する方法は、`test/integration/targets/nxos_bgp/tasks/main.yaml <https://github.com/ansible/ansible/blob/devel/test/integration/targets/nxos_bgp/tasks/main.yaml>`_ を参照してください。
 
-For more options::
+その他のオプションは、次のコマンドを実行すれば確認できます。
 
     ansible-test network-integration --help
 
-If you need additional help or feedback, reach out in ``#ansible-network`` on Freenode.
+本書で示したもの以外にヘルプやフィードバックが必要な場合は、Freenode の ``#ansible-network`` にアクセスしてください。
 
 
-Where to find out more
+その他の詳細情報
 ======================
 
-If you'd like to know more about the plans for improving testing Ansible, join the `Testing Working Group <https://github.com/ansible/community/blob/master/meetings/README.md>`_.
+Ansible テストを改善する詳細な計画を確認したい場合は、「`Testing Working Group <https://github.com/ansible/community/blob/master/meetings/README.md>`_」にご参加ください。

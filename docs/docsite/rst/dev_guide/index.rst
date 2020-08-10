@@ -1,59 +1,59 @@
 .. _developer_guide:
 
 ***************
-Developer Guide
+開発者ガイド
 ***************
 
-Welcome to the Ansible Developer Guide!
+Ansible 開発者ガイドにようこそ!
 
-**Who should use this guide?**
+**本ガイドの対象者**
 
-If you want to extend Ansible by using a custom module or plugin locally, creating a module or plugin, adding functionality to an existing module, or expanding test coverage, this guide is for you. We've included detailed information for developers on how to test and document modules, as well as the prerequisites for getting your module or plugin accepted into the main Ansible repository.
+ローカルでカスタムモジュールまたはプラグインを使用して Ansible を拡張する、モジュールまたはプラグインを作成する、既存のモジュールに機能を追加する、またはテストの対象を広げる場合は、このガイドが役立ちます。開発者向けの詳細な情報として、モジュールのテストおよびドキュメント方法と、モジュールまたはプラグインをメインの Ansible リポジトリーで許可するための前提条件を記載しました。
 
-Find the task that best describes what you want to do:
+以下の中から、お客様のニーズに最も適したタスクを選んでください。
 
-* I'm looking for a way to address a use case:
+* ユースケースに対応する方法を探している。
 
-   * I want to :ref:`add a custom plugin or module locally <developing_locally>`.
-   * I want to figure out if :ref:`developing a module is the right approach <module_dev_should_you>` for my use case.
-   * I want to :ref:`develop a collection <developing_collections>`.
+   * :ref:`ローカルにカスタムプラグインまたはモジュール <developing_locally>` を追加したい。
+   * :ref:`私のユースケースではモジュールを開発することが適切なアプローチ <module_dev_should_you>` であるかどうかを知りたい。
+   * :ref:`コレクションを開発 <developing_collections>` したい。
 
-* I've read the info above, and I'm sure I want to develop a module:
+* 上記の情報を読んで、モジュールを開発したい。
 
-   * What do I need to know before I start coding?
-   * I want to :ref:`set up my Python development environment <environment_setup>`.
-   * I want to :ref:`get started writing a module <developing_modules_general>`.
-   * I want to write a specific kind of module:
-      * a :ref:`network module <developing_modules_network>`
-      * a :ref:`Windows module <developing_modules_general_windows>`.
-      * an :ref:`Amazon module <AWS_module_development>`.
-      * an :ref:`OpenStack module <OpenStack_module_development>`.
-      * an :ref:`oVirt/RHV module <oVirt_module_development>`.
-      * a :ref:`VMware module <VMware_module_development>`.
-   * I want to :ref:`write a series of related modules <developing_modules_in_groups>` that integrate Ansible with a new product (for example, a database, cloud provider, network platform, etc.).
+   * コーディングを始める前に何を知っておくべきか。
+   * :ref:`Python 開発環境を設定 <environment_setup>` したい。
+   * :ref:`モジュールの作成 <developing_modules_general>` を開始したい。
+   * 特定のモジュールを作成したい。
+      * :ref:`ネットワークモジュール` <developing_modules_network>
+      * :ref:`Windows モジュール` <developing_modules_general_windows>
+      * :ref:`Amazon モジュール` <AWS_module_development>
+      * :ref:`OpenStack モジュール` <OpenStack_module_development>
+      * :ref:`oVirt/RHV モジュール` <oVirt_module_development>
+      * :ref:`VMware モジュール` <VMware_module_development>
+   * Ansible を新製品 (データベース、クラウドプロバイダー、ネットワークプラットフォームなど) と統合する :ref:`一連の関連モジュールを記述 <developing_modules_in_groups>` したい。
 
-* I want to refine my code:
+* コードを改良したい。
 
-   * I want to :ref:`debug my module code <debugging>`.
-   * I want to :ref:`add tests <developing_testing>`.
-   * I want to :ref:`document my module <module_documenting>`.
-   * I want to :ref:`document my set of modules for a network platform <documenting_modules_network>`.
-   * I want to follow :ref:`conventions and tips for clean, usable module code <developing_modules_best_practices>`.
-   * I want to :ref:`make sure my code runs on Python 2 and Python 3 <developing_python_3>`.
+   * :ref:`モジュールコードをデバッグ <debugging>` したい。
+   * :ref:`テストを追加 <developing_testing>` したい。
+   * :ref:`モジュールを文書化 <module_documenting>` したい。
+   * :ref:`ネットワークプラットフォーム用のモジュールセットを文書化 <documenting_modules_network>` したい。
+   * :ref:`記述方法が適切で使用可能なモジュールコードの規則とヒント <developing_modules_best_practices>` に従いたい。
+   * :ref:`コードが Python 2 および Python 3 で実行することを確認 <developing_python_3>` したい。
 
-* I want to work on other development projects:
+* 他の開発プロジェクトで作業したい。
 
-   * I want to :ref:`write a plugin <developing_plugins>`.
-   * I want to :ref:`connect Ansible to a new source of inventory <developing_inventory>`.
-   * I want to :ref:`deprecate an outdated module <deprecating_modules>`.
+   * :ref:`プラグインを記述 <developing_plugins>` したい。
+   * :ref:`インベントリーの新しいソースに Ansible を接続 <developing_inventory>` したい。
+   * :ref:`古いモジュールを廃止 <deprecating_modules>` したい。
 
-* I want to contribute back to the Ansible project:
+* Ansible プロジェクトに貢献したい。
 
-  * I want to :ref:`understand how to contribute to Ansible <ansible_community_guide>`.
-  * I want to :ref:`contribute my module or plugin <developing_modules_checklist>`.
-  * I want to :ref:`understand the license agreement <contributor_license_agreement>` for contributions to Ansible.
+  * :ref:`Ansible への貢献方法を理解 <ansible_community_guide>` したい。
+  * :ref:`モジュールまたはプラグインを提供 <developing_modules_checklist>` したい。
+  * :ref:`Ansible への貢献に関する使用許諾契約を理解 <contributor_license_agreement>` したい。
 
-If you prefer to read the entire guide, here's a list of the pages in order.
+本ガイドをすべて読む場合は、以下に示す順番でページを表示してください。
 
 .. toctree::
    :maxdepth: 2

@@ -6,14 +6,14 @@
 PEP 8
 *****
 
-.. contents:: Topics
+.. contents:: トピック
 
-`PEP 8`_ style guidelines are enforced by `pycodestyle`_ on all python files in the repository by default.
+`PEP 8`_ スタイルのガイドラインは、デフォルトでリポジトリーにあるすべての python ファイルで `pycodestyle`_ によって強制されます。
 
-Running Locally
+ローカルでの実行
 ===============
 
-The `PEP 8`_ check can be run locally with::
+`PEP 8`_ チェックは、次の方法でローカルに実行できます。
 
 
     ansible-test sanity --test pep8 [file-or-directory-path-to-check] ...

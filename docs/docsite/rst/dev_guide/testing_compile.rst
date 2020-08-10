@@ -3,28 +3,28 @@
 .. _testing_compile:
 
 *************
-Compile Tests
+コンパイルテスト
 *************
 
-.. contents:: Topics
+.. contents:: トピック
 
-Overview
+概要
 ========
 
-Compile tests check source files for valid syntax on all supported python versions:
+コンパイルテストでは、サポートされているすべての python バージョンで、ソースファイルの構文が有効かどうかを確認します。
 
-- 2.4 (Ansible 2.3 only)
+- 2.4 (Ansible 2.3 のみ)
 - 2.6
 - 2.7
 - 3.5
 - 3.6
 
-NOTE: In Ansible 2.4 and earlier the compile test was provided by a dedicated sub-command ``ansible-test compile`` instead of a sanity test using ``ansible-test sanity --test compile``.
+注記: Ansible 2.4 以前では、``ansible-test sanity --test compile`` を使用するサニティーテストの代わりに、コンパイルテストが専用のサブコマンド ``ansible-test compile`` によって提供されていました。
 
-Running compile tests locally
+ローカルでのコンパイルテストの実行
 =============================
 
-Compile tests can be run across the whole code base by doing:
+コンパイルテストを実行するには、次のように、コードベース全体でテストを実行できます。
 
 .. code:: shell
 
@@ -32,31 +32,31 @@ Compile tests can be run across the whole code base by doing:
     source hacking/env-setup
     ansible-test sanity --test compile
 
-Against a single file by doing:
+1 つのファイルに対して以下を行います。
 
 .. code:: shell
 
    ansible-test sanity --test compile lineinfile
 
-Or against a specific Python version by doing:
+または、以下を実行して特定の Python バージョンに対して実行します。
 
 .. code:: shell
 
    ansible-test sanity --test compile --python 2.7 lineinfile
 
-For advanced usage see the help:
+高度な使用方法は、ヘルプを参照してください。
 
 .. code:: shell
 
    ansible-test sanity --help
 
 
-Installing dependencies
+依存関係のインストール
 =======================
 
-``ansible-test`` has a number of dependencies , for ``compile`` tests we suggest running the tests with ``--local``, which is the default
+``ansible-test`` にはいくつかの依存関係があります。``コンパイル`` テストでは、デフォルトである ``--local`` を使用してテストを実行することが推奨されます。
 
-The dependencies can be installed using the ``--requirements`` argument. For example:
+依存関係は、``--requirements`` 引数を使用してインストールできます。例:
 
 .. code:: shell
 
@@ -64,10 +64,10 @@ The dependencies can be installed using the ``--requirements`` argument. For exa
 
 
 
-The full list of requirements can be found at `test/runner/requirements <https://github.com/ansible/ansible/tree/devel/test/runner/requirements>`_. Requirements files are named after their respective commands. See also the `constraints <https://github.com/ansible/ansible/blob/devel/test/runner/requirements/constraints.txt>`_ applicable to all commands.
+要件の詳細は、`test/runner/requirements <https://github.com/ansible/ansible/tree/devel/test/runner/requirements>`_ を参照してください。要件ファイルは、各コマンドの後に名前が付けられます。すべてのコマンドに適用可能な `制約 <https://github.com/ansible/ansible/blob/devel/test/runner/requirements/constraints.txt>`_ も参照してください。
 
 
-Extending compile tests
+コンパイルテストの拡張
 =======================
 
-If you believe changes are needed to the compile tests please add a comment on the `Testing Working Group Agenda <https://github.com/ansible/community/blob/master/meetings/README.md>`_ so it can be discussed.
+コンパイルテストに変更が必要な場合は、`Testing Working Group Agenda <https://github.com/ansible/community/blob/master/meetings/README.md>`_ にコメントを追加してください。その内容について話し合うことができます。

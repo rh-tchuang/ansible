@@ -2,12 +2,12 @@
 .. _developing_collections:
 
 **********************
-Developing collections
+コレクションの開発
 **********************
 
 
-Collections are a distribution format for Ansible content. You can use collections to package and distribute playbooks, roles, modules, and plugins.
-You can publish and use collections through `Ansible Galaxy <https://galaxy.ansible.com>`_.
+コレクションは、Ansible コンテンツのディストリビューション形式です。コレクションを使用して Playbook、ロール、モジュール、プラグインをパッケージ化および配布できます。
+`Ansible Galaxy` <https://galaxy.ansible.com>_ を使用してコレクションを公開および使用できます。
 
 .. contents::
    :local:
@@ -15,11 +15,11 @@ You can publish and use collections through `Ansible Galaxy <https://galaxy.ansi
 
 .. _collection_structure:
 
-Collection structure
+コレクション構造
 ====================
 
-Collections follow a simple data structure. None of the directories are required unless you have specific content that belongs in one of them. A collection does require a ``galaxy.yml`` file at the root level of the collection. This file contains all of the metadata that Galaxy
-and other tools need in order to package, build and publish the collection::
+コレクションは、単純なデータ構造に従います。いずれかのディレクトリーに属する特定のコンテンツがない場合は、いずれのディレクトリーも不要です。コレクションには、コレクションのルートレベルでの ``galaxy.yml`` ファイルが必要です。このファイルには、
+Galaxy などのツールがコレクションをパッケージ化、構築、公開するのに必要なメタデータがすべて含まれています。
 
     collection/
     ├── docs/
@@ -43,53 +43,53 @@ and other tools need in order to package, build and publish the collection::
 
 
 .. note::
-    * Ansible only accepts ``.yml`` extensions for :file:`galaxy.yml`, and ``.md`` for the :file:`README` file and any files in the :file:`/docs` folder.
-    * See the `draft collection <https://github.com/bcoca/collection>`_ for an example of a full collection structure.
-    * Not all directories are currently in use. Those are placeholders for future features.
+    * Ansible では、:file:`README` ファイルおよび :file:`/docs` フォルダー内のファイルでは、:file:`galaxy.yml` の ``.yml`` 拡張子のみが許可されます。
+    * 完全なコレクション構造の例は、「`ドラフト コレクション<https://github.com/bcoca/collection>`_」を参照してください。
+    * 現在すべてのディレクトリーが使用されているわけではありません。これらは今後の機能のプレースホルダーになります。
 
 .. _galaxy_yml:
 
 galaxy.yml
 ----------
 
-A collection must have a ``galaxy.yml`` file that contains the necessary information to build a collection artifact.
-See :ref:`collections_galaxy_meta` for details.
+コレクションには、コレクションアーティファクトのビルドに必要な情報が含まれる ``galaxy.yml`` ファイルが必要です。
+詳細は、「:ref:`collections_galaxy_meta`」を参照してください。
 
 .. _collections_doc_dir:
 
-docs directory
+ドキュメンテーションディレクトリー
 ---------------
 
-Put general documentation for the collection here. Keep the specific documentation for plugins and modules embedded as Python docstrings. Use the ``docs`` folder to describe how to use the roles and plugins the collection provides, role requirements, and so on. Use markdown and do not add subfolders.
+コレクションの一般的なドキュメントをここに置きます。Python docstring として埋め込まれたプラグインおよびモジュールの特定のドキュメントを保持します。``docs`` フォルダーを使用して、コレクションが提供するロールおよびプラグイン、ロール要件などを使用する方法を記述します。マークダウンを使用し、サブフォルダーは追加しません。
 
-Use ``ansible-doc`` to view documentation for plugins inside a collection:
+``ansible-doc`` を使用して、コレクション内のプラグインのドキュメントを表示します。
 
 .. code-block:: bash
 
     ansible-doc -t lookup my_namespace.my_collection.lookup1
 
-The ``ansible-doc`` command requires the fully qualified collection name (FQCN) to display specific plugin documentation. In this example, ``my_namespace`` is the namespace and ``my_collection`` is the collection name within that namespace.
+``ansible-doc`` コマンドでは、特定のプラグインのドキュメントを表示するために、完全修飾コレクション名 (FQCN) が必要です。この例では、``my_namespace`` は名前空間で、``my_collection`` はその名前空間内のコレクション名です。
 
-.. note:: The Ansible collection namespace is defined in the ``galaxy.yml`` file and is not equivalent to the GitHub repository name.
+.. note:: Ansible コレクションの名前空間は、``galaxy.yml`` ファイルで定義され、GitHub リポジトリー名と同等ではありません。
 
 .. _collections_plugin_dir:
 
-plugins directory
+プラグインディレクトリー
 ------------------
 
-Add a 'per plugin type' specific subdirectory here, including ``module_utils`` which is usable not only by modules, but by most plugins by using their FQCN. This is a way to distribute modules, lookups, filters, and so on, without having to import a role in every play.
+モジュールだけでなく、FQCN を使用してほとんどのプラグインで使用可能な ``module_utils`` を含め、「プラグインタイプ別」の固有のサブディレクトリーを追加します。これは、すべてのプレイにロールをインポートしなくても、モジュール、検索、フィルターなどを配布する方法です。
 
-Vars plugins are unsupported in collections. Cache plugins may be used in collections for fact caching, but are not supported for inventory plugins.
+VCS プラグインはコレクションではサポートされていません。キャッシュプラグインは、ファクトキャッシュのコレクションで使用できますが、インベントリープラグインではサポートされていません。
 
 module_utils
 ^^^^^^^^^^^^
 
-When coding with ``module_utils`` in a collection, the Python ``import`` statement needs to take into account the FQCN along with the ``ansible_collections`` convention. The resulting Python import will look like ``from ansible_collections.{namespace}.{collection}.plugins.module_utils.{util} import {something}``
+コレクションで ``module_utils`` を使用してコーディングする場合、Python の ``import`` ステートメントは、``ansible_collections`` 規則と FQCN を共に考慮する必要があります。生成される Python インポートは、``from ansible_collections.{namespace}.{collection}.plugins.module_utils.{util} import {something}`` のようになります。
 
-The following example snippets show a Python and PowerShell module using both default Ansible ``module_utils`` and
-those provided by a collection. In this example the namespace is ``ansible_example``, the collection is ``community``.
-In the Python example the ``module_util`` in question is called ``qradar`` such that the FQCN is
-``ansible_example.community.plugins.module_utils.qradar``:
+デフォルトの Ansible ``module_utils`` とコレクションから提供されるものを使用した、
+Python および PowerShell モジュールを示します。この例では、名前空間は ``ansible_example`` で、コレクションは ``community`` です。
+Python の例では、問題の ``module_util`` が ``qradar`` と呼ばれ、
+FQCN は ``ansible_example.community.plugins.module_utils.qradar`` となります。
 
 .. code-block:: python
 
@@ -116,14 +116,14 @@ In the Python example the ``module_util`` in question is called ``qradar`` such 
         not_rest_data_keys=['state']
     )
 
-Note that importing something from an ``__init__.py`` file requires using the file name:
+``__init__.py`` ファイルから何かをインポートするには、ファイル名を使用する必要があります。
 
 .. code-block:: python
 
     from ansible_collections.namespace.collection_name.plugins.callback.__init__ import CustomBaseClass
 
-In the PowerShell example the ``module_util`` in question is called ``hyperv`` such that the FCQN is
-``ansible_example.community.plugins.module_utils.hyperv``:
+PowerShell の例では、問題の ``module_util`` は ``hyperv`` となり、
+FCQN は ``ansible_example.community.plugins.module_utils.hyperv`` となります。
 
 .. code-block:: powershell
 
@@ -140,88 +140,88 @@ In the PowerShell example the ``module_util`` in question is called ``hyperv`` s
     Invoke-HyperVFunction -Name $module.Params.name
 
     $module.ExitJson()
-
+    
 .. _collections_roles_dir:
 
-roles directory
+roles ディレクトリー
 ----------------
 
-Collection roles are mostly the same as existing roles, but with a couple of limitations:
+コレクションロールは既存ロールとほぼ同じですが、いくつか制限があります。
 
- - Role names are now limited to contain only lowercase alphanumeric characters, plus ``_`` and start with an alpha character.
- - Roles in a collection cannot contain plugins any more. Plugins must live in the collection ``plugins`` directory tree. Each plugin is accessible to all roles in the collection.
+ - ロール名は、小文字の英数字を使用し、``_`` を追加してから、アルファベットで指定します。
+ - コレクションのロールにはプラグインを含めることができません。プラグインは、コレクションの ``plugins`` ディレクトリーツリーに置かれている必要があります。各プラグインは、コレクションのすべてのロールからアクセスできます。
 
-The directory name of the role is used as the role name. Therefore, the directory name must comply with the
-above role name rules.
-The collection import into Galaxy will fail if a role name does not comply with these rules.
+ロールのディレクトリー名はロール名として使用されます。したがって、
+ディレクトリー名は上記のロール名のルールに準拠する必要があります。
+ロール名がこれらのルールに準拠していないと、Galaxy へのコレクションのインポートは失敗します。
 
-You can migrate 'traditional roles' into a collection but they must follow the rules above. You man need to rename roles if they don't conform. You will have to move or link any role-based plugins to the collection specific directories.
+「従来のロール」をコレクションに移行することはできますが、上記のルールに従わなければなりません。従わない場合は、ロールの名前を変更する必要があります。ロールベースのプラグインをコレクションの特定のディレクトリーに移動したりリンクしたりする必要があります。
 
 .. note::
 
-    For roles imported into Galaxy directly from a GitHub repository, setting the ``role_name`` value in the role's
-    metadata overrides the role name used by Galaxy. For collections, that value is ignored. When importing a
-    collection, Galaxy uses the role directory as the name of the role and ignores the ``role_name`` metadata value.
+    GitHub リポジトリーから直接 Galaxy にインポートされたロールの場合は、
+    ロールのメタデータに ``role_name`` の値を設定すると、Galaxy が使用するロール名が上書きされます。コレクションの場合、この値は無視されます。コレクションをインポートする場合、
+    Galaxy は、ロールディレクトリーをロールの名前としてを使用し、メタデータ値 ``role_name`` を無視します。
 
-playbooks directory
+playbooks ディレクトリー
 --------------------
 
-TBD.
+現在準備中です。
 
-tests directory
+test ディレクトリー
 ----------------
 
-TBD. Expect tests for the collection itself to reside here.
+現在準備中です。コレクションのテストがここに常にあることが期待されます。
 
 
 .. _creating_collections:
 
-Creating collections
+コレクションの作成
 ======================
 
-To create a collection:
+コレクションを作成するには、以下を行います。
 
-#. Initialize a collection with :ref:`ansible-galaxy collection init<creating_collections_skeleton>` to create the skeleton directory structure.
-#. Add your content to the collection.
-#. Build the collection into a collection artifact with :ref:`ansible-galaxy collection build<building_collections>`.
-#. Publish the collection artifact to Galaxy with :ref:`ansible-galaxy collection publish<publishing_collections>`.
+#. :ref:`ansible-galaxy collection init<creating_collections_skeleton>` を使用してコレクションを初期化し、スケルトンディレクトリー構造を作成します。
+#. コンテンツをコレクションに追加しｍす。
+#. :ref:`ansible-galaxy collection build<building_collections>` を使用して、コレクションをコレクションアーティファクトに構築します。。
+#. :ref:`ansible-galaxy collection publish<publishing_collections>` を使用して、コレクションアーティファクトを Galaxy に公開します。
 
-A user can then install your collection on their systems.
+これにより、ユーザーが、そのコレクションをシステムにインストールできるようになります。
 
-Currently the ``ansible-galaxy collection`` command implements the following sub commands:
+現在、``ansible-galaxy collection`` コマンドは以下のサブコマンドを実装しています。
 
-* ``init``: Create a basic collection skeleton based on the default template included with Ansible or your own template.
-* ``build``: Create a collection artifact that can be uploaded to Galaxy or your own repository.
-* ``publish``: Publish a built collection artifact to Galaxy.
-* ``install``: Install one or more collections.
+* ``init``: Ansible に含まれるデフォルトテンプレートまたは独自のテンプレートに基づいて、基本的なコレクションのスケルトンを作成します。
+* ``build``: Galaxy または独自のリポジトリーにアップロードできるコレクションアーティファクトを作成します。
+* ``publish``: 構築したコレクションアーティファクトを Galaxy に公開します。
+* ``install``: コレクションを 1 つまたは複数インストールします。
 
-To learn more about the ``ansible-galaxy`` cli tool, see the :ref:`ansible-galaxy` man page.
+``ansible-galaxy`` cli ツールの詳細は、man ページの :ref:`ansible-galaxy` を参照してください。
 
 .. _creating_collections_skeleton:
 
-Creating a collection skeleton
+コレクションスケルトンの作成
 ------------------------------
 
-To start a new collection:
+新規コレクションを開始するには、以下を使用します。
 
 .. code-block:: bash
 
     collection_dir#> ansible-galaxy collection init my_namespace.my_collection
 
-Then you can populate the directories with the content you want inside the collection. See
-https://github.com/bcoca/collection to get a better idea of what you can place inside a collection.
+これにより、コレクションのコンテンツをディレクトリーに追加できるようになります。コレクションに置けるものは、
+https://github.com/bcoca/collection を参照してください。
 
 
 .. _docfragments_collections:
 
-Using documentation fragments in collections
+コレクションでのドキュメントフラグメントの使用
 --------------------------------------------
 
-To include documentation fragments in your collection:
+コレクションにドキュメントフラグメントを含めるには、以下を行います。
 
-#. Create the documentation fragment: ``plugins/doc_fragments/fragment_name``.
+#. ``plugins/doc_fragments/fragment_name`` ドキュメントのフラグメントに作成します。
 
-#. Refer to the documentation fragment with its FQCN.
+#. FQCN を使用したドキュメントフラグメントを参照します。
 
 .. code-block:: yaml
 
@@ -231,22 +231,22 @@ To include documentation fragments in your collection:
      - community.kubernetes.k8s_resource_options
      - community.kubernetes.k8s_scale_options
 
-:ref:`module_docs_fragments` covers the basics for documentation fragments. The `kubernetes <https://github.com/ansible-collections/kubernetes>`_ collection includes a complete example.
+:ref:`module_docs_fragments` は、ドキュメントフラグメントの基本を説明します。`kubernetes <https://github.com/ansible-collections/kubernetes>`_ コレクションには完全な例が含まれます。
 
-You can also share documentation fragments across collections with the FQCN.
+また、FQCN を使用してコレクション間でドキュメントフラグメントを共有することもできます。
 
 .. _building_collections:
 
-Building collections
+コレクションの構築
 --------------------
 
-To build a collection, run ``ansible-galaxy collection build`` from inside the root directory of the collection:
+コレクションを構築するには、コレクションのルートディレクトリーから ``ansible-galaxy collection build`` を実行します。
 
 .. code-block:: bash
 
     collection_dir#> ansible-galaxy collection build
 
-This creates a tarball of the built collection in the current directory which can be uploaded to Galaxy.::
+これにより、現在のディレクトリーに構築されたコレクションの tarball が作成されます。これは Galaxy にアップロードできます。
 
     my_collection/
     ├── galaxy.yml
@@ -256,130 +256,130 @@ This creates a tarball of the built collection in the current directory which ca
 
 
 .. note::
-    * Certain files and folders are excluded when building the collection artifact. This is not currently configurable and is a work in progress so the collection artifact may contain files you would not wish to distribute.
-    * If you used the now-deprecated ``Mazer`` tool for any of your collections, delete any and all files it added to your :file:`releases/` directory before you build your collection with ``ansible-galaxy``.
-    * You must also delete the :file:`tests/output` directory if you have been testing with ``ansible-test``.
-    * The current Galaxy maximum tarball size is 2 MB.
+    * コレクションアーティファクトのビルド時に、特定のファイルおよびフォルダーは除外されます。これは作業が進行中で、現在は設定できないため、コレクションアーティファクトに配布したくないファイルが含まれる場合があります。
+    * 今回の非推奨となった ``Mazer`` ツールをコレクションに使用した場合は、``ansible-galaxy`` でコレクションをビルドする前に、:file:`releases/` ディレクトリーに追加したすべてのファイルを削除します。
+    * ``ansible-test`` でテストしている場合は、:file:`tests/output` ディレクトリーを削除する必要もあります。
+    * 現在の Galaxy の tarball 最大サイズは 2 MB です。
 
 
-This tarball is mainly intended to upload to Galaxy
-as a distribution method, but you can use it directly to install the collection on target systems.
+この tarball は、配布方法として主に Galaxy にアップロードすることを目的としていますが、
+ターゲットシステムにコレクションをインストールするために直接使用することもできます。
 
 .. _trying_collection_locally:
 
-Trying collections locally
+ローカルでコレクションを試行
 --------------------------
 
-You can try your collection locally by installing it from the tarball. The following will enable an adjacent playbook to
-access the collection:
+コレクションを tarball からインストールすると、ローカルでコレクションを試すことができます。以下では、
+隣接する Playbook がコレクションにアクセスできるようになります。
 
 .. code-block:: bash
 
    ansible-galaxy collection install my_namespace-my_collection-1.0.0.tar.gz -p ./collections
 
 
-You should use one of the values configured in :ref:`COLLECTIONS_PATHS` for your path. This is also where Ansible itself will
-expect to find collections when attempting to use them. If you don't specify a path value, ``ansible-galaxy collection install``
-installs the collection in the first path defined in :ref:`COLLECTIONS_PATHS`, which by default is ``~/.ansible/collections``.
+パスには、:ref:`COLLECTIONS_PATHS` で設定された値の 1 つを使用する必要があります。これはまた、Ansible 自体がコレクションを使用しようとするときに、
+コレクションを見つけることを期待する場所でもあります。パスの値を指定しない場合、``ansible-galaxy collection install`` は、
+:ref:`COLLECTIONS_PATHS` で定義された最初のパス (デフォルトでは ~``~/.ansible/collections``) にコレクションをインストールします。
 
-Next, try using the local collection inside a playbook. For examples and more details see :ref:`Using collections <using_collections>`
+次に、Playbook 内でローカルコレクションの使用を試行します。例および詳細は、「:ref:`コレクションの使用 <using_collections>`」を参照してください。
 
 .. _publishing_collections:
 
-Publishing collections
+コレクションの公開
 ----------------------
 
-You can publish collections to Galaxy using the ``ansible-galaxy collection publish`` command or the Galaxy UI itself. You need a namespace on Galaxy to upload your collection. See `Galaxy namespaces <https://galaxy.ansible.com/docs/contributing/namespaces.html#galaxy-namespaces>`_ on the Galaxy docsite for details.
+``ansible-galaxy collection publish`` コマンドまたは Galaxy UI 自体を使用して、コレクションを Galaxy に公開できます。コレクションをアップロードするには、Galaxy で名前空間が必要です。詳細は、Galaxy docsite の「`Galaxy 名前空間 <https://galaxy.ansible.com/docs/contributing/namespaces.html#galaxy-namespaces>`_」を参照してください。
 
-.. note:: Once you upload a version of a collection, you cannot delete or modify that version. Ensure that everything looks okay before you upload it.
+.. note:: コレクションのバージョンをアップロードしたら、そのバージョンを削除または変更できません。アップロードする前に、すべての情報が適切であることを確認します。
 
 .. _galaxy_get_token:
 
-Getting your token or API key
+トークンまたは API キーの取得
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To upload your collection to Galaxy, you must first obtain an API token (``--api-key`` in the ``ansible-galaxy`` CLI command). The API token is a secret token used to protect your content.
+コレクションを Galaxy にアップロードするには、最初に API トークン (CLI の ``ansible-galaxy`` コマンドで ``--api-key``) を取得する必要があります。API トークンは、コンテンツを保護するために使用するシークレットトークンです。
 
-To get your API token:
+API トークンを取得するには、以下を行います。
 
-* For galaxy, go to the `Galaxy profile preferences <https://galaxy.ansible.com/me/preferences>`_ page and click :guilabel:`API token`.
-* For Automation Hub, go to https://cloud.redhat.com/ansible/automation-hub/token/ and click :guilabel:`Get API token` from the version dropdown.
+* `Galaxy プロファイルの設定` <https://galaxy.ansible.com/me/preferences>_ ページに移動し、:guilabel:`API トークン` をクリックします。
+* Automation Hub の場合は、https://cloud.redhat.com/ansible/automation-hub/token/ にアクセスし、バージョンのドロップダウンから :guilabel:`Get API token` をクリックします。
 
 .. _upload_collection_ansible_galaxy:
 
-Upload using ansible-galaxy
+ansible-galaxy を使用したアップロード
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. note::
-  By default, ``ansible-galaxy`` uses https://galaxy.ansible.com as the Galaxy server (as listed in the :file:`ansible.cfg` file under :ref:`galaxy_server`). If you are only publishing your collection to Ansible Galaxy, you do not need any further configuration. If you are using Red Hat Automation Hub or any other Galaxy server, see :ref:`Configuring the ansible-galaxy client <galaxy_server_config>`.
+  デフォルトでは、(:ref:`galaxy_server` の :file:`ansible.cfg` ファイルに記載されていているように) ``ansible-galaxy`` は https://galaxy.ansible.com を Galaxy サーバーとして使用します。Ansible Galaxy にコレクションを公開するだけの場合は、これ以上の設定は必要ありません。Red Hat Automation Hub またはその他の Galaxy サーバーを使用している場合は、「:ref:`ansible-galaxy クライアントの設定 <galaxy_server_config>`」を参照してください。
 
-To upload the collection artifact with the ``ansible-galaxy`` command:
+``ansible-galaxy`` コマンドでコレクションアーティファクトをアップロードするには、以下を使用します。
 
 .. code-block:: bash
 
      ansible-galaxy collection publish path/to/my_namespace-my_collection-1.0.0.tar.gz --api-key=SECRET
 
-The above command triggers an import process, just as if you uploaded the collection through the Galaxy website.
-The command waits until the import process completes before reporting the status back. If you wish to continue
-without waiting for the import result, use the ``--no-wait`` argument and manually look at the import progress in your
-`My Imports <https://galaxy.ansible.com/my-imports/>`_ page.
+上記のコマンドは、Galaxy の Web サイトからコレクションをアップロードしたかのように、インポートプロセスをトリガーします。
+このコマンドは、インポート処理が完了するまで待機してからステータスを報告します。インポート結果を待たずに続行したい場合は、
+``--no-wait`` 引数を使用して、
+`My Imports <https://galaxy.ansible.com/my-imports/>`_ ページでインポートの進行状況を手動で確認してください。
 
-The API key is a secret token used by the Galaxy server to protect your content. See :ref:`galaxy_get_token` for details.
+API キーは、コンテンツを保護するために Galaxy サーバーによって使用されるシークレットトークンです。詳細は、「:ref:`galaxy_get_token`」を参照してください。
 
 .. _upload_collection_galaxy:
 
-Upload a collection from the Galaxy website
+Galaxy の Web サイトからコレクションをアップロードします。
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To upload your collection artifact directly on Galaxy:
+Galaxy でコレクションアーティファクトを直接アップロードするには、以下を行います。
 
-#. Go to the `My Content <https://galaxy.ansible.com/my-content/namespaces>`_ page, and click the **Add Content** button on one of your namespaces.
-#. From the **Add Content** dialogue, click **Upload New Collection**, and select the collection archive file from your local filesystem.
+#. `My content <https://galaxy.ansible.com/my-content/namespaces>_` ページに移動し、名前空間のいずれかの **コンテンツを追加** ボタンをクリックします。
+#. **コンテンツの追加** ダイアログから、**新規コレクションのアップロード** をクリックして、ローカルファイルシステムからコレクションアーカイブファイルを選択します。
 
-When uploading collections it doesn't matter which namespace you select. The collection will be uploaded to the
-namespace specified in the collection metadata in the ``galaxy.yml`` file. If you're not an owner of the
-namespace, the upload request will fail.
+コレクションをアップロードする場合は、どの名前空間を選択しても問題ありません。コレクションが、
+``galaxy.yml`` ファイルのコレクションメタデータに指定した名前空間にアップロードされます。あなたが名前空間の所有者でないと、
+アップロード要求は失敗します。
 
-Once Galaxy uploads and accepts a collection, you will be redirected to the **My Imports** page, which displays output from the
-import process, including any errors or warnings about the metadata and content contained in the collection.
+Galaxy がコレクションをアップロードして受け入れると、**My Imports** ページにリダイレクトされます。
+このページには、コレクションに含まれるメタデータやコンテンツに関するエラーや警告など、インポート処理の出力が表示されます。
 
 .. _collection_versions:
 
-Collection versions
+コレクションのバージョン
 -------------------
 
-Once you upload a version of a collection, you cannot delete or modify that version. Ensure that everything looks okay before
-uploading. The only way to change a collection is to release a new version. The latest version of a collection (by highest version number)
-will be the version displayed everywhere in Galaxy; however, users will still be able to download older versions.
+コレクションのバージョンをアップロードしたら、そのバージョンを削除または変更することはできません。アップロードする前に、
+すべてが問題なく見えることを確認してください。コレクションを変更する唯一の方法は、新しいバージョンをリリースすることです。コレクションの最新バージョン (バージョン番号の高いもの) は、Galaxy のすべての場所に表示されるバージョンになりますが、
+ユーザーは古いバージョンもダウンロードできます。
 
-Collection versions use `Semantic Versioning <https://semver.org/>`_ for version numbers. Please read the official documentation for details and examples. In summary:
+コレクションのバージョンは、バージョン番号に `セマンティックバージョン` <https://semver.org/>_ を使用します。詳細と例は、公式ドキュメントをお読みください。つまり、以下のようになります。
 
-* Increment major (for example: x in `x.y.z`) version number for an incompatible API change.
-* Increment minor (for example: y in `x.y.z`) version number for new functionality in a backwards compatible manner.
-* Increment patch (for example: z in `x.y.z`) version number for backwards compatible bug fixes.
+* 互換性のない API 変更のメジャーバージョンのバージョン番号 (例: `x.y.z` の x)。
+* 後方互換の方法で新機能のマイナーバージョンのバージョン番号 (例: `x.y.z` の y)。
+* 後方互換のバグ修正向けのインクリメントパッチのバージョン番号 (例: `x.y.z` の z)。
 
 .. _migrate_to_collection:
 
-Migrating Ansible content to a collection
+Ansible コンテンツのコレクションへの移行
 =========================================
 
-You can experiment with migrating existing modules into a collection using the `content_collector tool <https://github.com/ansible/content_collector>`_. The ``content_collector`` is a playbook that helps you migrate content from an Ansible distribution into a collection.
+`content_collector ツール <https://github.com/ansible/content_collector>`_ を使用すると、既存モジュールのコレクションへの移行を試すことができます。``content_collector`` は、コンテンツを Ansible ディストリビューションからコレクションに移行するのに役に立つ Playbook です。
 
 .. warning::
 
-	This tool is in active development and is provided only for experimentation and feedback at this point.
+	このツールは現在開発中であり、現時点では実験とフィードバックのためにのみ提供されています。
 
-See the `content_collector README <https://github.com/ansible/content_collector>`_ for full details and usage guidelines.
+詳細および使用方法のガイドラインは、「`content_collector README <https://github.com/ansible/content_collector>`_」を参照してください。
 
 .. seealso::
 
    :ref:`collections`
-       Learn how to install and use collections.
+       コレクションのインストールおよび使用方法はこちらを参照してください。
    :ref:`collections_galaxy_meta`
-       Understand the collections metadata structure.
+       コレクションのメタデータ構造を理解します。
    :ref:`developing_modules_general`
-       Learn about how to write Ansible modules
-   `Mailing List <https://groups.google.com/group/ansible-devel>`_
-       The development mailing list
+       Ansible モジュールの作成方法について
+   `メーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       開発メーリングリスト
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       #ansible IRC チャットチャンネル

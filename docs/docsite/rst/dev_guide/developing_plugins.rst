@@ -2,30 +2,30 @@
 .. _plugin_guidelines:
 
 ******************
-Developing plugins
+プラグインの開発
 ******************
 
 .. contents::
    :local:
 
-Plugins augment Ansible's core functionality with logic and features that are accessible to all modules. Ansible ships with a number of handy plugins, and you can easily write your own. All plugins must:
+プラグインは、すべてのモジュールがアクセスできるロジックおよび機能を使用して Ansible のコア機能を拡張します。Ansible には、便利なプラグインが多数同梱されています。また、簡単に独自のプラグインを作成することもできます。すべてのプラグインは、以下の条件を満たす必要があります。
 
-* be written in Python
-* raise errors
-* return strings in unicode
-* conform to Ansible's configuration and documentation standards
+* Python で書かれている。
+* エラーを発生させる。
+* Unicode で文字列を返す。
+* Ansible の設定およびドキュメントの標準仕様に準拠する。
 
-Once you've reviewed these general guidelines, you can skip to the particular type of plugin you want to develop.
+これらの一般的なガイドラインを確認したら、開発する特定のタイプのプラグインを参照してください。
 
-Writing plugins in Python
+Python でのプラグインの作成
 =========================
 
-You must write your plugin in Python so it can be loaded by the ``PluginLoader`` and returned as a Python object that any module can use. Since your plugin will execute on the controller, you must write it in a :ref:`compatible version of Python <control_node_requirements>`.
+``PluginLoader`` により読み込まれ、モジュールが使用できる Python オブジェクトとして返すには、Python でプラグインを作成する必要があります。プラグインはコントローラーで実行するため、:ref:`互換性のある Python バージョン <control_node_requirements>` で作成する必要があります。
 
-Raising errors
+エラーの発生
 ==============
 
-You should return errors encountered during plugin execution by raising ``AnsibleError()`` or a similar class with a message describing the error. When wrapping other exceptions into error messages, you should always use the ``to_native`` Ansible function to ensure proper string compatibility across Python versions:
+プラグインの実行中に発生したエラーは、``AnsibleError()`` または同様のクラスでエラーを記述したメッセージを発生させて返す必要があります。他の例外をエラーメッセージにラップする場合は、Python のバージョン間で適切な文字列の互換性を確保するために、常に Ansible 関数の ``to_native`` を使用する必要があります。
 
 .. code-block:: python
 
@@ -36,22 +36,22 @@ You should return errors encountered during plugin execution by raising ``Ansibl
     except Exception as e:
         raise AnsibleError('Something happened, this was original exception: %s' % to_native(e))
 
-Check the different `AnsibleError objects <https://github.com/ansible/ansible/blob/devel/lib/ansible/errors/__init__.py>`_ and see which one applies best to your situation.
+様々な `AnsibleError オブジェクト <https://github.com/ansible/ansible/blob/devel/lib/ansible/errors/__init__.py>`_ を確認して、お使いの状況に最適なものを確認します。
 
-String encoding
+文字列エンコーディング
 ===============
 
-You must convert any strings returned by your plugin into Python's unicode type. Converting to unicode ensures that these strings can run through Jinja2. To convert strings:
+プラグインによって返される文字列は、Python の Unicode タイプに変換する必要があります。Unicode に変換すると、これらの文字列が Jinja2 を介して実行できるようになります。文字列を変換するには、次を実行します。
 
 .. code-block:: python
 
     from ansible.module_utils._text import to_text
     result_string = to_text(result_string)
 
-Plugin configuration & documentation standards
+プラグインの設定およびドキュメントの標準仕様
 ==============================================
 
-To define configurable options for your plugin, describe them in the ``DOCUMENTATION`` section of the python file. Callback and connection plugins have declared configuration requirements this way since Ansible version 2.4; most plugin types now do the same. This approach ensures that the documentation of your plugin's options will always be correct and up-to-date. To add a configurable option to your plugin, define it in this format:
+プラグインの設定可能なオプションを定義するには、python ファイルの ``DOCUMENTATION`` セクションで説明します。Ansible バージョン 2.4 以降、コールバックおよび接続プラグインはこの方法で設定要件を宣言しました。ほとんどのプラグインが同じように動作するようになりました。この方法により、プラグインのオプションのドキュメントを常に正しく最新の状態に保つことができます。設定可能なオプションをプラグインに追加するには、以下の形式で定義します。
 
 .. code-block:: yaml
 
@@ -68,22 +68,22 @@ To define configurable options for your plugin, describe them in the ``DOCUMENTA
         type: boolean/float/integer/list/none/path/pathlist/pathspec/string/tmppath
         version_added: X.x
 
-To access the configuration settings in your plugin, use ``self.get_option(<option_name>)``. For most plugin types, the controller pre-populates the settings. If you need to populate settings explicitly, use a ``self.set_options()`` call.
+プラグインの構成設定にアクセスするには、``self.get_option(<option_name>)`` を使用します。ほとんどのプラグインタイプでは、コントローラーは設定を事前入力します。設定を明示的に入力する必要がある場合は、``self.set_options()`` 呼び出しを使用します。
 
 
-Plugins that support embedded documentation (see :ref:`ansible-doc` for the list) must include well-formed doc strings to be considered for merge into the Ansible repo. If you inherit from a plugin, you must document the options it takes, either via a documentation fragment or as a copy. See :ref:`module_documenting` for more information on correct documentation. Thorough documentation is a good idea even if you're developing a plugin for local use.
+組み込みドキュメンテーションをサポートするプラグイン (そのリストの「:ref:`ansible-doc`」参照) には、Ansible リポジトリーへのマージ用に考慮される適切な形式のドキュメント文字列が必要になります。プラグインを継承する場合は、そのプラグインが取るオプションを、ドキュメントフラグメントから、またはコピーとして文書化しなければなりません。正しいドキュメントの詳細は「:ref:`module_documenting`」を参照してください。詳細なドキュメントは、ローカルで使用するプラグインを開発する場合でも推奨されます。
 
-Developing particular plugin types
+特定のプラグインタイプの開発
 ==================================
 
 .. _developing_actions:
 
-Action plugins
+Action プラグイン
 --------------
 
-Action plugins let you integrate local processing and local data with module functionality.
+Action プラグインを使用すると、ローカル処理とローカルデータをモジュール機能に統合できます。
 
-To create an action plugin, create a new class with the Base(ActionBase) class as the parent:
+Action プラグインを作成するには、Base(ActionBase) クラスを親として新しいクラスを作成します。
 
 .. code-block:: python
 
@@ -92,8 +92,8 @@ To create an action plugin, create a new class with the Base(ActionBase) class a
     class ActionModule(ActionBase):
         pass
 
-From there, execute the module using the ``_execute_module`` method to call the original module.
-After successful execution of the module, you can modify the module return data.
+そこから、``_execute_module`` メソッドを使用して元のモジュールを呼び出します。
+モジュールの実行に成功すると、モジュールの戻り値データを変更できます。
 
 .. code-block:: python
 
@@ -102,7 +102,7 @@ After successful execution of the module, you can modify the module return data.
                                          task_vars=task_vars, tmp=tmp)
 
 
-For example, if you wanted to check the time difference between your Ansible controller and your target machine(s), you could write an action plugin to check the local time and compare it to the return data from Ansible's ``setup`` module:
+たとえば、Ansible コントローラーとターゲットマシン間の時間差を確認する場合は、Action プラグインを作成してローカルタイムを確認し、それを Ansible の ``setup`` モジュールから返されるデータと比較できます。
 
 .. code-block:: python
 
@@ -137,22 +137,22 @@ For example, if you wanted to check the time difference between your Ansible con
                 ret['delta_microseconds'] = time_delta.microseconds
 
             return dict(ansible_facts=dict(ret))
+    
 
+このコードはコントローラーの時間を確認し、``setup`` モジュールを使用してリモートマシンの日時を取得し、取得した時間とローカル時間の差異を算出し、
+その時間差を日数、秒、マイクロ秒で返します。
 
-This code checks the time on the controller, captures the date and time for the remote machine using the ``setup`` module, and calculates the difference between the captured time and
-the local time, returning the time delta in days, seconds and microseconds.
-
-For practical examples of action plugins,
-see the source code for the `action plugins included with Ansible Core <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/action>`_
+Action プラグインの実用的な例
+「`Ansible Core に含まれる Action プラグイン<https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/action>`_」のソースコードを参照してください。
 
 .. _developing_cache_plugins:
 
-Cache plugins
+Cache プラグイン
 -------------
 
-Cache plugins store gathered facts and data retrieved by inventory plugins. Only fact caching is currently supported by cache plugins in collections.
+Cache プラグインは、Inventory プラグインによって取得されるファクトおよびデータを収集したデータを格納します。現在、ファクトキャッシュのみがコレクションの Cache プラグインでサポートされています。
 
-Import cache plugins using the cache_loader so you can use ``self.set_options()`` and ``self.get_option(<option_name>)``. If you import a cache plugin directly in the code base, you can only access options via ``ansible.constants``, and you break the cache plugin's ability to be used by an inventory plugin.
+cache_loader を使用して Cache プラグインをインポートし、``self.set_options()`` および ``self.get_option(<option_name>)`` を使用できるようにします。コードベースで Cache プラグインを直接インポートする場合は、``ansible.constants`` からのみアクセスでき、Inventory プラグインによって使用される Cache プラグインの機能が壊れます。
 
 .. code-block:: python
 
@@ -160,11 +160,11 @@ Import cache plugins using the cache_loader so you can use ``self.set_options()`
     [...]
     plugin = cache_loader.get('custom_cache', **cache_kwargs)
 
-There are two base classes for cache plugins, ``BaseCacheModule`` for database-backed caches, and ``BaseCacheFileModule`` for file-backed caches.
+Cache プラグインには、2 つのベースクラス (データベースベースのバックアップ用のキャッシュの場合は ``BaseCacheModule``、ファイルのバックアップ用のキャッシュの場合は ``BaseCacheFileModule``) があります。
 
-To create a cache plugin, start by creating a new ``CacheModule`` class with the appropriate base class. If you're creating a plugin using an ``__init__`` method you should initialize the base class with any provided args and kwargs to be compatible with inventory plugin cache options. The base class calls ``self.set_options(direct=kwargs)``. After the base class ``__init__`` method is called ``self.get_option(<option_name>)`` should be used to access cache options.
+Cache プラグインを作成するには、最初に適切なベースクラスで新しい ``CacheModule`` クラスを作成します。``__init__`` メソッドを使用してプラグインを作成する場合は、指定した args および kwargs でベースクラスを初期化して、Inventory プラグインのキャッシュオプションと互換性を持たせるようにする必要があります。ベースクラスは ``self.set_options(direct=kwargs)`` を呼び出します。ベースクラスの ``__init__`` メソッドが呼ばれたあと、キャッシュオプションにアクセスするために ``self.get_option(<option_name>)`` を使用しなければなりません。
 
-New cache plugins should take the options ``_uri``, ``_prefix``, and ``_timeout`` to be consistent with existing cache plugins.
+新しい Cache プラグインは、既存の Cache プラグインとの整合性を保つために、``_uri`` オプション、``_prefix`` オプション、および ``_timeout`` オプションを使用する必要があります。
 
 .. code-block:: python
 
@@ -177,22 +177,22 @@ New cache plugins should take the options ``_uri``, ``_prefix``, and ``_timeout`
             self._prefix = self.get_option('_prefix')
             self._timeout = self.get_option('_timeout')
 
-If you use the ``BaseCacheModule``, you must implement the methods ``get``, ``contains``, ``keys``, ``set``, ``delete``, ``flush``, and ``copy``. The ``contains`` method should return a boolean that indicates if the key exists and has not expired. Unlike file-based caches, the ``get`` method does not raise a KeyError if the cache has expired.
+``BaseCacheModule`` を使用する場合は、メソッドの ``get``、``contains``、``keys``、``set``、``delete``、``flush``、および ``copy`` を実装する必要があります。``contains`` メソッドは、キーが存在し、期限切れではないことを示すブール値を返す必要があります。ファイルベースのキャッシュとは異なり、キャッシュの有効期限が切れている場合、``get`` メソッドは KeyError を発生させません。
 
-If you use the ``BaseFileCacheModule``, you must implement ``_load`` and ``_dump`` methods that will be called from the base class methods ``get`` and ``set``.
+``BaseFileCacheModule`` を使用する場合は、ベースクラスメソッド ``get`` および ``set`` から呼び出される ``_load`` メソッドおよび ``_dump`` メソッドを実装する必要があります。
 
-If your cache plugin stores JSON, use ``AnsibleJSONEncoder`` in the ``_dump`` or ``set`` method  and ``AnsibleJSONDecoder`` in the ``_load`` or ``get`` method.
+Cache プラグインが JSON を格納している場合は、``_dump`` メソッドまたは ``set`` メソッドで ``AnsibleJSONEncoder`` を使用するか、``_load`` メソッドまたは ``get`` メソッドで ``AnsibleJSONDecoder`` を設定します。
 
-For example cache plugins, see the source code for the `cache plugins included with Ansible Core <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/cache>`_.
+たとえば、Cache プラグインは、「`Ansible Core に含まれる Cache プラグイン <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/cache>`_」のソースコードを参照してください。
 
 .. _developing_callbacks:
 
-Callback plugins
+Callback プラグイン
 ----------------
 
-Callback plugins add new behaviors to Ansible when responding to events. By default, callback plugins control most of the output you see when running the command line programs.
+Callback プラグインは、イベントに応答する際に新しい動作を Ansible に追加します。デフォルトでは、Callback プラグインは、コマンドラインプログラムの実行時に表示されるほとんどの出力を制御します。
 
-To create a callback plugin, create a new class with the Base(Callbacks) class as the parent:
+Callback プラグインを作成するには、Base(Callbacks) クラスを親として使用して新規クラスを作成します。
 
 .. code-block:: python
 
@@ -201,13 +201,13 @@ To create a callback plugin, create a new class with the Base(Callbacks) class a
   class CallbackModule(CallbackBase):
       pass
 
-From there, override the specific methods from the CallbackBase that you want to provide a callback for.
-For plugins intended for use with Ansible version 2.0 and later, you should only override methods that start with ``v2``.
-For a complete list of methods that you can override, please see ``__init__.py`` in the
-`lib/ansible/plugins/callback <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/callback>`_ directory.
+そこから、コールバックを提供する CallbackBase から特定のメソッドを上書きします。
+Ansible バージョン 2.0 以降で使用するプラグインでは、``v2`` で始まる方法のみを上書きする必要があります。
+上書き可能なメソッドの完全リストは、
+`lib/ansible/plugins/callback <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/callback>`_ ディレクトリーの「``__init__.py``」を参照してください。
 
-The following is a modified example of how Ansible's timer plugin is implemented,
-but with an extra option so you can see how configuration works in Ansible version 2.4 and later:
+以下は、Ansible の Timer プラグインの実装方法の変更例です。
+ただし、追加のオプションを使用すると、Ansible バージョン 2.4 以降で構成がどのように機能するかを確認できます。
 
 .. code-block:: python
 
@@ -273,56 +273,56 @@ but with an extra option so you can see how configuration works in Ansible versi
           # Shows the usage of a config option declared in the DOCUMENTATION variable. Ansible will have set it when it loads the plugin.
           # Also note the use of the display object to print to screen. This is available to all callbacks, and you should use this over printing yourself
           self._display.display(self._plugin_options['format_string'] % (self._days_hours_minutes_seconds(runtime)))
+    
+``CALLBACK_VERSION`` および ``CALLBACK_NAME`` の定義は、Ansible バージョン 2.0 以降のプラグインが正しく機能するために必要であることに注意してください。``CALLBACK_TYPE`` は、標準出力 (stdout) に書き込むプラグインを 1 つだけ読み込むことができるため、ほとんどの「stdout」プラグインをその他のものと区別するために必要です。
 
-Note that the ``CALLBACK_VERSION`` and ``CALLBACK_NAME`` definitions are required for properly functioning plugins for Ansible version 2.0 and later. ``CALLBACK_TYPE`` is mostly needed to distinguish 'stdout' plugins from the rest, since you can only load one plugin that writes to stdout.
-
-For example callback plugins, see the source code for the `callback plugins included with Ansible Core <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/callback>`_
+Callback プラグインの例は、`Ansible Core に含まれる Callback プラグイン <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/callback>`_ のソースコードを参照してください。
 
 .. _developing_connection_plugins:
 
-Connection plugins
+Connection プラグイン
 ------------------
 
-Connection plugins allow Ansible to connect to the target hosts so it can execute tasks on them. Ansible ships with many connection plugins, but only one can be used per host at a time. The most commonly used connection plugins are the ``paramiko`` SSH, native ssh (just called ``ssh``), and ``local`` connection types.  All of these can be used in playbooks and with ``/usr/bin/ansible`` to connect to remote machines.
+Connection プラグインは、Ansible をターゲットホストに接続して、そのホストでタスクを実行できるようにします。Ansible には多くの Connection プラグインが含まれていますが、1 台のホストで一度に使用できるプラグインは 1 つのみです。最も一般的に使用される Connection プラグインは、``paramiko`` SSH、ネイティブ ssh (``ssh`` と呼ばれます)、および ``local`` の接続タイプです。 これらはすべて Playbook と ``/usr/bin/ansible`` で使用して、リモートマシンに接続できます。
 
-Ansible version 2.1 introduced the ``smart`` connection plugin. The ``smart`` connection type allows Ansible to automatically select either the ``paramiko`` or ``openssh`` connection plugin based on system capabilities, or the ``ssh`` connection plugin if OpenSSH supports ControlPersist.
+Ansible バージョン 2.1 では、``smart`` 接続プラグインが導入されました。``スマート`` 接続タイプにより、Ansible はシステム機能に基づいて、Connection プラグインの ``paramiko`` または ``openssh`` を自動的に選択するか、OpenSSH が ControlPersist に対応している場合は ``ssh`` の Connetion プラグインを選択します。
 
-To create a new connection plugin (for example, to support SNMP, Message bus, or other transports), copy the format of one of the existing connection plugins and drop it into ``connection`` directory on your :ref:`local plugin path <local_plugins>`.
+新しい Connetion プラグイン (SNMP、メッセージバス、またはその他のトランスポートをサポートする場合など) を作成するには、既存の Connetion プラグインのいずれかの形式をコピーして、:ref:`ローカルプラグインパス <local_plugins>` にある ``connection`` ディレクトリーに置きます。
 
-For example connection plugins, see the source code for the `connection plugins included with Ansible Core <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/connection>`_.
+Connection プラグインの例は、「`Ansible Core に含まれる Connection プラグイン<https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/connection>`_」のソースコードを参照してください。
 
 .. _developing_filter_plugins:
 
-Filter plugins
+Filter プラグイン
 --------------
 
-Filter plugins manipulate data. They are a feature of Jinja2 and are also available in Jinja2 templates used by the ``template`` module. As with all plugins, they can be easily extended, but instead of having a file for each one you can have several per file. Most of the filter plugins shipped with Ansible reside in a ``core.py``.
+Filter プラグインはデータを操作します。これらは Jinja2 の機能であり``template`` モジュールにより使用される Jinja2 テンプレートでも利用できます。すべてのプラグインと同様に簡単に拡張できますが、プラグインごとにファイルを作成する代わりに、ファイルごとに複数のプラグインを作成できます。Ansible に同梱される Filter プラグインのほとんどは ``core.py`` にあります。
 
-Filter plugins do not use the standard configuration and documentation system described above.
+Filter プラグインは、上記の標準設定およびドキュメントシステムを使用しません。
 
-For example filter plugins, see the source code for the `filter plugins included with Ansible Core <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/filter>`_.
+Filter プラグインの例は、「`Ansible Core に含まれる Filter プラグイン <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/filter>`_」のソースコードを参照してください。
 
 .. _developing_inventory_plugins:
 
-Inventory plugins
+Inventory プラグイン
 -----------------
 
-Inventory plugins parse inventory sources and form an in-memory representation of the inventory. Inventory plugins were added in Ansible version 2.4.
+Inventory プラグインはインベントリーソースを解析し、インベントリーのインメモリー表示を形成します。Inventory プラグインは Ansible バージョン 2.4 で追加されました。
 
-You can see the details for inventory plugins in the :ref:`developing_inventory` page.
+Inventory プラグインの詳細は、「:ref:`developing_inventory`」ページを参照してください。
 
 .. _developing_lookup_plugins:
 
-Lookup plugins
+Lookup プラグイン
 --------------
 
-Lookup plugins pull in data from external data stores. Lookup plugins can be used within playbooks both for looping --- playbook language constructs like ``with_fileglob`` and ``with_items`` are implemented via lookup plugins --- and to return values into a variable or parameter.
+Lookup プラグインは、外部データストアからデータをプルします。Lookup プラグインは Playbook 内でループするため (``with_fileglob`` や ``with_items`` などの Playbook 言語の構造は Lookup プラグインを介して実装されています)、また変数やパラメーターに値を返すために使用することができます。
 
-Lookup plugins are very flexible, allowing you to retrieve and return any type of data. When writing lookup plugins, always return data of a consistent type that can be easily consumed in a playbook. Avoid parameters that change the returned data type. If there is a need to return a single value sometimes and a complex dictionary other times, write two different lookup plugins.
+Lookup プラグインは非常に柔軟性があるため、あらゆるタイプのデータを取得し、返すことができます。Lookup プラグインを記述する際には、Playbook で簡単に使用できる一貫性のあるタイプのデータを常に返します。返されたデータ型を変更するパラメーターは使用しないでください。単一の値を返さなければならないときもあれば、複雑なディクショナリーを返さなければない場合もあります。Lookup プラグインを 2 つ記述してください。
 
-Ansible includes many :ref:`filters <playbooks_filters>` which can be used to manipulate the data returned by a lookup plugin. Sometimes it makes sense to do the filtering inside the lookup plugin, other times it is better to return results that can be filtered in the playbook. Keep in mind how the data will be referenced when determining the appropriate level of filtering to be done inside the lookup plugin.
+Ansible には、Lookup プラグインによって返されるデータを操作するのに使用できる「:ref:`filters <playbooks_filters>`」が多数含まれています。Lookup プラグイン内でフィルターを実行することが適切な場合もありますが、Playbook でフィルター処理できる結果を返す方が適切な場合もあります。Lookup プラグイン内で実行するフィルターの適切なレベルを決定する際に、データがどのように参照されるかに留意してください。
 
-Here's a simple lookup plugin implementation --- this lookup returns the contents of a text file as a variable:
+以下は簡単な Lookup プラグインの実装です。この Lookup は、テキストファイルの内容を変数として返します。
 
 .. code-block:: python
 
@@ -384,7 +384,7 @@ Here's a simple lookup plugin implementation --- this lookup returns the content
 
           return ret
 
-The following is an example of how this lookup is called::
+以下は、このルックアップがどのように呼び出されるかの例になります。
 
   ---
   - hosts: all
@@ -396,31 +396,31 @@ The following is an example of how this lookup is called::
        - debug:
            msg: the value of foo.txt is {{ contents }} as seen today {{ lookup('pipe', 'date +"%Y-%m-%d"') }}
 
-For example lookup plugins, see the source code for the `lookup plugins included with Ansible Core <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/lookup>`_.
+Lookup プラグインの例は、「`Ansible Core に含まれる Lookup プラグイン <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/lookup>`_」のソースコードを参照してください。
 
-For more usage examples of lookup plugins, see :ref:`Using Lookups<playbooks_lookups>`.
+Lookup プラグインの使用方法の例は、「:ref:`Lookup の使用<playbooks_lookups>`」を参照してください。
 
 .. _developing_test_plugins:
 
-Test plugins
+Test プラグイン
 ------------
 
-Test plugins verify data. They are a feature of Jinja2 and are also available in Jinja2 templates used by the ``template`` module. As with all plugins, they can be easily extended, but instead of having a file for each one you can have several per file. Most of the test plugins shipped with Ansible reside in a ``core.py``. These are specially useful in conjunction with some filter plugins like ``map`` and ``select``; they are also available for conditional directives like ``when:``.
+Test プラグインはデータを検証します。これらは Jinja2 の機能であり``template`` モジュールにより使用される Jinja2 テンプレートでも利用できます。すべてのプラグインと同様に簡単に拡張できますが、プラグインごとにファイルを作成する代わりに、ファイルごとに複数のプラグインを作成できます。Ansible に同梱される Test プラグインのほとんどは ``core.py`` にあります。これらは、``map`` や ``select`` などの Filter プラグインと併用する場合に特に役立ちます。また、``when:`` のような条件ディレクティブでも利用できます。
 
-Test plugins do not use the standard configuration and documentation system described above.
+Test プラグインは、上記の標準設定およびドキュメントシステムを使用しません。
 
-For example test plugins, see the source code for the `test plugins included with Ansible Core <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/test>`_.
+たとえば、Test プラグインは、「`Ansible Core に含まれる Test プラグイン <https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/test>`_」のソースコードを参照してください。
 
 .. _developing_vars_plugins:
 
-Vars plugins
+Vars プラグイン
 ------------
 
-Vars plugins inject additional variable data into Ansible runs that did not come from an inventory source, playbook, or command line. Playbook constructs like 'host_vars' and 'group_vars' work using vars plugins.
+Vars プラグインは、インベントリーソース、Playbook、またはコマンドラインに組み込まれていない Ansible の実行に、変数データを追加します。Playbook は、Vars プラグインを使用して「host_vars」と「group_vars」の作業のように構築します。
 
-Vars plugins were partially implemented in Ansible 2.0 and rewritten to be fully implemented starting with Ansible 2.4. Vars plugins are unsupported by collections.
+Vars プラグインは Ansible 2.0 に部分的に実装され、Ansible 2.4 以降は、完全実装になるように書き直されました。Vars プラグインはコレクションによってサポートされません。
 
-Older plugins used a ``run`` method as their main body/work:
+古いプラグインでは、``run`` メソッドを主要な本文/作業として使用していました。
 
 .. code-block:: python
 
@@ -428,38 +428,38 @@ Older plugins used a ``run`` method as their main body/work:
         pass # your code goes here
 
 
-Ansible 2.0 did not pass passwords to older plugins, so vaults were unavailable.
-Most of the work now  happens in the ``get_vars`` method which is called from the VariableManager when needed.
+Ansible 2.0 は古いプラグインにパスワードを渡さなかったため、vault は利用できません。
+ほとんどの作業は、必要に応じて VariableManager から呼び出される ``get_vars`` メソッドで実行されるようになりました。
 
 .. code-block:: python
 
     def get_vars(self, loader, path, entities):
         pass # your code goes here
 
-The parameters are:
+パラメーターは以下のとおりです。
 
- * loader: Ansible's DataLoader. The DataLoader can read files, auto-load JSON/YAML and decrypt vaulted data, and cache read files.
- * path: this is 'directory data' for every inventory source and the current play's playbook directory, so they can search for data in reference to them. ``get_vars`` will be called at least once per available path.
- * entities: these are host or group names that are pertinent to the variables needed. The plugin will get called once for hosts and again for groups.
+ * loader: Ansible の DataLoader です。DataLoader は、ファイルの読み取り、JSON/YAML の自動読み込み、vault を使用したデータの復号化、および読み取りファイルのキャッシュを行うことができます。
+ * path: これはすべてのインベントリーソースと現在のプレイの Playbook ディレクトリーの「ディレクトリーデータ」であるため、それを参照するデータを検索することができます。``get_vars`` は、利用可能なパスごとに最低 1 回呼び出されます。
+ * entities: 必要な変数に関連付けられるホスト名またはグループ名です。プラグインはホストについて 1 回呼び出され、グループについて再度呼び出されます。
 
-This ``get vars`` method just needs to return a dictionary structure with the variables.
+この ``get vars`` メソッドは変数を含むディクショナリー構造を返す必要があります。
 
-Since Ansible version 2.4, vars plugins only execute as needed when preparing to execute a task. This avoids the costly 'always execute' behavior that occurred during inventory construction in older versions of Ansible.
+Ansible バージョン 2.4 以降、変数プラグインはタスク実行を準備する際に、必要に応じて実行されます。これにより、古いバージョンの Ansible のインベントリー構築中に発生した「常に実行」動作が回避されます。
 
-For example vars plugins, see the source code for the `vars plugins included with Ansible Core
-<https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/vars>`_.
+たとえば、変数プラグインは「`Ansible Core に含まれる Vars プラグイン
+<https://github.com/ansible/ansible/tree/devel/lib/ansible/plugins/vars>`_」のソースコードを参照してください。
 
 .. seealso::
 
    :ref:`all_modules`
-       List of all modules
+       モジュール一覧
    :ref:`developing_api`
-       Learn about the Python API for task execution
+       タスク実行用の Python API について
    :ref:`developing_inventory`
-       Learn about how to develop dynamic inventory sources
+       動的インベントリーソースの開発方法について
    :ref:`developing_modules_general`
-       Learn about how to write Ansible modules
-   `Mailing List <https://groups.google.com/group/ansible-devel>`_
-       The development mailing list
+       Ansible モジュールの作成方法について
+   `メーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       開発メーリングリスト
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       #ansible IRC チャットチャンネル

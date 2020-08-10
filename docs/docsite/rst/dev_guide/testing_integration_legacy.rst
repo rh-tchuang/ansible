@@ -3,16 +3,16 @@
 .. _testing_integration_legacy:
 
 *******************************************
-Testing using the Legacy Integration system
+レガシー統合システムを使用したテスト
 *******************************************
 
-.. contents:: Topics
+.. contents:: トピック
 
-This page details how to run the integration tests that haven't been ported to the new ``ansible-test`` framework.
+このページでは、新しい ``ansible-test`` フレームワークに移植されていない統合テストの実行方法を説明します。
 
-The following areas are still tested using the legacy ``make tests`` command:
+以下の領域は、従来の ``make tests`` コマンドを使用してテストされています。
 
-* amazon (some)
+* Amazon (一部)
 * azure
 * cloudflare
 * cloudscale
@@ -23,73 +23,73 @@ The following areas are still tested using the legacy ``make tests`` command:
 * jenkins
 * rackspace
 
-Over time the above list will be reduced as tests are ported to the ``ansible-test`` framework.
+テストが ``ansible-test`` フレームワークに移植されると、上記のリストは徐々に少なくなっていきます。
 
 
-Running Cloud Tests
+クラウドテストの実行
 ====================
 
-Cloud tests exercise capabilities of cloud modules (e.g. ec2_key).  These are
-not 'tests run in the cloud' so much as tests that leverage the cloud modules
-and are organized by cloud provider.
+クラウドテストでは、クラウドモジュール (例: ec2_key) が使用されます。 このようなテストは、
+「クラウドモジュールを使用するテスト」に比べると、クラウドでテストを実行されることが少なく、
+クラウドプロバイダー別にまとめられます。
 
-Some AWS tests may use environment variables. It is recommended to either unset any AWS environment variables( such as ``AWS_DEFAULT_PROFILE``, ``AWS_SECRET_ACCESS_KEY``, etc) or be sure that the environment variables match the credentials provided in ``credentials.yml`` to ensure the tests run with consistency to their full capability on the expected account. See `AWS CLI docs <https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html>`_ for information on creating a profile.
+AWS テストによっては、環境変数を使用するものもあります。AWS 環境変数 (``AWS_DEFAULT_PROFILE``、``AWS_SECRET_ACCESS_KEY`` など) の設定を解除するか、環境変数が ``credentials.yml`` で提供される認証情報と一致することを確認して、予想されるアカウントの完全な機能に一貫性のあるテストが実行されるようにすることが推奨されます。プロファイルの作成に関する情報は、「`AWS CLI docs<https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html>`_」を参照してください。
 
-Subsets of tests may be run by ``#commenting`` out unnecessary roles in the appropriate playbook, such as ``test/integration/amazon.yml``.
+テストのサブセットは、適切な Playbook の ``#commenting`` 不要なロール (例: ``test/integration/amazon.yml`` ) をコメントアウトして実行できます。
 
-In order to run cloud tests, you must provide access credentials in a file
-named ``credentials.yml``. A sample credentials file named
-``credentials.template`` is available for syntax help.
+クラウドテストを実行するには、
+``credentials.yml`` という名前のファイルでアクセス認証情報を指定する必要があります。``credentials.template`` という名前のサンプル認証情報ファイルは、
+構文のヘルプで利用できます。
 
-Provide cloud credentials::
+クラウド認証を提供します::
 
     cp credentials.template credentials.yml
     ${EDITOR:-vi} credentials.yml
 
 
-Other configuration
+その他の設定
 ===================
 
-In order to run some tests, you must provide access credentials in a file named
-``credentials.yml``. A sample credentials file named ``credentials.template`` is available
-for syntax help.
+テストを実行するには、
+``credentials.yml`` という名前のファイルにアクセス認証情報を指定する必要があります。``credentials.template`` という名前の認証情報ファイルのサンプルが、
+構文ヘルプに利用できます。
 
-IAM policies for AWS
+AWS の IAM ポリシー
 ====================
 
-In order to run the tests in an AWS account ansible needs fairly wide ranging powers which
-can be provided to a dedicated user or temporary credentials using a specific policy
-configured in the AWS account.
+AWS アカウントでテストを実行するためには、
+Ansible に、
+AWS アカウントで設定された特定のポリシーを使用して、専用のユーザや一時的な認証情報に提供できる、かなり広範囲の権限が必要となります。
 
 testing-iam-policy.json.j2
 --------------------------
 
-The testing-iam-policy.json.j2 file contains a policy which can be given to the user
-running the tests to give close to minimum rights required to run the tests.  Please note
-that this does not fully restrict the user; The user has wide privileges for viewing
-account definitions and is also able to manage some resources that are not related to
-testing (e.g. AWS lambdas with different names) primarily due to the limitations of the
-Amazon ARN notation.  At the very least the policy limits the user to one region, however
-tests should not be run in a primary production account in any case.
+testing-iam-policy.json.j2 ファイルにはポリシーが含まれており、
+テストを実行しているユーザーにテストの実行に必要な最低限の権限を付与できます。 これはユーザーを完全に制限するものではないことに注意してください。
+ユーザーはアカウント定義を表示するための幅広い権限を持っており、
+テストとは関係のないリソース (たとえば、異なる名前の AWS ラムダ) 
+を管理することもできます 
+(主に Amazon ARN 表記の制限のため)。 少なくともポリシーではユーザーを 1 つのリージョンに制限していますが、
+どのような場合でもプライマリーの実稼働アカウントでテストを実行すべきではありません。
 
-Other Definitions required
+その他の必要な定義
 --------------------------
 
-Apart from installing the policy and giving it to the user identity running
-the tests, a lambda role `ansible_integration_tests` has to be created which
-has lambda basic execution privileges.
+ポリシーをインストールし、テストを実行中のユーザー ID に付与する以外に、
+ラムダロール `ansible_integration_tests` を作成する必要があります。
+これには、ラムダに、基本的な実行権限があります。
 
 
-Running Tests
+テストの実行
 =============
 
-The tests are invoked via a ``Makefile``.
+テストは ``Makefile`` で呼び出されます。
 
-If you haven't already got Ansible available use the local checkout by doing::
+Ansible がまだ利用可能でない場合は、以下の方法でローカルチェックアウトを使用します。
 
   source hacking/env-setup
 
-Run the tests by doing::
+以下を実行してテストを実行します。
 
   cd test/integration/
   # TARGET is the name of the test from the list at the top of this page
@@ -99,10 +99,10 @@ Run the tests by doing::
   # To run all cloud tests you can do:
   make cloud
 
-.. warning:: Possible cost of running cloud tests
+.. warning:: クラウドテストにかかる可能性のあるコスト
 
-   Running cloud integration tests will create and destroy cloud
-   resources. Running these tests may result in additional fees associated with
-   your cloud account. Care is taken to ensure that created resources are
-   removed. However, it is advisable to inspect your AWS console to ensure no
-   unexpected resources are running.
+   クラウド統合テストを実行すると、
+   クラウドリソースが作成され、破棄されます。このようなテストを実行すると、
+   クラウドアカウントに、関連する追加費用が発生することがあります。作成されたリソースが確実に実行されるように
+   注意する必要があります。ただし、AWS コンソールを検査して、
+   予期しないリソースが実行していないことを確認することが推奨されます。

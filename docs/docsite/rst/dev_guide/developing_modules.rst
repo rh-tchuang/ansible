@@ -2,62 +2,62 @@
 .. _module_dev_should_you:
 
 ****************************
-Should you develop a module?
+モジュールを開発する必要がありますか
 ****************************
 
-Developing Ansible modules is easy, but often it isn't necessary. Before you start writing a new module, ask:
+Ansible モジュールの開発は容易ですが、通常は不要です。新しいモジュールを書き始める前に、以下を確認します。
 
-1. Does a similar module already exist?
+1. 同様のモジュールが存在しているか。
 
-An existing module may cover the functionality you want. Ansible Core includes thousands of modules. Search our :ref:`list of existing modules <all_modules>` to see if there's a module that does what you need.
+既存のモジュールは必要な機能に対応できます。Ansible Core には、数千ものモジュールが含まれています。:ref:`既存のモジュールの一覧<all_modules>` を検索し、必要な動作を行うモジュールがあるかどうかを確認します。
 
-2. Does a Pull Request already exist?
+2. プル要求が存在しているか。
 
-An existing Pull Request may cover the functionality you want. If someone else has already started developing a similar module, you can review and test it. There are a few ways to find open module Pull Requests:
+既存のプル要求は、必要な機能に対応する場合があります。他のユーザーが同様のモジュールの開発を開始している場合は、そのモジュールを確認してテストできます。オープンモジュールのプル要求を見つける方法はいくつかあります。
 
-* `GitHub new module PRs <https://github.com/ansible/ansible/labels/new_module>`_
-* `All updates to modules <https://github.com/ansible/ansible/labels/module>`_
-* `New module PRs listed by directory <https://ansible.sivel.net/pr/byfile.html>`_ search for `lib/ansible/modules/`
+* `GitHub の新しいモジュール PR <https://github.com/ansible/ansible/labels/new_module>`_
+* `モジュールへのすべてのアップデート <https://github.com/ansible/ansible/labels/module>`_
+* `lib/ansible/modules/` で `ディレクトリー別に表示されている新規 PR <https://ansible.sivel.net/pr/byfile.html>`_ 
 
-If you find an existing PR that looks like it addresses your needs, please provide feedback on the PR. Community feedback speeds up the review and merge process.
+ニーズに対応していると思われる既存の PR が見つかった場合は、PR に関するご意見やご要望をお寄せください。コミュニティーのフィードバックにより、レビューおよびマージのプロセスが速くなります。
 
-3. Should you use or develop an action plugin instead?
+3. 代わりにアクションプラグインを使用するか、または開発する必要があります。
 
-An action plugin may be the best way to get the functionality you want. Action plugins run on the control node instead of on the managed node, and their functionality is available to all modules. For more information about developing plugins, read the :ref:`developing plugins page <developing_plugins>`.
+アクションプラグインは、必要な機能を取得する最善の方法です。アクションプラグインは管理ノードではなく、コントロールノードで実行され、それらの機能はすべてのモジュールで利用できます。プラグインの開発に関する詳細は、「:ref:`プラグインの開発 <developing_plugins>`」を参照してください。
 
-4. Should you use a role instead?
+4. 代わりにロールを使用する必要があります。
 
-A combination of existing modules may cover the functionality you want. You can write a role for this type of use case. Check out the :ref:`roles documentation<playbooks_reuse_roles>`.
+既存のモジュールの組み合わせによって、希望の機能に対応できる可能性があります。このタイプのユースケースにロールを作成することができます。「:ref:`ロールのドキュメント<playbooks_reuse_roles>`」を参照してください。
 
-5. Should you write multiple modules instead of one module?
+5. 1 つのモジュールではなく複数のモジュールを記述するべきか。
 
-The functionality you want may be too large for a single module. If you want to connect Ansible to a new cloud provider, database, or network platform, you may need to :ref:`develop a related group of modules<developing_modules_in_groups>`.
+単一のモジュールでは、希望する機能が大きすぎる場合があります。Ansible を新しいクラウドプロバイダー、データベース、またはネットワークプラットフォームに接続する場合は、:ref:`モジュールの関連グループを開発<developing_modules_in_groups>` しないといけない場合があります。
 
-* Modules should have a concise and well defined functionality. Basically, follow the UNIX philosophy of doing one thing well.
+* モジュールは簡潔で明確に定義された機能を備えている必要があります。基本的には、1 つのことをうまく行うという UNIX の哲学に従ってください。
 
-* Modules should not require that a user know all the underlying options of an API/tool to be used. For instance, if the legal values for a required module parameter cannot be documented, that's a sign that the module would be rejected.
+* モジュールは、使用する API/ツールの基礎となるすべてのオプションを把握する必要はありません。たとえば、必要なモジュールパラメーターの有効な値を文書化できない場合、それはモジュールが拒否されることを示しています。
 
-* Modules should typically encompass much of the logic for interacting with a resource. A lightweight wrapper around an API that does not contain much logic would likely cause users to offload too much logic into a playbook, and for this reason the module would be rejected. Instead try creating multiple modules for interacting with smaller individual pieces of the API.
+* モジュールは通常、リソースと対話するロジックの多くを包含する必要があります。ロジックがあまり含まれていない API の軽量ラッパーを使用すると、ユーザーがあまりにも多くのロジックを Playbook にオフロードする可能性があるため、モジュールが拒否されます。代わりに、API の小さな個々の部分と対話するための複数のモジュールを作成してみてください。
 
-If your use case isn't covered by an existing module, an open PR, an action plugin, or a role, and you don't need to create multiple modules, then you're ready to start developing a new module. Choose from the topics below for next steps:
+ユースケースが、既存のモジュール、オープン PR、アクションプラグイン、またはロールでは対応されていなくて、複数のモジュールを作成する必要がない場合は、新しいモジュールの開発を開始する準備ができています。次のステップは、以下のトピックから選択します。
 
-* I want to :ref:`get started on a new module <developing_modules_general>`.
-* I want to review :ref:`tips and conventions for developing good modules <developing_modules_best_practices>`.
-* I want to :ref:`write a Windows module <developing_modules_general_windows>`.
-* I want :ref:`an overview of Ansible's architecture <developing_program_flow_modules>`.
-* I want to :ref:`document my module <developing_modules_documenting>`.
-* I want to :ref:`contribute my module back to Ansible Core <developing_modules_checklist>`.
-* I want to :ref:`add unit and integration tests to my module <developing_testing>`.
-* I want to :ref:`add Python 3 support to my module <developing_python_3>`.
-* I want to :ref:`write multiple modules <developing_modules_in_groups>`.
+* :ref:`新しいモジュールで開始 <developing_modules_general>` したい。
+* :ref:`適切なモジュールを開発するためのヒントや規則 <developing_modules_best_practices>` を確認したい。
+* :ref:`Windows モジュールを作成 <developing_modules_general_windows>` したい。
+* :ref:`Ansible のアーキテクチャーの概要 <developing_program_flow_modules>` がほしい。
+* :ref:`モジュールを文書化 <developing_modules_documenting>` したい。
+* :ref:`モジュールを Ansible Core に提供 <developing_modules_checklist>` したい。
+* :ref:`ユニットおよびインテグレーションテストをモジュールに追加 <developing_testing>` したい。
+* :ref:`Python 3 サポートをモジュールに追加 <developing_python_3>` したい。
+* :ref:`複数のモジュールを作成 <developing_modules_in_groups>` したい。
 
 .. seealso::
 
    :ref:`all_modules`
-       Learn about available modules
-   `GitHub modules directory <https://github.com/ansible/ansible/tree/devel/lib/ansible/modules>`_
-       Browse module source code
-   `Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Development mailing list
+       利用可能なモジュールについて
+   `GitHub モジュールディレクトリー <https://github.com/ansible/ansible/tree/devel/lib/ansible/modules>`_
+       モジュールソースコードの閲覧
+   `メーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       開発メーリングリスト
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible IRC chat channel

@@ -1,7 +1,7 @@
 changelog
 =========
 
-yamllint および rstcheck を使用した changelog フラグメントの基本的な文法チェック。
+yamllint および rstcheck を使用した changelog フラグメントの基本的な文法チェックです。
 
 以下のセクションが 1 つ以上必要です。
 

@@ -1,11 +1,11 @@
 **********************************
-Developing the Ansible Core Engine
+Ansible Core Engine の開発
 **********************************
 
-Although many of the pieces of the Ansible Core Engine are plugins that can be
-swapped out via playbook directives or configuration, there are still pieces
-of the Engine that are not modular.  The documents here give insight into how
-those pieces work together.
+Ansible Core Engine の多くの部分はプラグインであり、
+Playbook ディレクティブまたは設定を介して交換できますが、
+モジュール化されていないエンジンの部分がまだあります。 本ガイドでは、
+これらがどのように連携するかについての洞察を説明します。
 
 .. toctree::
    :maxdepth: 1
@@ -15,10 +15,10 @@ those pieces work together.
 .. seealso::
 
    :ref:`developing_api`
-       Learn about the Python API for task execution
+       タスク実行用の Python API について
    :ref:`developing_plugins`
-       Learn about developing plugins
-   `Mailing List <https://groups.google.com/group/ansible-devel>`_
-       The development mailing list
+       プラグインの開発について
+   `メーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       開発メーリングリスト
    `irc.freenode.net <http://irc.freenode.net>`_
        #ansible-devel IRC chat channel

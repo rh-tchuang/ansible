@@ -7,7 +7,7 @@
 
 Ansible
 ~~~~~~~~~
-* "Ansible" と書きます。 「Ansible, Inc.」または「AnsibleWorks」にはしないでください。このルールの唯一の例外は、法的文書または財務諸表を作成する場合です。
+* 「Ansible」と書きます。 「Ansible, Inc.」または「AnsibleWorks」にはしないでください。このルールの唯一の例外は、法的文書または財務諸表を作成する場合です。
 
 * ロゴマークは、本文で使用しないでください。その他の文章で使用しているフォントを常に使用します。
 
@@ -21,13 +21,13 @@ Ansible の実際の製品、サービス、または部門ではない場合に
 コロン
 ~~~~~~~~~~~~~~~~~
 通常、コロンは、リストまたは一連の要素の前に使用されます。
-- The Triangle Area consists of three cities: Raleigh, Durham, and Chapel Hill.
+The Triangle Area consists of three cities: Raleigh, Durham, and Chapel Hill.
 
 ただし、リストが、文内の要素の補語または目的語の場合は、以下のようにします。
-- Before going on vacation, be sure to (1) set the alarm, (2) cancel the newspaper, and (3) ask a neighbor to collect your mail.
+Before going on vacation, be sure to (1) set the alarm, (2) cancel the newspaper, and (3) ask a neighbor to collect your mail.
 
 直後に関連するリストを追加する場合は、「as follows」および「the following」(次のとおり) の後にコロンを使用します。
-「The steps for changing directories are as follows:」(ディレクトリーを変更する手順は次のとおりです。)
+The steps for changing directories are as follows:
 
     1.Open a terminal.
     2.Type cd...
@@ -45,10 +45,10 @@ Ansible の実際の製品、サービス、または部門ではない場合に
 ~~~~~~~~~~~
 3 つ以上の項目が続く場合は、「and」の前にコンマを使用します。 
 
-- 「Item 1, item 2, and item 3.」
+- Item 1, item 2, and item 3.
 
    
-こうすれば読みやすくなり、混乱を避けることができます。これに対する主な例外は PR です。PR では、多くの場合ジャーナリスト向けのスタイルにより、このようなコンマは使用しません。
+これにより読みやすくなり、混乱を避けることができます。これに対する主な例外は PR です。PR では、多くの場合ジャーナリスト向けのスタイルにより、このようなコンマは使用しません。
 
 次の 2 つの文章の意味が大きく異なることを考えると、コンマは常に重要です。
 
@@ -64,7 +64,7 @@ Ansible の実際の製品、サービス、または部門ではない場合に
 
 縮約
 ~~~~~~~~~~~~~
-Ansible ドキュメントで縮約は使用しないでください。
+Ansible ドキュメントでは、縮約は使用しないでください。
 
 エムダッシュ (－)
 ~~~~~~~~~~
@@ -99,18 +99,18 @@ Ansible ドキュメントで縮約は使用しないでください。
 
 性別の参照
 ~~~~~~~~~~~~~~~~~~
-ドキュメンテーションでは、性別固有の代名詞は使用しないでください。「he/she」や「his/hers」ではなく「they」および「their」を使用する文を読む方が適切です。 
+ドキュメンテーションでは、性別固有の代名詞は使用しないでください。「he/she」や「his/hers」ではなく「they」および「their」を使用する方が適切です。 
 
 指示を示す場合は「you」と使用し、より一般的な説明では「the user」、「new users」などを使用すると良いでしょう。 
 
-テクニカルドキュメントを作成する際は、「You」 の代わりに「one」は使用しないでください。「one」を使用すると堅苦しくなります。
+テクニカルドキュメントを作成する際は、「You」 の意味で「one」を使用しないでください。「one」を使用すると堅苦しくなります。
 
-作成時に「we」は使用しないでください。「We」はユーザー側では何も行われていません。Ansible の製品は、ユーザーの要求に応じて作業を行っています。
+ドキュメントの作成時に「we」は使用しないでください。「we」はユーザーの動作を示しません。Ansible の製品は、ユーザーの要求に応じて作業を行っています。
 
 
 ハイフン
 ~~~~~~~~~~~~~~
-このハイフンの主な機能は、特定の複合用語の特徴です。目的が満たされない限り、ハイフンは使用しないでください。複合形容詞が間違って解釈されない場合、または多くの心理学用語と同じ様に、その意味が確立されている場合、ハイフンは必要ありません。
+このハイフンの主な機能は、特定の複合用語の特徴です。目的が満たされない限り、ハイフンは使用しないでください。複合形容詞が間違って解釈されない場合、または多くの心理学用語と同じ様に、その意味が確立されている場合は、ハイフンが必要ありません。
 
 ハイフンは、あいまいさや混乱を避けるためにを使用します。
 
@@ -174,7 +174,7 @@ AP スタイルブックに従って、月と州の名前を省略します。�
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      "Place the punctuation inside the quotes," the editor said.
 
-まれな場合を除いて、「said」または「say」だけを使用してください。それ以外は、引用の邪魔になり、編集される傾向があるためです。
+ほとんどの場合は、「said」または「say」だけを使用してください。それ以外は、引用の邪魔になり、編集される傾向があるためです。
 
 引用の直後に名前を追加します。
      "I like to write first-person because I like to become the character I'm writing," Wally Lamb said. 

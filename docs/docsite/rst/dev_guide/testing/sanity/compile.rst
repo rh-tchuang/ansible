@@ -1,4 +1,4 @@
-compile
+コンパイル
 =======
 
-詳細は、:ref:`testing_compile` を参照してください。
+詳細は、「:ref:`testing_compile`」を参照してください。

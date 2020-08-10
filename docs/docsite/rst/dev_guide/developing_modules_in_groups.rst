@@ -1,154 +1,154 @@
 .. _developing_modules_in_groups:
 
 *********************************************
-Information for submitting a group of modules
+モジュールのグループを送信する情報
 *********************************************
 
-.. contents:: Topics
+.. contents:: トピック
    :local:
 
-Submitting a group of modules
+モジュールのグループの送信
 =============================
 
-This section discusses how to get multiple related modules into Ansible.
+本セクションでは、複数の関連モジュールを Ansible に組み込む方法を説明します。
 
-This document is intended for both companies wishing to add modules for their own products as well as users of 3rd party products wishing to add Ansible functionality.
+本ガイドは、自社製品のモジュールを追加することを希望する企業と、Ansible 機能を追加したいサードパーティー製品のユーザーの両方を対象としています。
 
-It's based on module development tips and tricks that the Ansible core team and community have accumulated.
+これは、Ansible コアチームおよびコミュニティーが蓄積したモジュール開発のヒントおよびテクニックに基づいています。
 
 .. include:: shared_snippets/licensing.txt
 
-Before you start coding
+コーディングを開始する前に
 =======================
 
-Although it's tempting to get straight into coding, there are a few things to be aware of first. This list of prerequisites is designed to help ensure that you develop high-quality modules that flow easily through the review process and get into Ansible more quickly.
+コーディングを始める前に、注意すべき点がいくつかあります。この前提条件の一覧は、レビュープロセスを簡単に終わらせ、より早く Ansible に組み込まれる高品質のモジュールを開発できるように設計されています。
 
-* Read though all the pages linked off :ref:`developing_modules_general`; paying particular focus to the :ref:`developing_modules_checklist`.
-* New modules must be PEP 8 compliant. See :ref:`testing_pep8` for more information.
-* Starting with Ansible version 2.7, all new modules must :ref:`support Python 2.7+ and Python 3.5+ <developing_python_3>`. If this is an issue, please contact us (see the "Speak to us" section later in this document to learn how).
-* Have a look at the existing modules and how they've been named in the :ref:`all_modules`, especially in the same functional area (such as cloud, networking, databases).
-* Shared code can be placed into ``lib/ansible/module_utils/``
-* Shared documentation (for example describing common arguments) can be placed in ``lib/ansible/plugins/doc_fragments/``.
-* With great power comes great responsibility: Ansible module maintainers have a duty to help keep modules up to date. As with all successful community projects, module maintainers should keep a watchful eye for reported issues and contributions.
-* Although not required, unit and/or integration tests are strongly recommended. Unit tests are especially valuable when external resources (such as cloud or network devices) are required. For more information see :ref:`developing_testing` and the `Testing Working Group <https://github.com/ansible/community/blob/master/meetings/README.md>`_.
-  * Starting with Ansible 2.4 all :ref:`network_modules` MUST have unit tests.
+* 「:ref:`developing_modules_general`」からリンクされているすべてのページを読みます。特に、「:ref:`developing_modules_checklist`」に注意してください。
+* 新しいモジュールは PEP 8 に準拠している必要があります。詳細は、「:ref:`testing_pep8`」を参照してください。
+* Ansible バージョン 2.7 以降では、新しいモジュールはすべて :ref:`Python 2.7 以降および Python 3.5 以降 <developing_python_3>` に対応する必要があります。問題が解決しない場合はお問い合わせください (お問い合わせ方法は、本ガイドの後半の「お問い合わせ」セクションをご覧ください。
+* 既存のモジュールで、特に同じ機能領域 (クラウド、ネットワーク、データベースなど) で :ref:`all_modules` にどのように命名方法が採用されているかを確認してください。
+* 共有コードは、``lib/ansible/module_utils/`` に置くことができます。
+* 共有ドキュメント (共通引数の記述など) は、``lib/ansible/plugins/doc_fragments/`` に置くことができます。
+* 大きな力には大きな責任が伴います。Ansible モジュールメンテナーには、モジュールを最新の状態に保つのを手伝う義務があります。モジュールメンテナーは、成功しているすべてのコミュニティープロジェクトと同様、報告された問題と貢献に注意を払う必要があります。
+* 必須ではありませんが、ユニットテストや統合テストが強く推奨されます。ユニットテストは、外部リソース (クラウドやネットワークデバイスなど) が必要な場合に特に有効です。詳細は、「:ref:`developing_testing`」および「`Testing Working Group <https://github.com/ansible/community/blob/master/meetings/README.md>`_」を参照してください。
+  * Ansible 2.4 以降、すべての :ref:`network_modules` にはユニットテストが必要です。
 
 
-Naming convention
+命名規則
 =================
 
-As you may have noticed when looking under ``lib/ansible/modules/`` we support up to two directories deep (but no deeper), e.g. `databases/mysql`. This is used to group files on disk as well as group related modules into categories and topics the Module Index, for example: :ref:`database_modules`.
+``lib/ansible/modules/`` を見ると気づかれるかもしれませんが、わたしたちがサポートするのはディレクトリーの 2 階層 (`databases/mysql` など) までです。これはディスク上のファイルをグループ化したり、関連するモジュールをモジュールインデックスのカテゴリーやトピックでグループ化したりするために使用されます (:ref:`database_modules` など)。
 
-The directory name should represent the *product* or *OS* name, not the company name.
+ディレクトリー名は、会社名ではなく、*製品* または *OS* の名前を表す必要があります。
 
-Each module should have the above (or similar) prefix; see existing :ref:`all_modules` for existing examples.
+各モジュールには上記 (または同様) の接頭辞が必要です。既存の例は、既存の「:ref:`all_modules`」を参照してください。
 
-**Note:**
+**注記: **
 
-* File and directory names are always in lower case
-* Words are separated with an underscore (``_``) character
-* Module names should be in the singular, rather than plural, eg ``command`` not ``commands``
+* ファイルおよびディレクトリーの名前は常に小文字です。
+* 単語はアンダースコア (``_``) 記号で区切ります。
+* モジュール名は、複数形ではなく、単数形にする必要があります。たとえば、``commands`` ではなく、``command`` とします。
 
 
-Speak to us
+お問い合わせ
 ===========
 
-Circulating your ideas before coding is a good way to help you set off in the right direction.
+コーディングを始める前にアイデアを循環させることは、正しい方向に進むのに役立つ良い方法です。
 
-After reading the "Before you start coding" section you will hopefully have a reasonable idea of the structure of your modules.
+「コーディングを開始する前に」セクションを読むと、モジュールの構造について合理的に理解できるでしょう。
 
-We've found that writing a list of your proposed module names and a one or two line description of what they will achieve and having that reviewed by Ansible is a great way to ensure the modules fit the way people have used Ansible Modules before, and therefore make them easier to use.
+これまでに、提案されたモジュール名のリストとそのモジュールで実現できることを 1、2 行で説明し、それを Ansible がレビューすることが、モジュールがこれまで Ansible モジュールを使用してきた人の使い方に適しているかどうかを確認し、より使いやすくするための優れた方法であることが分かっています。
 
 
-Where to get support
+サポートを受ける場所
 ====================
 
-Ansible has a thriving and knowledgeable community of module developers that is a great resource for getting your questions answered.
+Ansible には、活発で知識が豊富なモジュール開発者のコミュニティーがあり、質問に答えるための素晴らしいリソースとなっています。
 
-In the :ref:`ansible_community_guide` you can find how to:
+「:ref:`ansible_community_guide`」では、以下の方法を確認できます。
 
-* Subscribe to the Mailing Lists - We suggest "Ansible Development List" (for codefreeze info) and "Ansible Announce list"
-* ``#ansible-devel`` - We have found that IRC ``#ansible-devel`` on FreeNode's IRC network works best for module developers so we can have an interactive dialogue.
-* IRC meetings - Join the various weekly IRC meetings `meeting schedule and agenda page <https://github.com/ansible/community/blob/master/meetings/README.md>`_
+* メーリングリストをサブスクライブすること。「Ansible Development List」（codefreeze 情報用）および「Ansible Announce list」を提案します。
+* ``#ansible-devel`` - FreeNode の IRC ネットワーク ``#ansible-devel`` では、インタラクティブな対話を行うことができるため、モジュール開発者に最適なものであることが分かっています。
+* IRC ミーティング - 様々な IRC ミーティング (毎週) に参加する。「`ミーティングスケジュールおよび議題ページ <https://github.com/ansible/community/blob/master/meetings/README.md>`_」を参照してください。
 
 
-Your first pull request
+最初のプル要求
 =======================
 
-Now that you've reviewed this document, you should be ready to open your first pull request.
+本ドキュメントを確認すれば、最初のプル要求を作成する準備が整うはずです。
 
-The first PR is slightly different to the rest because it:
+最初の PR は、通常のものとは少し異なります。
 
-* defines the namespace
-* provides a basis for detailed review that will help shape your future PRs
-* may include shared documentation (`doc_fragments`) that multiple modules require
-* may include shared code (`module_utils`) that multiple modules require
-
-
-The first PR should include the following files:
-
-* ``lib/ansible/modules/$category/$topic/__init__.py`` - An empty file to initialize namespace and allow Python to import the files. *Required new file*
-* ``lib/ansible/modules/$category/$topic/$yourfirstmodule.py`` - A single module. *Required new file*
-* ``lib/ansible/plugins/doc_fragments/$topic.py`` - Code documentation, such as details regarding common arguments. *Optional new file*
-* ``lib/ansible/module_utils/$topic.py`` - Code shared between more than one module, such as common arguments. *Optional new file*
-
-And that's it.
-
-Before pushing your PR to GitHub it's a good idea to review the :ref:`developing_modules_checklist` again.
-
-After publishing your PR to https://github.com/ansible/ansible, a Shippable CI test should run within a few minutes. Check the results (at the end of the PR page) to ensure that it's passing (green). If it's not passing, inspect each of the results. Most of the errors should be self-explanatory and are often related to badly formatted documentation (see :ref:`yaml_syntax`) or code that isn't valid Python 2.6  or valid Python 3.5 (see :ref:`developing_python_3`). If you aren't sure what a Shippable test message means, copy it into the PR along with a comment and we will review.
-
-If you need further advice, consider join the ``#ansible-devel`` IRC channel (see how in the "Where to get support").
+* 名前空間を定義します。
+* 今後の PR を構成するのに役立つ詳細レビューの基礎を提供します。
+* 複数のモジュールが必要とする共有ドキュメント (`doc_fragments`) を含めることができます。
+* 複数のモジュールが必要とする共有コード (`module_utils`) を含めることができます。
 
 
-We have a ``ansibullbot`` helper that comments on GitHub Issues and PRs which should highlight important information.
+最初の PR には以下のファイルが含まれている必要があります。
+
+* ``lib/ansible/modules/$category/$topic/__init__.py`` - 名前空間を初期化し、Python がファイルをインポートできるようにする空のファイル。*必要な新規ファイル*
+* ``lib/ansible/modules/$category/$topic/$yourfirstmodule.py`` - 単一のモジュール。*必要な新規ファイル*
+* ``lib/ansible/plugins/doc_fragments/$topic.py`` - 一般的な引数の詳細などのコードのドキュメント。*任意の新しいファイル*
+* ``lib/ansible/module_utils/$topic.py`` - 一般的な引数などの、複数のモジュール間で共有されるコード。*任意の新しいファイル*
+
+以上です。
+
+PR を GitHub にプッシュする前に、「:ref:`developing_modules_checklist`」を再度確認することが推奨されます。
+
+PR を https://github.com/ansible/ansible に公開した後、Shippable CI テストが数分以内に実行されるはずです。結果 (PR ページの最後にあります) を読んで、合格している (緑色) ことを確認します。合格していない場合は、各結果を確認してください。エラーのほとんどは説明の必要がないもので、ドキュメントの形式が正しくない場合がほとんどです (「:ref:`yaml_syntax`」を参照)。または、有効な Python 2.6 や Python 3.5 ではないコード (:ref:`developing_python_3` を参照) に関連しています。もし、Shippable テストメッセージが何を意味するのかわからない場合は、わたしたちが確認するため、コメントと一緒に PR にコピーしてください。
+
+さらにアドバイスが必要な場合は、IRC チャンネル ``#ansible-devel`` に参加することを検討してください (「サポートを得る方法」を参照してください)。
 
 
-Subsequent PRs
+GitHub Issue および PRS にコメントする ``ansibullbot`` ヘルパーがあります。重要な情報を強調表示します。
+
+
+その後の PR
 ==============
 
-By this point you first PR that defined the module namespace should have been merged. You can take the lessons learned from the first PR and apply it to the rest of the modules.
+この時点で、モジュールの名前空間を定義した最初の PR がマージされている必要があります。最初の PR から学んだ教訓を、残りのモジュールに適用できます。
 
-Raise exactly one PR per module for the remaining modules.
+残りのモジュールについては、モジュールごとに PR を1つだけ上げます。
 
-Over the years we've experimented with different sized module PRs, ranging from one module to many tens of modules, and during that time we've found the following:
+長年にわたり、1 つのモジュールから数十にもなるモジュールまで、さまざまなサイズのモジュール PR を試してきましたが、それにより次のことがわかりました。
 
-* A PR with a single file gets a higher quality review
-* PRs with multiple modules are harder for the creator to ensure all feedback has been applied
-* PRs with many modules take a lot more work to review, and tend to get passed over for easier-to-review PRs.
+* PR に含まれるファイルが 1 つの場合は、高品質のレビューが得られます。
+* PR に含まれるファイルが複数の場合は、すべてのフィードバックが適用されていることを作成者が確認するのがより困難になります。
+* PR に含まれるモジュールが多くなると、レビューに必要な作業も増えるため、レビューしやすい PR が選ばれる傾向があります。
 
-You can raise up to five PRs at once (5 PRs = 5 new modules) **after** your first PR has been merged. We've found this is a good batch size to keep the review process flowing.
+最初の PR がマージされた **後**、最大 5 つの PR を一度に上げることができます (5 個の PR は 5 個の新規モジュールに相当)。これが、レビュープロセスをスムーズに進めるための適切なバッチサイズであることが分かりました。
 
-Maintaining your modules
+モジュールのメンテナンス
 ========================
 
-Now that your modules are integrated there are a few bits of housekeeping to be done.
+モジュールが統合されると、いくつかのハウスキーピング処理が必要になります。
 
-**Bot Meta**
-Update `Ansibullbot` so it knows who to notify if/when bugs or PRs are raised against your modules
-`BOTMETA.yml <https://github.com/ansible/ansible/blob/devel/.github/BOTMETA.yml>`_.
+**ボットメタ**
+`Ansibullbot` を更新して、
+作成したモジュールの `BOTMETA.yml <https://github.com/ansible/ansible/blob/devel/.github/BOTMETA.yml>`_ に対してバグまたは PR が発生したかどうか、発生した場合はいつ誰に通知するかを設定します。
 
-If there are multiple people that can be notified, please list them. That avoids waiting on a single person who may be unavailable for any reason. Note that in `BOTMETA.yml` you can take ownership of an entire directory.
+通知するユーザーが複数の場合は、リストを作成します。これにより、1 人のユーザーが何らかの理由で対応できない場合に、その他の人がそのユーザーを待つ必要がなくなります。`BOTMETA.yml` では、ディレクトリー全体の所有権を取得できることに注意してください。
 
 
-**Review Module web docs**
-Review the autogenerated module documentation for each of your modules, found in :ref:`Module Docs <modules_by_category>` to ensure they are correctly formatted. If there are any issues please fix by raising a single PR.
+**モジュール Web ドキュメントの確認**
+モジュールごとに自動生成されるモジュールドキュメントを確認してください。「:ref:`モジュールドキュメント <modules_by_category>`」でドキュメントが正しくフォーマットされていることを確認します。問題がある場合は、PR を 1 つ作成して修正してください。
 
-If the module documentation hasn't been published live yet, please let a member of the Ansible Core Team know in the ``#ansible-devel`` IRC channel.
+モジュールのドキュメントが公開されていない場合は、IRC チャンネルの ``#ansible-devel`` で、Ansible Core Team のメンバーにご連絡ください。
 
-.. note:: Consider adding a scenario guide to cover how to use your set of modules. Use the :ref:`sample scenario guide rst file <scenario_template>` to help you get started. For network modules, see :ref:`documenting_modules_network` for further documentation requirements.
+.. note:: モジュールセットの使用方法についてシナリオガイドを追加することを検討してください。これを始めるには、「:ref:`sample scenario guide rst file <scenario_template>`」が役に立ちます。ネットワークモジュールの詳細は、ドキュメンテーションの要件を「:ref:`documenting_modules_network`」でご確認ください。
 
-New to git or GitHub
+git または GitHub をはじめて使用する場合
 ====================
 
-We realize this may be your first use of Git or GitHub. The following guides may be of use:
+ここでは、Git または GitHub を初めて使用するユーザーを対象としています。次のガイドが参考になります。
 
 * `How to create a fork of ansible/ansible <https://help.github.com/articles/fork-a-repo/>`_
 * `How to sync (update) your fork <https://help.github.com/articles/syncing-a-fork/>`_
 * `How to create a Pull Request (PR) <https://help.github.com/articles/about-pull-requests/>`_
 
-Please note that in the Ansible Git Repo the main branch is called ``devel`` rather than ``master``, which is used in the official GitHub documentation
+Ansible Git リポジトリーでは、メインブランチは ``master`` ではなく ``devel`` と呼ばれます。これは、公式の GitHub ドキュメントで使用されています。
 
-After your first PR has been merged ensure you "sync your fork" with ``ansible/ansible`` to ensure you've pulled in the directory structure and and shared code or documentation previously created.
+最初の PR がマージされると、以前作成したディレクトリー構造、および共有コードまたはドキュメントを取得できるように、``ansible/ansible`` と「フォークを同期」させます。
 
-As stated in the GitHub documentation, always use feature branches for your PRs, never commit directly into ``devel``.
+GitHub ドキュメントに記載されているように、PR には常に機能ブランチを使用し、``devel`` に直接コミットしないようにしてください。

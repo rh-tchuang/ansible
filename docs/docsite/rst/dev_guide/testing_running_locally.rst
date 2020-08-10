@@ -3,86 +3,86 @@
 .. _testing_running_locally:
 
 ***************
-Testing Ansible
+Ansible のテスト
 ***************
 
-.. contents:: Topics
+.. contents:: トピック
 
-This document describes how to:
+本書では、以下を行う方法を説明します。
 
-* Run tests locally using ``ansible-test``
-* Extend
+* ``ansible-test`` を使用してテストをローカルで実行します。
+* 拡張します。
 
-Requirements
+要件
 ============
 
-There are no special requirements for running ``ansible-test`` on Python 2.7 or later.
-The ``argparse`` package is required for Python 2.6.
-The requirements for each ``ansible-test`` command are covered later.
+Python 2.7 以降で ``ansible-test`` を実行する特別な要件はありません。
+Python 2.6 には ``argparse`` パッケージが必要です。
+各 ``ansible-test`` コマンドの要件は、後で説明します。
 
 
-Test Environments
+テスト環境
 =================
 
-Most ``ansible-test`` commands support running in one or more isolated test environments to simplify testing.
+ほとんどの ``ansible-test`` コマンドは、テストを簡単にするために、1 つ以上の分離テスト環境での実行をサポートします。
 
 
-Remote
+リモート
 ------
 
-The ``--remote`` option runs tests in a cloud hosted environment.
-An API key is required to use this feature.
+``--remote`` オプションは、クラウドホスト環境でテストを実行します。
+この機能を使用するには API キーが必要です。
 
-    Recommended for integration tests.
+    統合テストに推奨されます。
 
-See the `list of supported platforms and versions <https://github.com/ansible/ansible/blob/devel/test/runner/completion/remote.txt>`_ for additional details.
+詳細は、「`list of supported platforms and versions` <https://github.com/ansible/ansible/blob/devel/test/runner/completion/remote.txt>_」 の一覧を参照してください。
 
-Environment Variables
+環境変数
 ---------------------
 
-When using environment variables to manipulate tests there some limitations to keep in mind. Environment variables are:
+環境変数を使用してテストを操作する際には、以下の制限事項に留意してください。環境変数は以下のようになります。
 
-* Not propagated from the host to the test environment when using the ``--docker`` or ``--remote`` options.
-* Not exposed to the test environment unless whitelisted in ``test/runner/lib/util.py`` in the ``common_environment`` function.
-* Not exposed to the test environment when using the ``--tox`` option unless whitelisted in ``test/runner/tox.ini`` by the ``passenv`` definition.
+* ``--docker`` オプションまたは ``--remote`` オプションを使用する場合は、ホストからテスト環境に伝播されません。
+* ``common_environment`` 関数の ``test/runner/lib/util.py`` でホワイトリスト化されない限り、テスト環境に公開されません。
+* ``passenv`` 定義を使用して ``test/runner/tox.ini`` でホワイトリスト化しない限り、``--tox`` オプションを使用してテスト環境に公開されません。
 
-    Example: ``ANSIBLE_KEEP_REMOTE_FILES=1`` can be set when running ``ansible-test integration --tox``. However, using the ``--docker`` option would
-    require running ``ansible-test shell`` to gain access to the Docker environment. Once at the shell prompt, the environment variable could be set
-    and the tests executed. This is useful for debugging tests inside a container by following the
-    :ref:`Debugging AnsibleModule-based modules <debugging_ansiblemodule_based_modules>` instructions.
+    例: ``ansible-test integration --tox`` の実行時に、``ANSIBLE_KEEP_REMOTE_FILES=1`` を設定できます。ただし、``--docker`` オプションを使用すると、
+    Docker 環境にアクセスするには、``ansible-test shell`` を実行する必要があります。シェルプロンプトで一度、環境変数を設定でき、
+    テストが実行されました。これは、
+    「:ref:`AnsibleModule ベースのモジュールのデバッグ <debugging_ansiblemodule_based_modules>`」の指示に従って、コンテナー内でテストをデバッグする際に便利です。
 
-Interactive Shell
+インタラクティブシェル
 =================
 
-Use the ``ansible-test shell`` command to get an interactive shell in the same environment used to run tests. Examples:
+``ansible-test shell`` コマンドを使用して、テストを実行するのに使用する同じ環境でインタラクティブシェルを取得します。例:
 
-* ``ansible-test shell --docker`` - Open a shell in the default docker container.
-* ``ansible-test shell --tox 3.6`` - Open a shell in the Python 3.6 ``tox`` environment.
+* ``ansible-test shell --docker`` - デフォルトの docker コンテナーでシェルを開きます。
+* ``ansible-test shell --tox 3.6`` - Python 3.6 ``tox`` 環境でシェルを開きます。
 
 
-Code Coverage
+コードの対象範囲
 =============
 
-Code coverage reports make it easy to identify untested code for which more tests should
-be written.  Online reports are available but only cover the ``devel`` branch (see
-:ref:`developing_testing`).  For new code local reports are needed.
+コードの対象範囲レポートは、
+より多くのテストが記述されるべき未テストのコードを簡単に識別することができます。 オンラインレポートは利用できますが、``devel`` ブランチのみを対象としています 
+( :ref:`developing_testing` を参照)。 新規コードのローカルレポートが必要な場合。
 
-Add the ``--coverage`` option to any test command to collect code coverage data.  If you
-aren't using the ``--tox`` or ``--docker`` options which create an isolated python
-environment then you may have to use the ``--requirements`` option to ensure that the
-correct version of the coverage module is installed::
+``--coverage`` オプションをテストコマンドに追加して、コードの対象範囲のデータを収集します。 分離された python を作成する 
+``--tox`` オプションまたは ``--docker`` オプションを使用していない場合は、
+``-requirements`` オプションを使用して、
+対象モジュールの正しいバージョンがインストールされている必要があります。
 
    ansible-test units --coverage apt
    ansible-test integration --coverage aws_lambda --tox --requirements
    ansible-test coverage html
 
 
-Reports can be generated in several different formats:
+レポートは、複数の形式で生成できます。
 
-* ``ansible-test coverage report`` - Console report.
-* ``ansible-test coverage html`` - HTML report.
-* ``ansible-test coverage xml`` - XML report.
+* ``ansible-test coverage report`` - コンソールレポート
+* ``ansible-test coverage html`` - HTML レポート
+* ``ansible-test coverage xml`` - XML レポート
 
-To clear data between test runs, use the ``ansible-test coverage erase`` command. For a full list of features see the online help::
+テストの実行間でデータを消去するには、``ansible-test coverage erase`` コマンドを使用します。機能の一覧は、オンラインヘルプを参照してください。
 
    ansible-test coverage --help

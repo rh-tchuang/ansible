@@ -1,31 +1,31 @@
 .. _rebase_guide:
 
 ***********************
-Rebasing a pull request
+プル要求のリベース
 ***********************
 
-You may find that your pull request (PR) is out-of-date and needs to be rebased. This can happen for several reasons:
+プル要求 (PR) が古いため、リベースが必要になる場合があります。これにはいくつかの理由が考えられます。
 
-- Files modified in your PR are in conflict with changes which have already been merged.
-- Your PR is old enough that significant changes to automated test infrastructure have occurred.
+- PR で変更されたファイルは、すでにマージされている変更と競合しています。
+- PR は、自動化されたテストインフラストラクチャーに大きな変更が行われたのに十分なサイズです。
 
-Rebasing the branch used to create your PR will resolve both of these issues.
+PR を作成するのに使用するブランチを再設定すると、この両方の問題が解決されます。
 
-Configuring your remotes
+リモートの設定
 ========================
 
-Before you can rebase your PR, you need to make sure you have the proper remotes configured.
-Assuming you cloned your fork in the usual fashion, the ``origin`` remote will point to your fork::
+PR をリベースする前に、適切なリモートが設定されていることを確認する必要があります。
+通常の方法でフォークをクローンしたと仮定すると、``作成元`` のリモートはフォークを指定します。
 
    $ git remote -v
    origin  git@github.com:YOUR_GITHUB_USERNAME/ansible.git (fetch)
    origin  git@github.com:YOUR_GITHUB_USERNAME/ansible.git (push)
 
-However, you also need to add a remote which points to the upstream repository::
+ただし、アップストリームのリポジトリーを参照するリモートを追加する必要もあります。
 
    $ git remote add upstream https://github.com/ansible/ansible.git
 
-Which should leave you with the following remotes::
+次のリモートを残す必要があります。
 
    $ git remote -v
    origin  git@github.com:YOUR_GITHUB_USERNAME/ansible.git (fetch)
@@ -33,24 +33,24 @@ Which should leave you with the following remotes::
    upstream        https://github.com/ansible/ansible.git (fetch)
    upstream        https://github.com/ansible/ansible.git (push)
 
-Checking the status of your branch should show you're up-to-date with your fork at the ``origin`` remote::
+ブランチのステータスを確認すると、``作成元`` のリモートのフォークが最新の状態であることを理解できます。
 
    $ git status
    On branch YOUR_BRANCH
    Your branch is up-to-date with 'origin/YOUR_BRANCH'.
    nothing to commit, working tree clean
 
-Rebasing your branch
+ブランチのリベース
 ====================
 
-Once you have an ``upstream`` remote configured, you can rebase the branch for your PR::
+``アップストリーム`` のリモートを設定したら、PR のブランチをリベースできます。
 
    $ git pull --rebase upstream devel
 
-This will replay the changes in your branch on top of the changes made in the upstream ``devel`` branch.
-If there are merge conflicts, you will be prompted to resolve those before you can continue.
+これにより、アップストリームの ``devel`` ブランチで変更したブランチに変更が再プレイされます。
+マージの競合が発生した場合は、続行する前に解決するように求められます。
 
-Once you've rebased, the status of your branch will have changed::
+リベースすると、ブランチのステータスが以下のように変わります。
 
    $ git status
    On branch YOUR_BRANCH
@@ -59,28 +59,27 @@ Once you've rebased, the status of your branch will have changed::
      (use "git pull" to merge the remote branch into yours)
    nothing to commit, working tree clean
 
-Don't worry, this is normal after a rebase. You should ignore the ``git status`` instructions to use ``git pull``.
-We'll cover what to do next in the following section.
+リベースはこれで正常です。``git pull`` を使用するには ``git status`` 命令を無視します。
+次のセクションでは、次の作業を説明します。
 
-Updating your pull request
+プル要求の更新
 ==========================
 
-Now that you've rebased your branch, you need to push your changes to GitHub to update your PR.
+ブランチをリベースしたら、変更を GitHub にプッシュして、PR を更新する必要があります。
 
-Since rebasing re-writes git history, you will need to use a force push::
+git 履歴を再書き込みするため、強制的にプッシュする必要があります。
 
    $ git push --force-with-lease
 
-Your PR on GitHub has now been updated. This will automatically trigger testing of your changes.
-You should check in on the status of your PR after tests have completed to see if further changes are required.
+GitHub の PR が更新されました。これにより、変更のテストが自動的にトリガーされます。
+テスト完了後に PR のステータスを確認し、さらなる変更が必要であるかどうかを確認する必要があります。
 
-Getting help rebasing
+ヘルプの再ベース
 =====================
 
-For help with rebasing your PR, or other development related questions, join us on our #ansible-devel IRC chat channel
-on `freenode.net <https://freenode.net>`_.
+PR またはその他の開発関連の質問を再設定する際には、`freenode.net <https://freenode.net>`_ で #ansible-devel IRC チャットチャンネルに参加します。
 
 .. seealso::
 
    :ref:`community_development_process`
-       Information on roadmaps, opening PRs, Ansibullbot, and more
+       ロードマップ、オープン PRS、Ansibullbot などに関する情報

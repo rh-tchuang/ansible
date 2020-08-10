@@ -1,13 +1,13 @@
 .. _aci_dev_guide:
 
 ****************************
-Developing Cisco ACI modules
+Cisco ACI モジュールの開発 
 ****************************
-This is a brief walk-through of how to create new Cisco ACI modules for Ansible.
+Ansible 向けに新しい Cisco ACI モジュールを作成する方法に関する簡単なウォークスルーです。
 
-For more information about Cisco ACI, look at the :ref:`Cisco ACI user guide <aci_guide>`.
+Cisco ACI の詳細は「:ref:`Cisco ACI ユーザーガイド <aci_guide>`」を参照してください。
 
-What's covered in this section:
+本項で取り上げられている内容:
 
 .. contents::
    :depth: 3
@@ -16,36 +16,36 @@ What's covered in this section:
 
 .. _aci_dev_guide_intro:
 
-Introduction
+はじめに
 ============
-Ansible already ships with a large collection of Cisco ACI modules, however the ACI object model is huge and covering all possible functionality would easily cover more than 1500 individual modules.
+Ansible にはすでに Cisco ACI モジュールの大規模なコレクションが同梱されていますが、ACI のオブジェクトモデルは膨大なものであり、可能な機能にすべて対応するには、1500 個以上のモジュールに簡単に対応できなければなりません。
 
-If you are in need of specific functionality, you have 2 options:
+特定の機能が必要な場合は、2 つのオプションがあります。
 
-- Learn the ACI object model and use the low-level APIC REST API using the :ref:`aci_rest <aci_rest_module>` module
-- Write your own dedicated modules, which is actually quite easy
+- ACI オブジェクトモデルを学習し、「:ref:`aci_rest` <aci_rest_module>」モジュールを使用して低レベルの APIC REST API を使用します。
+- 独自の専用モジュールを作成することは、実際には非常に簡単です。
 
 .. seealso::
 
-   `ACI Fundamentals: ACI Policy Model <https://www.cisco.com/c/en/us/td/docs/switches/datacenter/aci/apic/sw/1-x/aci-fundamentals/b_ACI-Fundamentals/b_ACI-Fundamentals_chapter_010001.html>`_
-       A good introduction to the ACI object model.
-   `APIC Management Information Model reference <https://developer.cisco.com/docs/apic-mim-ref/>`_
-       Complete reference of the APIC object model.
-   `APIC REST API Configuration Guide <https://www.cisco.com/c/en/us/td/docs/switches/datacenter/aci/apic/sw/2-x/rest_cfg/2_1_x/b_Cisco_APIC_REST_API_Configuration_Guide.html>`_
-       Detailed guide on how the APIC REST API is designed and used, incl. many examples.
+   `ACI の基本: ACI ポリシー <https://www.cisco.com/c/en/us/td/docs/switches/datacenter/aci/apic/sw/1-x/aci-fundamentals/b_ACI-Fundamentals/b_ACI-Fundamentals_chapter_010001.html>モデル`
+       ACI オブジェクトモデルの優れた概要。
+   `APIC 管理情報モデル参照 <https://developer.cisco.com/docs/apic-mim-ref/>`_
+       APIC オブジェクトモデルの完全なリファレンス。
+   `APIC REST API 設定ガイド <https://www.cisco.com/c/en/us/td/docs/switches/datacenter/aci/apic/sw/2-x/rest_cfg/2_1_x/b_Cisco_APIC_REST_API_Configuration_Guide.html>`_
+       APIC REST API を設計および使用する方法についての詳細ガイドです。多数の例があります。
 
 
-So let's look at how a typical ACI module is built up.
+それでは、典型的な ACI モジュールがどのように構築されるかを見てみましょう。
 
 
 .. _aci_dev_guide_module_structure:
 
-ACI module structure
+ACI モジュール構造
 ====================
 
-Importing objects from Python libraries
+Python ライブラリーからのオブジェクトのインポート
 ---------------------------------------
-The following imports are standard across ACI modules:
+以下のインポートは、ACI モジュール全体で標準のものです。
 
 .. code-block:: python
 
@@ -53,19 +53,19 @@ The following imports are standard across ACI modules:
     from ansible.module_utils.basic import AnsibleModule
 
 
-Defining the argument spec
+引数仕様の定義
 --------------------------
-The first line adds the standard connection parameters to the module. After that, the next section will update the ``argument_spec`` dictionary with module-specific parameters. The module-specific parameters should include:
+最初の行は、標準の接続パラメーターをモジュールに追加します。その後、次のセクションでは、モジュール固有のパラメーターを使用して ``argument_spec`` ディクショナリーを更新します。モジュール固有のパラメーターには以下を含める必要があります。
 
-* the object_id (usually the name)
-* the configurable properties of the object
-* the parent object IDs (all parents up to the root)
-* only child classes that are a 1-to-1 relationship (1-to-many/many-to-many require their own module to properly manage)
-* the state
+* object_id (通常は名前)
+* オブジェクトの設定可能なプロパティー
+* 親オブジェクト ID (ルートまでのすべての親)
+* 1 対 1 の関係である子クラスのみ (1 対多/多対多 では、独自のモジュールが適切に管理する必要があります)。
+* 状態
 
-  + ``state: absent`` to ensure object does not exist
-  + ``state: present`` to ensure the object and configs exist; this is also the default
-  + ``state: query`` to retrieve information about objects in the class
+  + ``state: absent`` (オブジェクトが存在しないことを確認する)
+  + ``state: present`` (オブジェクトと設定が存在することを確認する (デフォルト))
+  + ``state: query`` クラスのオブジェクトに関する情報を取得する
 
 .. code-block:: python
 
@@ -83,11 +83,11 @@ The first line adds the standard connection parameters to the module. After that
         )
 
 
-.. hint:: Do not provide default values for configuration arguments. Default values could cause unintended changes to the object.
+.. hint:: 設定引数のデフォルト値を指定しないでください。デフォルト値により、オブジェクトへの意図しない変更が生じる可能性があります。
 
-Using the AnsibleModule object
+AnsibleModule オブジェクトの使用
 ------------------------------
-The following section creates an AnsibleModule instance. The module should support check-mode, so we pass the ``argument_spec`` and  ``supports_check_mode`` arguments. Since these modules support querying the APIC for all objects of the module's class, the object/parent IDs should only be required if ``state: absent`` or ``state: present``.
+以下のセクションは、AnsibleModule インスタンスを作成します。モジュールはチェックモードをサポートする必要があるため、``argument_spec`` 引数および ``supports_check_mode`` 引数を渡します。これらのモジュールは、モジュールのクラスのすべてのオブジェクトに対する APIC のクエリーをサポートするため、オブジェクト/親 ID は ``state: absent`` または ``state: present`` の場合に限り必要になります。
 
 .. code-block:: python
 
@@ -99,11 +99,11 @@ The following section creates an AnsibleModule instance. The module should suppo
             ['state', 'present', ['object_id', 'parent_id']],
         ],
     )
+    
 
-
-Mapping variable definition
+マッピング変数定義
 ---------------------------
-Once the AnsibleModule object has been initiated, the necessary parameter values should be extracted from ``params`` and any data validation should be done. Usually the only params that need to be extracted are those related to the ACI object configuration and its child configuration. If you have integer objects that you would like to validate, then the validation should be done here, and the ``ACIModule.payload()`` method will handle the string conversion.
+AnsibleModule オブジェクトが開始したら、必要なパラメーター値を ``params`` から抽出し``、データ検証を行う必要があります。通常、抽出する必要があるパラメーターは ACI オブジェクト設定およびその子設定に関連するパラメーターのみです。検証する整数オブジェクトがある場合、ここで検証を行う必要があります。``ACIModule.payload()`` メソッドは文字列変換を処理します。
 
 .. code-block:: python
 
@@ -118,15 +118,15 @@ Once the AnsibleModule object has been initiated, the necessary parameter values
     state = module.params['state']
 
 
-Using the ACIModule object
+ACIModule オブジェクトの使用
 --------------------------
-The ACIModule class handles most of the logic for the ACI modules. The ACIModule extends functionality to the AnsibleModule object, so the module instance must be passed into the class instantiation.
+ACIModule クラスは、ACI モジュールのロジックの大部分を処理します。ACIModule は機能を AnsibleModule オブジェクトに拡張するため、モジュールインスタンスをクラスのインスタンス化に渡す必要があります。
 
 .. code-block:: python
 
     aci = ACIModule(module)
 
-The ACIModule has six main methods that are used by the modules:
+ACIModule には、モジュールによって使用される 6 つの主なメソッドがあります。
 
 * construct_url
 * get_existing
@@ -135,31 +135,31 @@ The ACIModule has six main methods that are used by the modules:
 * post_config
 * delete_config
 
-The first two methods are used regardless of what value is passed to the ``state`` parameter.
+最初の 2 つのメソッドは、``state`` パラメーターに渡される値に関係なく使用されます。
 
-Constructing URLs
+URL の構築
 ^^^^^^^^^^^^^^^^^
-The ``construct_url()`` method is used to dynamically build the appropriate URL to interact with the object, and the appropriate filter string that should be appended to the URL to filter the results.
+``construct_url()`` メソッドは、オブジェクトと対話するために適切な URL と、URL に追加して結果にフィルターを設定する適切なフィルター文字列を動的にビルドするために使用されます。
 
-* When the ``state`` is not ``query``, the URL is the base URL to access the APIC plus the distinguished name to access the object. The filter string will restrict the returned data to just the configuration data.
-* When ``state`` is ``query``, the URL and filter string used depends on what parameters are passed to the object. This method handles the complexity so that it is easier to add new modules and so that all modules are consistent in what type of data is returned.
+* ``state`` が ``query`` でない場合、URL は APIC にアクセスするベース URL とオブジェクトにアクセスするための識別名です。フィルター文字列は返されたデータを設定データにのみ制限します。
+* ``state`` が ``query`` される場合、使用される URL およびフィルター文字列は、オブジェクトに渡されるパラメーターによって異なります。この方法は複雑性を処理するため、新しいモジュールの追加が容易になります。また、すべてのモジュールがどのタイプのデータを返すかに一貫性を持たせるようにします。
 
-.. note:: Our design goal is to take all ID parameters that have values, and return the most specific data possible. If you do not supply any ID parameters to the task, then all objects of the class will be returned. If your task does consist of ID parameters sed, then the data for the specific object is returned. If a partial set of ID parameters are passed, then the module will use the IDs that are passed to build the URL and filter strings appropriately.
+.. note:: 設計目標は、値を持つすべての ID パラメーターを取り、可能な限り最も具体的なデータを返すことです。タスクに ID パラメーターを指定しないと、クラスのすべてのオブジェクトが返されます。タスクが ID パラメーターで構成されている場合は、特定のオブジェクトのデータが返されます。ID パラメーターの一部が渡されると、モジュールは URL およびフィルター文字列を適切にビルドするために渡された ID を使用します。
 
-The ``construct_url()`` method takes 2 required arguments:
+``construct_url()`` メソッドは 2 つの必須引数を取ります。
 
-* **self** - passed automatically with the class instance
-* **root_class** - A dictionary consisting of ``aci_class``, ``aci_rn``, ``target_filter``, and ``module_object`` keys
+* **self** - クラスインスタンスで自動的に渡されます。
+* **root_class** - ``aci_class`` キー、``aci_rn`` キー、``target_filter`` キー、および ``module_object`` キーで構成されるディクショナリー
 
-  + **aci_class**: The name of the class used by the APIC, e.g. ``fvTenant``
+  + **aci_class** - APIC で使用されるクラスの名前 (例: ``fvTenant``)
 
-  + **aci_rn**: The relative name of the object, e.g. ``tn-ACME``
+  + **aci_rn** - オブジェクトの相対名 (例: ``tn-ACME``)。
 
-  + **target_filter**: A dictionary with key-value pairs that make up the query string for selecting a subset of entries, e.g. ``{'name': 'ACME'}``
+  + **target_filter** - エントリーのサブセットを選択するクエリー文字列を構成するキーと値のペアを持つディクショナリー (例: ``{'name': 'ACME'}``)
 
-  + **module_object**: The particular object for this class, e.g. ``ACME``
+  + **module_object** - このクラスの特定のオブジェクト (例: ``ACME``)
 
-Example:
+例: 
 
 .. code-block:: python
 
@@ -172,64 +172,64 @@ Example:
         ),
     )
 
-Some modules, like ``aci_tenant``, are the root class and so they would not need to pass any additional arguments to the method.
+``aci_tenant`` などの一部のモジュールは root クラスであるため、メソッドに追加の引数を渡す必要はありません。
 
-The ``construct_url()`` method takes 4 optional arguments, the first three imitate the root class as described above, but are for child objects:
+``construct_url()`` メソッドは、4 つの任意の引数を取ります。最初の 3 つの引数が上記のように root クラスを模倣しますが、これは子オブジェクト用です。
 
-* subclass_1 - A dictionary consisting of ``aci_class``, ``aci_rn``, ``target_filter``, and ``module_object`` keys
+* subclass_1 - ``aci_class`` キー、``aci_rn`` キー、``target_filter`` キー、および ``module_object`` キーで構成されるディクショナリー
 
-  + Example: Application Profile Class (AP)
+  + 例: Application Profile Class (AP)
 
-* subclass_2 - A dictionary consisting of ``aci_class``, ``aci_rn``, ``target_filter``, and ``module_object`` keys
+* subclass_2 - ``aci_class`` キー、``aci_rn`` キー、``target_filter`` キー、および ``module_object`` キーで構成されるディクショナリー
 
-  + Example: End Point Group (EPG)
+  + 例: エンドポイントグループ (EPG)
 
-* subclass_3 - A dictionary consisting of ``aci_class``, ``aci_rn``, ``target_filter``, and ``module_object`` keys
+* subclass_3 - ``aci_class`` キー、``aci_rn`` キー、``target_filter`` キー、および``module_object`` キーで構成されるディクショナリー
 
-  + Example: Binding a Contract to an EPG
+  + 例: EPG への契約のバインド
 
-* child_classes - The list of APIC names for the child classes supported by the modules.
+* child_classes - モジュールがサポートする子クラスの APIC 名のリスト。
 
-  + This is a list, even if it is a list of one
-  + These are the unfriendly names used by the APIC
-  + These are used to limit the returned child_classes when possible
-  + Example: ``child_classes=['fvRsBDSubnetToProfile', 'fvRsNdPfxPol']``
+  + 1 つのリストであっても、これはリストです
+  + これらは、APIC が使用する分かりにくい名前です。
+  + 可能な場合は、返された child_classes を制限するために使用されます。
+  + 例: ``child_classes=['fvRsBDSubnetToProfile', 'fvRsNdPfxPol']``
 
-.. note:: Sometimes the APIC will require special characters ([, ], and -) or will use object metadata in the name ("vlanns" for VLAN pools); the module should handle adding special characters or joining of multiple parameters in order to keep expected inputs simple.
+.. note:: APIC は、特殊文字 ([、]、および -) を要求したり、名前にオブジェクトのメタデータ (「VLAN」プールの場合は「vlanns」) を使用したりすることがあります。モジュールは、予想される入力の単純さに保つために、特殊文字の追加または複数のパラメーターの結合を処理する必要があります。
 
-Getting the existing configuration
+既存設定の取得
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Once the URL and filter string have been built, the module is ready to retrieve the existing configuration for the object:
+URL およびフィルター文字列が構築されると、モジュールはオブジェクトの既存の設定を取得できるようになります。
 
-* ``state: present`` retrieves the configuration to use as a comparison against what was entered in the task. All values that are different than the existing values will be updated.
-* ``state: absent`` uses the existing configuration to see if the item exists and needs to be deleted.
-* ``state: query`` uses this to perform the query for the task and report back the existing data.
+* ``state: present`` は、タスクで入力された比較に使用する設定を取得します。既存の値と異なるすべての値は更新されます。
+* ``state: absent`` は、既存の設定を使用して項目が存在し、削除する必要があるかどうかを確認します。
+* ``state: query`` は、これを使用してタスクのクエリーを実行し、既存のデータを報告します。
 
 .. code-block:: python
 
     aci.get_existing()
 
 
-When state is present
+state が present の場合
 ^^^^^^^^^^^^^^^^^^^^^
-When ``state: present``, the module needs to perform a diff against the existing configuration and the task entries. If any value needs to be updated, then the module will make a POST request with only the items that need to be updated. Some modules have children that are in a 1-to-1 relationship with another object; for these cases, the module can be used to manage the child objects.
+``state: present`` の場合、モジュールは既存の設定とタスクエントリーに対して diff を実行する必要があります。値を更新する必要がある場合、モジュールは更新が必要な項目のみを持つ POST 要求を行います。一部のモジュールには、別のオブジェクトと 1 対 1 の関係にある子があります。このような場合は、モジュールを使用して子オブジェクトを管理できます。
 
-Building the ACI payload
+ACI ペイロードの構築
 """"""""""""""""""""""""
-The ``aci.payload()`` method is used to build a dictionary of the proposed object configuration. All parameters that were not provided a value in the task will be removed from the dictionary (both for the object and its children). Any parameter that does have a value will be converted to a string and added to the final dictionary object that will be used for comparison against the existing configuration.
+``aci.payload()`` メソッドは、提案されたオブジェクト設定のディクショナリーを構築するために使用されます。タスクの値を提供しなかったパラメーターはすべて、ディクショナリー (オブジェクトとその子の両方) から削除されます。値を持つパラメーターは文字列に変換され、既存の設定と比較するために使用される最後のディクショナリーオブジェクトに追加されます。
 
-The ``aci.payload()`` method takes two required arguments and 1 optional argument, depending on if the module manages child objects.
+``aci.payload()`` メソッドは、モジュールが子オブジェクトを管理するかどうかに応じて、2 つの必須引数と、1 つの任意の引数を取ります。
 
-* ``aci_class`` is the APIC name for the object's class, e.g. ``aci_class='fvBD'``
-* ``class_config`` is the appropriate dictionary to be used as the payload for the POST request
+* ``aci_class`` はオブジェクトのクラスの APIC 名です (例: ``aci_class='fvBD'``)。
+* ``class_config`` は POST 要求のペイロードとして使用する適切なディクショナリーです。
 
-  + The keys should match the names used by the APIC.
-  + The values should be the corresponding value in ``module.params``; these are the variables defined above
+  + キーは APIC で使用される名前と一致する必要があります。
+  + 値は ``module.params`` の対応する値である必要があります。これらは上記の変数です。
 
-* ``child_configs`` is optional, and is a list of child config dictionaries.
+* ``child_configs`` は任意で、子設定のディクショナリーのリストです。
 
-  + The child configs include the full child object dictionary, not just the attributes configuration portion.
-  + The configuration portion is built the same way as the object.
+  + 子設定には、属性設定部分だけでなく、完全な子オブジェクトディクショナリーが含まれます。
+  + 設定部分は、オブジェクトと同じ方法で構築されます。
 
 .. code-block:: python
 
@@ -250,18 +250,18 @@ The ``aci.payload()`` method takes two required arguments and 1 optional argumen
             ),
         ],
     )
+    
 
-
-Performing the request
+要求の実行
 """"""""""""""""""""""
-The ``get_diff()`` method is used to perform the diff, and takes only one required argument, ``aci_class``.
-Example: ``aci.get_diff(aci_class='fvBD')``
+``get_diff()`` メソッドは diff の実行に使用され、必要な引数 ``aci_class`` を 1 つだけ取ります。
+例: ``aci.get_diff(aci_class='fvBD')``
 
-The ``post_config()`` method is used to make the POST request to the APIC if needed. This method doesn't take any arguments and handles check mode.
-Example: ``aci.post_config()``
+``post_config()`` メソッドは、必要に応じて APIC に対して POST 要求を実行するために使用されます。この方法は引数を取らず、チェックモードを処理します。
+例: ``aci.post_config()``
 
 
-Example code
+サンプルコード
 """"""""""""
 .. code-block:: guess
 
@@ -289,11 +289,11 @@ Example code
         aci.get_diff(aci_class='<object APIC class>')
 
         aci.post_config()
+    
 
-
-When state is absent
+state が absent の場合
 ^^^^^^^^^^^^^^^^^^^^
-If the task sets the state to absent, then the ``delete_config()`` method is all that is needed. This method does not take any arguments, and handles check mode.
+タスクが state を absent に設定すると、``delete_config()`` メソッドのみが必要になります。このメソッドは引数を取らず、チェックモードを処理します。
 
 .. code-block:: guess
 
@@ -301,9 +301,9 @@ If the task sets the state to absent, then the ``delete_config()`` method is all
             aci.delete_config()
 
 
-Exiting the module
+モジュールの終了
 ^^^^^^^^^^^^^^^^^^
-To have the module exit, call the ACIModule method ``exit_json()``. This method automatically takes care of returning the common return values for you.
+モジュールを終了するには、ACIModule メソッドの ``exit_json()`` を呼び出します。このメソッドでは、自動的に一般的な戻り値が返されます。
 
 .. code-block:: guess
 
@@ -315,9 +315,9 @@ To have the module exit, call the ACIModule method ``exit_json()``. This method 
 
 .. _aci_dev_guide_testing:
 
-Testing ACI library functions
+ACI ライブラリー関数のテスト
 =============================
-You can test your ``construct_url()`` and ``payload()`` arguments without accessing APIC hardware by using the following python script:
+以下の python スクリプトを使用すると、APIC ハードウェアにアクセスしなくても ``construct_url()`` 引数および ``payload()`` 引数をテストできます。
 
 .. code-block:: guess
 
@@ -376,7 +376,7 @@ You can test your ``construct_url()`` and ``payload()`` arguments without access
     print 'PAYLOAD:', json.dumps(aci.proposed, indent=4)
 
 
-This will result in:
+これにより、以下が生成されます。
 
 .. code-block:: yaml
 
@@ -389,9 +389,9 @@ This will result in:
         }
     }
 
-Testing for sanity checks
+健全性チェックのテスト
 -------------------------
-You can run from your fork something like:
+次のようなフォークから実行できます。
 
 .. code-block:: bash
 
@@ -400,20 +400,20 @@ You can run from your fork something like:
 .. seealso::
 
    :ref:`testing_sanity`
-        Information on how to build sanity tests.
+        健全性テストを構築する方法に関する情報
 
 
-Testing ACI integration tests
+ACI 統合テストのテスト
 -----------------------------
-You can run this:
+以下を実行できます。
 
 .. code-block:: bash
 
     $ ansible-test network-integration --continue-on-error --allow-unsupported --diff -v aci_tenant
 
-.. note:: You may need to add ``--python 2.7`` or ``--python 3.6`` in order to use the correct python version for performing tests.
+.. note:: テストの実行に適切な python バージョンを使用するには、``--python 2.7`` または ``--python 3.6`` を追加しないといけない場合があります。
 
-You may want to edit the used inventory at *test/integration/inventory.networking* and add something like:
+*test/integration/inventory.networking* で使用されたインベントリーを編集し、以下のように追加することもできます。
 
 .. code-block:: ini
 
@@ -430,12 +430,12 @@ You may want to edit the used inventory at *test/integration/inventory.networkin
 .. seealso::
 
    :ref:`testing_integration`
-       Information on how to build integration tests.
+       インテグレーションテストの構築方法に関する情報。
 
 
-Testing for test coverage
+テストカバレージのテスト
 -------------------------
-You can run this:
+以下を実行できます。
 
 .. code-block:: bash
 

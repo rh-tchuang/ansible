@@ -5,7 +5,7 @@
 .. contents::
   :local:
 
-標準的なアメリカ英語の使用
+標準的なアメリカ英語を使用する
 -----------------------------
 Ansible は標準的なアメリカ英語を使用します。アメリカ英語では綴りが異なる一般的な単語に注意してください (color と colour、organize と organise など)。
 
@@ -61,7 +61,7 @@ Ansible は標準的なアメリカ英語を使用します。アメリカ英語
 3. **開く** ダイアログボックスで、**保存** をクリックします。
 4. ツールバーで、**ファイルを開く** アイコンをクリックします。
 
-コードまたはコマンドスニペットについては、RST `code-block directive <https://www.sphinx-doc.org/en/1.5/markup/code.html#directive-code-block>`_ を参照してください。::
+コードまたはコマンドスニペットについては、RST の「`code-block directive <https://www.sphinx-doc.org/en/1.5/markup/code.html#directive-code-block>`_」を参照してください::
 
    .. code-block:: bash
 

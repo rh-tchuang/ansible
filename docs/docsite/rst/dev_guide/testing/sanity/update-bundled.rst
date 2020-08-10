@@ -17,9 +17,9 @@ update-bundled
 * ファイルには _BUNDLED_METADATA 変数がありますが、
   :file:`test/sanity/code-smell/update-bundled.py` ではそのファイルは指定されません。 これは通常、
   新しいバンドルライブラリーが追加されたときに発生します。 このエラーを解決するには、
-  このファイルを `update-bundled.py` テストスクリプトの 
+  このファイルを `update-bundled.py` テストスクリプトの `get_bundled_libs()` 関数に追加します。
 
-`get_bundled_libs()` 関数に追加します。
+_BUNDLED_METADATA には以下のフィールドがあります。
 
 :pypi_name: PyPI でバンドルされたパッケージの名前
 

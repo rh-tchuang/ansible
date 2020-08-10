@@ -2,453 +2,453 @@
 .. _developing_program_flow_modules:
 
 ***************************
-Ansible module architecture
+Ansible モジュールのアーキテクチャー
 ***************************
 
-If you're working on Ansible's Core code, writing an Ansible module, or developing an action plugin, this deep dive helps you understand how Ansible's program flow executes. If you're just using Ansible Modules in playbooks, you can skip this section.
+以下の詳細な説明は、Ansible の Core コードで作業している、Ansible モジュールを作成している、またはアクションプラグインを開発している場合に、Ansible のプログラムフローの実行方法を理解するのに役立ちます。Playbook で Ansible Modules を使用しているだけの場合、本セクションは必要ありません。
 
 .. contents::
    :local:
 
 .. _flow_types_of_modules:
 
-Types of modules
+モジュールの種類
 ================
 
-Ansible supports several different types of modules in its code base. Some of
-these are for backwards compatibility and others are to enable flexibility.
+Ansible は、コードベースでいくつかのタイプのモジュールをサポートしています。後方互換性のためのものもあれば、
+柔軟性を可能にするためのものもあります。
 
 .. _flow_action_plugins:
 
-Action plugins
+アクションプラグイン
 --------------
 
-Action plugins look like modules to anyone writing a playbook. Usage documentation for most action plugins lives inside a module of the same name. Some action plugins do all the work, with the module providing only documentation. Some action plugins execute modules. The ``normal`` action plugin executes modules that don't have special action plugins. Action plugins always execute on the controller.
+アクションプラグインは、Playbook を作成する人にとってはモジュールのように見えます。ほとんどのアクションプラグインの使用方法に関するドキュメントは、同じ名前のモジュール内にあります。アクションプラグインの中には、すべての作業を行なうものもありますが、このモジュールはドキュメントのみを提供します。一部のアクションプラグインはモジュールを実行します。``normal`` アクションプラグインは、特別なアクションプラグインを持たないモジュールを実行します。アクションプラグインは常にコントローラー上で実行されます。
 
-Some action plugins do all their work on the controller. For
-example, the :ref:`debug <debug_module>` action plugin (which prints text for
-the user to see) and the :ref:`assert <assert_module>` action plugin (which
-tests whether values in a playbook satisfy certain criteria) execute entirely on the controller.
+一部のアクションプラグインは、そのすべての作業をコントローラー上で実行します。たとえば、
+:ref:`debug <debug_module>` アクションプラグイン (ユーザーに表示するテキストを出力する) と、
+:ref:`assert <assert_module>` アクションプラグイン 
+(Playbook の値が特定の基準を満たしているかどうかをテストする) は、そのコントローラー上で完全に実行されます。
 
-Most action plugins set up some values on the controller, then invoke an
-actual module on the managed node that does something with these values. For example, the :ref:`template <template_module>` action plugin takes values from
-the user to construct a file in a temporary location on the controller using
-variables from the playbook environment. It then transfers the temporary file
-to a temporary file on the remote system. After that, it invokes the
-:ref:`copy module <copy_module>` which operates on the remote system to move the file
-into its final location, sets file permissions, and so on.
+ほとんどのアクションプラグインは、コントローラーにいくつかの値を設定してから、
+これらの値で何かを行う管理ノードで実際のモジュールを呼び出します。たとえば、:ref:`template <template_module>` アクションプラグインは、
+Playbook 環境から変数を使用して、
+コントローラーの一時的な場所にファイルを作成するユーザーから値を取得します。その後、この一時ファイルを、
+リモートシステムの一時ファイルに転送します。その後、
+:ref:`copy module <copy_module>` を呼び出します。
+その最後の場所にファイルを異動し、ファイルパーミッションの設定を行います。
 
 .. _flow_new_style_modules:
 
-New-style modules
+新スタイルのモジュール
 -----------------
 
-All of the modules that ship with Ansible fall into this category. While you can write modules in any language, all official modules (shipped with Ansible) use either Python or PowerShell.
+Ansible に同梱されるモジュールはすべてこのカテゴリーに分類されます。モジュールは任意の言語で記述できますが、(Ansible に同梱されている) 正式なモジュールはすべて Python または PowerShell を使用します。
 
-New-style modules have the arguments to the module embedded inside of them in
-some manner. Old-style modules must copy a separate file over to the
-managed node, which is less efficient as it requires two over-the-wire
-connections instead of only one.
+新しいスタイルのモジュールは、
+何らかの方法でモジュールの内部にモジュールの引数が埋め込まれています。古いスタイルのモジュールは、管理ノードで別のファイルをコピーする必要があります。
+ネットワークでは、
+接続は 1 つではなく 2 つ必要になるため、効率が悪くなります。
 
 .. _flow_python_modules:
 
 Python
 ^^^^^^
 
-New-style Python modules use the :ref:`Ansiballz` framework for constructing
-modules. These modules use imports from :code:`ansible.module_utils` to pull in
-boilerplate module code, such as argument parsing, formatting of return
-values as :term:`JSON`, and various file operations.
+新しいスタイルの Python モジュールは、
+モジュールの構築に :ref:`Ansiballz` フレームワークを使用します。これらのモジュールは、:code:`ansible.module_utils` からのインポートを使用して、
+引数の解析や、
+:term:`JSON` としての戻り値のフォーマット、さまざまなファイル操作などの boilerplate モジュールコードをプルします。
 
-.. note:: In Ansible, up to version 2.0.x, the official Python modules used the
-    :ref:`module_replacer` framework.  For module authors, :ref:`Ansiballz` is
-    largely a superset of :ref:`module_replacer` functionality, so you usually
-    do not need to know about one versus the other.
+.. note:: Ansible では、バージョン 2.0.x までの公式の Python モジュールで、
+    :ref:`module_replacer` フレームワークが使用されます。 モジュール作成者は、
+    :ref:`Ansiballz` は主に :ref: `module_replacer` 機能のスーパーセットであるため、
+    通常は両方を理解する必要はありません。
 
 .. _flow_powershell_modules:
 
 PowerShell
 ^^^^^^^^^^
 
-New-style PowerShell modules use the :ref:`module_replacer` framework for
-constructing modules. These modules get a library of PowerShell code embedded
-in them before being sent to the managed node.
+新しいスタイルの PowerShell モジュールは、
+:ref: `module_replacer` フレームワークを使用してモジュールを構築します。これらのモジュールは、管理ノードに送られる前に、
+PowerShell コードのライブラリーが埋め込まれています。
 
 .. _flow_jsonargs_modules:
 
-JSONARGS modules
+JSONARGS モジュール
 ----------------
 
-These modules are scripts that include the string
-``<<INCLUDE_ANSIBLE_MODULE_JSON_ARGS>>`` in their body.
-This string is replaced with the JSON-formatted argument string. These modules typically set a variable to that value like this:
+このモジュールは、その本文に、
+``<<INCLUDE_ANSIBLE_MODULE_JSON_ARGS>>`` 文字列を含むスクリプトです。
+この文字列は、JSON 形式の引数文字列に置き換えられます。通常、これらのモジュールは以下のような変数をその値に設定します。
 
 .. code-block:: python
 
     json_arguments = """<<INCLUDE_ANSIBLE_MODULE_JSON_ARGS>>"""
 
-Which is expanded as:
+これは以下のように展開されます。
 
 .. code-block:: python
 
     json_arguments = """{"param1": "test's quotes", "param2": "\"To be or not to be\" - Hamlet"}"""
 
-.. note:: Ansible outputs a :term:`JSON` string with bare quotes. Double quotes are
-       used to quote string values, double quotes inside of string values are
-       backslash escaped, and single quotes may appear unescaped inside of
-       a string value. To use JSONARGS, your scripting language must have a way
-       to handle this type of string. The example uses Python's triple quoted
-       strings to do this. Other scripting languages may have a similar quote
-       character that won't be confused by any quotes in the JSON or it may
-       allow you to define your own start-of-quote and end-of-quote characters.
-       If the language doesn't give you any of these then you'll need to write
-       a :ref:`non-native JSON module <flow_want_json_modules>` or
-       :ref:`Old-style module <flow_old_style_modules>` instead.
+.. note:: Ansible は、裸の引用符を使用する :term:`JSON` を出力します。二重引用符は文字列値の引用に使用され、
+       文字列値の中の二重引用符はバックスラッシュでエスケープされ、
+       単一引用符は、
+       文字列値の中でエスケープされていない状態で表示されることがあります。JSONARGS を使用するには、
+       スクリプト言語が、このタイプの文字列を処理できなければなりません。この例では、
+       Python の三重引用符で囲まれた文字列を使用しています。他のスクリプト言語では、
+       JSON の引用符と混同されないような類似の引用符文字が使用されているかもしれません。
+       または、独自の引用符開始文字と引用符終了文字を定義できるかもしれません。
+       もし言語がこれらを提供していない場合は、
+       代わりに :ref:`非ネイティブの JSON モジュール` <flow_want_json_modules>、
+       または :ref:`古いスタイルのモジュール <flow_old_style_modules>` を作成する必要があります。
 
-These modules typically parse the contents of ``json_arguments`` using a JSON
-library and then use them as native variables throughout the code.
+これらのモジュールは通常、JSON ライブラリーを使用して ``json_arguments`` のコンテンツを解析し、
+次にコード全体でネイティブ変数として使用します。
 
 .. _flow_want_json_modules:
 
-Non-native want JSON modules
+ネイティブ以外の JSON モジュール
 ----------------------------
 
-If a module has the string ``WANT_JSON`` in it anywhere, Ansible treats
-it as a non-native module that accepts a filename as its only command line
-parameter. The filename is for a temporary file containing a :term:`JSON`
-string containing the module's parameters. The module needs to open the file,
-read and parse the parameters, operate on the data, and print its return data
-as a JSON encoded dictionary to stdout before exiting.
+モジュールのどこかに ``WANT_JSON`` という文字列が含まれている場合、
+Ansible はそのモジュールを、
+唯一のコマンドラインパラメーターとしてファイル名を受け入れる非ネイティブモジュールとして扱います。ファイル名は、
+モジュールのパラメーターを含む :term:`JSON` 文字列を含む一時ファイル用です。モジュールは、ファイルを開き、パラメーターを読み込んで解析し、
+データを操作し、
+その戻り値を JSON にエンコードされたディクショナリーとして標準出力 (stdout) に出力してから終了する必要があります。
 
-These types of modules are self-contained entities. As of Ansible 2.1, Ansible
-only modifies them to change a shebang line if present.
+これらのタイプのモジュールは自己完結型のエンティティーです。Ansible 2.1 の時点では、
+シバンの行がある場合は、Ansible はそれだけを変更します。
 
-.. seealso:: Examples of Non-native modules written in ruby are in the `Ansible
-    for Rubyists <https://github.com/ansible/ansible-for-rubyists>`_ repository.
+.. seealso:: Ruby で書かれた非ネイティブモジュールの例は、「`Ansible 
+for Rubyists<https://github.com/ansible/ansible-for-rubyists>`_」リポジトリーから入手できます。
 
 .. _flow_binary_modules:
 
-Binary modules
+バイナリーモジュール
 --------------
 
-From Ansible 2.2 onwards, modules may also be small binary programs. Ansible
-doesn't perform any magic to make these portable to different systems so they
-may be specific to the system on which they were compiled or require other
-binary runtime dependencies. Despite these drawbacks, you may have
-to compile a custom module against a specific binary
-library if that's the only way to get access to certain resources.
+Ansible 2.2 以降、モジュールは小規模のバイナリープログラムになる場合があります。Ansible には、
+これらを異なるシステムに移植できるようにするな機能がないため、
+コンパイルされたシステムに固有のものであったり、
+その他のバイナリー実行時の依存関係を必要としたりすることがあります。このような欠点があるにもかかわらず、
+特定のリソースにアクセスするための唯一の方法であるならば、
+特定のバイナリーライブラリーに対してカスタムモジュールのコンパイルが必要になる場合があります。
 
-Binary modules take their arguments and return data to Ansible in the same
-way as :ref:`want JSON modules <flow_want_json_modules>`.
+バイナリーモジュールは引数を取り、
+「:ref:`want JSON モジュール <flow_want_json_modules>`」と同じ方法で Ansible にデータを返します。
 
-.. seealso:: One example of a `binary module
-    <https://github.com/ansible/ansible/blob/devel/test/integration/targets/binary_modules/library/helloworld.go>`_
-    written in go.
+.. seealso:: Go で書かれた `バイナリーモジュール
+    <https://github.com/ansible/ansible/blob/devel/test/integration/targets/binary_modules/library/helloworld.go>`_ 
+の一例
 
 .. _flow_old_style_modules:
 
-Old-style modules
+古いスタイルのモジュール
 -----------------
 
-Old-style modules are similar to
-:ref:`want JSON modules <flow_want_json_modules>`, except that the file that
-they take contains ``key=value`` pairs for their parameters instead of
-:term:`JSON`. Ansible decides that a module is old-style when it doesn't have
-any of the markers that would show that it is one of the other types.
+古いスタイルのモジュールは、
+:ref:`want JSON モジュール <flow_want_json_modules>` と似ていますが、
+取得するファイルには、
+:term:`JSON` の代わりにパラメーターの ``key=value`` ペアが含まれています。Ansible は、モジュールに、他のタイプのいずれかであることを示すマーカーがない場合に、
+そのモジュールが古いスタイルであると判断します。
 
 .. _flow_how_modules_are_executed:
 
-How modules are executed
+モジュールの実行方法
 ========================
 
-When a user uses :program:`ansible` or :program:`ansible-playbook`, they
-specify a task to execute. The task is usually the name of a module along
-with several parameters to be passed to the module. Ansible takes these
-values and processes them in various ways before they are finally executed on
-the remote machine.
+:program:`ansible` または :program:`ansible-playbook` を使用する場合は、
+実行するタスクを指定します。タスクは通常、
+モジュールの名前と、モジュールに渡すいくつかのパラメーターを指定します。Ansible はこれらの値を受け取り、
+さまざまな方法で処理した後、
+最終的にリモートマシン上で実行されます。
 
 .. _flow_executor_task_executor:
 
 Executor/task_executor
 ----------------------
 
-The TaskExecutor receives the module name and parameters that were parsed from
-the :term:`playbook <playbooks>` (or from the command line in the case of
-:command:`/usr/bin/ansible`). It uses the name to decide whether it's looking
-at a module or an :ref:`Action Plugin <flow_action_plugins>`. If it's
-a module, it loads the :ref:`Normal Action Plugin <flow_normal_action_plugin>`
-and passes the name, variables, and other information about the task and play
-to that Action Plugin for further processing.
+TaskExecutor は、
+:term:`playbook <playbooks>` 
+:command:`/usr/bin/ansible` の場合はコマンドライン) から解析されたモジュール名およびパラメーターを受け取ります。この名前を使用して、
+モジュールを見ているのか :ref:`アクションプラグイン <flow_action_plugins>` を見ているのかを判断します。モジュールであれば、
+:ref:`normal アクションプラグイン <flow_normal_action_plugin>` を読み込み、
+名前や変数、
+およびタスクやプレイに関するその他の情報をそのアクションプラグインに渡して、さらに処理を行います。
 
 .. _flow_normal_action_plugin:
 
-The ``normal`` action plugin
+``通常`` のアクションプラグイン
 ----------------------------
 
-The ``normal`` action plugin executes the module on the remote host. It is
-the primary coordinator of much of the work to actually execute the module on
-the managed machine.
+``通常`` アクションプラグインはリモートホスト上でモジュールを実行します。これは、
+管理マシンで、
+モジュールを実際に実行するタスクの多くの作業に対する主要な調整役です。
 
-* It loads the appropriate connection plugin for the task, which then transfers
-  or executes as needed to create a connection to that host.
-* It adds any internal Ansible properties to the module's parameters (for
-  instance, the ones that pass along ``no_log`` to the module).
-* It works with other plugins (connection, shell, become, other action plugins)
-  to create any temporary files on the remote machine and
-  cleans up afterwards.
-* It pushes the module and module parameters to the
-  remote host, although the :ref:`module_common <flow_executor_module_common>`
-  code described in the next section decides which format
-  those will take.
-* It handles any special cases regarding modules (for instance, async
-  execution, or complications around Windows modules that must have the same names as Python modules, so that internal calling of modules from other Action Plugins work.)
+* タスクに適切な接続プラグインを読み込み、
+  そのホストへの接続を作成するために必要に応じて転送や実行を行います。
+* モジュールのパラメーターに、
+  Ansible の内部プロパティーを追加します (たとえば ``no_log`` をモジュールに渡すものなど)。
+* その他のプラグイン (接続、シェル、become、
+  その他のアクションプラグイン) と連携してリモートマシン上に一時ファイルを作成し、
+  その後のクリーンアップを行います。
+* モジュールとモジュールパラメーターをリモートホストにプッシュしますが、
+  次のセクションで説明する :ref:`module_common <flow_executor_module_common>` 
+  コードが
+  どの形式を取るかを判断します。
+* モジュールに関する特殊なケースを処理します (たとえば、
+  非同期実行や、Python モジュールと同じ名前を持たなければならない Windows モジュールの複雑さなど。これにより、他のアクションプラグインからのモジュールの内部呼び出しが機能します)。
 
-Much of this functionality comes from the `BaseAction` class,
-which lives in :file:`plugins/action/__init__.py`. It uses the
-``Connection`` and ``Shell`` objects to do its work.
+この機能の多くは、
+:file:`plugins/action/__init__.py` にある `BaseAction` クラスから来ています。これは、
+``Connection`` オブジェクトおよび ``Shell`` オブジェクトを使用して動作します。
 
 .. note::
-    When :term:`tasks <tasks>` are run with the ``async:`` parameter, Ansible
-    uses the ``async`` Action Plugin instead of the ``normal`` Action Plugin
-    to invoke it. That program flow is currently not documented. Read the
-    source for information on how that works.
+    :term:`タスク` <tasks>が ``async:`` パラメーターで実行されると、
+    Ansible は ``normal`` アクションプラグインではなく、
+    ``async`` を使用してタスクを呼び出します。そのプログラムフローは現在のところ文書化されていません。仕組みについては、
+    情報源を参照してください。
 
 .. _flow_executor_module_common:
 
 Executor/module_common.py
 -------------------------
 
-Code in :file:`executor/module_common.py` assembles the module
-to be shipped to the managed node. The module is first read in, then examined
-to determine its type:
+:file:`executor/module_common.py` のコードは、
+管理ノードに出荷されるモジュールを組み立てます。モジュールは最初に読み込まれ、
+その後、その型を調べるために検査されます。
 
-* :ref:`PowerShell <flow_powershell_modules>` and :ref:`JSON-args modules <flow_jsonargs_modules>` are passed through :ref:`Module Replacer <module_replacer>`.
-* New-style :ref:`Python modules <flow_python_modules>` are assembled by :ref:`Ansiballz`.
-* :ref:`Non-native-want-JSON <flow_want_json_modules>`, :ref:`Binary modules <flow_binary_modules>`, and :ref:`Old-Style modules <flow_old_style_modules>` aren't touched by either of these and pass through unchanged.
+* :ref:`PowerShell <flow_powershell_modules>` および :ref:`JSON-args モジュール <flow_jsonargs_modules>` は、:ref:`Module Replacer <module_replacer>` に渡されます。
+* 新しいスタイルの :ref:`Python モジュール <flow_python_modules>` は、:ref:`Ansiballz` により組み立てられます。
+* :ref:`Non-native-want-JSON <flow_want_json_modules>`、:ref:`バイナリーモジュール <flow_binary_modules>`、および :ref:`古いスタイルのモジュール <flow_old_style_modules>` は、これらのいずれにも触れられず、そのまま通過します。
 
-After the assembling step, one final
-modification is made to all modules that have a shebang line. Ansible checks
-whether the interpreter in the shebang line has a specific path configured via
-an ``ansible_$X_interpreter`` inventory variable. If it does, Ansible
-substitutes that path for the interpreter path given in the module. After
-this, Ansible returns the complete module data and the module type to the
-:ref:`Normal Action <flow_normal_action_plugin>` which continues execution of
-the module.
+アセンブルステップの後、
+シバン行を持つすべてのモジュールに対して最終的な修正を行います。Ansible は、
+シバン行にあるインタープリターが特定のパスを持っているかどうかを、
+``ansible_$X_interpreter`` インベントリー変数で確認します。特定のパスが設定されている場合、
+Ansible はそのパスをモジュールで指定されたインタープリターのパスに置き換えます。この後、
+Ansible はモジュールの完全なデータとモジュールタイプを 
+:ref:`Normal Action <flow_normal_action_plugin>` に返し、
+モジュールの実行を継続します。
 
-Assembler frameworks
+アセンブラーフレームワーク
 --------------------
 
-Ansible supports two assembler frameworks: Ansiballz and the older Module Replacer.
+Ansible は、2 つのアセンブラフレームワーク (Ansiballz と古い Module Replacer) をサポートしています。
 
 .. _module_replacer:
 
-Module Replacer framework
+Module Replacer フレームワーク
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The Module Replacer framework is the original framework implementing new-style
-modules, and is still used for PowerShell modules. It is essentially a preprocessor (like the C Preprocessor for those
-familiar with that programming language). It does straight substitutions of
-specific substring patterns in the module file. There are two types of
-substitutions:
+Module Replacer フレームワークは、
+新しいスタイルのモジュールを実装したオリジナルのフレームワークで、今でも PowerShell モジュールに使用されています。これは、
+基本的にはプリプロセッサーです (プログラミング言語に精通している人向けの C プロセッサーのようなもの)。モジュールファイルの中で、
+特定の部分文字列パターンの直接の置換を行います。置換には、
+2 つの種類があります。
 
-* Replacements that only happen in the module file. These are public
-  replacement strings that modules can utilize to get helpful boilerplate or
-  access to arguments.
+* モジュールファイル内でのみ行われる置換。これは、
+  モジュールが有用なボイラプレートを取得したり、
+  引数にアクセスするために利用できるパブリックな置換文字列です。
 
-  - :code:`from ansible.module_utils.MOD_LIB_NAME import *` is replaced with the
-    contents of the :file:`ansible/module_utils/MOD_LIB_NAME.py`  These should
-    only be used with :ref:`new-style Python modules <flow_python_modules>`.
-  - :code:`#<<INCLUDE_ANSIBLE_MODULE_COMMON>>` is equivalent to
-    :code:`from ansible.module_utils.basic import *` and should also only apply
-    to new-style Python modules.
-  - :code:`# POWERSHELL_COMMON` substitutes the contents of
-    :file:`ansible/module_utils/powershell.ps1`. It should only be used with
-    :ref:`new-style Powershell modules <flow_powershell_modules>`.
+  - :code:`from ansible.module_utils.MOD_LIB_NAME import *` は、
+    :file:`ansible/module_utils/MOD_LIB_NAME.py` の内容に置き換えられます。
+    これは、:ref:`新しいスタイルの Python モジュール <flow_python_modules>` でのみ使用してください。
+  - :code:`#<<INCLUDE_ANSIBLE_MODULE_COMMON>>` は、
+    :code:`from ansible.module_utils.basic import *` と同等であり、
+    新しいスタイルの Python モジュールにのみ適用されます。
+  - :code:`# POWERSHELL_COMMON` は、
+    :file:`ansible/module_utils/powershell.ps1` の内容を置き換えます。これは、
+    :ref:`新しいスタイルの Powershell モジュール <flow_powershell_modules>` でのみ使用してください。
 
-* Replacements that are used by ``ansible.module_utils`` code. These are internal replacement patterns. They may be used internally, in the above public replacements, but shouldn't be used directly by modules.
+* ``ansible.module_utils`` のコードで使用される置換です。これらは内部的な置換パターンです。これらは内部的には上記のパブリックな置換で使用できますが、モジュールでは直接使用しないでください。
 
-  - :code:`"<<ANSIBLE_VERSION>>"` is substituted with the Ansible version.  In
-    :ref:`new-style Python modules <flow_python_modules>` under the
-    :ref:`Ansiballz` framework the proper way is to instead instantiate an
-    `AnsibleModule` and then access the version from
-    :attr:``AnsibleModule.ansible_version``.
-  - :code:`"<<INCLUDE_ANSIBLE_MODULE_COMPLEX_ARGS>>"` is substituted with
-    a string which is the Python ``repr`` of the :term:`JSON` encoded module
-    parameters. Using ``repr`` on the JSON string makes it safe to embed in
-    a Python file. In new-style Python modules under the Ansiballz framework
-    this is better accessed by instantiating an `AnsibleModule` and
-    then using :attr:`AnsibleModule.params`.
-  - :code:`<<SELINUX_SPECIAL_FILESYSTEMS>>` substitutes a string which is
-    a comma separated list of file systems which have a file system dependent
-    security context in SELinux. In new-style Python modules, if you really
-    need this you should instantiate an `AnsibleModule` and then use
-    :attr:`AnsibleModule._selinux_special_fs`. The variable has also changed
-    from a comma separated string of file system names to an actual python
-    list of filesystem names.
-  - :code:`<<INCLUDE_ANSIBLE_MODULE_JSON_ARGS>>` substitutes the module
-    parameters as a JSON string. Care must be taken to properly quote the
-    string as JSON data may contain quotes. This pattern is not substituted
-    in new-style Python modules as they can get the module parameters another
-    way.
-  - The string :code:`syslog.LOG_USER` is replaced wherever it occurs with the
-    ``syslog_facility`` which was named in :file:`ansible.cfg` or any
-    ``ansible_syslog_facility`` inventory variable that applies to this host.  In
-    new-style Python modules this has changed slightly. If you really need to
-    access it, you should instantiate an `AnsibleModule` and then use
-    :attr:`AnsibleModule._syslog_facility` to access it. It is no longer the
-    actual syslog facility and is now the name of the syslog facility. See
-    the :ref:`documentation on internal arguments <flow_internal_arguments>`
-    for details.
+  - :code:`"<<ANSIBLE_VERSION>>"` は Ansible のバージョンで置き換えられます。 :ref:`Ansiballz` フレームワークの
+    :ref:`新しいスタイルの Python モジュール <flow_python_modules>` では、
+    代わりに 
+    `AnsibleModule`をインスタンス化し、
+    :attr:``AnsibleModule.ansible_version`` からバージョンにアクセスするのが適切な方法です。
+  - :code:`"<<INCLUDE_ANSIBLE_MODULE_COMPLEX_ARGS>>"` は、
+    :term:`JSON` エンコードされたモジュールパラメーターの Python ``repr`` 
+    である文字列で置き換えられます。JSON 文字列に ``repr`` を使用することで、
+    Python ファイルに埋め込むことが安全になります。Ansiballz フレームワークの新しいスタイルの Python モジュールでは、
+    `AnsibleModule` のインスタンスを作成し、
+    :attr:`AnsibleModule.params` を使用することでアクセスする方が適しています。
+  - :code:`<<SELINUX_SPECIAL_FILESYSTEMS>>` は、
+    SELinux で、
+    ファイルシステム依存のセキュリティーコンテキストを持つファイルシステムのコンマ区切りのリストである文字列に置換します。新しいスタイルの Python モジュールでは、
+    これが本当に必要な場合は `AnsibleModule`をインスタンス化して、
+    :attr:`AnsibleModule._selinux_special_fs` を使用してください。また、
+    この変数は、ファイルシステム名をコンマで区切った文字列から、
+    実際の Python のファイルシステム名のリストに変更になりました。
+  - :code:`<<INCLUDE_ANSIBLE_MODULE_JSON_ARGS>>` は、
+    モジュールのパラメーターを JSON 文字列に置き換えます。JSON データには引用符が含まれている可能性があるため、
+    文字列を適切に引用符で囲むように注意する必要があります。新しいスタイルの Python モジュールでは、
+    モジュールのパラメーターは別の方法で取得できるため、
+    このパターンは代用されません。
+  - 文字列 :code:`syslog.LOG_USER` は、
+    :file:`ansible.cfg` や、
+    ``ansible_syslog_facility`` のインベントリー変数で指定された ``syslog_facility`` に置き換えられます。 新しいスタイルの Paython モジュールでは、
+    これは少し変更になっています。本当にアクセスする必要がある場合は、
+    `AnsibleModule` をインスタンス化してから、
+    :attr:`AnsibleModule._syslog_facility` を使用してアクセスする必要があります。これは実際の syslog ファシリティーではなく、
+    その syslog ファシリティの名前になりました。詳細は、
+    「:ref:`内部引数のドキュメント <flow_internal_arguments>`」
+    を参照してください。
 
 .. _Ansiballz:
 
-Ansiballz framework
+Ansiballz フレームワーク
 ^^^^^^^^^^^^^^^^^^^
 
-The Ansiballz framework was adopted in Ansible 2.1 and is used for all new-style Python modules. Unlike the Module Replacer, Ansiballz uses real Python imports of things in
-:file:`ansible/module_utils` instead of merely preprocessing the module. It
-does this by constructing a zipfile -- which includes the module file, files
-in :file:`ansible/module_utils` that are imported by the module, and some
-boilerplate to pass in the module's parameters. The zipfile is then Base64
-encoded and wrapped in a small Python script which decodes the Base64 encoding
-and places the zipfile into a temp directory on the managed node. It then
-extracts just the Ansible module script from the zip file and places that in
-the temporary directory as well. Then it sets the PYTHONPATH to find Python
-modules inside of the zip file and imports the Ansible module as the special name, ``__main__``.
-Importing it as ``__main__`` causes Python to think that it is executing a script rather than simply
-importing a module. This lets Ansible run both the wrapper script and the module code in a single copy of Python on the remote machine.
+Ansiballz フレームワークは Ansible 2.1 で採用され、すべての新しいスタイルの Python モジュールで使用されています。Module Replacer とは異なり、Ansiballz は、
+単にモジュールを前処理するのではなく、:file:`ansible/module_utils` にあるものを実際の Python インポートして使用します。これは、
+モジュールファイル、
+モジュールによってインポートされた :file:`ansible/module_utils` 内のファイル、
+モジュールのパラメーターを渡す boilerplate を含む zip ファイルを作成することによって行われます。この zipfile は Base64 でエンコードされ、
+小規模の Python スクリプトでラップされ、
+Base64 エンコードをデコードして管理ノードの temp ディレクトリーに置きます。次に、
+zip ファイルから Ansible モジュールのスクリプトだけを抽出し、
+それを一時ディレクトリーに置きます。PYTHONPATH を設定して zip ファイル内の Python モジュールを探し、
+Ansible モジュールを ``__main__`` という特別な名前でインポートします。
+これを ``__main__`` としてインポートすることで、Python は単にモジュールをインポートするのではなく、
+スクリプトを実行していると考えるようになります。これにより、Ansible はラッパースクリプトとモジュールコードの両方を、リモートマシンにある Python のコピーで実行できます。
 
 .. note::
-    * Ansible wraps the zipfile in the Python script for two reasons:
+    * Ansible が Python スクリプトで zip ファイルをラップするには、以下の 2 つの理由があります。
 
-        * for compatibility with Python 2.6 which has a less
-          functional version of Python's ``-m`` command line switch.
+        * Python の ``-m`` コマンドラインスイッチの機能が少ない 
+          Python 2.6 との互換性のため。
 
-        * so that pipelining will function properly. Pipelining needs to pipe the
-          Python module into the Python interpreter on the remote node. Python
-          understands scripts on stdin but does not understand zip files.
+        * パイプラインが正しく機能するようにするため。パイプラインは、
+          Python モジュールをリモートノードの Python インタープリターにパイプする必要があります。Python
+          Python は標準出力 (stdin) 上のスクリプトは理解できますが、zip ファイルは理解できません。
 
-    * Prior to Ansible 2.7, the module was executed via a second Python interpreter instead of being
-      executed inside of the same process. This change was made once Python-2.4 support was dropped
-      to speed up module execution.
+    * Ansible 2.7 より前のバージョンでは、モジュールは同じプロセス内で実行するのではなく、
+      2 つ目の Python インタープリターを介して実行していました。この変更は、
+      モジュールの実行を高速化するために Python-2.4 のサポートが削除された後に行われました。
 
-In Ansiballz, any imports of Python modules from the
-:py:mod:`ansible.module_utils` package trigger inclusion of that Python file
-into the zipfile. Instances of :code:`#<<INCLUDE_ANSIBLE_MODULE_COMMON>>` in
-the module are turned into :code:`from ansible.module_utils.basic import *`
-and :file:`ansible/module-utils/basic.py` is then included in the zipfile.
-Files that are included from :file:`module_utils` are themselves scanned for
-imports of other Python modules from :file:`module_utils` to be included in
-the zipfile as well.
+Ansiballz では、
+:py:mod:`ansible.module_utils` パッケージから Python モジュールをインポートすると、
+その Python ファイルが zip ファイルに含まれるようになります。モジュールの :code:`#<<INCLUDE_ANSIBLE_MODULE_COMMON>>` のインスタンスは 
+:code:`from ansible.module_utils.basic import *` に変換され、
+次に、:file:`ansible/module-utils/basic.py` が zip ファイルにインクルードされます。
+:file:`module_utils` に含まれているファイルは、
+:file:`module_utils` から他の Python モジュールがインポートされているかどうかをスキャンし、
+同様に zip ファイルににインポートされます。
 
 .. warning::
-    At present, the Ansiballz Framework cannot determine whether an import
-    should be included if it is a relative import. Always use an absolute
-    import that has :py:mod:`ansible.module_utils` in it to allow Ansiballz to
-    determine that the file should be included.
+    現在、Ansiballz フレームワークでは、
+    インポートが相対インポートの場合に、インポートを含めるべきかどうかを判断することができません。Ansiballz がファイルを含めるべきかどうかを判断できるように、
+    :py:mod:`ansible.module_utils` 
+    を含む絶対インポートを使用してください。
 
 
 .. _flow_passing_module_args:
 
-Passing args
+引数を渡す
 ------------
 
-Arguments are passed differently by the two frameworks:
+以下の 2 つのフレームワークでは、引数の渡し方が異なります。
 
-* In :ref:`module_replacer`, module arguments are turned into a JSON-ified string and substituted into the combined module file.
-* In :ref:`Ansiballz`, the JSON-ified string is part of the script which wraps the zipfile. Just before the wrapper script imports the Ansible module as ``__main__``, it monkey-patches the private, ``_ANSIBLE_ARGS`` variable in ``basic.py`` with the variable values. When a :class:`ansible.module_utils.basic.AnsibleModule` is instantiated, it parses this string and places the args into :attr:`AnsibleModule.params` where it can be accessed by the module's other code.
+* :ref:`module_replacer` では、モジュールの引数は JSON 化された文字列に変換され、結合されたモジュールファイルに置き換えられます。
+* :ref:`Ansiballz` では、JSON 化された文字列は zip ファイルをラップするスクリプトに含まれますが、ラッパースクリプトは Ansible モジュールを ``__main__`` としてインポートする直前に、``basic.py`` のプライベート変数 ``_ANSIBLE_ARGS`` に変数値をモンキーパッチします。:class:`ansible.module_utils.basic.AnsibleModule` がインスタンス化されると、この文字列を解析して :attr:`AnsibleModule.params` に配置し、モジュールの他のコードからアクセスできるようにします。
 
 .. warning::
-    If you are writing modules, remember that the way we pass arguments is an internal implementation detail: it has changed in the past and will change again as soon as changes to the common module_utils
-    code allow Ansible modules to forgo using :class:`ansible.module_utils.basic.AnsibleModule`. Do not rely on the internal global ``_ANSIBLE_ARGS`` variable.
+    モジュールを記述する場合、引数の渡し方は内部的な実装の詳細であることを覚えておいてください。
+    過去に変更されていますが、共通の module_utils コードが変更されて Ansible モジュールが :class:`ansible.module_utils.basic.AnsibleModule` の使用を見送ることができるようになると、すぐにまた変更されるでしょう。内部のグローバル変数 ``_ANSIBLE_ARGS`` に使用しないようにしてください。
 
-    Very dynamic custom modules which need to parse arguments before they
-    instantiate an ``AnsibleModule`` may use ``_load_params`` to retrieve those parameters.
-    Although ``_load_params`` may change in breaking ways if necessary to support
-    changes in the code, it is likely to be more stable than either the way we pass parameters or the internal global variable.
+    ``AnsibleModule`` をインスタンス化する前に引数を解析する必要がある非常に動的なカスタムモジュールでは、
+    ``_load_params``を使用してパラメーターを取得することがあります。
+    ``_load_params`` はコードの変更に対応するために必要に応じて変更されることがありますが、パラメーターを渡す方法や内部グローバル変数よりも安定している可能性があります。
+    サポートが必要な場合は、``_load_params`` が破損した方法で変更する可能性があります。
 
 .. note::
-    Prior to Ansible 2.7, the Ansible module was invoked in a second Python interpreter and the
-    arguments were then passed to the script over the script's stdin.
+    Ansible 2.7 より前のバージョンでは、Ansible モジュールは 2 番目の Python インタープリターで呼び出され、
+    引数はスクリプトの標準入力 (stdin) を介してスクリプトに渡されていました。
 
 
 .. _flow_internal_arguments:
 
-Internal arguments
+内部引数
 ------------------
 
-Both :ref:`module_replacer` and :ref:`Ansiballz` send additional arguments to
-the module beyond those which the user specified in the playbook. These
-additional arguments are internal parameters that help implement global
-Ansible features. Modules often do not need to know about these explicitly as
-the features are implemented in :py:mod:`ansible.module_utils.basic` but certain
-features need support from the module so it's good to know about them.
+:ref:`module_replacer` および :ref:`Ansiballz` は両方とも、
+Playbook でユーザーが指定した以上の追加引数をモジュールに送ります。これらの追加引数は、
+Ansible 
+のグローバルな機能を実装するのに役立つ内部パラメータです。機能は :py:mod:`ansible.module_utils.basic` で実装されているため、
+モジュールはこれらを明示的に知る必要はないことは少なくありませんが、
+特定の機能にはモジュールのサポートが必要になるため、知ることは良いことです。
 
-The internal arguments listed here are global. If you need to add a local internal argument to a custom module, create an action plugin for that specific module - see ``_original_basename`` in the `copy action plugin <https://github.com/ansible/ansible/blob/devel/lib/ansible/plugins/action/copy.py#L329>`_ for an example.
+ここに記載されている内部引数はグローバルです。カスタムモジュールにローカルの内部引数を追加する必要がある場合は、その特定のモジュール用のアクションプラグインを作成してください。例は、「`copy action plugin <https://github.com/ansible/ansible/blob/devel/lib/ansible/plugins/action/copy.py#L329>`_」の「``_original_basename``」を参照してください。
 
 _ansible_no_log
 ^^^^^^^^^^^^^^^
 
-Boolean. Set to True whenever a parameter in a task or play specifies ``no_log``. Any module that calls :py:meth:`AnsibleModule.log` handles this automatically. If a module implements its own logging then
-it needs to check this value. To access in a module, instantiate an
-``AnsibleModule`` and then check the value of :attr:`AnsibleModule.no_log`.
+ブール値です。タスクやプレイのパラメーターで ``no_log`` が指定されている場合は常に True に設定します。:py:meth:`AnsibleModule.log` を呼び出すモジュールがこれを自動的に処理します。モジュールが独自のロギングを実装している場合は、
+この値を確認する必要があります。モジュール内でアクセスするには、
+``AnsibleModule`` をインスタンス化してから :attr:`AnsibleModule.no_log` の値をチェックします。
 
 .. note::
-    ``no_log`` specified in a module's argument_spec is handled by a different mechanism.
+    モジュールの argument_spec で指定された ``no_log`` は別のメカニズムで処理されます。
 
 _ansible_debug
 ^^^^^^^^^^^^^^^
 
-Boolean. Turns more verbose logging on or off and turns on logging of
-external commands that the module executes. If a module uses
-:py:meth:`AnsibleModule.debug` rather than :py:meth:`AnsibleModule.log` then
-the messages are only logged if ``_ansible_debug`` is set to ``True``.
-To set, add ``debug: True`` to :file:`ansible.cfg` or set the environment
-variable :envvar:`ANSIBLE_DEBUG`. To access in a module, instantiate an
-``AnsibleModule`` and access :attr:`AnsibleModule._debug`.
+ブール値です。より詳細なログをオンまたはオフにし、
+モジュールが実行する外部コマンドのログをオンにします。モジュールが 
+:py:meth:`AnsibleModule.log` ではなく :py:meth:`AnsibleModule.debug` を使用している場合は、
+``_ansible_debug`` が ``True`` に設定されている場合にのみメッセージがログに記録されます。
+設定するには、``debug: True`` を :file:`ansible.cfg` に追加するか、
+環境変数 :envvar:`ANSIBLE_DEBUG` を設定してください。モジュール内でアクセスするには、
+``AnsibleModule`` をインスタンス化して :attr:`AnsibleModule._debug` にアクセスします。
 
 _ansible_diff
 ^^^^^^^^^^^^^^^
 
-Boolean. If a module supports it, tells the module to show a unified diff of
-changes to be made to templated files. To set, pass the ``--diff`` command line
-option. To access in a module, instantiate an `AnsibleModule` and access
-:attr:`AnsibleModule._diff`.
+ブール値です。モジュールがこれをサポートしている場合は、
+テンプレート化されたファイルに加えられる変更の統一された diff を表示するようにモジュールに指示します。これを設定するには、
+コマンドラインオプション ``--diff`` を渡します。モジュール内でアクセスするには、`AnsibleModule` をインスタンス化して、
+:attr:`AnsibleModule._diff` にアクセスします。
 
 _ansible_verbosity
 ^^^^^^^^^^^^^^^^^^
 
-Unused. This value could be used for finer grained control over logging.
+使用されていません。この値は、ログをより細かく制御するために使用できます。
 
 _ansible_selinux_special_fs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-List. Names of filesystems which should have a special SELinux
-context. They are used by the `AnsibleModule` methods which operate on
-files (changing attributes, moving, and copying). To set, add a comma separated string of filesystem names in :file:`ansible.cfg`::
+リストです。特別な SELinux 
+コンテキストを持つべきファイルシステムの名前。これは、ファイルを操作する `AnsibleModule` メソッド 
+(属性の変更、移動、およびコピー) で使用されます。これを設定するには、:file:`ansible.cfg` にファイルシステム名のコンマ区切りの文字列を追加します。
 
   # ansible.cfg
   [selinux]
   special_context_filesystems=nfs,vboxsf,fuse,ramfs,vfat
 
-Most modules can use the built-in ``AnsibleModule`` methods to manipulate
-files. To access in a module that needs to know about these special context filesystems, instantiate an ``AnsibleModule`` and examine the list in
-:attr:`AnsibleModule._selinux_special_fs`.
+ほとんどのモジュールでは、
+組み込みの ``AnsibleModule`` メソッドを使用してファイルを操作することができます。この特殊なコンテキストファイルシステムについて知る必要があるモジュールでアクセスするには、``AnsibleModule`` をインスタンス化して、
+:attr:`AnsibleModule._selinux_special_fs` のリストを調べます。
 
-This replaces :attr:`ansible.module_utils.basic.SELINUX_SPECIAL_FS` from
-:ref:`module_replacer`. In module replacer it was a comma separated string of
-filesystem names. Under Ansiballz it's an actual list.
+これは、
+:ref:`module_replacer` の :attr:`ansible.module_utils.basic.SELINUX_SPECIAL_FS` を置き換えたものです。モジュールリプレッサーでは、
+これは、ファイルシステム名をコンマで区切った文字列でした。Ansiballz では実際のリストになります。
 
 .. versionadded:: 2.1
 
 _ansible_syslog_facility
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-This parameter controls which syslog facility Ansible module logs to. To set, change the ``syslog_facility`` value in :file:`ansible.cfg`. Most
-modules should just use :meth:`AnsibleModule.log` which will then make use of
-this. If a module has to use this on its own, it should instantiate an
-`AnsibleModule` and then retrieve the name of the syslog facility from
-:attr:`AnsibleModule._syslog_facility`. The Ansiballz code is less hacky than the old :ref:`module_replacer` code:
+このパラメーターは、Ansible モジュールがどの syslog ファシリティーにログを記録するかを制御します。これを設定するには、:file:`ansible.cfg` の ``syslog_facility`` の値を変更します。ほとんどのモジュールは、
+:meth:`AnsibleModule.log` を使用するだけで、
+これを使用するようになります。モジュールが独自にこれを使用しなければならない場合は、
+`AnsibleModule` をインスタンス化し、
+:attr:`AnsibleModule._syslog_facility` から syslog ファシリティーの名前を取得する必要があります。Ansiballz のコードは、:ref:`module_replacer` コードよりも洗練されています。
 
 .. code-block:: python
 
@@ -467,68 +467,68 @@ this. If a module has to use this on its own, it should instantiate an
 _ansible_version
 ^^^^^^^^^^^^^^^^
 
-This parameter passes the version of Ansible that runs the module. To access
-it, a module should instantiate an `AnsibleModule` and then retrieve it
-from :attr:`AnsibleModule.ansible_version`. This replaces
-:attr:`ansible.module_utils.basic.ANSIBLE_VERSION` from
-:ref:`module_replacer`.
+このパラメーターには、モジュールを実行する Ansible のバージョンを渡します。これにアクセスするために、
+モジュールは `AnsibleModule` をインスタンス化してから、
+それを :attr:`AnsibleModule.ansible_version` から取得する必要があります。これは、
+:ref:`module_replacer` の 
+:attr:`ansible.module_utils.basic.ANSIBLE_VERSION` を置き換えるものです。
 
 .. versionadded:: 2.1
 
 
 .. _flow_module_return_values:
 
-Module return values & Unsafe strings
+モジュール戻り値と安全でない文字列
 -------------------------------------
 
-At the end of a module's execution, it formats the data that it wants to return as a JSON string and prints the string to its stdout. The normal action plugin receives the JSON string, parses it into a Python dictionary, and returns it to the executor.
+モジュールの実行の最後に、返したいデータを JSON 文字列としてフォーマットし、その文字列を標準出力 (stdout) に出力します。normal アクションプラグインは JSON 文字列を受け取り、Python ディクショナリーに解析してエクゼキューターに返します。
 
-If Ansible templated every string return value, it would be vulnerable to an attack from users with access to managed nodes. If an unscrupulous user disguised malicious code as Ansible return value strings, and if those strings were then templated on the controller, Ansible could execute arbitrary code. To prevent this scenario, Ansible marks all strings inside returned data as ``Unsafe``, emitting any Jinja2 templates in the strings verbatim, not expanded by Jinja2.
+Ansible がすべての文字列の戻り値をテンプレート化した場合は、管理ノードにアクセスできるユーザーからの攻撃に対して脆弱になります。悪意のあるユーザーが悪意のあるコードを Ansible の戻り値の文字列として偽装し、それらの文字列がコントローラー上でテンプレート化されると、Ansible が任意のコードを実行する可能性があります。このシナリオを防ぐために、Ansible では、返されたデータ内のすべての文字列を ``Unsafe`` としてマークし、文字列内の Jinja2 テンプレートをすべてそのまま出力し、Jinja2 によって展開されないようにしています
 
-Strings returned by invoking a module through ``ActionPlugin._execute_module()`` are automatically marked as ``Unsafe`` by the normal action plugin. If another action plugin retrieves information from a module through some other means, it must mark its return data as ``Unsafe`` on its own.
+``ActionPlugin._execute_module()`` を介してモジュールを呼び出して返された文字列には、normal アクションプラグインによって自動的に ``Unsafe`` というマークが付きます。別のアクションプラグインが他の方法でモジュールから情報を取得した場合は、そのアクションプラグイン自身がその戻り値に ``Unsafe`` マークを付ける必要があります。
 
-In case a poorly-coded action plugin fails to mark its results as "Unsafe," Ansible audits the results again when they are returned to the executor,
-marking all strings as ``Unsafe``. The normal action plugin protects itself and any other code that it calls with the result data as a parameter. The check inside the executor protects the output of all other action plugins, ensuring that subsequent tasks run by Ansible will not template anything from those results either.
+コード化が不十分なアクションプラグインが結果を「安全でない」とすることに失敗すると、
+Ansible は結果がエクゼキューターに返されたときに結果を再監査し、すべての文字列に ``Unsafe`` マークを付けます。normal アクションプラグインは、自分自身と、結果データをパラメーターとして呼び出す他のコードを保護します。エクゼキューター内のチェックは、他のすべてのアクションプラグインの出力を保護し、Ansible によって実行された後続のタスクがこれらの結果から何かをテンプレート化することがないようにします。
 
 .. _flow_special_considerations:
 
-Special considerations
+特別な考慮事項
 ----------------------
 
 .. _flow_pipelining:
 
-Pipelining
+パイプライン
 ^^^^^^^^^^
 
-Ansible can transfer a module to a remote machine in one of two ways:
+Ansible は、以下のいずれかの方法で、モジュールをリモートマシンに転送できます。
 
-* it can write out the module to a temporary file on the remote host and then
-  use a second connection to the remote host to execute it with the
-  interpreter that the module needs
-* or it can use what's known as pipelining to execute the module by piping it
-  into the remote interpreter's stdin.
+* リモートホスト上の一時ファイルにモジュールを書き出し、
+  リモートホストへの第二の接続を使用して、
+  モジュールが必要とするインタープリターで実行する方法です。
+* あるいは、
+  リモートインタープリターの標準入力 (stdin) にパイプしてモジュールを実行する、パイプライン化と呼ばれる方法を使用することもできます。
 
-Pipelining only works with modules written in Python at this time because
-Ansible only knows that Python supports this mode of operation. Supporting
-pipelining means that whatever format the module payload takes before being
-sent over the wire must be executable by Python via stdin.
+パイプラインは現時点では Python で書かれたモジュールでしか動作しません。
+これは、Python のみがこの操作モードをサポートしていると Ansible が認識しているためです。パイプラインをサポートしているということは、
+モジュールのペイロードがどのような形式であっても、
+stdin を介して Python で実行できなければならないということを意味します。
 
 .. _flow_args_over_stdin:
 
-Why pass args over stdin?
+標準入力 (stdin) で引数を渡す理由
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Passing arguments via stdin was chosen for the following reasons:
+以下の理由により、stdin で引数を渡すことが選択されました。
 
-* When combined with :ref:`ANSIBLE_PIPELINING`, this keeps the module's arguments from
-  temporarily being saved onto disk on the remote machine. This makes it
-  harder (but not impossible) for a malicious user on the remote machine to
-  steal any sensitive information that may be present in the arguments.
-* Command line arguments would be insecure as most systems allow unprivileged
-  users to read the full commandline of a process.
-* Environment variables are usually more secure than the commandline but some
-  systems limit the total size of the environment. This could lead to
-  truncation of the parameters if we hit that limit.
+* :ref:`ANSIBLE_PIPELINING` と組み合わせることで、
+  モジュールの引数が一時的にリモートマシンのディスクに保存されることを防ぎます。これにより、
+  リモートマシン上で悪意のあるユーザーが、
+  引数に存在する可能性のある機密情報を盗むことが難しくなります (ただし不可能ではありません)。
+* ほとんどのシステムでは、
+  権限のないユーザーがプロセスのコマンドライン全体を読むことを許可されているため、コマンドライン引数は安全ではありません。
+* 通常、環境変数は、コマンドラインよりも安全ですが、
+  システムによっては環境の合計サイズを制限しています。その制限を超えると、
+  パラメーターが切り捨てられてしまう可能性があります。
 
 
 .. _flow_ansiblemodule:
@@ -538,12 +538,12 @@ AnsibleModule
 
 .. _argument_spec:
 
-Argument spec
+引数の仕様
 ^^^^^^^^^^^^^
 
-The ``argument_spec`` provided to ``AnsibleModule`` defines the supported arguments for a module, as well as their type, defaults and more.
+``AnsibleModule`` に提供される ``argument_spec`` は、モジュールでサポートされる引数、その型、デフォルトなどを定義します。
 
-Example ``argument_spec``:
+``argument_spec`` の例：
 
 .. code-block:: python
 
@@ -559,12 +559,12 @@ Example ``argument_spec``:
         )
     ))
 
-This section will discuss the behavioral attributes for arguments:
+本セクションでは、引数の動作属性を説明します。
 
 type
 """"
 
-``type`` allows you to define the type of the value accepted for the argument. The default value for ``type`` is ``str``. Possible values are:
+``type`` では、引数に受け入れられる値の型を定義できます。``type`` のデフォルト値は ``str`` です。以下の値が使用できます。
 
 * str
 * list
@@ -579,65 +579,65 @@ type
 * bytes
 * bits
 
-The ``raw`` type, performs no type validation or type casing, and maintains the type of the passed value.
+``raw`` 型で、型の検証や型のケーシングを行わず、渡された値の型を保持します。
 
 elements
 """"""""
 
-``elements`` works in combination with ``type`` when ``type='list'``. ``elements`` can then be defined as ``elements='int'`` or any other type, indicating that each element of the specified list should be of that type.
+``elements`` は、``type='list'`` の時に ``type`` と組み合わせて動作します。``elements`` は ``elements='int'`` などの型で定義することができ、指定されたリストの各要素がその型であることを示します。
 
 default
 """""""
 
-The ``default`` option allows sets a default value for the argument for the scenario when the argument is not provided to the module. When not specified, the default value is ``None``.
+``default`` オプションは、引数がモジュールに提供されていない場合のシナリオの引数のデフォルト値を設定します。指定されていない場合、デフォルト値は ``None`` です。
 
 fallback
 """"""""
 
-``fallback`` accepts a ``tuple`` where the first argument is a callable (function) that will be used to perform the lookup, based on the second argument. The second argument is a list of values to be accepted by the callable.
+``fallback`` は、第 1 引数に、第 2 引数に基づいて検索を実行するために使用される callable (関数) の ``タプル`` を受け入れます。2 つ目の引数は、呼び出し可能な値のリストを指定します。
 
-The most common callable used is ``env_fallback`` which will allow an argument to optionally use an environment variable when the argument is not supplied.
+最も一般的に使用されている callable は ``env_fallback`` で、これは引数に環境変数が与えられていない場合に任意で環境変数を使用できるようにします。
 
-Example::
+例:
 
     username=dict(fallback=(env_fallback, ['ANSIBLE_NET_USERNAME']))
 
 choices
 """""""
 
-``choices`` accepts a list of choices that the argument will accept. The types of ``choices`` should match the ``type``.
+``choice`` は、引数が受け入れる選択肢のリストを受け入れます。``choices`` の型は、``type`` と一致している必要があります。
 
 required
 """"""""
 
-``required`` accepts a boolean, either ``True`` or ``False`` that indicates that the argument is required. This should not be used in combination with ``default``.
+``required`` には、引数が必要であることを示すブール値 (``True`` または ``False``) を使用できます。これは ``default`` と組み合わせて使用しないでください。
 
 no_log
 """"""
 
-``no_log`` accepts a boolean, either ``True`` or ``False``, that indicates explicitly whether or not the argument value should be masked in logs and output.
+``no_log`` には、引数の値がログや出力でマスクされるべきかどうかを明示的に示すブール値 (``True`` または ``False``) を使用できます。
 
 .. note::
-   In the absence of ``no_log``, if the parameter name appears to indicate that the argument value is a password or passphrase (such as "admin_password"), a warning will be shown and the value will be masked in logs but **not** output. To disable the warning and masking for parameters that do not contain sensitive information, set ``no_log`` to ``False``.
+   ``no_log`` がない場合は、パラメーター名が、引数の値がパスワードやパスフレーズであることを示しているように見える場合 (「admin_password」など)、警告が表示され、値はログでマスクされますが、**出力されません**。機密情報を含まないパラメーターの警告とマスクを無効にするには、``no_log`` を ``False`` に設定します。
 
 aliases
 """""""
 
-``aliases`` accepts a list of alternative argument names for the argument, such as the case where the argument is ``name`` but the module accepts ``aliases=['pkg']`` to allow ``pkg`` to be interchangeably with ``name``
+``aliases`` では、引数の代替引数名のリストが使用できます。たとえば、引数が ``name`` ですが、モジュールが ``aliases=['pkg']`` を受け付けて、``pkg`` を ``name`` と互換性を持たせるようにしています。
 
 options
 """""""
 
-``options`` implements the ability to create a sub-argument_spec, where the sub options of the top level argument are also validated using the attributes discussed in this section. The example at the top of this section demonstrates use of ``options``. ``type`` or ``elements`` should be ``dict`` is this case.
+``options`` では、トップレベル引数のサブオプションもこのセクションで説明した属性を使用して検証される sub-argument_spec を作成する機能を実装しています。このセクションの先頭にある例は、``options`` の使用を示しています。ここでは、``type`` または ``elements`` は ``dict`` である必要があります。
 
 apply_defaults
 """"""""""""""
 
-``apply_defaults`` works alongside ``options`` and allows the ``default`` of the sub-options to be applied even when the top-level argument is not supplied.
+``apply_defaults`` は ``options`` と並んで動作し、トップレベルの引数が指定されていない場合でもサブオプションの ``デフォルト`` を適用できるようにします。
 
-In the example of the ``argument_spec`` at the top of this section, it would allow ``module.params['top_level']['second_level']`` to be defined, even if the user does not provide ``top_level`` when calling the module.
+このセクションの先頭にある ``argument_spec`` の例では、ユーザーがモジュールを呼び出すときに ``top_level`` を指定しなかった場合でも、``module.params['top_level']['second_level']`` を定義できるようにします。
 
 removed_in_version
 """"""""""""""""""
 
-``removed_in_version`` indicates which version of Ansible a deprecated argument will be removed in.
+``removed_in_version`` は、非推奨の引数が削除される Ansible のバージョンを示します。

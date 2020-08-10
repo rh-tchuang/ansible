@@ -1,67 +1,67 @@
 .. _developing_modules_general_windows:
 
 **************************************
-Windows module development walkthrough
+Windows モジュールウォークスルー
 **************************************
 
-In this section, we will walk through developing, testing, and debugging an
-Ansible Windows module.
+本セクションでは、
+Ansible Windows モジュールの開発、テスト、デバッグの開発手順 (ウォークスルー) を説明します。
 
-Because Windows modules are written in Powershell and need to be run on a
-Windows host, this guide differs from the usual development walkthrough guide.
+Windows モジュールは Powershell で書かれており、
+Windows ホスト上で実行する必要があるため、このガイドは通常の開発ウォークスルーガイドとは異なります。
 
-What's covered in this section:
+本項で説明する内容:
 
 .. contents::
    :local:
 
 
-Windows environment setup
+Windows 環境の設定
 =========================
 
-Unlike Python module development which can be run on the host that runs
-Ansible, Windows modules need to be written and tested for Windows hosts.
-While evaluation editions of Windows can be downloaded from
-Microsoft, these images are usually not ready to be used by Ansible without
-further modification. The easiest way to set up a Windows host so that it is
-ready to by used by Ansible is to set up a virtual machine using Vagrant.
-Vagrant can be used to download existing OS images called *boxes* that are then
-deployed to a hypervisor like VirtualBox. These boxes can either be created and
-stored offline or they can be downloaded from a central repository called
-Vagrant Cloud.
+Ansible を実行するホストで実行できる Python モジュール開発とは異なり、
+Windows モジュールは、Windows ホスト用に記述してテストする必要があります。
+Windows の評価版は Microsoft からダウンロードすることができますが、
+このイメージは通常、
+さらに修正を加えなければ Ansible で使用できません。Ansible で使用できるように Windows ホストをセットアップする最も簡単な方法は、
+Vagrant を使用して仮想マシンをセットアップすることです。
+Vagrantは、ボックス (*box*) と呼ばれる既存の OS イメージをダウンロードして、
+VirtualBox のようなハイパーバイザーにデプロイするために使用されます。これらのボックスはオフラインで作成して保存するか、
+Vagrant Cloud 
+と呼ばれる中央リポジトリーからダウンロードします。
 
-This guide will use the Vagrant boxes created by the `packer-windoze <https://github.com/jborean93/packer-windoze>`_
-repository which have also been uploaded to `Vagrant Cloud <https://app.vagrantup.com/boxes/search?utf8=%E2%9C%93&sort=downloads&provider=&q=jborean93>`_.
-To find out more info on how these images are created, please go to the GitHub
-repo and look at the ``README`` file.
+このガイドでは、
+`Vagrant Cloud <https://app.vagrantup.com/boxes/search?utf8=%E2%9C%93&sort=downloads&provider=&q=jborean93>`_ にもアップロードされている `packer-windoze <https://github.com/jborean93/packer-windoze>`_ リポジトリーで作成された Vagrant ボックスを使用します。
+これらのイメージがどのように作成されているかの詳細は、
+GitHubのリポジトリーにある ``README`` ファイルを参照してください。
 
-Before you can get started, the following programs must be installed (please consult the Vagrant and
-VirtualBox documentation for installation instructions):
+作業を開始する前に、
+以下のプログラムをインストールする必要があります (インストール方法は Vagrant および VirtualBox のドキュメントを参照してください)。
 
 - Vagrant
 - VirtualBox
 
-Create a Windows server in a VM
+仮想マシンで Windows サーバーを作成
 ===============================
 
-To create a single Windows Server 2016 instance, run the following:
+1 つの Windows Server 2016 インスタンスを作成するには、次のコマンドを実行します。
 
 .. code-block:: shell
 
     vagrant init jborean93/WindowsServer2016
     vagrant up
 
-This will download the Vagrant box from Vagrant Cloud and add it to the local
-boxes on your host and then start up that instance in VirtualBox. When starting
-for the first time, the Windows VM will run through the sysprep process and
-then create a HTTP and HTTPS WinRM listener automatically. Vagrant will finish
-its process once the listeners are online, after which the VM can be used by Ansible.
+これにより、Vagrant Cloud から Vagrant ボックスをダウンロードしてホスト上のローカルボックスに追加し、
+VirtualBox でそのインスタンスを起動します。初めて起動すると、
+Windows の仮想マシンは、sysprep プロセスを経て、
+HTTP および HTTPS の WinRM リスナーを自動的に作成します。Vagrant はリスナーがオンラインになるとプロセスを終了します。
+これで、仮想マシンが Ansible で使用できるようになりました。
 
-Create an Ansible inventory
+Ansible インベントリーの作成
 ===========================
 
-The following Ansible inventory file can be used to connect to the newly
-created Windows VM:
+以下の Ansible インベントリーファイルを使用して、
+新しく作成した Windows 仮想マシンに接続できます。
 
 .. code-block:: ini
 
@@ -76,13 +76,13 @@ created Windows VM:
     ansible_winrm_transport=ntlm
     ansible_winrm_server_cert_validation=ignore
 
-.. note:: The port ``55986`` is automatically forwarded by Vagrant to the
-    Windows host that was created, if this conflicts with an existing local
-    port then Vagrant will automatically use another one at random and display
-    show that in the output.
+.. note:: ポート ``55986`` は、Vagrant により、作成された Windows ホストに転送されます。
+    これが既存のローカルポートと競合すると、
+    Vagrant は自動的にランダムに別のポートを使用し、
+    出力にその旨を表示します。
 
-The OS that is created is based on the image set. The following
-images can be used:
+作成される OS はイメージセットに基づいています。以下のイメージが
+使用できます。
 
 - `jborean93/WindowsServer2008-x86 <https://app.vagrantup.com/jborean93/boxes/WindowsServer2008-x86>`_
 - `jborean93/WindowsServer2008-x64 <https://app.vagrantup.com/jborean93/boxes/WindowsServer2008-x64>`_
@@ -91,42 +91,42 @@ images can be used:
 - `jborean93/WindowsServer2012R2 <https://app.vagrantup.com/jborean93/boxes/WindowsServer2012R2>`_
 - `jborean93/WindowsServer2016 <https://app.vagrantup.com/jborean93/boxes/WindowsServer2016>`_
 
-When the host is online, it can accessible by RDP on ``127.0.0.1:3389`` but the
-port may differ depending if there was a conflict. To get rid of the host, run
-``vagrant destroy --force`` and Vagrant will automatically remove the VM and
-any other files associated with that VM.
+ホストがオンラインになっている場合は、RDP を介して ``127.0.0.1:3389`` でアクセスできますが、
+競合があるとポートが異なる場合があります。ホストを削除するには、
+``vagrant destroy --force`` を実行すると、
+Vagrant は自動的に仮想マシンと、その仮想マシンに関連付けられている他のファイルを削除します。
 
-While this is useful when testing modules on a single Windows instance, these
-host won't work without modification with domain based modules. The Vagrantfile
-at `ansible-windows <https://github.com/jborean93/ansible-windows/tree/master/vagrant>`_
-can be used to create a test domain environment to be used in Ansible. This
-repo contains three files which are used by both Ansible and Vagrant to create
-multiple Windows hosts in a domain environment. These files are:
+これは、1 つの Windows インスタンスでモジュールをテストする際に便利ですが、
+ドメインベースのモジュールではこれらのホストは変更なしでは動作しません。`ansible-windows <https://github.com/jborean93/ansible-windows/tree/master/vagrant>`_ 
+にある Vagrantfile は、
+Ansible で使用するテストドメイン環境を作成するために使用できます。このリポジトリーには、
+Ansible と Vagrant の両方がドメイン環境で複数の Windows ホストを作成するのに使用する 
+3 つのファイルが含まれています。これらのファイルは以下のようになります。
 
-- ``Vagrantfile``: The Vagrant file that reads the inventory setup of ``inventory.yml`` and provisions the hosts that are required
-- ``inventory.yml``: Contains the hosts that are required and other connection information such as IP addresses and forwarded ports
-- ``main.yml``: Ansible playbook called by Vagrant to provision the domain controller and join the child hosts to the domain
+- ``Vagrantfile`` - ``inventory.yml`` のインベントリー設定を読み込んで、必要なホストをプロビジョニングする Vagrant ファイルです。
+- ``inventory.yml`` - 必要なホストと、IP アドレスや転送ポートなどの他の接続情報が含まれています。
+- ``main.yml`` - Vagrant より呼び出された Ansible Playbook は、ドメインコントローラーをプロビジョニングし、子ホストをドメインに参加させます。
 
-By default, these files will create the following environment:
+デフォルトでは、これらのファイルは以下の環境を作成します。
 
-- A single domain controller running on Windows Server 2016
-- Five child hosts for each major Windows Server version joined to that domain
-- A domain with the DNS name ``domain.local``
-- A local administrator account on each host with the username ``vagrant`` and password ``vagrant``
-- A domain admin account ``vagrant-domain@domain.local`` with the password ``VagrantPass1``
+- Windows Server 2016 で実行しているドメインコントローラー 1 つ
+- ドメインに参加している各 Windows Server のメジャーバージョンの子ホスト 5 台
+- ドメイン (DNS 名 ``domain.local``)
+- 各ホストのローカル管理者アカウント (ユーザー名 ``vagrant`` およびパスワード ``vagrant``)
+- ドメイン管理者アカウント ``vagrant-domain@domain.local`` (パスワード ``VagrantPass1``)
 
-The domain name and accounts can be modified by changing the variables
-``domain_*`` in the ``inventory.yml`` file if it is required. The inventory
-file can also be modified to provision more or less servers by changing the
-hosts that are defined under the ``domain_children`` key. The host variable
-``ansible_host`` is the private IP that will be assigned to the VirtualBox host
-only network adapter while ``vagrant_box`` is the box that will be used to
-create the VM.
+ドメイン名とアカウントは、
+必要に応じて ``inventory.yml`` ファイル内の変数 ``domain_*`` を変更することで変更できます。また、インベントリーファイルは、
+``domain_children`` キーの下に定義されているホストを変更することで、
+より多く (またはより少ない) サーバーをプロビジョニングするように変更することもできます。ホスト変数 ``ansible_host`` は、
+VirtualBox のホスト専用ネットワークアダプターに割り当てられるプライベート IP で、
+``vagrant_box`` は、
+仮想マシンの作成に使用されるボックスです。
 
-Provisioning the environment
+環境のプロビジョニング
 ============================
 
-To provision the environment as is, run the following:
+そのまま環境をプロビジョニングするには、次を実行します。
 
 .. code-block:: shell
 
@@ -134,16 +134,16 @@ To provision the environment as is, run the following:
     cd vagrant
     vagrant up
 
-.. note:: Vagrant provisions each host sequentially so this can take some time
-    to complete. If any errors occur during the Ansible phase of setting up the
-    domain, run ``vagrant provision`` to rerun just that step.
+.. note:: Vagrant は各ホストを順次プロビジョニングしていくため、
+    完了するまでに時間がかかることがあります。もし、ドメインを設定する Ansible フェーズでエラーが発生した場合は、
+    ``vagrant provision`` を実行してそのステップを再実行してください。
 
-Unlike setting up a single Windows instance with Vagrant, these hosts can also
-be accessed using the IP address directly as well as through the forwarded
-ports. It is easier to access it over the host only network adapter as the
-normal protocol ports are used, e.g. RDP is still over ``3389``. In cases where
-the host cannot be resolved using the host only network IP, the following
-protocols can be access over ``127.0.0.1`` using these forwarded ports:
+Vagrant で Windows インスタンスを 1つ設定するのとは異なり、
+これらのホストには転送ポートだけでなく、
+IP アドレスを使用して直接アクセスすることもできます。通常のプロトコルポートが使用されるため、
+ホスト専用のネットワークアダプターを使用してアクセスする方が簡単です。たとえば、RDP は現在も ``3389`` で使用されています。ホストのみのネットワーク IP を使用して解決できない場合は、
+以下の転送ポートを使用して 、
+``127.0.0.1`` を介して以下のプロトコルにアクセスすることができます。
 
 - ``RDP``: 295xx
 - ``SSH``: 296xx
@@ -151,38 +151,38 @@ protocols can be access over ``127.0.0.1`` using these forwarded ports:
 - ``WinRM HTTPS``: 298xx
 - ``SMB``: 299xx
 
-Replace ``xx`` with the entry number in the inventory file where the domain
-controller started with ``00`` and is incremented from there. For example, in
-the default ``inventory.yml`` file, WinRM over HTTPS for ``SERVER2012R2`` is
-forwarded over port ``29804`` as it's the fourth entry in ``domain_children``.
+``xx`` を、
+ドメインコントローラーが ``00`` で始まり、そこからインクリメントされるインベントリーファイルのエントリー番号に置き換えます。たとえば、
+デフォルトの ``inventory.yml`` ファイルでは、
+WinRM over HTTPS for ``SERVER2012R2`` は ``domain_children`` の 4 番目のエントリーであるため、ポート ``29804`` で転送されます。
 
-.. note:: While an SSH server is available on all Windows hosts but Server
-    2008 (non R2), it is not a support connection for Ansible managing Windows
-    hosts and should not be used with Ansible.
+.. note:: SSH サーバーは、Server 2008 (R2 以外) を除くすべての Windows ホストで利用できますが、
+    Windows ホストを管理する Ansible のサポート接続ではないため、
+    Ansible では使用しないでください。
 
-Windows new module development
+Windows 新しいモジュール開発
 ==============================
 
-When creating a new module there are a few things to keep in mind:
+新しいモジュールを作成する際には、以下の点に留意してください。
 
-- Module code is in Powershell (.ps1) files while the documentation is contained in Python (.py) files of the same name
-- Avoid using ``Write-Host/Debug/Verbose/Error`` in the module and add what needs to be returned to the ``$module.Result`` variable
-- To fail a module, call ``$module.FailJson("failure message here")``, an Exception or ErrorRecord can be set to the second argument for a more descriptive error message
-- You can pass in the exception or ErrorRecord as a second argument to ``FailJson("failure", $_)`` to get a more detailed output
-- Most new modules require check mode and integration tests before they are merged into the main Ansible codebase
-- Avoid using try/catch statements over a large code block, rather use them for individual calls so the error message can be more descriptive
-- Try and catch specific exceptions when using try/catch statements
-- Avoid using PSCustomObjects unless necessary
-- Look for common functions in ``./lib/ansible/module_utils/powershell/`` and use the code there instead of duplicating work. These can be imported by adding the line ``#Requires -Module *`` where * is the filename to import, and will be automatically included with the module code sent to the Windows target when run via Ansible
-- As well as PowerShell module utils, C# module utils are stored in ``./lib/ansible/module_utils/csharp/`` and are automatically imported in a module execution if the line ``#AnsibleRequires -CSharpUtil *`` is present
-- C# and PowerShell module utils achieve the same goal but C# allows a developer to implement low level tasks, such as calling the Win32 API, and can be faster in some cases
-- Ensure the code runs under Powershell v3 and higher on Windows Server 2008 and higher; if higher minimum Powershell or OS versions are required, ensure the documentation reflects this clearly
-- Ansible runs modules under strictmode version 2.0. Be sure to test with that enabled by putting ``Set-StrictMode -Version 2.0`` at the top of your dev script
-- Favour native Powershell cmdlets over executable calls if possible
-- Use the full cmdlet name instead of aliases, e.g. ``Remove-Item`` over ``rm``
-- Use named parameters with cmdlets, e.g. ``Remove-Item -Path C:\temp`` over ``Remove-Item C:\temp``
+- モジュールのコードは Powershell (.ps1) ファイルにあり、ドキュメントは同じ名前の Python (.py) ファイルに含まれています。
+- モジュールでは ``Write-Host/Debug/Verbose/Error`` を使用せず、``$module.Result`` 変数に返す必要のあるものを追加します。
+- モジュールを失敗させるには、``$module.FailJson("failure message here")`` を呼び出して、Exception または ErrorRecord を 2 番目の引数に設定して、より詳細なエラーメッセージを表示できます。
+- 例外または ErrorRecord を 2 つ目の引数として ``FailJson("failure", $_)`` に渡すと、より詳細な出力を取得できます。
+- ほとんどの新規モジュールには、主要な Ansible コードベースにマージする前にチェックモードと統合テストが必要です。
+- 大規模なコードブロックで try/catch 文を使用するのは避け、個別の呼び出しに使用することで、エラーメッセージがより分かりやすくなるようにします。
+- Try/catch 文の使用時に特定の例外を試して捕え (キャッチし) ます。
+- 必要な場合を除き PSCustomObject は使用しないでください。
+- 重複する作業を行わないように、``./lib/ansible/module_utils/powershell/`` にある共通の関数を探して、そこにあるコードを使用してください。これらの関数は  ``#Requires -Module *`` という行を追加することでインポートすることができます。* はインポートするファイル名で、Ansible を介して実行する場合に、自動的に Windows ターゲットに送信されたモジュールコードが含まれています。
+- PowerShell モジュールユーティリティーの他に、C# モジュールユーティリティーが ``./lib/ansible/module_utils/csharp/`` にあります。これは、``#AnsibleRequires -CSharpUtil *`` 行が存在する場合に、モジュール実行に自動的にインポートされます。
+- C# および PowerShell モジュールユーティリティーは同じ目的を達成していますが、C# では Win32 API の呼び出しなどの低レベルのタスクを実装することができるため、場合によってはより速く達成できます。
+- このコードが Windows Server 2008 以降の Powershell v3 以降で動作することを確認してください。最小バージョンより新しい Powershell または OS が必要な場合は、ドキュメントにこの内容が明確に反映されていることを確認してください。
+- Ansible は、strictmode バージョン 2.0 でモジュールを実行します。必ず、開発スクリプトの先頭に ``Set-StrictMode -Version 2.0`` と記述して、この機能を有効にしてテストしてください。
+- 可能であれば、実行可能な呼び出しよりも、ネイティブの Powershell コマンドレットを優先してください。
+- エイリアスの代わりに完全なコマンドレット名を使用してください (例: ``rm`` ではなく ``Remove-Item``)。
+- コマンドレットで名前付きパラメーターを使用します (例: ``Remove-Item C:\temp`` ではなく ``Remove-Item -Path C:\temp``)。
 
-A very basic powershell module `win_environment <https://github.com/ansible/ansible/blob/devel/lib/ansible/modules/windows/win_environment.ps1>`_ is included below. It demonstrates how to implement check-mode and diff-support, and also shows a warning to the user when a specific condition is met.
+非常に基本的なパワーシェルモジュール `win_environment <https://github.com/ansible/ansible/blob/devel/lib/ansible/modules/windows/win_environment.ps1>`_ が以下に含まれています。これは、check-mode および diff-support を実装する方法を示し、特定の条件が満たされるとユーザーに警告を表示します。
 
 .. .. include:: ../../../../lib/ansible/modules/windows/win_environment.ps1
 ..    :code: powershell
@@ -190,59 +190,59 @@ A very basic powershell module `win_environment <https://github.com/ansible/ansi
 .. literalinclude:: ../../../../lib/ansible/modules/windows/win_environment.ps1
    :language: powershell
 
-A slightly more advanced module is `win_uri <https://github.com/ansible/ansible/blob/devel/lib/ansible/modules/windows/win_uri.ps1>`_ which additionally shows how to use different parameter types (bool, str, int, list, dict, path) and a selection of choices for parameters, how to fail a module and how to handle exceptions.
+もう少し高度なモジュールとしては `win_uri <https://github.com/ansible/ansible/blob/devel/lib/ansible/modules/windows/win_uri.ps1>`_ がありますが、ここで、さまざまなパラメーター型 (bool、str、int、list、dict、path) の使用方法やパラメーターの選択方法、モジュールを失敗させる方法、例外の処理方法などを紹介しています。
 
-As part of the new ``AnsibleModule`` wrapper, the input parameters are defined and validated based on an argument
-spec. The following options can be set at the root level of the argument spec:
+新しい ``AnsibleModule`` ラッパーの一部として、入力パラメーターが定義され、
+引数の仕様に基づいて検証されます。以下のオプションは、引数仕様のルートレベルで設定できます。
 
-- ``mutually_exclusive``: A list of lists, where the inner list contains module options that cannot be set together
-- ``no_log``: Stops the module from emitting any logs to the Windows Event log
-- ``options``: A dictionary where the key is the module option and the value is the spec for that option
-- ``required_by``: A dictionary where the option(s) specified by the value must be set if the option specified by the key is also set
-- ``required_if``: A list of lists where the inner list contains 3 or 4 elements;
-    * The first element is the module option to check the value against
-    * The second element is the value of the option specified by the first element, if matched then the required if check is run
-    * The third element is a list of required module options when the above is matched
-    * An optional fourth element is a boolean that states whether all module options in the third elements are required (default: ``$false``) or only one (``$true``)
-- ``required_one_of``: A list of lists, where the inner list contains module options where at least one must be set
-- ``required_together``: A list of lists, where the inner list contains module options that must be set together
-- ``supports_check_mode``: Whether the module supports check mode, by default this is ``$false``
+- ``mutually_exclusive``: リストのリストで、内側のリストには一緒に設定できないモジュールオプションが含まれています。
+- ``no_log``: モジュールが Windows イベントログにログを出力しないようにします。
+- ``options``: キーがモジュールオプションで、値がそのオプションの仕様となるディクショナリーです。
+- ``required_by``: キーで指定されたオプションが設定されている場合に、値で指定されたオプションも設定しなければならないディクショナリーです。
+- ``required_if``: 3 または 4 つの要素が含まれるリストが記載されるリストです。
+    * 最初の要素は、値を確認するモジュールオプションです。
+    * 2 つ目の要素は、1 つ目の要素によって指定されるオプションの値です。一致すると必須の if チェックが実行します。
+    * 3 つ目の要素は、上記が一致した場合に必要なモジュールオプションのリストです。
+    *  4 番目の要素 (任意) は、3 番目の要素のすべてのモジュールオプションが必要なのか (デフォルト: ``$false``)、1 つだけが必要なのか (``$true``) を示すブール値です。
+- ``required_one_of``: 少なくとも 1 つは設定しなければならないモジュールオプションが含まれているリストが記載されるリストです。
+- ``required_together``: 一緒に設定しなければならないモジュールオプションが含まれているリストが記載されるリストです。
+- ``supports_check_mode``: モジュールがチェックモードに対応しているかどうか (デフォルトは ``$false`` です)。
 
-The actual input options for a module are set within the ``options`` value as a dictionary. The keys of this dictionary
-are the module option names while the values are the spec of that module option. Each spec can have the following
-options set:
+モジュールの実際の入力オプションは、``options`` 値内にディクショナリーとして設定されます。このディレクトリーのキーはモジュールオプション名であり、
+値はそのモジュールオプションの仕様です。各仕様には、
+以下のオプションを設定できます。
 
-- ``aliases``: A list of aliases for the module option
-- ``choices``: A list of valid values for the module option, if ``type=list`` then each list value is validated against the choices and not the list itself
-- ``default``: The default value for the module option if not set
-- ``elements``: When ``type=list``, this sets the type of each list value, the values are the same as ``type``
-- ``no_log``: Will sanitise the input value before being returned in the ``module_invocation`` return value
-- ``removed_in_version``: States when a deprecated module option is to be removed, a warning is displayed to the end user if set
-- ``required``: Will fail when the module option is not set
-- ``type``: The type of the module option, if not set then it defaults to ``str``. The valid types are;
-    * ``bool``: A boolean value
-    * ``dict``: A dictionary value, if the input is a JSON or key=value string then it is converted to dictionary
-    * ``float``: A float or `Single <https://docs.microsoft.com/en-us/dotnet/api/system.single?view=netframework-4.7.2>`_ value
-    * ``int``: An Int32 value
-    * ``json``: A string where the value is converted to a JSON string if the input is a dictionary
-    * ``list``: A list of values, ``elements=<type>`` can convert the individual list value types if set. If ``elements=dict`` then ``options`` is defined, the values will be validated against the argument spec. When the input is a string then the string is split by ``,`` and any whitespace is trimmed
-    * ``path``: A string where values likes ``%TEMP%`` are expanded based on environment values. If the input value starts with ``\\?\`` then no expansion is run
-    * ``raw``: No conversions occur on the value passed in by Ansible
-    * ``sid``: Will convert Windows security identifier values or Windows account names to a `SecurityIdentifier <https://docs.microsoft.com/en-us/dotnet/api/system.security.principal.securityidentifier?view=netframework-4.7.2>`_ value
-    * ``str``: The value is converted to a string
+- ``aliases``: モジュールオプションのエイリアスのリストです。
+- ``choices``: モジュールオプションの有効な値のリストです。``type=list`` の場合、各リストの値が choices に対して検証され、リスト自体は検証されません。
+- ``default``: モジュールオプションのデフォルト値 (設定されていない場合)
+- ``elements``: ``type=list`` の場合、各リスト値のタイプが設定され、値は ``type`` と同じになります。
+- ``no_log``: ``module_invocation`` 戻り値で返される前に入力値をサニタイズします。
+- ``removed_in_version``: 非推奨のモジュールオプションを削除すると、警告が設定されている場合はエンドユーザーに警告が表示されます。
+- ``required``: モジュールオプションが設定されていないと失敗します。
+- ``type``: モジュールオプションのタイプです。設定されていない場合は、デフォルトで ``str`` に設定されます。有効なタイプは以下のとおりです。
+    * ``bool``: ブール値です。
+    * ``dict``: ディクショナリーの値です。入力が JSON または key=value 文字列の場合は、ディクショナリーに変換されます。
+    * ``float``: float または `Single` <https://docs.microsoft.com/en-us/dotnet/api/system.single?view=netframework-4.7.2>_ 値
+    * ``int``: Int32 値
+    * ``JSON``: 入力がディクショナリーである場合に値が JSON 文字列に変換される文字列です。
+    * ``list``: 値のリスト。``elements=<type>`` は、設定されている場合に個別のリスト値タイプを変換できます。``elements=dict`` の場合、``options`` が定義されると、値は引数仕様に対して検証されます。入力が文字列である場合、文字列は ``,`` で分割され、空白文字はすべてトリミングされます。
+    * ``path``: ``%TEMP%`` などの値が環境値に基づいて展開される文字列。入力値が ``\\?\`` で始まると、展開は実行されません。
+    * ``raw``: Ansible によって渡される値で変換が行われません。
+    * ``SID``: Windows セキュリティー識別子の値または Windows アカウント名を `SecurityIdentifier <https://docs.microsoft.com/en-us/dotnet/api/system.security.principal.securityidentifier?view=netframework-4.7.2>`_ 値に変換します。
+    * ``str``: 値は文字列に変換されます。
 
-When ``type=dict``, or ``type=list`` and ``elements=dict``, the following keys can also be set for that module option:
+``type=dict`` または ``type=list`` および ``elements=dict`` の場合は、そのモジュールオプションに以下のキーを設定することもできます。
 
-- ``apply_defaults``: The value is based on the ``options`` spec defaults for that key if ``True`` and null if ``False``. Only valid when the module option is not defined by the user and ``type=dict``.
-- ``mutually_exclusive``: Same as the root level ``mutually_exclusive`` but validated against the values in the sub dict
-- ``options``: Same as the root level ``options`` but contains the valid options for the sub option
-- ``required_if``: Same as the root level ``required_if`` but validated against the values in the sub dict
-- ``required_by``: Same as the root level ``required_by`` but validated against the values in the sub dict
-- ``required_together``: Same as the root level ``required_together`` but validated against the values in the sub dict
-- ``required_one_of``: Same as the root level ``required_one_of`` but validated against the values in the sub dict
+- 値は、``True`` の場合はそのキーの ``options`` 仕様のデフォルトになり、``False`` の場合は null です。モジュールオプションがユーザーによって定義されておらず、``type=dict`` の場合に限り有効です。
+- ``mutually_exclusive``: ルートレベルの ``mutually_exclusive`` と同じですが、サブディクショナリーの値に対して検証されます。
+- ``options``: ルートレベルの ``options`` と同じですが、サブオプションの有効なオプションが含まれています。
+- ``required_if``: ルートレベルの ``required_if`` と同じですが、サブディクショナリーの値に対して検証されます。
+- ``required_by``: ルートレベルの ``required_by`` と同じですが、サブディクショナリーの値に対して検証されます。
+- ``required_together``: ルートレベルの ``required_together`` と同じですが、サブディクショナリーの値に対して検証されます。
+- ``required_one_of``: ルートレベルの ``required_one_of`` と同じですが、サブディクショナリーの値に対して検証されます。
 
-A module type can also be a delegate function that converts the value to whatever is required by the module option. For
-example the following snippet shows how to create a custom type that creates a ``UInt64`` value:
+モジュール型は、値をモジュールオプションで必要とされるものに変換するデリゲート関数にすることもできます。たとえば、
+次のスニペットの例は、``UInt64`` 値を作成するカスタム型を作成する方法を示しています。
 
 .. code-block:: powershell
 
@@ -251,83 +251,79 @@ example the following snippet shows how to create a custom type that creates a `
     }
     $uint64_type = $module.Params.uint64_type
 
-When in doubt, look at some of the other core modules and see how things have been
-implemented there.
+不明な場合は、他のコアモジュールを見て、
+そこにどのように実装されているかを見てみましょう。
 
-Sometimes there are multiple ways that Windows offers to complete a task; this
-is the order to favour when writing modules:
+Windows がタスクを完了させるために、複数の方法が提示されることがあります。
+モジュールを書くときに好ましい順序は以下のようになります。
 
-- Native Powershell cmdlets like ``Remove-Item -Path C:\temp -Recurse``
-- .NET classes like ``[System.IO.Path]::GetRandomFileName()``
-- WMI objects through the ``New-CimInstance`` cmdlet
-- COM objects through ``New-Object -ComObject`` cmdlet
-- Calls to native executables like ``Secedit.exe``
+- ネイティブの Powershell コマンドレット (``Remove-Item -Path C:\temp -Recurse`` など)
+- .NET クラス (``[System.IO.Path]::GetRandomFileName()`` など)
+- (``New-CimInstance`` コマンドレットを使用した) WMI オブジェクト
+- (``New-Object -ComObject`` コマンドレットを使用した) COM オブジェクト
+- ``Secedit.exe`` などのネイティブ実行ファイルへの呼び出し
 
-PowerShell modules support a small subset of the ``#Requires`` options built
-into PowerShell as well as some Ansible-specific requirements specified by
-``#AnsibleRequires``. These statements can be placed at any point in the script,
-but are most commonly near the top. They are used to make it easier to state the
-requirements of the module without writing any of the checks. Each ``requires``
-statement must be on its own line, but there can be multiple requires statements
-in one script.
+PowerShell モジュールは、PowerShell に組み込まれている ``#Requires`` オプションの一部と、
+``#AnsibleRequires`` で指定されている 
+Ansible 固有の要件をサポートしています。これらのステートメントはスクリプトの任意の場所に配置することができますが、
+最も一般的なのはスクリプトの先頭付近です。これらを使用することで、
+チェック項目を書かなくてもモジュールの要件を簡単に記述できるようになります。各 ``requires`` 文は、
+それぞれ独立した行に記述しなければなりませんが、
+1 つのスクリプトに複数の requires 文を記述することができます。
 
-These are the checks that can be used within Ansible modules:
+以下のチェックは、Ansible モジュール内で使用できます。
 
-- ``#Requires -Module Ansible.ModuleUtils.<module_util>``: Added in Ansible 2.4, specifies a module_util to load in for the module execution.
-- ``#Requires -Version x.y``: Added in Ansible 2.5, specifies the version of PowerShell that is required by the module. The module will fail if this requirement is not met.
-- ``#AnsibleRequires -OSVersion x.y``: Added in Ansible 2.5, specifies the OS build version that is required by the module and will fail if this requirement is not met. The actual OS version is derived from ``[Environment]::OSVersion.Version``.
-- ``#AnsibleRequires -Become``: Added in Ansible 2.5, forces the exec runner to run the module with ``become``, which is primarily used to bypass WinRM restrictions. If ``ansible_become_user`` is not specified then the ``SYSTEM`` account is used instead.
-- ``#AnsibleRequires -CSharpUtil Ansible.<module_util>``: Added in Ansible 2.8, specifies a C# module_util to load in for the module execution.
+- ``#Requires -Module Ansible.ModuleUtils.<module_util>``: Ansible 2.4 で追加され、モジュール実行のために読み込む module_util を指定します。
+- ``#Requires -Version x.y``: Ansible 2.5 で追加され、モジュールに必要な PowerShell のバージョンを指定します。この要件を満たしていないと、モジュールは失敗します。
+- ``#AnsibleRequires -OSVersion x.y``: Ansible 2.5 で追加され、モジュールが必要とする OS ビルドバージョンを指定します。この要件を満たしていない場合は失敗します。実際の OS バージョンは ``[Environment]::OSVersion.Version`` から得られます。
+- ``#AnsibleRequires -Become``: Ansible 2.5 で追加され、exec ランナーが ``become`` でモジュールを強制的に実行します。これは主に WinRM の制限を回避するために使用されます。``ansible_become_user`` を指定しないと、代わりに ``SYSTEM`` アカウントが使用されます。
+- ``#AnsibleRequires -CSharpUtil Ansible.<module_util>``: Ansible 2.8 で追加され、モジュール実行に読み込む C# module_unil を指定します。
 
-C# module utils can reference other C# utils by adding the line
-``using Ansible.<module_util>;`` to the top of the script with all the other
-using statements.
+他のすべての using 文を使用する場合は、スクリプトの先頭に ``using Ansible.<module_util>;`` 行を使用すると、
+その他の C# のモジュールユーティリティーを参照できます。
 
 
-Windows module utilities
+Windows モジュールユーティリティー
 ========================
 
-Like Python modules, PowerShell modules also provide a number of module
-utilities that provide helper functions within PowerShell. These module_utils
-can be imported by adding the following line to a PowerShell module:
+Python モジュールと同様、
+PowerShell モジュールにも PowerShell 内でヘルパー関数を提供するモジュールユーティリティーが多数用意されています。これらの module_utils は、
+PowerShell モジュールに以下の行を追加することでインポートできます。
 
 .. code-block:: powershell
 
     #Requires -Module Ansible.ModuleUtils.Legacy
 
-This will import the module_util at ``./lib/ansible/module_utils/powershell/Ansible.ModuleUtils.Legacy.psm1``
-and enable calling all of its functions. As of Ansible 2.8, Windows module
-utils can also be written in C# and stored at ``lib/ansible/module_utils/csharp``.
-These module_utils can be imported by adding the following line to a PowerShell
-module:
+これにより、``./lib/ansible/module_utils/powershell/Ansible.ModuleUtils.Legacy.psm1`` にあるmodule_util がインポートされ、
+そのすべての関数を呼び出すことができるようになります。Ansible 2.8 では、
+Windows モジュールユーティリティーを C# で記述し、``lib/ansible/module_utils/csharp`` に保存することもできます。
+これらの module_utils は、
+PowerShell モジュールに次の行を追加することでインポートできます。
 
 .. code-block:: powershell
 
     #AnsibleRequires -CSharpUtil Ansible.Basic
 
-This will import the module_util at ``./lib/ansible/module_utils/csharp/Ansible.Basic.cs``
-and automatically load the types in the executing process. C# module utils can
-reference each other and be loaded together by adding the following line to the
-using statements at the top of the util:
+これにより、
+``./lib/ansible/module_utils/csharp/Ansible.Basic.cs`` にある module_util をインポートし、実行中の型を自動的に読み込みます。C# モジュールユーティリティーは、ユーティリティーの先頭にある using 文に以下の行を追加することで、お互いを参照して一緒に読み込むことができます。
 
 .. code-block:: csharp
 
     using Ansible.Become;
 
-There are special comments that can be set in a C# file for controlling the
-compilation parameters. The following comments can be added to the script;
+C# ファイルには、コンパイルパラメーターを制御するために設定できる特別なコメントがあります。以下のコメントをスクリプトに追加することができます。
 
-- ``//AssemblyReference -Name <assembly dll> [-CLR [Core|Framework]]``: The assembly DLL to reference during compilation, the optional ``-CLR`` flag can also be used to state whether to reference when running under .NET Core, Framework, or both (if omitted)
-- ``//NoWarn -Name <error id> [-CLR [Core|Framework]]``: A compiler warning ID to ignore when compiling the code, the optional ``-CLR`` works the same as above. A list of warnings can be found at `Compiler errors <https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/index>`_
+- ``//AssemblyReference -Name <assembly dll> [-CLR [Core|Framework]]``: コンパイル中に参照するアセンブリー DLL です。任意の ``-CLR`` フラグを使用して、.NET Core、Framework、またはその両方 (省略されている場合) で実行するときに参照するかどうかを表示することもできます。
+- ``//NoWarn -Name <error id> [-CLR [Core|Framework]]``: コードをコンパイルする際に無視するコンパイラー警告 ID です。任意の ``-CLR`` は上記と同じように機能します。警告のリストは、「`コンパイラーエラー <https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/index>`_」を参照してください。
 
-As well as this, the following pre-processor symbols are defined;
+この他に、以下のプリプロセッサーシンボルも定義されています。
 
-- ``CORECLR``: This symbol is present when PowerShell is running through .NET Core
-- ``WINDOWS``: This symbol is present when PowerShell is running on Windows
-- ``UNIX``: This symbol is present when PowerShell is running on Unix
+- ``CORECLR``: このシンボルは、PowerShell が .NET Core を介して実行されている場合に表示されます。
+- ``WINDOWS``: このシンボルは、PowerShell が Windows で実行している場合に表示されます。
+- ``UNIX``: このシンボルは、PowerShell が Unix で実行している場合に表示されます。
 
-A combination of these flags help to make a module util interoperable on both
-.NET Framework and .NET Core, here is an example of them in action:
+これフラグの組み合わせは、
+.NET Framework と .NET Core の両方でモジュールユーティリティーを相互運用可能にするのに役立ちます。
 
 .. code-block:: csharp
 
@@ -347,32 +343,30 @@ A combination of these flags help to make a module util interoperable on both
     //NoWarn -Name CS1956 -CLR Framework
 
 
-The following is a list of module_utils that are packaged with Ansible and a general description of what
-they do:
+以下に Ansible と一緒にパッケージ化されている module_utils リストと、
+それらが何をするのかの一般的な説明を示します。
 
-- ArgvParser: Utiliy used to convert a list of arguments to an escaped string compliant with the Windows argument parsing rules.
-- CamelConversion: Utility used to convert camelCase strings/lists/dicts to snake_case.
-- CommandUtil: Utility used to execute a Windows process and return the stdout/stderr and rc as separate objects.
-- FileUtil: Utility that expands on the ``Get-ChildItem`` and ``Test-Path`` to work with special files like ``C:\pagefile.sys``.
-- Legacy: General definitions and helper utilities for Ansible module.
-- LinkUtil: Utility to create, remove, and get information about symbolic links, junction points and hard inks.
-- SID: Utilities used to convert a user or group to a Windows SID and vice versa.
+- ArgvParser: 引数のリストを Windows の引数解析ルールに準拠しているエスケープされた文字列に変換するのに使用されるユーティリティー。
+- CamelConversion: camelCase strings/lists/dicts を snake_case に変換するのに使用されるユーティリティー。
+- CommandUtil: Windows プロセスを実行し、stdout/stderr と rc を異なるオブジェクトとして返すために使用されるユーティリティー。
+- FileUtil: ``C:\pagefile.sys`` のような特殊なファイルを扱うために ``Get-ChildItem`` および ``Test-Path`` を拡張するユーティリティー。
+- Legacy: Ansible モジュールの一般的な定義およびヘルパーユーティリティー。
+- LinkUtil: シンボリックリンク、分岐点、ハードインクに関する情報を作成、削除、取得するユーティリティー。
+- SID: ユーザーやグループを Windows SID に変換したり、Windows SID をユーザーやグループに変換するのに使用するユーティリティー。
 
-For more details on any specific module utility and their requirements, please see the `Ansible
-module utilities source code <https://github.com/ansible/ansible/tree/devel/lib/ansible/module_utils/powershell>`_.
+特定のモジュールユーティリティーとその要件に関する詳細は、`「Ansible 
+モジュールユーティリティーのソースコード <https://github.com/ansible/ansible/tree/devel/lib/ansible/module_utils/powershell>`_」を参照してください。
 
-PowerShell module utilities can be stored outside of the standard Ansible
-distribution for use with custom modules. Custom module_utils are placed in a
-folder called ``module_utils`` located in the root folder of the playbook or role
-directory.
+PowerShell モジュールユーティリティーは、カスタムモジュールで使用するために、
+標準の Ansible ディストリビューションの外に保存できます。カスタム module_utils は、
+Playbook またはロールのルートディレクトリーにある ``module_utils`` 
+という名前のディレクトリーに置かれます。
 
-C# module utilities can also be stored outside of the standard Ansible distribution for use with custom modules. Like
-PowerShell utils, these are stored in a folder called ``module_utils`` and the filename must end in the extension
-``.cs``, start with ``Ansible.``  and be named after the namespace defined in the util.
+C# モジュールユーティリティーは、カスタムモジュールで使用するために、標準の Ansible ディストリビューションの外に保存することもできます。PowerShell ユーティリティーと同様、``module_utils`` という名前のディレクトリーに保存され、
+ファイル名は拡張子 ``.cs`` で終わり、``Ansible.`` で始まり、ユーティリティーで定義された名前空間にちなんだ名前でなければなりません。
 
-The below example is a role structure that contains two PowerShell custom module_utils called
-``Ansible.ModuleUtils.ModuleUtil1``, ``Ansible.ModuleUtils.ModuleUtil2``, and a C# util containing the namespace
-``Ansible.CustomUtil``::
+次の例は、
+``Ansible.ModuleUtils.ModuleUtil1`` および ``Ansible.ModuleUtils.ModuleUtil2`` と呼ばれる 2 つの PowerShell カスタム module_utils と、``Ansible.CustomUtil`` という名前の名前空間を含む C# ユーティリティーを含むロール構造です。
 
     meta/
       main.yml
@@ -385,23 +379,23 @@ The below example is a role structure that contains two PowerShell custom module
     tasks/
       main.yml
 
-Each PowerShell module_util must contain at least one function that has been exported with ``Export-ModuleMember``
-at the end of the file. For example
+各 PowerShell module_util は、
+ファイルの最後に ``Export-ModuleMember`` でエクスポートされた関数を少なくとも 1 つ含まなければなりません。たとえば、以下のようになります。
 
 .. code-block:: powershell
 
     Export-ModuleMember -Function Invoke-CustomUtil, Get-CustomInfo
 
 
-Windows playbook module testing
+Windows Playbook モジュールのテスト
 ===============================
 
-You can test a module with an Ansible playbook. For example:
+Ansible Playbook でモジュールをテストできます。例:
 
-- Create a playbook in any directory ``touch testmodule.yml``.
-- Create an inventory file in the same directory ``touch hosts``.
-- Populate the inventory file with the variables required to connect to a Windows host(s).
-- Add the following to the new playbook file::
+- Playbook ``touch testmodule.yml`` をディレクトリーに作成します。
+- 同じディレクトリーにインベントリーファイル ``touch hosts`` を作成します。
+- Windows ホストへの接続に必要な変数を指定してインベントリーファイルを設定します。
+- 以下を新しい Playbook ファイルに追加します。
 
     ---
     - name: test out windows module
@@ -411,24 +405,24 @@ You can test a module with an Ansible playbook. For example:
         win_module:
           name: test name
 
-- Run the playbook ``ansible-playbook -i hosts testmodule.yml``
+- Playbook ``ansible-playbook -i hosts testmodule.yml`` を実行します。
 
-This can be useful for seeing how Ansible runs with
-the new module end to end. Other possible ways to test the module are
-shown below.
+これは、
+新しいモジュールを使用して Ansible がどのように動作するかを端から端まで確認するのに便利です。モジュールをテストする他の方法には、
+以下ようなものがあります。
 
 
-Windows debugging
+Windows のデバッグ
 =================
 
-Debugging a module currently can only be done on a Windows host. This can be
-useful when developing a new module or implementing bug fixes. These
-are some steps that need to be followed to set this up:
+現在、モジュールのデバッグは Windows ホスト上でしかできません。これは新しいモジュールを開発したり、
+バグの修正を実装したりするときに便利です。これを設定するために
+必要な手順をいくつか紹介します。
 
-- Copy the module script to the Windows server
-- Copy the folders ``./lib/ansible/module_utils/powershell`` and ``./lib/ansible/module_utils/csharp`` to the same directory as the script above
-- Add an extra ``#`` to the start of any ``#Requires -Module`` lines in the module code, this is only required for any lines starting with ``#Requires -Module``
-- Add the following to the start of the module script that was copied to the server:
+- モジュールスクリプトを Windows サーバーにコピーします。
+- ``./lib/ansible/module_utils/powershell`` および ``./lib/ansible/module_utils/csharp`` を上記のスクリプトと同じディレクトリーにコピーします。
+- モジュールコードにあるすべての ``#Requires -Module`` 行の先頭に ``#`` を追加してください。これは、``#Requires -Module`` で始まる行にのみ必要です。
+- 以下を、サーバーにコピーされたモジュールスクリプトの先頭に追加します。
 
 .. code-block:: powershell
 
@@ -460,8 +454,8 @@ are some steps that need to be followed to set this up:
     # End of the setup code and start of the module code
     #!powershell
 
-You can add more args to ``$complex_args`` as required by the module or define the module options through a JSON file
-with the structure::
+モジュールに必要な場合は ``$complex_args`` にさらに引数を追加したり、
+その構造を持つ JSON ファイルでモジュールオプションを定義することもできます。
 
     {
         "ANSIBLE_MODULE_ARGS": {
@@ -472,55 +466,55 @@ with the structure::
         }
     }
 
-There are multiple IDEs that can be used to debug a Powershell script, two of
-the most popular ones are
+Powershell スクリプトのデバッグに使用できる IDE が複数あり、
+以下の 2 つが 最も一般的なものになります。
 
 - `Powershell ISE`_
-- `Visual Studio Code`_
+- `Visual Studio コード`_
 
 .. _Powershell ISE: https://docs.microsoft.com/en-us/powershell/scripting/core-powershell/ise/how-to-debug-scripts-in-windows-powershell-ise
 .. _Visual Studio Code: https://blogs.technet.microsoft.com/heyscriptingguy/2017/02/06/debugging-powershell-script-in-visual-studio-code-part-1/
 
-To be able to view the arguments as passed by Ansible to the module follow
-these steps.
+Ansible がモジュールに渡した引数を表示するには、
+以下の手順に従います。
 
-- Prefix the Ansible command with :envvar:`ANSIBLE_KEEP_REMOTE_FILES=1<ANSIBLE_KEEP_REMOTE_FILES>` to specify that Ansible should keep the exec files on the server.
-- Log onto the Windows server using the same user account that Ansible used to execute the module.
-- Navigate to ``%TEMP%\..``. It should contain a folder starting with ``ansible-tmp-``.
-- Inside this folder, open the PowerShell script for the module.
-- In this script is a raw JSON script under ``$json_raw`` which contains the module arguments under ``module_args``. These args can be assigned manually to the ``$complex_args`` variable that is defined on your debug script or put in the ``args.json`` file.
+- Ansible コマンドの前に :envvar:`ANSIBLE_KEEP_REMOTE_FILES=1<ANSIBLE_KEEP_REMOTE_FILES>` を付けて、Ansible が exec ファイルをサーバ上に保持するように指定します。
+- Ansible がモジュールの実行に使用したのと同じユーザーアカウントを使用して Windows サーバーにログインします。
+- ``%TEMP%\..`` に移動します。これには、``ansible-tmp-`` で始まるディレクトリーが含まれている必要があります。
+- このフォルダー内で、モジュールの PowerShell スクリプトを開きます。
+- このスクリプトは、``$json_raw`` にある生の JSON スクリプトで、``module_args`` の下にモジュール引数が含まれています。これらの引数は、デバッグスクリプトで定義される ``$complex_args`` 変数に手動で割り当てたり、``args.json`` ファイルに置いたりできます。
 
 
-Windows unit testing
+Windows のユニットテスト
 ====================
 
-Currently there is no mechanism to run unit tests for Powershell modules under Ansible CI.
+現在、Ansible CI で Powershell モジュールのユニットテストを実行するメカニズムはありません。
 
 
-Windows integration testing
+Windows 統合テスト
 ===========================
 
-Integration tests for Ansible modules are typically written as Ansible roles. These test
-roles are located in ``./test/integration/targets``. You must first set up your testing
-environment, and configure a test inventory for Ansible to connect to.
+Ansible モジュールの統合テストは、通常、Ansible ロールとして記述されます。これらのテストロールは、
+``./test/integration/targets`` にあります。最初にテスト環境を設定し、
+Ansible が接続するテストインベントリーを設定する必要があります。
 
-In this example we will set up a test inventory to connect to two hosts and run the integration
-tests for win_stat:
+この例では、
+2 台のホストに接続して win_stat の統合テストを実行するためのテストインベントリーを設定します。
 
-- Run the command ``source ./hacking/env-setup`` to prepare environment.
-- Create a copy of ``./test/integration/inventory.winrm.template`` and name it ``inventory.winrm``.
-- Fill in entries under ``[windows]`` and set the required variables that are needed to connect to the host.
-- :ref:`Install the required Python modules <windows_winrm>` to support WinRM and a configured authentication method.
-- To execute the integration tests, run ``ansible-test windows-integration win_stat``; you can replace ``win_stat`` with the role you wish to test.
+- コマンド ``source ./hacking/env-setup`` を実行して環境を準備します。
+- ``./test/integration/inventory.winrm.template`` のコピーを作成し、``inventory.winrm`` という名前を付けます。
+- ``[windows]`` の下にエントリーを入力し、ホストへの接続に必要な変数を設定します。
+- WinRM と、設定された認証方法をサポートするのに :ref:`必要な Python モジュールをインストール <windows_winrm>` します。
+- 統合テストを実行するには、``ansible-test windows-integration win_stat`` を実行します。``win_stat`` はテストするロールに置き換えることができます。
 
-This will execute all the tests currently defined for that role. You can set
-the verbosity level using the ``-v`` argument just as you would with
-ansible-playbook.
+これにより、そのロールに現在定義されているテストがすべて実行されます。ansible-playbook と同じように、
+``-v`` 引数を使用して、
+詳細レベルを設定できます。
 
-When developing tests for a new module, it is recommended to test a scenario once in
-check mode and twice not in check mode. This ensures that check mode
-does not make any changes but reports a change, as well as that the second run is
-idempotent and does not report changes. For example:
+新しいモジュールのテストを開発する場合、シナリオをチェックモードで 1 回、
+チェックモードではない状態で 1 回テストすることが推奨されます。これにより、
+チェックモードでは何も変更を加えずに変更を報告し、
+2 回目の実行では冪等で変更を報告しないことを保証します。たとえば、以下のようになります。
 
 .. code-block:: yaml
 
@@ -569,11 +563,11 @@ idempotent and does not report changes. For example:
         - not remove_file_again is changed
 
 
-Windows communication and development support
+Windows の通信および開発サポート
 =============================================
 
-Join the IRC channel ``#ansible-devel`` or ``#ansible-windows`` on freenode for
-discussions about Ansible development for Windows.
+Windows における Ansible 開発に関する説明は、IRC チャンネル ``#ansible-devel`` またはフリーノード ``#ansible-windows`` 
+に参加してください。
 
-For questions and discussions pertaining to using the Ansible product,
-use the ``#ansible`` channel.
+Ansible 製品の使用に関する質問とディスカッションは、
+``#ansible`` チャンネルを使用してください。

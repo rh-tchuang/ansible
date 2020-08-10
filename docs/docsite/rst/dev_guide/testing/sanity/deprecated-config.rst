@@ -1,6 +1,6 @@
 :orphan:
 
-deprecated-config
+非推奨の設定
 =================
 
 ``DOCUMENTATION`` 設定は削除されることが予定されています。

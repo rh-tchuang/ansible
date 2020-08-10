@@ -1,46 +1,46 @@
 ********************
-Ansible architecture
+Ansible アーキテクチャー
 ********************
 
-Ansible is a radically simple IT automation engine that automates cloud provisioning, configuration management, application deployment, intra-service orchestration, and many other IT needs.
+Ansible は、クラウドプロビジョニング、設定管理、アプリケーションのデプロイメント、サービス内オーケストレーション、およびその他の IT のニーズを自動化する非常にシンプルな IT 自動化エンジンです。
 
-Being designed for multi-tier deployments since day one, Ansible models your IT infrastructure by describing how all of your systems inter-relate, rather than just managing one system at a time.
+Ansible は、リリースされたその日から多層デプロイメント用に設計されており、システムを 1 つずつ管理する代わりに、すべてのシステムがどのように相互に関連しているかを記述することで、IT インフラストラクチャーをモデル化します。
 
-It uses no agents and no additional custom security infrastructure, so it's easy to deploy - and most importantly, it uses a very simple language (YAML, in the form of Ansible Playbooks) that allow you to describe your automation jobs in a way that approaches plain English.
+エージェントを使用せず、カスタムセキュリティーインフラストラクチャーを追加しないため、簡単にデプロイメントできます。最も重要なことは、非常に単純な言語 (YAML を Ansible Playbook の形式で使用) を使用しているため、分かりやすい英語に近づける方法で自動化ジョブを記述できます。
 
-In this section, we'll give you a really quick overview of how Ansible works so you can see how the pieces fit together.
+本セクションでは、Ansible の動作の概要を簡単に説明します。これにより各ピースがどのように組み合わされているかを確認できます。
 
 .. contents::
    :local:
 
-Modules
+モジュール
 =======
 
-Ansible works by connecting to your nodes and pushing out scripts called "Ansible modules" to them. Most modules accept parameters that describe the desired state of the system.
-Ansible then executes these modules (over SSH by default), and removes them when finished. Your library of modules can reside on any machine, and there are no servers, daemons, or databases required.
+Ansible は、ノードに接続し、「Ansible モジュール」と呼ばれるスクリプトをノードにプッシュすることで機能します。ほとんどのモジュールは、システムの希望の状態を記述するパラメーターを受け入れます。
+その後、Ansible はこれらのモジュールを実行して (デフォルトでは SSH 上)、終了すると削除されます。モジュールのライブラリーはどのマシンにも配置でき、サーバー、デーモン、またはデータベースは必要ありません。
 
-You can :ref:`write your own modules <developing_modules_general>`, though you should first consider :ref:`whether you should <developing_modules>`. Typically you'll work with your favorite terminal program, a text editor, and probably a version control system to keep track of changes to your content. You may write specialized modules in any language that can return JSON (Ruby, Python, bash, etc).
+:ref:`モジュールは自身で作成 <developing_modules_general>` できますが、その前に、:ref:`作成すべきかどうか <developing_modules>` を検討する必要があります。通常、任意のターミナルプログラム、テキストエディター、およびおそらくバージョン管理システムを使用して、コンテンツへの変更を追跡します。JSON を返すことができる任意の言語 (Ruby、Python、bash など) で特殊なモジュールを作成できます。
 
-Module utilities
+モジュールユーティリティー
 ================
 
-When multiple modules use the same code, Ansible stores those functions as module utilities to minimize duplication and maintenance. For example, the code that parses URLs is ``lib/ansible/module_utils/url.py``. You can :ref:`write your own module utilities <developing_module_utilities>` as well. Module utilities may only be written in Python or in PowerShell.
+複数のモジュールが同じコードを使用する場合は、Ansible がこの機能をモジュールユーティリティーとして保存し、重複とメンテナンスを最小限に抑えます。たとえば、URL を解析するコードは ``lib/ansible/module_utils/url.py`` です。:ref:`自身でモジュールユーティリティーを作成 <developing_module_utilities>` することもできます。モジュールユーティリティーは Python または PowerShell でのみ記述できます。
 
-Plugins
+プラグイン
 =======
 
-:ref:`Plugins <plugins_lookup>` augment Ansible's core functionality. While modules execute on the target system in separate processes (usually that means on a remote system), plugins execute on the control node within the ``/usr/bin/ansible`` process. Plugins offer options and extensions for the core features of Ansible - transforming data, logging output, connecting to inventory, and more. Ansible ships with a number of handy plugins, and you can easily :ref:`write your own <developing_plugins>`. For example, you can write an :ref:`inventory plugin <developing_inventory>` to connect to any datasource that returns JSON. Plugins must be written in Python.
+:ref:`プラグイン <plugins_lookup>` は Ansible のコア機能を拡張します。モジュールは、ターゲットシステムにおいて個別のプロセス (通常はリモートシステム上にある) で実行されるのに対して、プラグインは ``/usr/bin/ansible`` プロセス内のコントロールノードで実行されます。プラグインは、データの変換、出力のログ出力、インベントリーへの接続など、Ansible のコア機能のオプションおよび拡張機能を提供します。Ansible には、便利なプラグインが多数同梱されています。また、:ref:`自身でプラグイン <developing_plugins>` を簡単に記述することもできます。たとえば、:ref:`インベントリープラグイン <developing_inventory>` を作成して、JSON を返すデータソースに接続できます。プラグインは Python で記述する必要があります。
 
-Inventory
+インベントリー
 =========
 
-By default, Ansible represents the machines it manages in a file (INI, YAML, etc.) that puts all of your managed machines in groups of your own choosing.
+デフォルトでは、Ansible は、自身が作成したグループにすべての管理マシンを配置するファイル (INI、YAML など) で管理するマシンを表します。
 
-To add new machines, there is no additional SSL signing server involved, so there's never any hassle deciding why a particular machine didn't get linked up due to obscure NTP or DNS issues.
+新規マシンを追加するための、追加の SSL 署名サーバーはありません。したがって、NTP または DNS の問題が原因で特定のマシンがリンクされない理由を判断する手間がかかります。
 
-If there's another source of truth in your infrastructure, Ansible can also connect to that. Ansible can draw inventory, group, and variable information from sources like EC2, Rackspace, OpenStack, and more.
+インフラストラクチャーに信頼できる別のソースがある場合は、Ansible もこれに接続できます。Ansible は、EC2、Rackspace、OpenStack などのソースからインベントリー、グループ、および変数情報を取り出すことができます。
 
-Here's what a plain text inventory file looks like::
+プレーンテキストのインベントリーファイルは次のようになります。
 
     ---
     [webservers]
@@ -51,18 +51,18 @@ Here's what a plain text inventory file looks like::
     db0.example.com
     db1.example.com
 
-Once inventory hosts are listed, variables can be assigned to them in simple text files (in a subdirectory called 'group_vars/' or 'host_vars/' or directly in the inventory file.
+インベントリーホストの一覧が作成されると、単純なテキストファイル形式で (「group_vars/」または「host_vars/」という名前のサブディレクトリー内、またはインベントリーファイルに直接) 割り当てることができます。
 
-Or, as already mentioned, use a dynamic inventory to pull your inventory from data sources like EC2, Rackspace, or OpenStack.
+または、上述のように、動的インベントリーを使用して、EC2、Rackspace、OpenStack のようなデータソースからインベントリーをプルすることもできます。
 
-Playbooks
+Playbook
 =========
 
-Playbooks can finely orchestrate multiple slices of your infrastructure topology, with very detailed control over how many machines to tackle at a time.  This is where Ansible starts to get most interesting.
+Playbook は、インフラストラクチャートポロジーの複数のスライスを細かく調整 (オーケストレーション) することができ、同時に取り組むマシンの数を非常に細かく制御することができます。 ここからが、Ansible で最も魅力的な点になります。
 
-Ansible's approach to orchestration is one of finely-tuned simplicity, as we believe your automation code should make perfect sense to you years down the road and there should be very little to remember about special syntax or features.
+Ansible のオーケストレーションへのアプローチは、細かく調整された簡素化の 1 つです。通常、自動化コードは今後何年にもわたって完全に理解できるものであり、特別な構文や機能について覚えておくべきことはほとんどないためです。
 
-Here's what a simple playbook looks like::
+以下は単純な Playbook の例です。
 
     ---
     - hosts: webservers
@@ -78,19 +78,19 @@ Here's what a simple playbook looks like::
 
 .. _ansible_search_path:
 
-The Ansible search path
+Ansible 検索パス
 =======================
 
-Modules, module utilities, plugins, playbooks, and roles can live in multiple locations. If you
-write your own code to extend Ansible's core features, you may have multiple files with similar or the same names in different locations on your Ansible control node. The search path determines which of these files Ansible will discover and use on any given playbook run.
+モジュール、モジュールユーティリティー、プラグイン、Playbook、およびロールは複数の場所に置くことができます。自身でコードを記述して Ansible のコア機能を拡張する場合は、
+Ansible コントロールノードの異なる場所に同じ名前を持つ複数のファイルが存在する場合があります。検索パスにより、Ansible が特定のプレイブックの実行で検出して使用するこれらのファイルが決まります。
 
-Ansible's search path grows incrementally over a run. As
-Ansible finds each playbook and role included in a given run, it appends
-any directories related to that playbook or role to the search path. Those
-directories remain in scope for the duration of the run, even after the playbook or role
-has finished executing. Ansible loads modules, module utilities, and plugins in this order:
+Ansible の検索パスは、実行時に段階的に増えます。Ansibleは、
+特定の実行に含まれる各 Playbook とロールを見つけると、
+その Playbook またはロールに関連するすべてのディレクトリーを検索パスに追加します。これらのディレクトリーは、
+Playbook またはロールの実行が終了した後でも、
+実行中はスコープ内に残ります。Ansibleは、モジュール、モジュールユーティリティー、プラグインを次の順序でロードします。
 
-1. Directories adjacent to a playbook specified on the command line. If you run Ansible with ``ansible-playbook /path/to/play.yml``, Ansible appends these directories if they exist:
+1. コマンドラインで指定した Playbook に隣接するディレクトリー。``ansible-playbook /path/to/play.yml`` で Ansible を実行し、次のディレクトリーが存在する場合は、そのディレクトリーを Ansible が追加します。
 
    .. code-block:: bash
 
@@ -98,9 +98,9 @@ has finished executing. Ansible loads modules, module utilities, and plugins in 
       /path/to/module_utils
       /path/to/plugins
 
-2. Directories adjacent to a playbook that is statically imported by a
-   playbook specified on the command line. If ``play.yml`` includes
-   ``- import_playbook: /path/to/subdir/play1.yml``, Ansible appends these directories if they exist:
+2. コマンドラインで指定した Playbook が静的にインポートする 
+   Playbook に隣接するディレクトリー。``play.yml`` に ``- import_playbook: /path/to/subdir/play1.yml`` が含まれていて、
+   次のディレクトリーが存在する場合は、そのディレクトリーを Ansible が追加します。
 
    .. code-block:: bash
 
@@ -108,8 +108,8 @@ has finished executing. Ansible loads modules, module utilities, and plugins in 
       /path/to/subdir/module_utils
       /path/to/subdir/plugins
 
-3. Subdirectories of a role directory referenced by a playbook. If
-   ``play.yml`` runs ``myrole``, Ansible appends these directories if they exist:
+3. Playbook によって参照されるロールディレクトリーのサブディレクトリー。``play.yml`` が ``myrole`` を実行し、
+   次のディレクトリーが存在する場合は、そのディレクトリーを Ansible が追加します。
 
    .. code-block:: bash
 
@@ -117,9 +117,9 @@ has finished executing. Ansible loads modules, module utilities, and plugins in 
       /path/to/roles/myrole/module_utils
       /path/to/roles/myrole/plugins
 
-4. Directories specified as default paths in ``ansible.cfg`` or by the related
-   environment variables, including the paths for the various plugin types. See :ref:`ansible_configuration_settings` for more information.
-   Sample ``ansible.cfg`` fields:
+4. ``ansible.cfg`` でデフォルトパスとして指定されたディレクトリー、
+   または関連する環境変数で指定されたディレクトリー (さまざまなプラグインタイプのパスを含む)。詳細は、「:ref:`ansible_configuration_settings`」を参照してください。
+   ``ansible.cfg`` フィールドの例:
 
    .. code-block:: bash
 
@@ -128,7 +128,7 @@ has finished executing. Ansible loads modules, module utilities, and plugins in 
       DEFAULT_CACHE_PLUGIN_PATH
       DEFAULT_FILTER_PLUGIN_PATH
 
-   Sample environment variables:
+   環境変数の例:
 
    .. code-block:: bash
 
@@ -137,13 +137,13 @@ has finished executing. Ansible loads modules, module utilities, and plugins in 
       ANSIBLE_CACHE_PLUGINS
       ANSIBLE_FILTER_PLUGINS
 
-5. The standard directories that ship as part of the Ansible distribution.
+5. Ansible ディストリビューションに同梱される標準ディレクトリー。
 
 .. caution::
 
-   Modules, module utilities, and plugins in user-specified directories will
-   override the standard versions. This includes some files with generic names.
-   For example, if you have a file named ``basic.py`` in a user-specified
-   directory, it will override the standard ``ansible.module_utils.basic``.
+   ユーザーが指定したディレクトリーにあるモジュール、
+   モジュールユーティリティー、およびプラグインは標準バージョンを上書きします。これには、一般的な名前のファイルも含まれます。
+   たとえば、ユーザーが指定したディレクトリーに``basic.py`` という名前のファイルがある場合は、
+   標準の ``ansible.module_utils.basic`` が上書きされます。
 
-   If you have more than one module, module utility, or plugin with the same name in different user-specified directories, the order of commands at the command line and the order of includes and roles in each play will affect which one is found and used on that particular play.
+   同じ名前のモジュール、モジュールユーティリティー、またはプラグインが複数のユーザ指定ディレクトリーにある場合、コマンドラインでのコマンドの順序や、各プレイでのインクルードとロールの順序は、その特定のプレイでどのモジュールが見つかり、使用されるかによって異なります。

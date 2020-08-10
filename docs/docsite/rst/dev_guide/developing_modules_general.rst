@@ -2,59 +2,59 @@
 .. _module_dev_tutorial_sample:
 
 *******************************************
-Ansible module development: getting started
+Ansible モジュールの開発: はじめに
 *******************************************
 
-A module is a reusable, standalone script that Ansible runs on your behalf, either locally or remotely. Modules interact with your local machine, an API, or a remote system to perform specific tasks like changing a database password or spinning up a cloud instance. Each module can be used by the Ansible API, or by the :command:`ansible` or :command:`ansible-playbook` programs. A module provides a defined interface, accepting arguments and returning information to Ansible by printing a JSON string to stdout before exiting. Ansible ships with thousands of modules, and you can easily write your own. If you're writing a module for local use, you can choose any programming language and follow your own rules. This tutorial illustrates how to get started developing an Ansible module in Python.
+モジュールは、ローカルまたはリモートで Ansible を実行する再利用可能なスタンドアロンスクリプトです。モジュールは、ローカルマシン、API、またはリモートシステムと対話し、データベースパスワードの変更やクラウドインスタンスの起動などの特定のタスクを実行します。各モジュールは、Ansible API または :command:`ansible` または :command:`ansible-playbook` のプログラムで使用できます。モジュールは定義されたインターフェースを提供し、引数を受け入れ、終了前に JSON 文字列を標準出力 (stdout) に出力して Ansible に情報を返します。Ansible には数千ものモジュールが同梱されているため、簡単に独自のモジュールを作成できます。ローカルで使用するためにモジュールを作成する場合は、任意のプログラミング言語を選択して、独自のルールに従います。このチュートリアルでは、Python で Ansible モジュールの開発を開始する方法を説明します。
 
-.. contents:: Topics
+.. contents:: トピック
    :local:
 
 .. _environment_setup:
 
-Environment setup
+環境の設定
 =================
 
-Prerequisites via apt (Ubuntu)
+apt (Ubuntu) による前提条件
 ------------------------------
 
-Due to dependencies (for example ansible -> paramiko -> pynacl -> libffi):
+依存関係のため (例: ansible -> paramiko -> pynacl -> libffi)。
 
 .. code:: bash
 
     sudo apt update
     sudo apt install build-essential libssl-dev libffi-dev python-dev
 
-Common environment setup
+一般的な環境設定
 ------------------------------
 
-1. Clone the Ansible repository:
-   ``$ git clone https://github.com/ansible/ansible.git``
-2. Change directory into the repository root dir: ``$ cd ansible``
-3. Create a virtual environment: ``$ python3 -m venv venv`` (or for
-   Python 2 ``$ virtualenv venv``. Note, this requires you to install
-   the virtualenv package: ``$ pip install virtualenv``)
-4. Activate the virtual environment: ``$ . venv/bin/activate``
-5. Install development requirements:
-   ``$ pip install -r requirements.txt``
-6. Run the environment setup script for each new dev shell process:
-   ``$ . hacking/env-setup``
+1. Ansible リポジトリーのクローンを作成します 
+   (``$ git clone https://github.com/ansible/ansible.git``)。
+2. ディレクトリーをリポジトリーの root ディレクトリーに変更します (``$ cd ansible``)。
+3. 仮想環境を作成します (``$ python3 -m venv venv`` 
+   (または Python 2 ``$ virtualenv venv`` の場合))。注記: これには、
+   virtualenv パッケージインストール (``$ pip install virtualenv``) する必要がある点に注意してください。
+4. 仮想環境をアクティベートします (``$ . venv/bin/activate``)。
+5. 開発要件をインストールします 
+   (``$ pip install -r requirements.txt``)。
+6. 新規 dev シェルプロセスごとに環境設定スクリプトを実行します 
+   (``$ . hacking/env-setup``)。
 
-.. note:: After the initial setup above, every time you are ready to start
-   developing Ansible you should be able to just run the following from the
-   root of the Ansible repo:
-   ``$ . venv/bin/activate && . hacking/env-setup``
+.. note:: 上記の初期設定後、
+   Ansible の開発を開始する準備ができるたびに、
+   Ansibleリポジトリのルートから次のコマンドを実行できるようになります 
+   (``$ . venv/bin/activate && . hacking/env-setup``)。
 
 
-Starting a new module
+新規モジュールの起動
 =====================
 
-To create a new module:
+新しいモジュールを作成するには、以下を行います。
 
-1. Navigate to the correct directory for your new module: ``$ cd lib/ansible/modules/cloud/azure/``
-2. Create your new module file: ``$ touch my_test.py``
-3. Paste the content below into your new module file. It includes the :ref:`required Ansible format and documentation <developing_modules_documenting>` and some example code.
-4. Modify and extend the code to do what you want your new module to do. See the :ref:`programming tips <developing_modules_best_practices>` and :ref:`Python 3 compatibility <developing_python_3>` pages for pointers on writing clean, concise module code.
+1. 新しいモジュールの適切なディレクトリーに移動します (``$ cd lib/ansible/modules/cloud/azure/``)。
+2. 新しいモジュールファイルを作成します (``$ touch my_test.py``)。
+3. 以下の内容を新しいモジュールファイルに貼り付けます。:ref:`必要な Ansible 形式およびドキュメント <developing_modules_documenting>` と、いくつかのサンプルコードが含まれます。
+4. コードを変更および拡張して、新しいモジュールで実行すべきことを実行します。適切で簡潔なモジュールコードを記述するヒントは、「:ref:`プログラミングのヒント <developing_modules_best_practices>`」および「:ref:`Python 3 の互換性 <developing_python_3>`」を参照してください。
 
 .. code-block:: python
 
@@ -188,18 +188,18 @@ To create a new module:
         main()
 
 
-Exercising your module code
+モジュールコードを試す
 ===========================
 
-Once you've modified the sample code above to do what you want, you can try out your module.
-Our :ref:`debugging tips <debugging>` will help if you run into bugs as you exercise your module code.
+上記のサンプルコードを修正したら、モジュールを試すことができます。
+:ref:`デバッグのヒント<debugging>` は、モジュールコードを実行中にバグが発生した場合に役立ちます。
 
-Exercising module code locally
+モジュールコードをローカルで試す
 ------------------------------
 
-If your module does not need to target a remote host, you can quickly and easily exercise your code locally like this:
+モジュールがリモートホストを対象にする必要がない場合は、以下のようにコードをローカルで簡単に使用できます。
 
--  Create an arguments file, a basic JSON config file that passes parameters to your module so you can run it. Name the arguments file ``/tmp/args.json`` and add the following content:
+-  パラメーターをモジュールに渡す基本的な JSON 設定ファイルである引数ファイルを作成して、これを実行できます。引数ファイル ``/tmp/args.json`` に名前を付け、以下の内容を追加します。
 
 .. code:: json
 
@@ -210,26 +210,26 @@ If your module does not need to target a remote host, you can quickly and easily
         }
     }
 
--  If you are using a virtual environment (highly recommended for
-   development) activate it: ``$ . venv/bin/activate``
--  Setup the environment for development: ``$ . hacking/env-setup``
--  Run your test module locally and directly:
+-  仮想環境を使用している場合 (開発には強く推奨されます) は、
+   それをアクティブにします。(``$ . venv/bin/activate``)。
+-  開発用の環境を設定します (``$ . hacking/env-setup``)。
+-  テストモジュールをローカルで直接実行します。
    ``$ python -m ansible.modules.cloud.azure.my_test /tmp/args.json``
 
-This should return output like this:
+これにより、以下のような出力が返されます。
 
 .. code:: json
 
     {"changed": true, "state": {"original_message": "hello", "new_message": "goodbye"}, "invocation": {"module_args": {"name": "hello", "new": true}}}
 
 
-Exercising module code in a playbook
+Playbook でのモジュールコードを試す
 ------------------------------------
 
-The next step in testing your new module is to consume it with an Ansible playbook.
+新規モジュールをテストする次のステップは、Ansible Playbook で使用します。
 
--  Create a playbook in any directory: ``$ touch testmod.yml``
--  Add the following to the new playbook file::
+-  任意のディレクトリーに Playbook を作成します (``$ touch testmod.yml``)。
+-  以下を新しい Playbook ファイルに追加します。
 
     - name: test my new module
       hosts: localhost
@@ -243,69 +243,69 @@ The next step in testing your new module is to consume it with an Ansible playbo
         debug:
           msg: '{{ testout }}'
 
-- Run the playbook and analyze the output: ``$ ansible-playbook ./testmod.yml``
+- Playbook を実行し、出力を分析します (``$ ansible-playbook ./testmod.yml``)。
 
-Testing basics
+基本テスト
 ====================
 
-These two examples will get you started with testing your module code. Please review our :ref:`testing <developing_testing>` section for more detailed
-information, including instructions for :ref:`testing module documentation <testing_module_documentation>`, adding :ref:`integration tests <testing_integration>`, and more.
+これら 2 つの例では、モジュールコードのテストを開始します。:ref:`モジュールドキュメントのテスト <testing_module_documentation>`、:ref:`統合テスト <testing_integration>` の追加などの詳細は、
+「:ref:`testing <developing_testing>`」セクションを参照してください。
 
-Sanity tests
+健全性テスト
 ------------
 
-You can run through Ansible's sanity checks in a container:
+Ansible の健全性チェックをコンテナーで実行できます。
 
 ``$ ansible-test sanity -v --docker --python 2.7 MODULE_NAME``
 
-Note that this example requires Docker to be installed and running. If you'd rather not use a
-container for this, you can choose to use ``--tox`` instead of ``--docker``.
+この例では Docker をインストールし、実行している必要があることに注意してください。コンテナーを使用しない場合は、
+``--docker`` の代わりに ``--tox`` を使用できます。
 
-Unit tests
+ユニットテスト
 ----------
 
-You can add unit tests for your module in ``./test/units/modules``. You must first setup your testing environment. In this example, we're using Python 3.5.
+モジュールのユニットテストは、``./test/units/modules`` に追加できます。最初にテスト環境を設定する必要があります。この例では、Python 3.5 を使用しています。
 
-- Install the requirements (outside of your virtual environment): ``$ pip3 install -r ./test/lib/ansible_test/_data/requirements/units.txt``
-- To run all tests do the following: ``$ ansible-test units --python 3.5`` (you must run ``. hacking/env-setup`` prior to this)
+- (仮想環境外に) 要件をインストールします (``$ pip3 install -r ./test/lib/ansible_test/_data/requirements/units.txt``)。
+- すべてのテストを実行するには、$ ansible-test units --python 3.5`` を実行します (この前に ``. hacking/env-setup`` を実行する必要があります)。
 
-.. note:: Ansible uses pytest for unit testing.
+.. note:: Ansible はユニットテストに pytest を使用します。
 
-To run pytest against a single test module, you can do the following (provide the path to the test module appropriately):
+1 つのテストモジュールに対して pytest を実行するには、以下を行います (テストモジュールへのパスを適切に提供します)。
 
 ``$ pytest -r a --cov=. --cov-report=html --fulltrace --color yes
 test/units/modules/.../test/my_test.py``
 
-Contributing back to Ansible
+Ansible への貢献
 ============================
 
-If you would like to contribute to the main Ansible repository
-by adding a new feature or fixing a bug, `create a fork <https://help.github.com/articles/fork-a-repo/>`_
-of the Ansible repository and develop against a new feature
-branch using the ``devel`` branch as a starting point.
-When you you have a good working code change, you can
-submit a pull request to the Ansible repository by selecting
-your feature branch as a source and the Ansible devel branch as
-a target.
+新しい機能の追加や、バグの修正など、メインの Ansible リポジトリーに貢献する場合は、
+Ansible リポジトリーの `フォークを作成 <https://help.github.com/articles/fork-a-repo/>`_ し、
+新機能に対して開発します。
+``devel`` ブランチを出発点として新しい機能ブランチに対して開発します。
+正常に機能するコードを変更したら、
+機能ブランチをソースとして、
+および Ansible devel ブランチをターゲットとして選択して、
+プル要求を Ansible リポジトリーに送信できます。
 
-If you want to contribute your module back to the upstream Ansible repo,
-review our :ref:`submission checklist <developing_modules_checklist>`, :ref:`programming tips <developing_modules_best_practices>`,
-and :ref:`strategy for maintaining Python 2 and Python 3 compatibility <developing_python_3>`, as well as
-information about :ref:`testing <developing_testing>` before you open a pull request.
-The :ref:`Community Guide <ansible_community_guide>` covers how to open a pull request and what happens next.
+モジュールをアップストリームの Ansible リポジトリーに提供するには、プル要求を作成する前に、
+「:ref:`提出のチェックリスト <developing_modules_checklist>`」、「:ref:`プログラミングのヒント <developing_modules_best_practices>`」、
+「:ref:`Python 2 および Python 3 の互換性を維持するための戦略 <developing_python_3>`」、
+および「:ref:`テスト <developing_testing>`」を確認します。
+:ref:`コミュニティーガイド <ansible_community_guide>` では、プル要求を作成する方法と、作成した後のプロセスを説明します。
 
 
-Communication and development support
+通信および開発のサポート
 =====================================
 
-Join the IRC channel ``#ansible-devel`` on freenode for discussions
-surrounding Ansible development.
+Ansible 開発に関するディスカッションは、freenode の IRCチャネル ``#ansible-devel`` 
+に参加してください。
 
-For questions and discussions pertaining to using the Ansible product,
-use the ``#ansible`` channel.
+Ansible 製品の使用に関する質問とディスカッションは、
+``#ansible`` チャンネルを使用してください。
 
-Credit
+謝辞
 ======
 
-Thank you to Thomas Stringer (`@trstringer <https://github.com/trstringer>`_) for contributing source
-material for this topic.
+このトピックの元となる資料を提供していただいた Thomas Stringer (`@trstringer <https://github.com/trstringer>`_) 
+氏に感謝の意を示します。

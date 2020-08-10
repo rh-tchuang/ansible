@@ -4,26 +4,26 @@
 Python API
 **********
 
-.. contents:: Topics
+.. contents:: トピック
 
-.. note:: This API is intended for internal Ansible use. Ansible may make changes to this API at any time that could break backward compatibility with older versions of the API. Because of this, external use is not supported by Ansible.
+.. note:: この API は、Ansible の内部使用を目的としています。Ansible は、API の古いバージョンと後方互換性を保てなくなる可能性のある API にいつでも変更を加えることができます。このため、Ansible では外部の使用はサポートされません。
 
-There are several ways to use Ansible from an API perspective.   You can use
-the Ansible Python API to control nodes, you can extend Ansible to respond to various Python events, you can
-write plugins, and you can plug in inventory data from external data sources.  This document
-gives a basic overview and examples of the Ansible execution and playbook API.
+API の観点から Ansible を使用する方法は複数あります。  Ansible Python APIを使用してノードを制御したり、
+Ansible を拡張してさまざまな Python イベントに応答したり、
+プラグインを作成したり、外部データソースからのインベントリデータをプラグインしたりできます。 本ガイドは、
+Ansible の実行および Playbook API の基本的な概要および例を提示します。
 
-If you would like to use Ansible programmatically from a language other than Python, trigger events asynchronously,
-or have access control and logging demands, please see the `Ansible Tower documentation <https://docs.ansible.com/ansible-tower/>`_.
+Python 以外の言語からプログラムで Ansible を使用する場合、イベントを非同期にトリガーする場合、またはアクセス制御とロギングの要求がある場合は、
+`Ansible Tower のドキュメント` <https://docs.ansible.com/ansible-tower/>`_ を参照してください。
 
-.. note:: Because Ansible relies on forking processes, this API is not thread safe.
+.. note:: Ansible はプロセスのフォークに依存しているため、この API はスレッドセーフではありません。
 
 .. _python_api_example:
 
-Python API example
+Python API の例
 ==================
 
-This example is a simple demonstration that shows how to minimally run a couple of tasks::
+この例は、いくつかのタスクを最小限に実行する方法を示す簡単なデモです::
 
     #!/usr/bin/env python
 
@@ -106,20 +106,20 @@ This example is a simple demonstration that shows how to minimally run a couple 
         shutil.rmtree(C.DEFAULT_LOCAL_TMP, True)
 
 
-.. note:: Ansible emits warnings and errors via the display object, which prints directly to stdout, stderr and the Ansible log.
+.. note:: Ansibleは、標準出力 (stdout)、標準エラー (stderr)、Ansible ログに直接出力する表示オブジェクトを介して警告とエラーを発行します。
 
-The source code for the ``ansible``
-command line tools (``lib/ansible/cli/``) is `available on GitHub <https://github.com/ansible/ansible/tree/devel/lib/ansible/cli>`_.
+``ansible`` コマンドラインツール (``lib/ansible/cli/``) のソースコードは、
+GitHub <https://github.com/ansible/ansible/tree/devel/lib/ansible/cli>`_ で利用できます。
 
 .. seealso::
 
    :ref:`developing_inventory`
-       Developing dynamic inventory integrations
+       動的インベントリー統合の開発
    :ref:`developing_modules_general`
-       Getting started on developing a module
+       モジュール開発を始める
    :ref:`developing_plugins`
-       How to develop plugins
-   `Development Mailing List <https://groups.google.com/group/ansible-devel>`_
-       Mailing list for development topics
+       プラグインの開発方法
+   `開発メーリングリスト <https://groups.google.com/group/ansible-devel>`_
+       開発トピックのメーリングリスト
    `irc.freenode.net <http://irc.freenode.net>`_
-       #ansible IRC chat channel
+       #ansible IRC チャットチャンネル

@@ -1,43 +1,43 @@
 .. _module_lifecycle:
 
 **********************************
-The lifecycle of an Ansible module
+Ansible モジュールのライフサイクル
 **********************************
 
-Modules in the main Ansible repo have a defined life cycle, from first introduction to final removal. The module life cycle is tied to the `Ansible release cycle <release_cycle>` and reflected in the :ref:`ansible_metadata_block`. A module may move through these four states:
+メインの Ansible リポジトリーのモジュールには、最初の導入から最後の削除までライフサイクルが定義されます。モジュールのライフサイクルは `Ansible リリースサイクル <release_cycle>` に関連付けられ、:ref:`ansible_metadata_block` に反映されます。モジュールは以下の 4 つの状態を移動します。
 
-1. When a module is first accepted into Ansible, we consider it in tech preview and mark it ``preview``. Modules in ``preview`` are not stable. You may change the parameters or dependencies, expand or reduce the functionality of ``preview`` modules. Many modules remain ``preview`` for years.
+1. モジュールが最初に Ansible に受け入れられると、テクノロジープレビューでそれが考慮され、``preview`` としてマークされます。``preview`` のモジュールは安定していません。パラメーターまたは依存関係を変更し、``preview`` モジュールの機能を拡張または縮小できます。多くのモジュールは今後も ``preview`` 状態を維持しています。
 
-2. If a module matures, we may mark it ``stableinterface`` and commit to maintaining its parameters, dependencies, and functionality. We support (though we cannot guarantee) backwards compatibility for ``stableinterface`` modules, which means their parameters should be maintained with stable meanings.
+2. モジュールが成熟した場合は、そのモジュールを ``stableinterface`` とマークし、そのパラメーター、依存関係、および機能を維持することを約束する場合があります。``stableinterface`` モジュールに対する後方互換性はサポートします (が保証はしません)。つまり、パラメーターは安定した方法で維持する必要があります。
 
-3. If a module's target API changes radically, or if someone creates a better implementation of its functionality, we may mark it ``deprecated``. Modules that are ``deprecated`` are still available but they are reaching the end of their life cycle. We retain deprecated modules for 4 release cycles with deprecation warnings to help users update playbooks and roles that use them.
+3. モジュールのターゲット API が大幅に変更された場合、または誰かがその機能に対して実装を作成した場合は、``deprecated`` とマークすることがあります。``廃止された`` モジュールは引き続き使用できますが、ライフサイクルの終わりに近づいています。非推奨のモジュールは 4 つのリリースサイクルの間保持され、ユーザーはそれを使用する Playbook とロールを更新するのに役立つ非推奨の警告が表示されます。
 
-4. When a module has been deprecated for four release cycles, we remove the code and mark the stub file ``removed``. Modules that are ``removed`` are no longer shipped with Ansible. The stub file helps users find alternative modules.
+4. 4 つのリリースサイクルでモジュールが非推奨になったら、コードを削除して、stab ファイルに ``removed`` とマークします。``削除`` されるモジュールは、Ansible に同梱されなくなりました。このスタブファイルは、ユーザーが代替モジュールを見つけるのに役立ちます。
 
 .. _deprecating_modules:
 
-Deprecating modules
+モジュールの非推奨化
 ===================
 
-To deprecate a module, you must:
+モジュールの使用を終了するには、以下を行う必要があります。
 
-1. Rename the file so it starts with an ``_``, for example, rename ``old_cloud.py`` to ``_old_cloud.py``. This keeps the module available and marks it as deprecated on the module index pages.
-2. Mention the deprecation in the relevant ``CHANGELOG``.
-3. Reference the deprecation in the relevant ``porting_guide_x.y.rst``.
-4. Update ``ANSIBLE_METADATA`` to contain ``status: ['deprecated']``.
-5. Add ``deprecated:`` to the documentation with the following sub-values:
+1. ファイルの名前を ``_`` で始まるように変更します。たとえば、``old_cloud.py`` の名前を ``_old_cloud.py`` に変更します。これにより、モジュールが利用可能のままとなり、モジュールインデックスページで非推奨としてマークされます。
+2. 関連する ``CHANGELOG`` の非推奨に言及してください。
+3. 関連する ``porting_guide_x.y.rst`` の非推奨を参照します。
+4. ``status: ['deprecated']`` を含む ``ANSIBLE_METADATA`` を更新します。
+5. 次のサブ値を使用して、``deprecated:`` をドキュメントに追加します。
 
-  :removed_in: A ``string``, such as ``"2.9"``; the version of Ansible where the module will be replaced with a docs-only module stub. Usually current release +4.
-  :why: Optional string that used to detail why this has been removed.
-  :alternative: Inform users they should do instead, i.e. ``Use M(whatmoduletouseinstead) instead.``.
+  :removed_in: ``"2.9"`` などの ``文字列`` (モジュールがドキュメントのみのモジュールスタブに置き換えられる Ansible のバージョン)。通常に、現在のリリース +4 になります。。
+  :why:これが削除された理由の詳細に使用される任意の文字列です。
+  :alternative:代わりに行う必要があることをユーザーに通知します。つまり、``代わりに M(whatmoduletouseinstead) を使用します``。
 
-* For an example of documenting deprecation, see this `PR that deprecates multiple modules <https://github.com/ansible/ansible/pull/43781/files>`_.
+* 非推奨の文書化の例は、`複数のモジュールを非推奨にする PR <https://github.com/ansible/ansible/pull/43781/files>`_ を参照してください。
 
-Changing a module name
+モジュール名の変更
 ======================
 
-You can also rename a module and keep an alias to the old name by using a symlink that starts with _.
-This example allows the ``stat`` module to be called with ``fileinfo``, making the following examples equivalent::
+_ で始まるシンボリックリンクを使用して、モジュールの名前を変更し、エイリアスを古い名前に保つこともできます。
+この例では、``stat`` モジュールを ``fileinfo`` で呼び出すことができるため、次の例は同等になります。
 
     EXAMPLES = '''
     ln -s stat.py _fileinfo.py

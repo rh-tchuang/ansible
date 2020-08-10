@@ -3,19 +3,19 @@
 .. _testing_sanity:
 
 ************
-Sanity Tests
+サニティーテスト
 ************
 
-.. contents:: Topics
+.. contents:: トピック
 
-Sanity tests are made up of scripts and tools used to perform static code analysis.
-The primary purpose of these tests is to enforce Ansible coding standards and requirements.
+サニティーテストは、静的コード分析の実行に使用されるスクリプトおよびツールで構成されています。
+これらのテストの主な目的は、Ansible コーディングの仕様および要件を適用することです。
 
-Tests are run with ``ansible-test sanity``.
-All available tests are run unless the ``--test`` option is used.
+テストは ``ansible-test sanity`` で実行されます。
+``--test`` オプションを使用しない限り、利用可能なテストはすべて実行されます。
 
 
-How to run
+実行方法
 ==========
 
 .. code:: shell
@@ -34,9 +34,9 @@ How to run
    # Run validate-modules against a specific file
    ansible-test sanity --test validate-modules lib/ansible/modules/files/template.py
 
-Available Tests
+利用可能なテスト
 ===============
 
-Tests can be listed with ``ansible-test sanity --list-tests``.
+テストは、``ansible-test sanity --list-tests`` で一覧表示できます。
 
-See the full list of :ref:`sanity tests <all_sanity_tests>`, which details the various tests and details how to fix identified issues.
+各種テストや特定された問題を解決する方法の詳細は <all_sanity_tests>、「`サニティーテスト <all_sanity_tests>`」の一覧を参照してください。

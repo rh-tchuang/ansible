@@ -3,27 +3,27 @@
 .. _testing_units:
 
 **********
-Unit Tests
+ユニットテスト
 **********
 
-Unit tests are small isolated tests that target a specific library or module.  Unit tests
-in Ansible are currently the only way of driving tests from python within Ansible's
-continuous integration process. This means that in some circumstances the tests may be a
-bit wider than just units.
+ユニットテストは、特定のライブラリーまたはモジュールを対象とする小規模の分離テストです。 Ansible のユニットテストは、
+現在のところ Ansible の継続的インテグレーションプロセスの中で、
+python からテストを実行する唯一の方法です。つまり、状況によっては、
+テストはユニット以外のものも含まれます。
 
-.. contents:: Topics
+.. contents:: トピック
 
-Available Tests
+利用可能なテスト
 ===============
 
-Unit tests can be found in `test/units
-<https://github.com/ansible/ansible/tree/devel/test/units>`_. Notice that the directory
-structure of the tests matches that of ``lib/ansible/``.
+ユニットテストは `test/units 
+「<https://github.com/ansible/ansible/tree/devel/test/units>`_」にあります。テストのディレクトリー構造は、
+``lib/ansible/`` の構造と一致します。
 
-Running Tests
+テストの実行
 =============
 
-The Ansible unit tests can be run across the whole code base by doing:
+Ansible のユニットテストは、以下の操作を実行してコードベース全体で実行できます。
 
 .. code:: shell
 
@@ -31,76 +31,76 @@ The Ansible unit tests can be run across the whole code base by doing:
     source hacking/env-setup
     ansible-test units --tox
 
-Against a single file by doing:
+1 つのファイルに対して以下を行います。
 
 .. code:: shell
 
    ansible-test units --tox apt
 
-Or against a specific Python version by doing:
+または、以下を実行して特定の Python バージョンに対して実行します。
 
 .. code:: shell
 
    ansible-test units --tox --python 2.7 apt
 
-If you are running unit tests against things other than modules, such as module utilities, specify the whole file path:
+モジュールユーティリティーなどのモジュール以外のものに対してユニットテストを実行している場合は、ファイルパス全体を指定します。
 
 .. code:: shell
 
    ansible-test units --tox test/units/module_utils/basic/test_imports.py
 
-For advanced usage see the online help::
+高度な使用方法は、オンラインヘルプを参照してください。
 
    ansible-test units --help
 
-You can also run tests in Ansible's continuous integration system by opening a pull
-request.  This will automatically determine which tests to run based on the changes made
-in your pull request.
+プル要求を開くことで、
+Ansible の継続的な統合システムでテストを実行することもできます。 これにより、
+プル要求で行われた変更に基づいて実行するテストが自動的に決定されます。
 
 
-Installing dependencies
+依存関係のインストール
 =======================
 
-``ansible-test`` has a number of dependencies. For ``units`` tests we suggest using ``tox``.
+``ansible-test`` には多くの依存関係があります。``ユニット`` テストの場合は、``tox`` の使用が推奨されます。
 
-The dependencies can be installed using the ``--requirements`` argument, which will
-install all the required dependencies needed for unit tests. For example:
+依存関係は、``--requirements`` 引数を使用してインストールできます。
+これにより、ユニットテストに必要な依存関係がすべてインストールされます。例:
 
 .. code:: shell
 
    ansible-test units --tox --python 2.7 --requirements apache2_module
 
 
-.. note:: tox version requirement
+.. note:: tox バージョン要件
 
-   When using ``ansible-test`` with ``--tox`` requires tox >= 2.5.0
-
-
-The full list of requirements can be found at `test/lib/ansible_test/_data/requirements
-<https://github.com/ansible/ansible/tree/devel/test/lib/ansible_test/_data/requirements>`_. Requirements
-files are named after their respective commands. See also the `constraints
-<https://github.com/ansible/ansible/blob/devel/test/lib/ansible_test/_data/requirements/constraints.txt>`_
-applicable to all commands.
+   ``--tox`` で ``ansible-test`` を使用する場合は、2.5.0 より新しいバージョンが必要です。
 
 
-Extending unit tests
+要件の一覧は、「`test/lib/ansible_test/_data/requirements
+<https://github.com/ansible/ansible/tree/devel/test/lib/ansible_test/_data/requirements>`_」を参照してください。要件ファイルは、
+それぞれのコマンドにちなんだ名前が付けられています。すべてのコマンドに適用される「`constraints
+<https://github.com/ansible/ansible/blob/devel/test/lib/ansible_test/_data/requirements/constraints.txt>`_」
+も参照してください。
+
+
+ユニットテストの拡張
 ====================
 
 
-.. warning:: What a unit test isn't
+.. warning:: ユニットテスト以外のもの
 
-   If you start writing a test that requires external services then
-   you may be writing an integration test, rather than a unit test.
+   外部サービスを必要とするテストを書き始めると、
+   ユニットテストではなく統合テストを書くことができます。
 
 
-Structuring Unit Tests
+ユニットテストの構造
 ``````````````````````
 
-Ansible drives unit tests through `pytest <https://docs.pytest.org/en/latest/>`_. This
-means that tests can either be written a simple functions which are included in any file
-name like ``test_<something>.py`` or as classes.
+Ansible ドライブユニットテストは、`pytest` <https://docs.pytest.org/en/latest/>_ でテストします。つまり、
+テストは ``test_<something>.py`` のようなファイル名に含まれる単純な関数か、
+クラスとして書くことができます。
 
-Here is an example of a function::
+以下は、関数の例です。
 
   #this function will be called simply because it is called test_*()
 
@@ -110,7 +110,7 @@ Here is an example of a function::
       c = 33
       assert a + b = c
 
-Here is an example of a class::
+以下はクラスの例です::
 
   import unittest
 
@@ -130,87 +130,87 @@ Here is an example of a class::
         c = -13
         assert self.a - self.b = c
 
-Both methods work fine in most circumstances; the function-based interface is simpler and
-quicker and so that's probably where you should start when you are just trying to add a
-few basic tests for a module.  The class-based test allows more tidy set up and tear down
-of pre-requisites, so if you have many test cases for your module you may want to refactor
-to use that.
+関数ベースのインターフェースの方がシンプルで速いため、
+モジュールにいくつかの基本的なテストを追加しようとしている場合は、
+おそらくこの方法から始めるべきでしょう。 クラスベースのテストでは、前提条件の設定や分解をより整然と行うことができますため、
+モジュールに多くのテストケースがある場合は、
+それを使用するようにリファクタリングした方がよいでしょう。
 
-Assertions using the simple ``assert`` function inside the tests will give full
-information on the cause of the failure with a trace-back of functions called during the
-assertion.  This means that plain asserts are recommended over other external assertion
-libraries.
+テスト内で単純な ``assert`` を使用するアサーションは、
+アサーション中に呼び出された関数のトレースバックにより、
+失敗の原因に関する完全な情報を提供します。 これは、他の外部アサーションライブラリーよりも、
+プレーンアサートが推奨されることを意味します。
 
-A number of the unit test suites include functions that are shared between several
-modules, especially in the networking arena.  In these cases a file is created in the same
-directory, which is then included directly.
+ユニットテストスイートの多くは、
+特にネットワークの分野では、複数のモジュール間で共有される関数を含んでいます。 このような場合は、
+同じディレクトリーにファイルが作成され、
 
 
-Module test case common code
+それが直接インクルードされます。
 ````````````````````````````
 
-Keep common code as specific as possible within the `test/units/` directory structure. For
-example, if it's specific to testing Amazon modules, it should be in
-`test/units/modules/cloud/amazon/`. Don't import common unit test code from directories
-outside the current or parent directories.
+`test/units/` ディレクトリー構造内で、共通コードを可能な限り具体的にしてください。たとえば、
+たとえば、Amazon モジュールのテストに固有の場合は、
+`test/units/modules/cloud/amazon/` にある必要があります。カレントディレクトリーや親ディレクトリー以外のディレクトリーから、
+共通のユニットテストコードをインポートしないでください。
 
-Don't import other unit tests from a unit test. Any common code should be in dedicated
-files that aren't themselves tests.
+ユニットテストから他のユニットテストをインポートしないでください。共通のコードは、
+それ自体がテストではない専用のファイルに記述してください。
 
 
-Fixtures files
+Fixtures ファイル
 ``````````````
 
-To mock out fetching results from devices, or provide other complex data structures that
-come from external libraries, you can use ``fixtures`` to read in pre-generated data.
+デバイスからの結果のフェッチをモックアウトしたり、外部ライブラリーからの他の複雑なデータ構造を提供するために、
+``fixtures`` を使用して事前に生成されたデータを読み込むことができます。
 
-Text files live in ``test/units/modules/network/PLATFORM/fixtures/``
+``test/units/modules/network/PLATFORM/fixtures/`` に含まれるテキストファイル
 
-Data is loaded using the ``load_fixture`` method
+データは、``load_fixture`` メソッドを使用して読み込みます。
 
-See `eos_banner test
-<https://github.com/ansible/ansible/blob/devel/test/units/modules/network/eos/test_eos_banner.py>`_
-for a practical example.
+詳細は、「`eos_banner test
+<https://github.com/ansible/ansible/blob/devel/test/units/modules/network/eos/test_eos_banner.py>`_」
+を参照してください。
 
-If you are simulating APIs you may find that python placebo is useful.  See
-:ref:`testing_units_modules` for more information.
+API のシミュレーションをしているのであれば、python のプラシーボが役に立つかもしれません。 詳細は、
+「:ref:`testing_units_modules`」を参照してください。
 
 
-Code Coverage For New or Updated Unit Tests
+新規ユニットテストまたは更新されたユニットテスト用のコード対応
 ```````````````````````````````````````````
-New code will be missing from the codecov.io coverage reports (see :ref:`developing_testing`), so
-local reporting is needed.  Most ``ansible-test`` commands allow you to collect code
-coverage; this is particularly useful when to indicate where to extend testing.
+新しいコードは、codecov.io のカバレージレポートには追加されないため (:ref:`development_testing` を参照)、
+ローカルレポートが必要になります。 ほとんどの ``ansible-test`` コマンドでコードカバレージを収集することができます。
+これは、テストを拡張する場所を示す際に特に便利です。
 
-To collect coverage data add the ``--coverage`` argument to your ``ansible-test`` command line:
+カバレージデータを収集するには、``--coverage`` 引数を ``ansible-test`` コマンドラインに追加します。
 
 .. code:: shell
 
    ansible-test units --coverage apt
    ansible-test coverage html
 
-Results will be written to ``test/results/reports/coverage/index.html``
+結果は ``test/results/reports/coverage/index.html`` に書き込まれます。
 
-Reports can be generated in several different formats:
+Report は、複数の形式で生成できます。
 
-* ``ansible-test coverage report`` - Console report.
-* ``ansible-test coverage html`` - HTML report.
-* ``ansible-test coverage xml`` - XML report.
+* ``ansible-test coverage report`` - コンソールレポート
+* ``ansible-test coverage html`` - HTML レポート
+* ``ansible-test coverage xml`` - XML レポート
 
-To clear data between test runs, use the ``ansible-test coverage erase`` command.  See
-:ref:`testing_running_locally` for more information about generating coverage
-reports.
+テストの実行間でデータを消去するには、``ansible-test coverage erase`` コマンドを使用します。 カバレージレポートの生成は、
+「:ref:`testing_running_locally`」
+を参照してください。
 
 
 .. seealso::
 
    :ref:`testing_units_modules`
-       Special considerations for unit testing modules
+       ユニットテストモジュールに関する特別な考慮事項
    :ref:`testing_running_locally`
-       Running tests locally including gathering and reporting coverage data
-   `Python 3 documentation - 26.4. unittest — Unit testing framework <https://docs.python.org/3/library/unittest.html>`_
-       The documentation of the unittest framework in python 3
-   `Python 2 documentation - 25.3. unittest — Unit testing framework <https://docs.python.org/3/library/unittest.html>`_
-       The documentation of the earliest supported unittest framework - from Python 2.6
-   `pytest: helps you write better programs <https://docs.pytest.org/en/latest/>`_
-       The documentation of pytest - the framework actually used to run Ansible unit tests
+       カバレージデータの収集とレポートを含む、ローカルでのテストの実行
+   `Python 3 ドキュメント - 26.4. unittest - ユニットテストのフレームワーク <https://docs.python.org/3/library/unittest.html>`_
+       Python 3 における unittest フレームワークのドキュメント
+   `Python 2 ドキュメント - 25.3. unittest - ユニットテストのフレームワーク <https://docs.python.org/3/library/unittest.html>`_
+       サポートされている初期の unittest フレームワークのドキュメント - Python 2.6
+   `pytest (より優れたプログラムを書き込むのに役立ちます) <https://docs.pytest.org/en/latest/>`_
+       pytest のドキュメント: Ansible ユニットテストの実行に実際に使用されているフレームワーク
